@@ -1,5 +1,5 @@
 import User from '../types/user.type';
-import db from '../database';
+import db from '../config/database';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
@@ -13,9 +13,9 @@ class UserModel {
   async create(u: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt) 
-                    values ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
-                    RETURNING id, email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt`;
+      const sql = `INSERT INTO users (email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt, gr) 
+                    values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+                    RETURNING id, email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt, gr`;
 
       const createdAt = new Date();
       const updatedAt = new Date();
@@ -29,6 +29,7 @@ class UserModel {
         u.box_info,
         createdAt,
         updatedAt,
+        u.gr,
       ]);
       connection.release();
       return result.rows[0];
@@ -44,7 +45,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, email, username, password, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users';
+        'SELECT id, email, username, password, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -63,7 +64,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users 
+      const sql = `SELECT id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -107,7 +108,7 @@ class UserModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, password`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, password, gr`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -129,7 +130,7 @@ class UserModel {
       }
       const sql = `DELETE FROM users
                     WHERE id=$1
-                    RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt`;
+                    RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {
@@ -159,6 +160,21 @@ class UserModel {
     } catch (error) {
       throw new Error(
         `Could not find user with email ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  // helper func to determine if the email exists when creation
+  async emailExists(email: string): Promise<boolean> {
+    try {
+      const connection = await db.connect();
+      const sql = 'SELECT email FROM users WHERE email=$1';
+      const result = await connection.query(sql, [email]);
+      connection.release();
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error(
+        `Unable to check email existence: ${(error as Error).message}`,
       );
     }
   }

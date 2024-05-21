@@ -11,6 +11,10 @@ const pool = new Pool({
   max: 4,
 });
 
+pool.on('connect', async () => {
+  await console.log(`Connected to DB Postgres: ${config.DB_NAME}`);
+});
+
 pool.on('error', (error: Error) => {
   console.error(error.message);
 });

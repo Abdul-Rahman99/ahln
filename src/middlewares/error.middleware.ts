@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { config } from '../../../config';
-import Error from '../../types/error.type';
+import { config } from '../../config';
+import Error from '../types/error.type';
 const nodeEnv = config.NODE_ENV;
 
 export const errorMiddleware = (

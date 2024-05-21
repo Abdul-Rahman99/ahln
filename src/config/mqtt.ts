@@ -14,7 +14,7 @@ export const client: MqttClient = mqtt.connect(options as any);
 client.on('connect', () => {
   console.log('MQTT Connected');
 
-  // subscribe to all topics under 'data/' -<adjust as needed>-
+  // subscribe to all topics under 'data/' --<adjust as needed>--
   const wildcardTopic = 'data/#';
   client.subscribe(wildcardTopic, { qos: 1 }, (err, granted) => {
     if (err) {
@@ -49,6 +49,14 @@ client.on('message', (topic, message) => {
 client.on('error', function (error) {
   console.log('MQTT connection error:', error);
   process.exit(1);
+});
+
+client.on('reconnect', () => {
+  console.log('Reconnecting to MQTT broker');
+});
+
+client.on('end', () => {
+  console.log('Connection to MQTT broker ended');
 });
 
 const shouldSubscribeToTopic = (topic: string): boolean => {

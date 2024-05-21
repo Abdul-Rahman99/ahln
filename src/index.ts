@@ -7,11 +7,14 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss';
+
+import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
+import i18n from './config/i18n';
 import mountRoutes from './routes';
 import { config } from '../config';
-import { errorMiddleware, notFound } from './lib/middlewares/error.middleware';
+import { errorMiddleware, notFound } from './middlewares/error.middleware';
 
-import { client } from './mqtt.config';
+import { client } from './config/mqtt';
 import connectDatabase from './models';
 
 const app: Express = express();
@@ -23,21 +26,30 @@ connectDatabase();
 client;
 
 // Middlewares
+app.use(localizationMiddleware); // use localization middleware
+app.use(i18n.init); // initialize i18n
+
 app.use(morgan('dev')); // http request logger  middleware
 app.use(helmet()); // http security
 app.use(
   cors({
-    origin: '*', // front end dev
+    origin: ['*'], // frontend dev
     credentials: true,
   }),
 );
 app.use(express.json({ limit: '20kb' })); // Parsing JSON, limit to prevent large requests
-app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
+    limit: '50mb',
     extended: true,
+    parameterLimit: 50000,
   }),
 );
+
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  next();
+});
 
 app.use(mongoSanitize()); // no sql query injection
 
@@ -51,9 +63,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
   next();
 });
-// console.log(sanitizedInput);
-// Routes
-app.use('/uploads', express.static('uploads'));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -61,6 +70,9 @@ const limiter = rateLimit({
   message:
     'Too many accounts created from this IP, please try again after 1 hour',
 });
+
+// Routes
+app.use('/uploads', express.static('uploads'));
 
 // Apply the rate limiting middleware to all requests.
 app.use('/api', limiter);
@@ -76,6 +88,7 @@ app.use((_req: Request, res: Response) => {
 app.use(notFound);
 app.use(errorMiddleware);
 
+// server connection
 const PORT = config.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`App is Running on Port ${PORT}`);

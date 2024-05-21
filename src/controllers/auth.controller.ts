@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/user.model';
-import asyncHandler from '../lib/middlewares/asyncHandler';
+import asyncHandler from '../middlewares/asyncHandler';
 import { config } from '../../config';
 import User from '../types/user.type';
+import i18n from '../config/i18n';
 
 const userModel = new UserModel();
 
@@ -26,7 +27,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const token = generateToken(user);
 
-  res.status(201).json({ user, token });
+  res.status(201).json({ message: i18n.__('REGISTER_SUCCESS'), user, token });
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
@@ -38,15 +39,15 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     !bcrypt.compareSync(password + config.JWT_SECRET_KEY, user.password)
   ) {
     res.status(401);
-    throw new Error('Invalid credentials');
+    throw new Error(i18n.__('INVALID_CREDENTIALS'));
   }
-  // no expiration for sign in -<< until the user logout >>-
+
   const token = jwt.sign(
     { id: user.id, role: user.role },
     config.JWT_SECRET_KEY!,
   );
 
-  res.json({ user, token });
+  res.json({ message: i18n.__('LOGIN_SUCCESS'), user, token });
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
@@ -55,6 +56,6 @@ export const currentUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  // invalidate token (handled on the client side)
-  res.status(200).json({ message: 'Logged out successfully' });
+  // Invalidate token (handled on the client side)
+  res.status(200).json({ message: i18n.__('LOGOUT_SUCCESS') });
 });

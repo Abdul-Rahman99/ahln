@@ -6,12 +6,20 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/users.controller';
-import verifyToken from '../lib/middlewares/verifyToken';
-import authorize from '../lib/middlewares/authorize';
+
+import {
+  createUserValidator,
+  deleteUserValidator,
+  getUserValidator,
+  updateUserValidator,
+} from '../validation/user.validation';
+
+import verifyToken from '../middlewares/verifyToken';
+import authorize from '../middlewares/authorize';
 
 const router = express.Router();
 
-router.post('/new', createUser);
+router.post('/new', createUserValidator, createUser);
 router.get(
   '/get-all',
   verifyToken,
@@ -19,12 +27,13 @@ router.get(
   getAllUsers,
 );
 
-router.get('/get-one/:id', verifyToken, getUserById);
+router.get('/get-one/:id', verifyToken, getUserValidator, getUserById);
 
 router.put(
   '/update/:id',
   verifyToken,
   authorize('admin', 'super admin'),
+  updateUserValidator,
   updateUser,
 );
 
@@ -32,6 +41,7 @@ router.delete(
   '/delete/:id',
   verifyToken,
   authorize('admin', 'super admin'),
+  deleteUserValidator,
   deleteUser,
 );
 

@@ -1,6 +1,7 @@
 -- Ensure the extension is available
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+
 -- Create the table
 CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v1() PRIMARY KEY NOT NULL,
@@ -11,12 +12,9 @@ CREATE TABLE users (
     alt_phone VARCHAR(20),
     payment_method VARCHAR(50),
     box_info JSONB,
-    role VARCHAR(20) NOT NULL DEFAULT 'customer' CHECK (role IN ('admin', 'customer', 'super admin' , 'delievry')),
+    gr VARCHAR(255),
+    role VARCHAR(20) NOT NULL DEFAULT 'customer' CHECK (role IN ('admin', 'customer', 'super admin', 'vendor', 'operations')),
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- CREATE TABLE mqtt (
-
--- );

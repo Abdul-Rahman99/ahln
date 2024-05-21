@@ -11,5 +11,6 @@ type User = {
   role: 'admin' | 'super admin' | 'customer' | 'delievry';
   createdAt: Date;
   updatedAt: Date;
+  gr?: string;
 };
 export default User;

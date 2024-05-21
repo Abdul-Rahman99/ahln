@@ -1,0 +1,24 @@
+{
+  "EMAIL_REQUIRED": "البريد الإلكتروني مطلوب",
+  "EMAIL_INVALID": "تنسيق البريد الإلكتروني غير صالح",
+  "EMAIL_IN_USE": "البريد الإلكتروني مستخدم بالفعل",
+  "NAME_REQUIRED": "الاسم مطلوب",
+  "PASSWORD_REQUIRED": "كلمة المرور مطلوبة",
+  "PASSWORD_MIN_LENGTH": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+  "PHONE_REQUIRED": "رقم الهاتف مطلوب",
+  "INVALID_PHONE_FORMAT": "تنسيق رقم الهاتف غير صالح",
+
+  "USER_CREATED_SUCCESSFULLY": "تم إنشاء المستخدم بنجاح",
+  "USER_UPDATED_SUCCESSFULLY": "تم تحديث المستخدم بنجاح",
+  "USER_DELETED_SUCCESSFULLY": "تم حذف المستخدم بنجاح",
+
+  "REGISTER_SUCCESS": "تم تسجيل المستخدم بنجاح",
+  "INVALID_CREDENTIALS": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+  "LOGIN_SUCCESS": "تسجيل الدخول ناجح",
+  "LOGOUT_SUCCESS": "تم تسجيل الخروج بنجاح",
+
+  "COMPARTMENTS_NUMBER_REQUIRED": "عدد الأقسام مطلوب",
+  "COMPARTMENTS_STATUS_REQUIRED": "حالة الأقسام مطلوبة",
+  "VIDEO_ID_REQUIRED": "معرف الفيديو مطلوب",
+  "INVALID_ID": "معرف غير صالح"
+}

@@ -1,10 +1,10 @@
-import db from '../database';
+import db from '../config/database';
 
 const connectDatabase = async () => {
   try {
     const client = await db.connect();
     try {
-      console.log('Database connected successfully');
+      console.log('Database is Ready');
     } finally {
       client.release();
     }

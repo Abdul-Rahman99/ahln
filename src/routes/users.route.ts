@@ -23,7 +23,7 @@ router.post('/new', createUserValidator, createUser);
 router.get(
   '/get-all',
   verifyToken,
-  authorize('admin', 'super admin', 'delivery'),
+  authorize('admin', 'super admin', 'vendor' , 'operations'),
   getAllUsers,
 );
 

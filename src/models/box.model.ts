@@ -2,64 +2,66 @@ import Box from '../types/box.type';
 import db from '../config/database';
 
 class BoxModel {
- // create box
+  // Create box
   async create(b: Box): Promise<Box> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO boxes (compartments_number, compartments_status, video_id) 
-                    VALUES ($1, $2, $3) 
-                    RETURNING id, compartments_number, compartments_status, video_id`;
+      const sql = `INSERT INTO box (compartments_number, compartment1, compartment2, compartment3, video_id) 
+                   VALUES ($1, $2, $3, $4, $5) 
+                   RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
 
       const result = await connection.query(sql, [
         b.compartments_number,
-        b.compartments_status,
+        b.compartment1,
+        b.compartment2,
+        b.compartment3,
         b.video_id,
       ]);
       connection.release();
-      return result.rows[0];
+
+      const box = result.rows[0];
+      return box;
     } catch (error) {
       throw new Error(`Unable to create box: ${(error as Error).message}`);
     }
   }
 
-  // get all
+  // Get all boxes
   async getMany(): Promise<Box[]> {
     try {
       const connection = await db.connect();
-      const sql = 'SELECT * FROM boxes';
+      const sql = 'SELECT * FROM box';
       const result = await connection.query(sql);
-
-      if (result.rows.length === 0) {
-        throw new Error(`No boxes in the database`);
-      }
       connection.release();
+
       return result.rows as Box[];
     } catch (error) {
       throw new Error(`Error retrieving boxes: ${(error as Error).message}`);
     }
   }
 
-  // get box by id
+  // Get box by id
   async getOne(id: string): Promise<Box> {
     try {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid box ID.');
       }
-      const sql = `SELECT * FROM boxes WHERE id=$1`;
+      const sql = `SELECT * FROM box WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
+      connection.release();
 
       if (result.rows.length === 0) {
         throw new Error(`Could not find box with ID ${id}`);
       }
-      connection.release();
+
       return result.rows[0] as Box;
     } catch (error) {
       throw new Error(`Could not find box ${id}: ${(error as Error).message}`);
     }
   }
 
-  // update box
+  // Update box
   async updateOne(b: Partial<Box>, id: string): Promise<Box> {
     try {
       const connection = await db.connect();
@@ -69,6 +71,15 @@ class BoxModel {
       const updateFields = Object.keys(b)
         .map((key) => {
           if (b[key as keyof Box] !== undefined && key !== 'id') {
+            if (
+              key === 'compartment1' ||
+              key === 'compartment2' ||
+              key === 'compartment3'
+            ) {
+              if (typeof b[key as keyof Box] !== 'boolean') {
+                throw new Error(`Field ${key} must be a boolean`);
+              }
+            }
             queryParams.push(b[key as keyof Box]);
             return `${key}=$${paramIndex++}`;
           }
@@ -78,7 +89,9 @@ class BoxModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE boxes SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, compartments_number, compartments_status, video_id`;
+      const sql = `UPDATE box SET ${updateFields.join(
+        ', ',
+      )} WHERE id=$${paramIndex} RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -88,22 +101,24 @@ class BoxModel {
       throw new Error(`Could not update box: ${(error as Error).message}`);
     }
   }
-  // delete box
+
+  // Delete box
   async deleteOne(id: string): Promise<Box> {
     try {
       const connection = await db.connect();
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid box ID.');
       }
-      const sql = `DELETE FROM boxes
+      const sql = `DELETE FROM box
                     WHERE id=$1
-                    RETURNING id, compartments_number, compartments_status, video_id`;
+                    RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
 
       const result = await connection.query(sql, [id]);
+      connection.release();
+
       if (result.rows.length === 0) {
         throw new Error(`Could not find box with ID ${id}`);
       }
-      connection.release();
 
       return result.rows[0] as Box;
     } catch (error) {

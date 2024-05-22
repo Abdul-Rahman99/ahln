@@ -7,7 +7,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     req.headers['Authorization'] || req.headers['authorization'];
   if (!authHeader) {
     res.status(401);
-    throw new Error('Token is required');
+    return next(new Error('Token is required'));
   }
 
   const token = authHeader.split(' ')[1];
@@ -17,7 +17,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (err) {
     res.status(401);
-    throw new Error('Invalid Token');
+    next(new Error('Invalid Token'));
   }
 };
 

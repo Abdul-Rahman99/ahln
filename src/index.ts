@@ -37,14 +37,15 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json({ limit: '20kb' })); // Parsing JSON, limit to prevent large requests
-app.use(
-  bodyParser.urlencoded({
-    limit: '50mb',
-    extended: true,
-    parameterLimit: 50000,
-  }),
-);
+app.use(bodyParser.json()); // Middleware to parse JSON requests
+app.use(express.json({ limit: '20kb' })); // limit to prevent large requests
+// app.use(
+//   bodyParser.urlencoded({
+//     limit: '50mb',
+//     extended: true,
+//     parameterLimit: 50000,
+//   }),
+// );
 
 app.use((req, res, next) => {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');

@@ -8,7 +8,7 @@ type User = {
   payment_method?: string;
   box_info?: Record<string, any>;
 
-  role: 'admin' | 'super admin' | 'customer' | 'delievry';
+  role: 'admin' | 'super admin' | 'customer' | 'vendor' | 'operations';
   createdAt: Date;
   updatedAt: Date;
   gr?: string;

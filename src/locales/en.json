@@ -1,4 +1,5 @@
 {
+  "INVALID_ROLE": "You are not allowed to access this route",
   "EMAIL_REQUIRED": "Email is required",
   "EMAIL_INVALID": "Invalid email format",
   "EMAIL_IN_USE": "Email already in use",
@@ -7,18 +8,19 @@
   "PASSWORD_MIN_LENGTH": "Password must be at least 6 characters long",
   "PHONE_REQUIRED": "Phone number is required",
   "INVALID_PHONE_FORMAT": "Invalid phone number format",
-
   "USER_CREATED_SUCCESSFULLY": "User created successfully",
   "USER_UPDATED_SUCCESSFULLY": "User updated successfully",
   "USER_DELETED_SUCCESSFULLY": "User deleted successfully",
-
   "REGISTER_SUCCESS": "User registered successfully",
   "LOGIN_SUCCESS": "Login successful",
   "LOGOUT_SUCCESS": "Logged out successfully",
   "INVALID_CREDENTIALS": "Invalid email or password",
-
-  "COMPARTMENTS_NUMBER_REQUIRED": "عدد الأقسام مطلوب",
-  "COMPARTMENTS_STATUS_REQUIRED": "حالة الأقسام مطلوبة",
-  "VIDEO_ID_REQUIRED": "معرف الفيديو مطلوب",
-  "INVALID_ID": "معرف غير صالح"
+  "COMPARTMENTS_NUMBER_REQUIRED": "Compartments number is required and must be an integer greater than 0.",
+  "COMPARTMENTS_STATUS_REQUIRED": "Compartments status is required and must be an object.",
+  "VIDEO_ID_REQUIRED": "Video ID is required and must be an integer greater than 0.",
+  "INVALID_ID": "Invalid ID format.",
+  "BOX_CREATED_SUCCESS": "Box created successfully",
+  "BOX_DELETED_SUCCESS": "Box deleted successfully",
+  "COMPARTMENTS_STATUS_INVALID": "Compartments status Invalid",
+  "BOX_UPDATED_SUCCESS": "Box updated successfully"
 }

@@ -21,7 +21,7 @@ router.post(
   '/new',
   verifyToken,
   authorize('admin', 'super admin', 'operations'),
-//   createBoxValidator,
+  createBoxValidator,
   createBox,
 );
 router.get(

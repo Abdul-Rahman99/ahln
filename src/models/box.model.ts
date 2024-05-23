@@ -8,7 +8,7 @@ class BoxModel {
       const connection = await db.connect();
       const sql = `INSERT INTO box (compartments_number, compartment1, compartment2, compartment3, video_id) 
                    VALUES ($1, $2, $3, $4, $5) 
-                   RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
+                   RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt, box_id`;
 
       const result = await connection.query(sql, [
         b.compartments_number,
@@ -89,9 +89,7 @@ class BoxModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE box SET ${updateFields.join(
-        ', ',
-      )} WHERE id=$${paramIndex} RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
+      const sql = `UPDATE box SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt, box_id`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -111,7 +109,7 @@ class BoxModel {
       }
       const sql = `DELETE FROM box
                     WHERE id=$1
-                    RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt`;
+                    RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt, box_id`;
 
       const result = await connection.query(sql, [id]);
       connection.release();

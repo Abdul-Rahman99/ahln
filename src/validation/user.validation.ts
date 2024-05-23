@@ -54,8 +54,8 @@ export const updateUserValidator = [
     .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
   body('role')
     .optional()
-    .isIn(['admin', 'customer', 'super admin', 'delivery'])
-    .withMessage('Invalid role'),
+    .isIn(['admin', 'super admin'])
+    .withMessage(i18n.__('INVALID_ROLE')),
   validatorMiddleware,
 ];
 

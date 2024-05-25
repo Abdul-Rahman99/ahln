@@ -11,7 +11,7 @@
     "fromat": "prettier --write src/**/*.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "migration:users-up": "db-migrate up",
+    "migration:up": "db-migrate up",
     "migration:users-down": "db-migrate down"
   },
   "keywords": [
@@ -24,6 +24,7 @@
     "@types/express": "^4.17.21",
     "@types/jasmine": "^5.1.4",
     "@types/supertest": "^6.0.2",
+    "autocannon": "^7.15.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
@@ -58,6 +59,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "@types/autocannon": "^7.12.5",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",

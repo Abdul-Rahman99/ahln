@@ -4,6 +4,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
+import path from 'path';
 
 import i18n from './config/i18n';
 import mountRoutes from './routes';
@@ -51,13 +52,16 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
 });
 
-app.use('/api', limiter); // Apply the rate limiting middleware to all API routes
+// app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
 // Static file serving
 app.use('/uploads', express.static('uploads'));
 
 // Mount routes
 mountRoutes(app);
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages/index.html'));
+});
 
 // 404 Not Found middleware
 app.use((_req: Request, res: Response) => {

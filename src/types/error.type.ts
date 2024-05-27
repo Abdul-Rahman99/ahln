@@ -1,4 +1,4 @@
-interface Error {
+type Error = {
   status?: number;
   name?: string;
   message?: string;

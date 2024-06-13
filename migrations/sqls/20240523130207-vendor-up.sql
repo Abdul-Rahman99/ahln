@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL DEFAULT 'customer' CHECK (role IN ('admin', 'customer', 'super admin', 'vendor', 'operations')),
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    user_id VARCHAR(20) UNIQUE
+    user_id VARCHAR(20) UNIQUE,
 );
 
 
@@ -178,10 +178,10 @@ BEGIN
     current_year := to_char(CURRENT_DATE, 'YY');
     
     -- Get the next sequence value (delivery number)
-    SELECT COALESCE(MAX(CAST(SUBSTRING(delivery_id FROM 8 FOR 7) AS INTEGER)), 0) + 1 INTO next_id FROM delivery;
+    SELECT COALESCE(MAX(CAST(SUBSTRING(delivery_id FROM 11 FOR 7) AS INTEGER)), 0) + 1 INTO next_id FROM delivery;
     
     -- Format the next id as 1000001, 1000002, etc.
-    next_id_formatted := LPAD(next_id::TEXT, 7, '0');
+    next_id_formatted := LPAD(next_id::TEXT, 7, '1000001');
     
     -- Construct the delivery_id
     NEW.delivery_id := 'Ahln_' || current_year || '_D' || next_id_formatted;

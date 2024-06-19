@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mqtt, { MqttClient } from 'mqtt';
 import config from '../../config';
@@ -35,16 +36,16 @@ client.on('message', (topic, message) => {
     console.log('Received non-JSON message:', message.toString());
   }
 
-  // if (shouldSubscribeToTopic(topic)) {
-  //   const specificTopic = topic;
-  //   client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
-  //     if (err) {
-  //       console.error(`Subscription error for topic ${specificTopic}:`, err);
-  //     } else {
-  //       console.log(`Subscribed to new topic: ${specificTopic}`, granted);
-  //     }
-  //   });
-  // }
+  if (shouldSubscribeToTopic(topic)) {
+    const specificTopic = topic;
+    client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
+      if (err) {
+        console.error(`Subscription error for topic ${specificTopic}:`, err);
+      } else {
+        console.log(`Subscribed to new topic: ${specificTopic}`, granted);
+      }
+    });
+  }
 });
 
 client.on('error', function (error) {
@@ -60,9 +61,8 @@ client.on('end', () => {
   console.log('Connection to MQTT broker ended');
 });
 
-// const shouldSubscribeToTopic = (
-//   : string): boolean => {
-//   //add logic to determine if a specific topic should be subscribed to
-//   // for example subscribe to certain patterns or newly discovered topics
-//   return true; // for demonstration  subscribe to all
-// };
+const shouldSubscribeToTopic = (topic: string): boolean => {
+  //add logic to determine if a specific topic should be subscribed to
+  // for example subscribe to certain patterns or newly discovered topics
+  return true; // for demonstration  subscribe to all
+};

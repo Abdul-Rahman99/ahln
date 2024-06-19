@@ -11,7 +11,7 @@ const userModel = new UserModel();
 
 const generateToken = (user: User) => {
   return jwt.sign({ id: user.id, role: user.role }, config.JWT_SECRET_KEY!, {
-    expiresIn: '1h',
+    expiresIn: '1m',
   });
 };
 
@@ -45,6 +45,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const token = jwt.sign(
     { id: user.id, role: user.role },
     config.JWT_SECRET_KEY!,
+    { expiresIn: '30s' }, // token expiration time set to 30 seconds for testing <change it>
   );
 
   res.json({ message: i18n.__('LOGIN_SUCCESS'), user, token });

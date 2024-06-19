@@ -16,6 +16,8 @@
   "INVALID_CREDENTIALS": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
   "LOGIN_SUCCESS": "تسجيل الدخول ناجح",
   "LOGOUT_SUCCESS": "تم تسجيل الخروج بنجاح",
+  "TOKEN_REQUIRED": "مطلوب رمز الوصول",
+  "INVALID_TOKEN": "رمز غير صالح",
 
   "COMPARTMENTS_NUMBER_REQUIRED": "عدد الأقسام مطلوب",
   "COMPARTMENTS_STATUS_REQUIRED": "حالة الأقسام مطلوبة",

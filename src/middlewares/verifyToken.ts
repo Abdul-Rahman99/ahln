@@ -1,23 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config';
+import i18n from '../config/i18n';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader: any =
-    req.headers['Authorization'] || req.headers['authorization'];
+  const authHeader = req.headers['authorization'] as string | undefined;
+
   if (!authHeader) {
-    res.status(401);
-    return next(new Error('Token is required'));
+    res.status(401).json({ message: i18n.__('TOKEN_REQUIRED') });
+    return;
   }
 
   const token = authHeader.split(' ')[1];
   try {
-    const currentUser: any = jwt.verify(token, config.JWT_SECRET_KEY!);
+    const currentUser = jwt.verify(token, config.JWT_SECRET_KEY!) as {
+      id: string;
+      role: string;
+    };
     req.currentUser = currentUser;
     next();
   } catch (err) {
-    res.status(401);
-    next(new Error('Invalid Token'));
+    res.status(401).json({ message: i18n.__('INVALID_TOKEN') });
   }
 };
 

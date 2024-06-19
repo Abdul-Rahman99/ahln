@@ -43,7 +43,7 @@ app.use(
 );
 
 app.use(mongoSanitize()); // Prevent NoSQL injection
-//app.use(xss())// simplified XSS protection can be applied with customization
+// app.use(xss())// simplified XSS protection can be applied with customization
 
 // Rate Limiting Middleware
 const limiter = rateLimit({
@@ -52,7 +52,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
 });
 
-// app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
+app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
 // Static file serving
 app.use('/uploads', express.static('uploads'));
@@ -75,7 +75,7 @@ app.use(notFound);
 app.use(errorMiddleware);
 
 // Start server
-const PORT = config.PORT || 5000;
+const PORT = config.PORT;
 const server = app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);
 });

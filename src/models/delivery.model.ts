@@ -103,7 +103,7 @@ class DeliveryModel {
   async updateOne(d: Partial<Delivery>, id: number): Promise<Delivery> {
     try {
       const connection = await db.connect();
-      const queryParams: any[] = [];
+      const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       const updateFields = Object.keys(d)

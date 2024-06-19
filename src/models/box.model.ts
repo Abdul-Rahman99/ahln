@@ -65,7 +65,16 @@ class BoxModel {
   async updateOne(b: Partial<Box>, id: string): Promise<Box> {
     try {
       const connection = await db.connect();
-      const queryParams: any[] = [];
+
+      // Check if the box exists in the database
+      const checkExistenceQuery = 'SELECT * FROM box WHERE id = $1';
+      const existenceResult = await connection.query(checkExistenceQuery, [id]);
+
+      if (existenceResult.rows.length === 0) {
+        throw new Error(`Box with id ${id} does not exist.`);
+      }
+
+      const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       const updateFields = Object.keys(b)
@@ -93,6 +102,10 @@ class BoxModel {
 
       const result = await connection.query(sql, queryParams);
       connection.release();
+
+      if (result.rows.length === 0) {
+        throw new Error(`Box with id ${id} was not updated.`);
+      }
 
       return result.rows[0] as Box;
     } catch (error) {

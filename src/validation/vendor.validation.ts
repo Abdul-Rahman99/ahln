@@ -1,9 +1,6 @@
 import { body, check } from 'express-validator';
 import validatorMiddleware from '../middlewares/validatorMiddleware';
-import VendorModel from '../models/vendor.model';
 import i18n from '../config/i18n';
-
-const vendorModel = new VendorModel();
 
 export const getUserValidator = [
   check('id').isInt({ min: 1 }).withMessage(i18n.__('INVALID_ID')),

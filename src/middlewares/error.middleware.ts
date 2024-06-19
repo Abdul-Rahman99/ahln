@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { config } from '../../config';
 import Error from '../types/error.type';
@@ -11,8 +12,7 @@ export const errorMiddleware = (
     keyValue?: Record<string, any>;
   },
   req: Request,
-  res: Response,
-  next: NextFunction,
+  res: Response
 ) => {
   const customError = {
     statusCode: res.statusCode || 500,

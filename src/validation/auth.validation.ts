@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { body } from 'express-validator';
 import UserModel from '../models/user.model';
 import validatorMiddleware from '../middlewares/validatorMiddleware';

@@ -62,7 +62,7 @@ class VendorModel {
   async updateOne(vendorData: Partial<Vendor>, id: number): Promise<Vendor> {
     try {
       const connection = await db.connect();
-      const queryParams: any[] = [];
+      const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       const updateFields = Object.keys(vendorData)

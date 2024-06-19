@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../config/database';
 
 const connectDatabase = async () => {

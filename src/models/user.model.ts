@@ -13,9 +13,9 @@ class UserModel {
   async create(u: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt, gr) 
-                    values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-                    RETURNING id, email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt, gr`;
+      const sql = `INSERT INTO users (email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt) 
+                    values ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+                    RETURNING id, email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt`;
 
       const createdAt = new Date();
       const updatedAt = new Date();
@@ -29,7 +29,6 @@ class UserModel {
         u.box_info,
         createdAt,
         updatedAt,
-        u.gr,
       ]);
       connection.release();
       return result.rows[0];
@@ -45,7 +44,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, email, username, password, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr FROM users';
+        'SELECT id, email, username, password, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -64,7 +63,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr FROM users 
+      const sql = `SELECT id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -83,7 +82,7 @@ class UserModel {
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
       const connection = await db.connect();
-      const queryParams: any[] = [];
+      const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       u.updatedAt = new Date();
@@ -108,7 +107,7 @@ class UserModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, password, gr`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, password`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -130,7 +129,7 @@ class UserModel {
       }
       const sql = `DELETE FROM users
                     WHERE id=$1
-                    RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, gr`;
+                    RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {

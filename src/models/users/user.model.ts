@@ -13,14 +13,15 @@ class UserModel {
   async create(u: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language) 
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-                    RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language`;
+      const sql = `INSERT INTO users (id, user_name, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language) 
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+                    RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language`;
 
       const createdAt = new Date();
       const updatedAt = new Date();
       const result = await connection.query(sql, [
         u.id,
+        u.user_name,
         u.role_id,
         u.fcm_token,
         createdAt,
@@ -43,7 +44,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users';
+        'SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -62,7 +63,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users 
+      const sql = `SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -106,7 +107,7 @@ class UserModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -126,7 +127,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {
@@ -164,7 +165,7 @@ class UserModel {
   async emailExists(email: string): Promise<boolean> {
     try {
       const connection = await db.connect();
-      const sql = 'SELECT email FROM users WHERE email=$1';
+      const sql = 'SELECT email FROM users  WHERE email=$1';
       const result = await connection.query(sql, [email]);
       connection.release();
       return result.rows.length > 0;
@@ -172,6 +173,21 @@ class UserModel {
       throw new Error(
         `Unable to check email existence: ${(error as Error).message}`,
       );
+    }
+  }
+
+  // Check if a phone number already exists in the database
+  async phoneExists(phone: string): Promise<boolean> {
+    try {
+      const sql = 'SELECT COUNT(*) FROM users WHERE phone_number = $1';
+      const connection = await db.connect();
+      const result = await connection.query(sql, [phone]);
+      connection.release();
+
+      return parseInt(result.rows[0].count) > 0;
+    } catch (error) {
+      console.error('Error checking phone existence:', error);
+      throw new Error('Failed to check phone existence');
     }
   }
 }

@@ -45,10 +45,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const token = jwt.sign(
     { id: user.id, role: user.role },
     config.JWT_SECRET_KEY!,
-    { expiresIn: '30s' }, // token expiration time set to 30 seconds for testing <change it>
+    // { expiresIn: '30s' }, // token expiration time set to 30 seconds for testing <change it if needed>
   );
 
-  res.json({ message: i18n.__('LOGIN_SUCCESS'), user, token });
+  res.json({ message: i18n.__('LOGIN_SUCCESS'), token });
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {

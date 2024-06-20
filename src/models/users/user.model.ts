@@ -1,7 +1,7 @@
-import User from '../types/user.type';
-import db from '../config/database';
+import { User } from '../../types/users/user.type';
+import db from '../../config/database';
 import bcrypt from 'bcrypt';
-import config from '../../config';
+import config from '../../../config';
 
 const hashPassword = (password: string) => {
   const salt = parseInt(config.SALT_ROUNDS as string, 10);
@@ -13,29 +13,28 @@ class UserModel {
   async create(u: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt) 
-                    values ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
-                    RETURNING id, email, username, password, phone, alt_phone, payment_method, box_info, createdAt, updatedAt`;
+      const sql = `INSERT INTO users (id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language) 
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+                    RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language`;
 
       const createdAt = new Date();
       const updatedAt = new Date();
       const result = await connection.query(sql, [
-        u.email,
-        u.username,
-        hashPassword(u.password),
-        u.phone,
-        u.alt_phone,
-        u.payment_method,
-        u.box_info,
+        u.id,
+        u.role_id,
+        u.fcm_token,
         createdAt,
         updatedAt,
+        u.is_active,
+        u.phone_number,
+        u.email,
+        hashPassword(u.password),
+        u.prefered_language,
       ]);
       connection.release();
       return result.rows[0];
     } catch (error) {
-      throw new Error(
-        `Unable to create (${u.username}): ${(error as Error).message}`,
-      );
+      throw new Error(`Unable to create user: ${(error as Error).message}`);
     }
   }
 
@@ -44,7 +43,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, email, username, password, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users';
+        'SELECT id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -63,7 +62,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt FROM users 
+      const sql = `SELECT id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -107,7 +106,7 @@ class UserModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt, password`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -115,7 +114,7 @@ class UserModel {
       return result.rows[0] as User;
     } catch (error) {
       throw new Error(
-        `Could not update user: ${u.username}, ${(error as Error).message}`,
+        `Could not update user ${id}: ${(error as Error).message}`,
       );
     }
   }
@@ -127,9 +126,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `DELETE FROM users
-                    WHERE id=$1
-                    RETURNING id, email, username, phone, alt_phone, payment_method, box_info, role, createdAt, updatedAt`;
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {

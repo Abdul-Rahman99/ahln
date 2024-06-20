@@ -22,33 +22,33 @@ export const createUserValidator = [
         throw new Error(i18n.__('EMAIL_IN_USE'));
       }
     }),
-  body('username').notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
+  body('user_name').notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
   body('password')
     .notEmpty()
     .withMessage(i18n.__('PASSWORD_REQUIRED'))
     .isLength({ min: 6 })
     .withMessage(i18n.__('PASSWORD_MIN_LENGTH')),
-  body('phone')
+  body('phone_number')
     .notEmpty()
     .withMessage(i18n.__('PHONE_REQUIRED'))
     .isMobilePhone(['ar-AE', 'ar-SA'])
     .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
-  body('role')
-    .optional()
-    .isIn(['admin', 'customer', 'super admin', 'delivery', 'operations'])
-    .withMessage(i18n.__('INVALID_ROLE')),
+  // body('role')
+  //   .optional()
+  //   .isIn(['admin', 'customer', 'super admin', 'delivery', 'operations'])
+  //   .withMessage(i18n.__('INVALID_ROLE')),
   validatorMiddleware,
 ];
 
 export const updateUserValidator = [
   check('id').isUUID().withMessage(i18n.__('INVALID_ID')),
   body('email').optional().isEmail().withMessage(i18n.__('EMAIL_REQUIRED')),
-  body('username').optional().notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
+  body('user_name').optional().notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
   body('password')
     .optional()
     .isLength({ min: 6 })
     .withMessage(i18n.__('PASSWORD_MIN_LENGTH')),
-  body('phone')
+  body('phone_number')
     .optional()
     .isMobilePhone(['ar-AE', 'ar-SA'])
     .withMessage(i18n.__('INVALID_PHONE_FORMAT')),

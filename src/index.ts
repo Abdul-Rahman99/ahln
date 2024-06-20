@@ -4,7 +4,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
-import path from 'path';
+// import path from 'path';
 
 import i18n from './config/i18n';
 import mountRoutes from './routes';
@@ -14,10 +14,17 @@ import { client } from './config/mqtt';
 import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
 
+// import patchDatabase from './config/patch';
+
 const app: Express = express();
 
 // Connect to PostgreSQL database
 connectDatabase();
+
+// PATCHING DATABASE IF NEEDED
+// patchDatabase().catch((err) =>
+//   console.error('Error in patching function:', err),
+// );
 
 // Connect to MQTT client
 client;
@@ -59,9 +66,10 @@ app.use('/uploads', express.static('uploads'));
 
 // Mount routes
 mountRoutes(app);
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages/index.html'));
-});
+
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'pages/index.html'));
+// });
 
 // 404 Not Found middleware
 app.use((_req: Request, res: Response) => {

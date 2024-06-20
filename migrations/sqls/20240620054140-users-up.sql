@@ -5,6 +5,17 @@ CREATE TABLE IF NOT EXISTS role (
     description TEXT
 );
 
+INSERT INTO role (id, title, description) VALUES
+(1, 'system_admin', 'System Administrator role with full access to the system.'),
+(2, 'customer', 'Customer role with access to customer-related features.'),
+(3, 'relative_customer', 'Relative of a customer with limited access.'),
+(4, 'operation_manager', 'Operations Manager role responsible for overseeing operations.'),
+(5, 'operation_member', 'Operations team member with access to operational tasks.'),
+(6, 'sales_manager', 'Sales Manager role overseeing the sales team.'),
+(7, 'sales_member', 'Sales team member involved in sales activities.'),
+(8, 'technical_manager', 'Technical Manager role overseeing technical operations.'),
+(9, 'technical_member', 'Technical team member involved in technical tasks.');
+
 -- Create the Permission table
 CREATE TABLE IF NOT EXISTS permission (
     id SERIAL PRIMARY KEY,
@@ -32,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
     phone_number VARCHAR(20) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    prefered_language VARCHAR(20) ,    
+    prefered_language VARCHAR(20),    
     FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
@@ -41,38 +52,6 @@ CREATE TABLE IF NOT EXISTS user_permission (
     user_id VARCHAR(20) NOT NULL,
     permission_id INTEGER NOT NULL,
     PRIMARY KEY (user_id, permission_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (permission_id) REFERENCES permission(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (permission_id) REFERENCES permission(id) ON DELETE CASCADE
 );
-
--- Set the sequence for the id column to start from 100001
-SELECT setval(pg_get_serial_sequence('users', 'id'), 1000000);
-
--- Function to generate the user_id
-CREATE OR REPLACE FUNCTION generate_user_id() RETURNS TRIGGER AS $$
-DECLARE
-    current_year TEXT;
-    next_id INTEGER;
-    next_id_formatted TEXT;
-BEGIN
-    -- Get the current year in two-digit format
-    current_year := to_char(CURRENT_DATE, 'YY');
-    
-    -- Get the next sequence value (user number)
-    SELECT COALESCE(MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)), 0) + 1 INTO next_id FROM users;
-    
-    -- Format the next id as D1000002, D1000003, etc.
-    next_id_formatted := LPAD(next_id::TEXT, 7, '0');
-    
-    -- Construct the user_id
-    NEW.id := 'Ahln_' || current_year || '_U' || next_id_formatted;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger to call the function before inserting a new row
-CREATE TRIGGER set_user_id
-BEFORE INSERT ON users
-FOR EACH ROW
-EXECUTE FUNCTION generate_user_id();

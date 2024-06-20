@@ -4,9 +4,7 @@ import authRoute from './auth.route';
 import roleRoute from './role.Route';
 import permissionRoute from './permission.route';
 // import boxRoute from './box.route';
-// import vendorRoute from './vendor.route';
-// import deliveryRoute from './delivery.route';
-// import operationsRoute from './operations.route';
+
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -14,9 +12,6 @@ const mountRoutes = (app: Express) => {
   app.use('/api/role', roleRoute);
   app.use('/api/permission', permissionRoute);
   // app.use('/api/box', boxRoute);
-  // app.use('/api/vendor', vendorRoute);
-  // app.use('/api/delivery', deliveryRoute);
-  // app.use('/api/operations', operationsRoute);
 };
 
 export default mountRoutes;

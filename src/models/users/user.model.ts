@@ -190,6 +190,21 @@ class UserModel {
       throw new Error('Failed to check phone existence');
     }
   }
+
+  async updateOtpHash(
+    userId: string,
+    otpHash: string,
+    otpExpiration: Date,
+  ): Promise<void> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET otp_hash=$1, otp_expiration=$2 WHERE id=$3`;
+      await connection.query(sql, [otpHash, otpExpiration, userId]);
+      connection.release();
+    } catch (error) {
+      throw new Error(`Could not update OTP hash: ${(error as Error).message}`);
+    }
+  }
 }
 
 export default UserModel;

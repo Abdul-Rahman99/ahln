@@ -1,4 +1,4 @@
-export interface Error {
+interface Error {
   status?: number;
   name?: string;
   message?: string;
@@ -6,3 +6,4 @@ export interface Error {
   code? : number ;
   keyValue? : number ;
 }
+export default Error;

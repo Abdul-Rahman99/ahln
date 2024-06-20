@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS Shipping_Company (
+    id SERIAL PRIMARY KEY,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tracking_system VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS Address (
+    id SERIAL PRIMARY KEY,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    country VARCHAR(20) NOT NULL,
+    city VARCHAR(20) NOT NULL,
+    district VARCHAR(20) NOT NULL,
+    street VARCHAR(20) NOT NULL,
+    building_type VARCHAR(20) NOT NULL,
+    building_number INTEGER NOT NULL,
+    floor INTEGER,
+    apartment_number INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS Box_Model (
+    id VARCHAR(20) UNIQUE NOT NULL PRIMARY KEY,
+    model_name VARCHAR(50) UNIQUE NOT NULL,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    number_of_doors INTEGER NOT NULL,
+    width VARCHAR(5),
+    height VARCHAR(5),
+    color VARCHAR(10),
+    model_image VARCHAR(1000),
+    has_outside_camera BOOLEAN,
+    has_inside_camera BOOLEAN,
+    has_tablet BOOLEAN
+);
+

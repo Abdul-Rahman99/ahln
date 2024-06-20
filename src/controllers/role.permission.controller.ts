@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import RolePermissionModel from '../models/users/role.permission.model';
 import asyncHandler from '../middlewares/asyncHandler';
-import { RolePermission } from '../types/users/role.permission.type';
+import { RolePermission } from '../types/role.permission.type';
 import i18n from '../config/i18n';
 
 const rolePermissionModel = new RolePermissionModel();

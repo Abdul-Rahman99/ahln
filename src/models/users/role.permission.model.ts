@@ -1,4 +1,4 @@
-import { RolePermission } from '../../types/users/role.permission.type';
+import { RolePermission } from '../../types/role.permission.type';
 import db from '../../config/database';
 
 class RolePermissionModel {

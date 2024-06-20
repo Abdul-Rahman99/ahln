@@ -1,4 +1,4 @@
-import { Role } from '../../types/users/role.type';
+import { Role } from '../../types/role.type';
 import db from '../../config/database';
 
 class RoleModel {

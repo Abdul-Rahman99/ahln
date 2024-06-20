@@ -1,4 +1,4 @@
-import { UserPermission } from '../../types/users/user.permission.type';
+import { UserPermission } from '../../types/user.permission.type';
 import db from '../../config/database';
 
 class UserPermissionModel {

@@ -1,4 +1,4 @@
-import { User } from '../../types/users/user.type';
+import { User } from '../../types/user.type';
 import db from '../../config/database';
 import bcrypt from 'bcrypt';
 import config from '../../../config';

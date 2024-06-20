@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import RoleModel from '../models/users/role.model';
 import asyncHandler from '../middlewares/asyncHandler';
-import { Role } from '../types/users/role.type';
+import { Role } from '../types/role.type';
 import i18n from '../config/i18n';
 
 const roleModel = new RoleModel();

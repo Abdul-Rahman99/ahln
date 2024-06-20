@@ -1,6 +1,6 @@
 import { body, check } from 'express-validator';
 import validatorMiddleware from '../middlewares/validatorMiddleware';
-import UserModel from '../models/user.model';
+import UserModel from '../models/users/user.model';
 import i18n from '../config/i18n';
 
 const userModel = new UserModel();

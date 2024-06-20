@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { body } from 'express-validator';
-import UserModel from '../models/user.model';
+import UserModel from '../models/users/user.model';
 import validatorMiddleware from '../middlewares/validatorMiddleware';
 import config from '../../config';
 import { NextFunction, Request, Response } from 'express';

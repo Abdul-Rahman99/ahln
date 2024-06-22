@@ -11,6 +11,7 @@ const multerOptions = (): Multer => {
     ) {
       cb(null, path.join(__dirname, '../uploads')); // Set your desired destination folder
     },
+    // eslint-disable-next-line @typescript-eslint/ban-types
     filename: function (req: Request, file: Express.Multer.File, cb: Function) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       cb(null, 'image-' + uniqueSuffix + path.extname(file.originalname));

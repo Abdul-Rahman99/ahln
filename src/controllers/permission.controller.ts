@@ -1,61 +1,60 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/controllers/permission.controller.ts
 import { Request, Response } from 'express';
 import PermissionModel from '../models/users/permission.model';
-import asyncHandler from '../middlewares/asyncHandler';
-import { Permission } from '../types/permission.type';
-import i18n from '../config/i18n';
 
 const permissionModel = new PermissionModel();
 
-export const createPermission = asyncHandler(
-  async (req: Request, res: Response) => {
-    const newPermission: Permission = req.body;
-    const createdPermission = await permissionModel.create(newPermission);
-    res.status(201).json({
-      message: i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
-      data: createdPermission,
-    });
-  },
-);
+export const createPermission = async (req: Request, res: Response) => {
+  try {
+    const { title, description } = req.body;
+    const permission = await permissionModel.create(title, description);
+    res.status(201).json(permission);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getAllPermissions = asyncHandler(
-  async (req: Request, res: Response) => {
-    const permissions = await permissionModel.getMany();
-    res.json(permissions);
-  },
-);
+export const getAllPermissions = async (req: Request, res: Response) => {
+  try {
+    const permissions = await permissionModel.getAll();
+    res.status(200).json(permissions);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getPermissionById = asyncHandler(
-  async (req: Request, res: Response) => {
-    const permissionId = req.params.id;
-    const permission = await permissionModel.getOne(Number(permissionId));
-    res.json(permission);
-  },
-);
+export const getPermissionById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const permission = await permissionModel.getById(Number(id));
+    res.status(200).json(permission);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const updatePermission = asyncHandler(
-  async (req: Request, res: Response) => {
-    const permissionId = req.params.id;
-    const permissionData: Partial<Permission> = req.body;
-    const updatedPermission = await permissionModel.updateOne(
-      permissionData,
-      Number(permissionId),
+export const updatePermission = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description } = req.body;
+    const permission = await permissionModel.update(
+      Number(id),
+      title,
+      description,
     );
-    res.json({
-      message: i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
-      updatedPermission,
-    });
-  },
-);
+    res.status(200).json(permission);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const deletePermission = asyncHandler(
-  async (req: Request, res: Response) => {
-    const permissionId = req.params.id;
-    const deletedPermission = await permissionModel.deleteOne(
-      Number(permissionId),
-    );
-    res.json({
-      message: i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
-      deletedPermission,
-    });
-  },
-);
+export const deletePermission = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const permission = await permissionModel.delete(Number(id));
+    res.status(200).json(permission);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

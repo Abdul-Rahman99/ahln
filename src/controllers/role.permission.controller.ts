@@ -1,51 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/controllers/rolePermission.controller.ts
 import { Request, Response } from 'express';
 import RolePermissionModel from '../models/users/role.permission.model';
-import asyncHandler from '../middlewares/asyncHandler';
-import { RolePermission } from '../types/role.permission.type';
-import i18n from '../config/i18n';
 
 const rolePermissionModel = new RolePermissionModel();
 
-export const createRolePermission = asyncHandler(
-  async (req: Request, res: Response) => {
-    const newRolePermission: RolePermission = req.body;
-    const createdRolePermission =
-      await rolePermissionModel.create(newRolePermission);
-    res.status(201).json({
-      message: i18n.__('ROLE_PERMISSION_CREATED_SUCCESSFULLY'),
-      data: createdRolePermission,
-    });
-  },
-);
-
-export const getAllRolePermissions = asyncHandler(
-  async (req: Request, res: Response) => {
-    const rolePermissions = await rolePermissionModel.getMany();
-    res.json(rolePermissions);
-  },
-);
-
-export const getRolePermissionById = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { role_id, permission_id } = req.params;
-    const rolePermission = await rolePermissionModel.getOne(
-      Number(role_id),
-      Number(permission_id),
+export const assignPermissionToRole = async (req: Request, res: Response) => {
+  try {
+    const { roleId, permissionId } = req.body;
+    const rolePermission = await rolePermissionModel.assignPermission(
+      roleId,
+      permissionId,
     );
-    res.json(rolePermission);
-  },
-);
+    res.status(201).json(rolePermission);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const deleteRolePermission = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { role_id, permission_id } = req.params;
-    const deletedRolePermission = await rolePermissionModel.deleteOne(
-      Number(role_id),
-      Number(permission_id),
+export const removePermissionFromRole = async (req: Request, res: Response) => {
+  try {
+    const { roleId, permissionId } = req.body;
+    await rolePermissionModel.revokePermission(roleId, permissionId);
+    res.status(200).json({ message: 'Permission removed from role' });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getPermissionsByRole = async (req: Request, res: Response) => {
+  try {
+    const { roleId } = req.params;
+    const permissions = await rolePermissionModel.getPermissionsByRole(
+      Number(roleId),
     );
-    res.json({
-      message: i18n.__('ROLE_PERMISSION_DELETED_SUCCESSFULLY'),
-      deletedRolePermission,
-    });
-  },
-);
+    res.status(200).json(permissions);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

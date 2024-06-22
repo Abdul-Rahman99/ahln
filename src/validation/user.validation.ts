@@ -6,7 +6,7 @@ import i18n from '../config/i18n';
 const userModel = new UserModel();
 
 export const getUserValidator = [
-  check('id').isUUID().withMessage(i18n.__('INVALID_ID')),
+  check('id').isString().withMessage(i18n.__('INVALID_ID')),
   validatorMiddleware,
 ];
 

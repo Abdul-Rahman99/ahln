@@ -33,8 +33,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const hashedPassword = bcrypt.hashSync(password + config.JWT_SECRET_KEY, 10);
 
   // Create the user
-  const user = await userModel.create({
-    email,
+  const user = await userModel.createUser({
+    email, 
     user_name,
     phone_number,
     password: hashedPassword,
@@ -59,8 +59,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const token = generateToken(user);
-
-  res.json({ message: i18n.__('LOGIN_SUCCESS'), token });
+  res.json({ message: i18n.__('LOGIN_SUCCESS'), data: { email }, token });
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
@@ -72,8 +71,6 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   // Invalidate token (handled on the client side)
   res.status(200).json({ message: i18n.__('LOGOUT_SUCCESS') });
 });
-
-
 
 // export const resetPassword = asyncHandler(
 //   async (req: Request, res: Response) => {

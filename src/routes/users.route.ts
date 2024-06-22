@@ -8,39 +8,47 @@ import {
 } from '../controllers/users.controller';
 
 import {
-  createUserValidator,
+  // createUserValidator,
   deleteUserValidator,
   getUserValidator,
-  updateUserValidator,
+  // updateUserValidator,
 } from '../validation/user.validation';
 
 import verifyToken from '../middlewares/verifyToken';
-import authorize from '../middlewares/authorize';
+import { authorize } from '../middlewares/authorize';
 
 const router = express.Router();
 
-router.post('/new', createUserValidator, createUser);
-router.get(
-  '/get-all',
+router.post(
+  '/new',
   verifyToken,
-  authorize('admin', 'super admin', 'vendor' , 'operations'),
-  getAllUsers,
+  authorize(['create_user']),
+  // createUserValidator,
+  createUser,
 );
 
-router.get('/get-one/:id', verifyToken, getUserValidator, getUserById);
+router.get('/get-all', verifyToken, authorize(['read_user']), getAllUsers);
+
+router.get(
+  '/get-one/:id',
+  verifyToken,
+  authorize(['read_user']),
+  getUserValidator,
+  getUserById,
+);
 
 router.put(
   '/update/:id',
-  verifyToken,
-  authorize('admin', 'super admin'),
-  updateUserValidator,
+  // verifyToken,
+  // authorize(['update_user']),
+  // updateUserValidator,
   updateUser,
 );
 
 router.delete(
   '/delete/:id',
   verifyToken,
-  authorize('admin', 'super admin'),
+  authorize(['delete_user']),
   deleteUserValidator,
   deleteUser,
 );

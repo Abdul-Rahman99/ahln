@@ -1,26 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../../config';
+
 import i18n from '../config/i18n';
+import config from '../../config';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'] as string | undefined;
-
-  if (!authHeader) {
-    res.status(401).json({ message: i18n.__('TOKEN_REQUIRED') });
-    return;
+  const token = req.header('Authorization')?.split(' ')[1]; // Assuming Bearer token
+  if (!token) {
+    return res.status(401).json({ message: i18n.__('TOKEN_REQUIRED') });
   }
 
-  const token = authHeader.split(' ')[1];
   try {
-    const currentUser = jwt.verify(token, config.JWT_SECRET_KEY!) as {
-      id: string;
-      role: string;
-    };
-    req.currentUser = currentUser;
+    const decoded = jwt.verify(token, config.JWT_SECRET_KEY);
+    req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: i18n.__('INVALID_TOKEN') });
+    res.status(400).json({ message: i18n.__('INVALID_TOKEN') });
   }
 };
 

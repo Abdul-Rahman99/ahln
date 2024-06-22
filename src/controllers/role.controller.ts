@@ -1,40 +1,56 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/controllers/role.controller.ts
 import { Request, Response } from 'express';
 import RoleModel from '../models/users/role.model';
-import asyncHandler from '../middlewares/asyncHandler';
-import { Role } from '../types/role.type';
-import i18n from '../config/i18n';
 
 const roleModel = new RoleModel();
 
-export const createRole = asyncHandler(async (req: Request, res: Response) => {
-  const newRole: Role = req.body;
-  const createdRole = await roleModel.create(newRole);
-  res.status(201).json({
-    message: i18n.__('ROLE_CREATED_SUCCESSFULLY'),
-    data: createdRole,
-  });
-});
+export const createRole = async (req: Request, res: Response) => {
+  try {
+    const { title, description } = req.body;
+    const role = await roleModel.create(title, description);
+    res.status(201).json(role);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getAllRoles = asyncHandler(async (req: Request, res: Response) => {
-  const roles = await roleModel.getMany();
-  res.json(roles);
-});
+export const getAllRoles = async (req: Request, res: Response) => {
+  try {
+    const roles = await roleModel.getAll();
+    res.status(200).json(roles);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getRoleById = asyncHandler(async (req: Request, res: Response) => {
-  const roleId = req.params.id;
-  const role = await roleModel.getOne(Number(roleId));
-  res.json(role);
-});
+export const getRoleById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const role = await roleModel.getById(Number(id));
+    res.status(200).json(role);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const updateRole = asyncHandler(async (req: Request, res: Response) => {
-  const roleId = req.params.id;
-  const roleData: Partial<Role> = req.body;
-  const updatedRole = await roleModel.updateOne(roleData, Number(roleId));
-  res.json({ message: i18n.__('ROLE_UPDATED_SUCCESSFULLY'), updatedRole });
-});
+export const updateRole = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description } = req.body;
+    const role = await roleModel.update(Number(id), title, description);
+    res.status(200).json(role);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const deleteRole = asyncHandler(async (req: Request, res: Response) => {
-  const roleId = req.params.id;
-  const deletedRole = await roleModel.deleteOne(Number(roleId));
-  res.json({ message: i18n.__('ROLE_DELETED_SUCCESSFULLY'), deletedRole });
-});
+export const deleteRole = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const role = await roleModel.delete(Number(id));
+    res.status(200).json(role);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

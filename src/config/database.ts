@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pool } from 'pg';
 
 import config from '../../config';
@@ -18,5 +19,6 @@ pool.on('connect', async () => {
 pool.on('error', (error: Error) => {
   console.error(error.message);
 });
+
 
 export default pool;

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '../../types/user.type';
 import db from '../../config/database';
 import bcrypt from 'bcrypt';
 import config from '../../../config';
+import pool from '../../config/database';
 
 const hashPassword = (password: string) => {
   const salt = parseInt(config.SALT_ROUNDS as string, 10);
@@ -10,28 +12,93 @@ const hashPassword = (password: string) => {
 
 class UserModel {
   // create new user
-  async create(u: User): Promise<User> {
+  async createUser(u: Partial<User>): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (id, user_name, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language) 
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
-                    RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, prefered_language`;
+
+      // Required fields
+      const requiredFields: string[] = ['email', 'phone_number', 'user_name'];
+      const providedFields: string[] = Object.keys(u).filter(
+        (key) => u[key as keyof User],
+      );
+
+      if (!requiredFields.every((field) => providedFields.includes(field))) {
+        throw new Error(
+          'Email, phone_number, and user_name are required fields.',
+        );
+      }
+
+      // Function to generate user id
+      async function generateUserId() {
+        try {
+          const currentYear = new Date().getFullYear().toString().slice(-2); // Get the current year in two-digit format
+          let nextId = 1;
+
+          // Fetch the next sequence value (user number)
+          const result = await pool.query(
+            'SELECT MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)) AS max_id FROM users',
+          );
+          if (result.rows.length > 0) {
+            nextId = (result.rows[0].max_id || 0) + 1;
+          }
+
+          // Format the next id as D1000002, D1000003, etc.
+          const nextIdFormatted = nextId.toString().padStart(7, '0');
+
+          // Construct the user_id
+          const id = `Ahln_${currentYear}_U${nextIdFormatted}`;
+          return id;
+        } catch (error: any) {
+          console.error('Error generating user_id:', error.message);
+          throw error;
+        }
+      }
+
+      // Generate user id
+      const id = await generateUserId(); // Await here to get the actual ID string
 
       const createdAt = new Date();
       const updatedAt = new Date();
+
+      // Prepare SQL query based on provided fields
+      const sqlFields: string[] = [];
+      const sqlParams: unknown[] = [];
+      let paramIndex = 1;
+
+      Object.keys(u).forEach((key) => {
+        if (
+          u[key as keyof User] !== undefined &&
+          key !== 'id' &&
+          key !== 'createdAt'
+        ) {
+          if (key === 'password') {
+            sqlFields.push('password=$' + paramIndex);
+            sqlParams.push(hashPassword(u.password as string));
+          } else {
+            sqlFields.push(`${key}=$${paramIndex}`);
+            sqlParams.push(u[key as keyof User]);
+          }
+          paramIndex++;
+        }
+      });
+
+      const sql = `INSERT INTO users (id, user_name, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+                RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+
       const result = await connection.query(sql, [
-        u.id,
+        id,
         u.user_name,
-        u.role_id,
-        u.fcm_token,
+        u.fcm_token || null,
         createdAt,
         updatedAt,
-        u.is_active,
+        u.is_active || true,
         u.phone_number,
         u.email,
-        hashPassword(u.password),
-        u.prefered_language,
+        sqlParams[0], // hashed password or null if not provided
+        u.preferred_language || null,
       ]);
+
       connection.release();
       return result.rows[0];
     } catch (error) {
@@ -44,7 +111,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users';
+        'SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -63,7 +130,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language FROM users 
+      const sql = `SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -107,7 +174,7 @@ class UserModel {
 
       queryParams.push(id);
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -127,7 +194,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, prefered_language`;
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {

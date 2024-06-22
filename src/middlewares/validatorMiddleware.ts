@@ -3,7 +3,7 @@ import { validationResult, Result, ValidationError } from 'express-validator';
 
 const validatorMiddleware = (
   req: Request,
-  res: Response<any, Record<string, any>>,
+  res: Response<unknown, Record<string, unknown>>,
   next: NextFunction,
 ): void => {
   const errors: Result<ValidationError> = validationResult(req);

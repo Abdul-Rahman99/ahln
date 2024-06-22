@@ -10,5 +10,5 @@ export interface User {
   phone_number: string;
   email: string;
   password: string;
-  prefered_language?: string;
+  preferred_language?: string;
 }

@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS users (
     user_id VARCHAR(20) UNIQUE,
 );
 
-
 -- Set the sequence for the id column to start from 100001
 SELECT setval(pg_get_serial_sequence('users', 'id'), 1000000);
 
@@ -36,7 +35,7 @@ BEGIN
     next_id_formatted := LPAD(next_id::TEXT, 7, '1000001');
     
     -- Construct the user_id
-    NEW.user_id := 'Ahln_' || current_year || '_U' || next_id_formatted;
+    NEW.id := 'Ahln_' || current_year || '_U' || next_id_formatted;
     
     RETURN NEW;
 END;

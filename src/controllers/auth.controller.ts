@@ -34,7 +34,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   // Create the user
   const user = await userModel.createUser({
-    email, 
+    email,
     user_name,
     phone_number,
     password: hashedPassword,
@@ -49,17 +49,33 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  // Check if both email and password are provided
+  if (!email || !password) {
+    res.status(400);
+    throw new Error(i18n.__('MISSING_CREDENTIALS'));
+  }
+
+  // Find the user by email
   const user = await userModel.findByEmail(email);
+
+  // Check if the user exists and if the password is correct
   if (
     !user ||
-    !bcrypt.compareSync(password + config.JWT_SECRET_KEY, user.password)
+    !bcrypt.hashSync(password + config.JWT_SECRET_KEY, user.password)
   ) {
     res.status(401);
     throw new Error(i18n.__('INVALID_CREDENTIALS'));
   }
 
+  // Generate token
   const token = generateToken(user);
-  res.json({ message: i18n.__('LOGIN_SUCCESS'), data: { email }, token });
+
+  // Send response
+  res.json({
+    message: i18n.__('LOGIN_SUCCESS'),
+    data: { email: user.email },
+    token,
+  });
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {

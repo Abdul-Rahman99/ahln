@@ -14,30 +14,37 @@ import {
   updateRoleValidator,
 } from '../validation/role.validation';
 
-// import verifyToken from '../middlewares/verifyToken';
-// import authorize from '../middlewares/authorize';
+import verifyToken from '../middlewares/verifyToken';
+import { authorize } from '../middlewares/authorize';
 
 const router = express.Router();
 
-router.post('/new', createRoleValidator, createRole);
-router.get(
-  '/get-all',
-  //   verifyToken,
-  //   authorize('admin', 'super admin'),
-  getAllRoles,
+router.post(
+  '/new',
+  verifyToken,
+  authorize(['create_role']),
+  createRoleValidator,
+  createRole,
 );
-router.get('/get-one/:id', getRoleValidator, getRoleById);
+router.get('/get-all', verifyToken, authorize(['read_role']), getAllRoles);
+router.get(
+  '/get-one/:id',
+  verifyToken,
+  authorize(['read_role']),
+  getRoleValidator,
+  getRoleById,
+);
 router.put(
   '/update/:id',
-  //   verifyToken,
-  //   authorize('admin', 'super admin'),
+  verifyToken,
+  authorize(['update_role']),
   updateRoleValidator,
   updateRole,
 );
 router.delete(
   '/delete/:id',
-  //   verifyToken,
-  //   authorize('admin', 'super admin'),
+  verifyToken,
+  authorize(['delete_role']),
   deleteRoleValidator,
   deleteRole,
 );

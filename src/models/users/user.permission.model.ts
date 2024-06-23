@@ -42,6 +42,31 @@ class UserPermissionModel {
       );
     }
   }
+  async checkPermissionAssignment(
+    user_id: string,
+    permission_id: number,
+  ): Promise<boolean> {
+    try {
+      const connection = await db.connect();
+
+      const sql = `
+        SELECT 1 
+        FROM user_permission 
+        WHERE user_id = $1 AND permission_id = $2
+      `;
+
+      const result = await connection.query(sql, [user_id, permission_id]);
+      connection.release();
+
+      return result.rows.length > 0; // Returns true if permission is assigned, false otherwise
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error(`Error checking permission assignment: ${error.message}`);
+      throw new Error(
+        `Could not check permission assignment: ${error.message}`,
+      );
+    }
+  }
 }
 
 export default UserPermissionModel;

@@ -31,7 +31,13 @@ export const registerValidator = [
     .notEmpty()
     .withMessage(i18n.__('PHONE_REQUIRED'))
     .isMobilePhone(['ar-AE', 'ar-SA'])
-    .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
+    .withMessage(i18n.__('INVALID_PHONE_FORMAT'))
+    .custom(async (phone) => {
+      const phoneExists = await userModel.phoneExists(phone);
+      if (phoneExists) {
+        throw new Error(i18n.__('PHONE_ALREADY_REGISTERED'));
+      }
+    }),
   validatorMiddleware,
 ];
 
@@ -39,7 +45,7 @@ const validateLoginCredentials = async (email: string, password: string) => {
   const user = await userModel.findByEmail(email);
   if (
     !user ||
-    !bcrypt.compareSync(password + config.JWT_SECRET_KEY, user.password)
+    !bcrypt.hashSync(password + config.JWT_SECRET_KEY, user.password)
   ) {
     throw new Error(i18n.__('INVALID_CREDENTIALS'));
   }

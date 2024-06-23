@@ -23,25 +23,27 @@ export const createUserValidator = [
       }
     }),
   body('user_name').notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
-  body('password')
-    .notEmpty()
-    .withMessage(i18n.__('PASSWORD_REQUIRED'))
-    .isLength({ min: 6 })
-    .withMessage(i18n.__('PASSWORD_MIN_LENGTH')),
+  // body('password')
+  //   .notEmpty()
+  //   .withMessage(i18n.__('PASSWORD_REQUIRED'))
+  //   .isLength({ min: 6 })
+  //   .withMessage(i18n.__('PASSWORD_MIN_LENGTH')),
   body('phone_number')
     .notEmpty()
     .withMessage(i18n.__('PHONE_REQUIRED'))
     .isMobilePhone(['ar-AE', 'ar-SA'])
-    .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
-  // body('role')
-  //   .optional()
-  //   .isIn(['admin', 'customer', 'super admin', 'delivery', 'operations'])
-  //   .withMessage(i18n.__('INVALID_ROLE')),
+    .withMessage(i18n.__('INVALID_PHONE_FORMAT'))
+    .custom(async (phone)=>{
+      const phoneExists = await userModel.phoneExists(phone)
+      if (phoneExists) {
+        throw new Error(i18n.__('PHONE_ALREADY_REGISTERED'));
+      }
+    }),
   validatorMiddleware,
 ];
 
 export const updateUserValidator = [
-  check('id').isUUID().withMessage(i18n.__('INVALID_ID')),
+  check('id').isString().withMessage(i18n.__('INVALID_ID')),
   body('email').optional().isEmail().withMessage(i18n.__('EMAIL_REQUIRED')),
   body('user_name').optional().notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
   body('password')
@@ -52,14 +54,10 @@ export const updateUserValidator = [
     .optional()
     .isMobilePhone(['ar-AE', 'ar-SA'])
     .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
-  body('role')
-    .optional()
-    .isIn(['admin', 'super admin'])
-    .withMessage(i18n.__('INVALID_ROLE')),
   validatorMiddleware,
 ];
 
 export const deleteUserValidator = [
-  check('id').isUUID().withMessage(i18n.__('INVALID_ID')),
+  check('id').isString().withMessage(i18n.__('INVALID_ID')),
   validatorMiddleware,
 ];

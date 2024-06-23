@@ -8,10 +8,10 @@ import {
 } from '../controllers/users.controller';
 
 import {
-  // createUserValidator,
+  createUserValidator,
   deleteUserValidator,
   getUserValidator,
-  // updateUserValidator,
+  updateUserValidator,
 } from '../validation/user.validation';
 
 import verifyToken from '../middlewares/verifyToken';
@@ -23,7 +23,7 @@ router.post(
   '/new',
   verifyToken,
   authorize(['create_user']),
-  // createUserValidator,
+  createUserValidator,
   createUser,
 );
 
@@ -39,9 +39,9 @@ router.get(
 
 router.put(
   '/update/:id',
-  // verifyToken,
-  // authorize(['update_user']),
-  // updateUserValidator,
+  verifyToken,
+  authorize(['update_user']),
+  updateUserValidator,
   updateUser,
 );
 

@@ -14,35 +14,42 @@ import {
   updatePermissionValidator,
 } from '../validation/permission.validation';
 
-// import verifyToken from '../middlewares/verifyToken';
-// import authorize from '../middlewares/authorize';
+import verifyToken from '../middlewares/verifyToken';
+import { authorize } from '../middlewares/authorize';
 
 const router = express.Router();
 
-router.post('/new', createPermissionValidator, createPermission);
+router.post(
+  '/new',
+  verifyToken,
+  authorize(['create_permission']),
+  createPermissionValidator,
+  createPermission,
+);
 router.get(
   '/get-all',
-//   verifyToken,
-//   authorize('admin', 'super admin'),
+  verifyToken,
+  authorize(['read_permission']),
   getAllPermissions,
 );
 router.get(
   '/get-one/:id',
-//   verifyToken,
+  verifyToken,
+  authorize(['read_permission']),
   getPermissionValidator,
   getPermissionById,
 );
 router.put(
   '/update/:id',
-//   verifyToken,
-//   authorize('admin', 'super admin'),
+  verifyToken,
+  authorize(['update_permission']),
   updatePermissionValidator,
   updatePermission,
 );
 router.delete(
   '/permission/delete/:id',
-//   verifyToken,
-//   authorize('admin', 'super admin'),
+  verifyToken,
+  authorize(['delete_permission']),
   deletePermissionValidator,
   deletePermission,
 );

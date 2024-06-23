@@ -1,4 +1,4 @@
-// src/models/rolePermission.model.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Permission } from '../../types/permission.type';
 import db from '../../config/database';
 
@@ -39,6 +39,31 @@ class RolePermissionModel {
     } catch (error) {
       throw new Error(
         `Unable to get permissions by role: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async checkPermissionAssignment(
+    role_id: number,
+    permission_id: number,
+  ): Promise<boolean> {
+    try {
+      const connection = await db.connect();
+
+      const sql = `
+        SELECT 1 
+        FROM role_permission 
+        WHERE role_id = $1 AND permission_id = $2
+      `;
+
+      const result = await connection.query(sql, [role_id, permission_id]);
+      connection.release();
+
+      return result.rows.length > 0; // Returns true if permission is assigned, false otherwise
+    } catch (error: any) {
+      console.error(`Error checking permission assignment: ${error.message}`);
+      throw new Error(
+        `Could not check permission assignment: ${error.message}`,
       );
     }
   }

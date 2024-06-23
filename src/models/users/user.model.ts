@@ -19,7 +19,7 @@ class UserModel {
       // Required fields
       const requiredFields: string[] = ['email', 'phone_number', 'user_name'];
       const providedFields: string[] = Object.keys(u).filter(
-        (key) => u[key as keyof User],
+        (key) => u[key as keyof User] !== undefined,
       );
 
       if (!requiredFields.every((field) => providedFields.includes(field))) {
@@ -60,44 +60,40 @@ class UserModel {
       const createdAt = new Date();
       const updatedAt = new Date();
 
+      // Hash the password
+      const hashedPassword = u.password ? await hashPassword(u.password) : null;
+
       // Prepare SQL query based on provided fields
-      const sqlFields: string[] = [];
-      const sqlParams: unknown[] = [];
-      let paramIndex = 1;
-
-      Object.keys(u).forEach((key) => {
-        if (
-          u[key as keyof User] !== undefined &&
-          key !== 'id' &&
-          key !== 'createdAt'
-        ) {
-          if (key === 'password') {
-            sqlFields.push('password=$' + paramIndex);
-            sqlParams.push(hashPassword(u.password as string));
-          } else {
-            sqlFields.push(`${key}=$${paramIndex}`);
-            sqlParams.push(u[key as keyof User]);
-          }
-          paramIndex++;
-        }
-      });
-
-      const sql = `INSERT INTO users (id, user_name, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-                RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
-
-      const result = await connection.query(sql, [
+      const sqlFields: string[] = [
+        'id',
+        'user_name',
+        'fcm_token',
+        'createdAt',
+        'updatedAt',
+        'is_active',
+        'phone_number',
+        'email',
+        'password',
+        'preferred_language',
+      ];
+      const sqlParams: unknown[] = [
         id,
         u.user_name,
         u.fcm_token || null,
         createdAt,
         updatedAt,
-        u.is_active || true,
+        u.is_active !== undefined ? u.is_active : true,
         u.phone_number,
         u.email,
-        sqlParams[0], // hashed password or null if not provided
+        hashedPassword,
         u.preferred_language || null,
-      ]);
+      ];
+
+      const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
+                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+
+      const result = await connection.query(sql, sqlParams);
 
       connection.release();
       return result.rows[0];

@@ -1,9 +1,6 @@
 import { body, check } from 'express-validator';
 import validatorMiddleware from '../middlewares/validatorMiddleware';
-// import RoleModel from '../models/users/role.model';
 import i18n from '../config/i18n';
-
-// const roleModel = new RoleModel();
 
 export const getRoleValidator = [
   check('id').isInt().withMessage(i18n.__('INVALID_ID')),

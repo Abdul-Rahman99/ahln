@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -86,29 +87,35 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   // Verify token using authMiddleware
   authMiddleware(req, res, async () => {
     const currentUser = req.currentUser as User;
+    const emailLower = email.toLowerCase();
+    try {
+      // Check if the provided email matches the token's email
+      if (currentUser.email !== emailLower) {
+        res.status(401);
+        throw new Error(i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
+      }
 
-    // Check if the provided email matches the token's email
-    if (currentUser.email !== email) {
-      res.status(401);
-      throw new Error(i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
+      // Check if the provided OTP matches the user's OTP
+      const isOtpValid = await userModel.verifyOtp(emailLower, otp);
+      if (!isOtpValid) {
+        res.status(400).json({ message: i18n.__('INVALID_OTP') });
+        return; // Return to exit the function
+      }
+
+      // Update the user's email_verified status
+      await userModel.updateUser(emailLower, {
+        email_verified: true,
+        register_otp: null,
+      });
+
+      res.status(200).json({
+        message: i18n.__('EMAIL_VERIFIED_SUCCESS'),
+        user: currentUser,
+      });
+    } catch (error: any) {
+      // Handle any errors that occur during verification
+      res.status(500).json({ message: error.message });
     }
-
-    // Check if the provided OTP matches the user's OTP
-    const isOtpValid = await userModel.verifyOtp(email, otp);
-    if (!isOtpValid) {
-      res.status(400);
-      throw new Error(i18n.__('INVALID_OTP'));
-    }
-
-    // Update the user's email_verified status
-    await userModel.updateUser(email, {
-      email_verified: true,
-      register_otp: null,
-    });
-
-    res
-      .status(200)
-      .json({ message: i18n.__('EMAIL_VERIFIED_SUCCESS'), user: currentUser });
   });
 });
 
@@ -183,3 +190,4 @@ export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json({ message: i18n.__('OTP_RESENT_SUCCESS') });
 });
+

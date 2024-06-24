@@ -42,7 +42,7 @@ class UserModel {
             nextId = (result.rows[0].max_id || 0) + 1;
           }
 
-          // Format the next id as D1000002, D1000003, etc.
+          // Format the next id as U1000002, U1000003, etc.
           const nextIdFormatted = nextId.toString().padStart(7, '0');
 
           // Construct the user_id
@@ -67,7 +67,6 @@ class UserModel {
       const sqlFields: string[] = [
         'id',
         'user_name',
-        'fcm_token',
         'createdAt',
         'updatedAt',
         'is_active',
@@ -75,23 +74,24 @@ class UserModel {
         'email',
         'password',
         'preferred_language',
+        'role_id', // Include role_id in the SQL fields
       ];
       const sqlParams: unknown[] = [
         id,
-        u.user_name,
-        u.fcm_token || null,
+        u.user_name?.toLowerCase(),
         createdAt,
         updatedAt,
         u.is_active !== undefined ? u.is_active : true,
         u.phone_number,
-        u.email,
+        u.email?.toLowerCase(),
         hashedPassword,
         u.preferred_language || null,
+        2,
       ];
 
       const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
-                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+              VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
       const result = await connection.query(sql, sqlParams);
 
@@ -107,7 +107,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
+        'SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
       const result = await connection.query(sql);
 
       if (result.rows.length === 0) {
@@ -126,7 +126,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
+      const sql = `SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -156,6 +156,7 @@ class UserModel {
   }
 
   // update user
+
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
       const connection = await db.connect();
@@ -178,6 +179,8 @@ class UserModel {
                   10,
                 ),
               ); // Hash the password if provided
+            } else if (key === 'email') {
+              queryParams.push((u[key as keyof User] as string).toLowerCase()); // Convert email to lowercase
             } else {
               queryParams.push(u[key as keyof User]);
             }
@@ -192,7 +195,7 @@ class UserModel {
 
       queryParams.push(id); // Add the user ID to the query parameters
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -212,7 +215,7 @@ class UserModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {

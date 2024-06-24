@@ -4,6 +4,7 @@ import {
   login,
   currentUser,
   logout,
+  verifyEmail,
 } from '../controllers/auth.controller';
 import verifyToken from '../middlewares/verifyToken';
 
@@ -22,4 +23,5 @@ router.get('/current', verifyToken, currentUser);
 
 router.post('/logout', verifyToken, logout);
 
+router.post('/verify-email', verifyEmail);
 export default router;

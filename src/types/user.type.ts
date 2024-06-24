@@ -11,4 +11,6 @@ export interface User {
   email: string;
   password: string;
   preferred_language?: string;
+  register_otp?: string | null;
+  email_verified?: boolean;
 }

@@ -171,7 +171,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) ,
     preferred_language VARCHAR(20),    
-    FOREIGN KEY (role_id) REFERENCES role(id)
+    FOREIGN KEY (role_id) REFERENCES role(id),
+    register_otp VARCHAR(255),
+    email_verified BOOLEAN DEFAULT false
 );
 
 INSERT INTO users (id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) VALUES

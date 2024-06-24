@@ -141,6 +141,20 @@ class UserModel {
     }
   }
 
+  async updateUser(email: string, updateFields: Partial<User>): Promise<User> {
+    try {
+      const user = await this.findByEmail(email);
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+      return await this.updateOne(updateFields, user.id);
+    } catch (error) {
+      throw new Error(
+        `Could not update user with email ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
+
   // update user
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
@@ -148,7 +162,7 @@ class UserModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      u.updatedAt = new Date();
+      const updatedAt = new Date();
 
       const updateFields = Object.keys(u)
         .map((key) => {
@@ -158,7 +172,12 @@ class UserModel {
             key !== 'createdAt'
           ) {
             if (key === 'password') {
-              queryParams.push(hashPassword(u.password as string)); // Hash the password if provided
+              queryParams.push(
+                bcrypt.hashSync(
+                  (u.password as string) + config.JWT_SECRET_KEY,
+                  10,
+                ),
+              ); // Hash the password if provided
             } else {
               queryParams.push(u[key as keyof User]);
             }
@@ -168,9 +187,12 @@ class UserModel {
         })
         .filter((field) => field !== null);
 
-      queryParams.push(id);
+      queryParams.push(updatedAt); // Add the updatedAt timestamp
+      updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+      queryParams.push(id); // Add the user ID to the query parameters
+
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
 
       const result = await connection.query(sql, queryParams);
       connection.release();
@@ -228,7 +250,7 @@ class UserModel {
   async emailExists(email: string): Promise<boolean> {
     try {
       const connection = await db.connect();
-      const sql = 'SELECT email FROM users  WHERE email=$1';
+      const sql = 'SELECT email FROM users WHERE email=$1';
       const result = await connection.query(sql, [email]);
       connection.release();
       return result.rows.length > 0;
@@ -266,6 +288,36 @@ class UserModel {
       connection.release();
     } catch (error) {
       throw new Error(`Could not update OTP hash: ${(error as Error).message}`);
+    }
+  }
+
+  async saveOtp(email: string, otp: string) {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET register_otp=$1 WHERE email=$2`;
+      await connection.query(sql, [otp, email]);
+      connection.release();
+    } catch (error) {
+      throw new Error(
+        `Could not save OTP for ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<boolean> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT register_otp FROM users WHERE email=$1`;
+      const result = await connection.query(sql, [email]);
+      connection.release();
+      if (result.rows.length && result.rows[0].register_otp === otp) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      throw new Error(
+        `Could not verify OTP for ${email}: ${(error as Error).message}`,
+      );
     }
   }
 }

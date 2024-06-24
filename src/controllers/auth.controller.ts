@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 import UserModel from '../models/users/user.model';
 import asyncHandler from '../middlewares/asyncHandler';
 import config from '../../config';
@@ -11,6 +12,27 @@ const userModel = new UserModel();
 
 const generateToken = (user: User) => {
   return jwt.sign({ id: user.id }, config.JWT_SECRET_KEY!);
+};
+
+const sendVerificationEmail = async (email: string, otp: string) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    auth: {
+      user: 'developer@dccme.ai', // replace this with developer@dccme.ai
+      pass: 'yfen ping pjfh emkp', // replace this with google app password
+    },
+  });
+
+  const mailOptions = {
+    from: 'AHLN App',
+    to: email,
+    subject: 'Verify your email',
+    html: `<p>Your OTP for email verification is: <b>${otp}</b></p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
 };
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
@@ -40,10 +62,44 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     password: hashedPassword,
   } as User);
 
+  // Generate OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  await userModel.saveOtp(email, otp);
+
+  // Send verification email
+  await sendVerificationEmail(email, otp);
+
   // Generate JWT token
   const token = generateToken(user);
 
   res.status(201).json({ message: i18n.__('REGISTER_SUCCESS'), user, token });
+});
+
+export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+
+  // Find the user by email
+  const user = await userModel.findByEmail(email);
+  if (!user) {
+    res.status(404);
+    throw new Error(i18n.__('USER_NOT_FOUND'));
+  }
+
+  // Check if the provided OTP matches the user's OTP
+  const isOtpValid = await userModel.verifyOtp(email, otp);
+  if (!isOtpValid) {
+    res.status(400);
+    throw new Error(i18n.__('INVALID_OTP'));
+  }
+
+  // Update the user's email_verified status
+  await userModel.updateUser(email, {
+    email_verified: true,
+    register_otp: null,
+  });
+
+  res.status(200).json({ message: i18n.__('EMAIL_VERIFIED_SUCCESS') });
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
@@ -61,7 +117,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   // Check if the user exists and if the password is correct
   if (
     !user ||
-    !bcrypt.hashSync(password + config.JWT_SECRET_KEY, user.password)
+    !bcrypt.compareSync(password + config.JWT_SECRET_KEY, user.password)
   ) {
     res.status(401);
     throw new Error(i18n.__('INVALID_CREDENTIALS'));
@@ -87,56 +143,3 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   // Invalidate token (handled on the client side)
   res.status(200).json({ message: i18n.__('LOGOUT_SUCCESS') });
 });
-
-// export const resetPassword = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { email, newPassword } = req.body;
-
-//     const user = await userModel.findByEmail(email);
-//     if (!user) {
-//       res.status(404);
-//       throw new Error(i18n.__('USER_NOT_FOUND'));
-//     }
-
-//     const hashedPassword = bcrypt.hashSync(
-//       newPassword + config.JWT_SECRET_KEY,
-//       parseInt(config.SALT_ROUNDS, 10),
-//     );
-//     await userModel.updateOne({ password: hashedPassword }, user.id);
-
-//     res.json({ message: i18n.__('PASSWORD_RESET_SUCCESS') });
-//   },
-// );
-
-// export const requestPasswordReset = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { email } = req.body;
-
-//     const user = await userModel.findByEmail(email);
-//     if (!user) {
-//       res.status(404);
-//       throw new Error(i18n.__('USER_NOT_FOUND'));
-//     }
-
-//     const otp = generateOtp();
-//     const otpHash = bcrypt.hashSync(otp, parseInt(config.SALT_ROUNDS, 10));
-
-//     // Store OTP hash in user record (you need to add otp_hash and otp_expiration columns in your user table)
-//     const otpExpiration = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
-//     await userModel.updateOne(
-//       { otp_hash: otpHash, otp_expiration: otpExpiration },
-//       user.id,
-//     );
-
-//     const mailOptions = {
-//       from: config.EMAIL_USER,
-//       to: email,
-//       subject: i18n.__('PASSWORD_RESET_REQUEST'),
-//       text: i18n.__('YOUR_OTP_IS', { otp }),
-//     };
-
-//     await transporter.sendMail(mailOptions);
-
-//     res.json({ message: i18n.__('OTP_SENT') });
-//   },
-// );

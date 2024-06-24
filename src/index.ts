@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 // import path from 'path';
-
+import dotenv from 'dotenv';
 import i18n from './config/i18n';
 import mountRoutes from './routes';
 import { config } from '../config';
@@ -15,6 +15,7 @@ import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
 
 // import patchDatabase from './config/patch';
+dotenv.config({ path: '../.env' });
 
 const app: Express = express();
 

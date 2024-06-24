@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import i18n from '../config/i18n';
 import config from '../../config';
 
@@ -11,11 +10,21 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const decoded = jwt.verify(token, config.JWT_SECRET_KEY);
+    if (!config.JWT_SECRET_KEY) {
+      throw new Error('JWT secret key is not defined.');
+    }
+
+    const decoded = jwt.verify(token, config.JWT_SECRET_KEY) as JwtPayload;
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(400).json({ message: i18n.__('INVALID_TOKEN') });
+    if (
+      err instanceof jwt.JsonWebTokenError ||
+      err instanceof jwt.TokenExpiredError
+    ) {
+      return res.status(401).json({ message: i18n.__('INVALID_TOKEN') });
+    }
+    return res.status(500).json({ message: i18n.__('SERVER_ERROR') });
   }
 };
 

@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import usersRoutes from './users.route';
 import authRoute from './auth.route';
-import roleRoute from './role.Route';
+import roleRoute from './role.route';
 import permissionRoute from './permission.route';
 import rolePermissionRoutes from './role.permission.route';
 import userPermissionRoutes from './user.permission.route';

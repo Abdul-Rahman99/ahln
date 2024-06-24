@@ -163,7 +163,6 @@ CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(20) UNIQUE NOT NULL PRIMARY KEY,
     user_name TEXT NOT NULL,
     role_id INTEGER,
-    fcm_token VARCHAR(255) UNIQUE,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN NOT NULL,
@@ -389,7 +388,7 @@ VALUES
 -- Guest role permissions
 INSERT INTO role_permission (role_id, permission_id)
 VALUES
-  (10,1)      -- create_user
+  (10,1);      -- create_user
 
 
 -- Box role permissions

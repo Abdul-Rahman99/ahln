@@ -6,7 +6,6 @@ import permissionRoute from './user/permission.route';
 import rolePermissionRoutes from './user/role.permission.route';
 import userPermissionRoutes from './user/user.permission.route';
 import tabletRoute from './box/tablet.route'
-// import boxRoute from './box.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/controllers/permission.controller.ts
 import { Request, Response } from 'express';
-import PermissionModel from '../models/users/permission.model';
+import PermissionModel from '../../models/users/permission.model';
 
 const permissionModel = new PermissionModel();
 

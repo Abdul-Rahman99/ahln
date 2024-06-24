@@ -1,6 +1,6 @@
 import { body, param } from 'express-validator';
-import validatorMiddleware from '../middlewares/validatorMiddleware';
-import i18n from '../config/i18n'; // Import i18n for localization
+import validatorMiddleware from '../../middlewares/validatorMiddleware';
+import i18n from '../../config/i18n'; // Import i18n for localization
 
 export const createBoxValidator = [
   body('compartments_number')

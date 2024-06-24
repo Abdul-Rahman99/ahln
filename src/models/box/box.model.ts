@@ -1,5 +1,5 @@
-import Box from '../types/box.type';
-import db from '../config/database';
+import Box from '../../types/box.type';
+import db from '../../config/database';
 
 class BoxModel {
   // Create box
@@ -7,8 +7,8 @@ class BoxModel {
     try {
       const connection = await db.connect();
       const sql = `INSERT INTO box (compartments_number, compartment1, compartment2, compartment3, video_id) 
-                   VALUES ($1, $2, $3, $4, $5) 
-                   RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt, box_id`;
+                  VALUES ($1, $2, $3, $4, $5) 
+                  RETURNING id, compartments_number, compartment1, compartment2, compartment3, video_id, createdAt, updatedAt, box_id`;
 
       const result = await connection.query(sql, [
         b.compartments_number,

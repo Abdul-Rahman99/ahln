@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
-import RolePermissionModel from '../models/users/role.permission.model';
+import RolePermissionModel from '../../models/users/role.permission.model';
 
 const rolePermissionModel = new RolePermissionModel();
 

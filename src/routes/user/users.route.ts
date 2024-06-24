@@ -5,17 +5,17 @@ import {
   getUserById,
   updateUser,
   deleteUser,
-} from '../controllers/users.controller';
+} from '../../controllers/user/users.controller';
 
 import {
   createUserValidator,
   deleteUserValidator,
   getUserValidator,
   updateUserValidator,
-} from '../validation/user.validation';
+} from '../../validation/user/user.validation';
 
-import verifyToken from '../middlewares/verifyToken';
-import { authorize } from '../middlewares/authorize';
+import verifyToken from '../../middlewares/verifyToken';
+import { authorize } from '../../middlewares/authorize';
 
 const router = express.Router();
 

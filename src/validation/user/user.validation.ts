@@ -1,7 +1,7 @@
 import { body, check } from 'express-validator';
-import validatorMiddleware from '../middlewares/validatorMiddleware';
-import UserModel from '../models/users/user.model';
-import i18n from '../config/i18n';
+import validatorMiddleware from '../../middlewares/validatorMiddleware';
+import UserModel from '../../models/users/user.model';
+import i18n from '../../config/i18n';
 
 const userModel = new UserModel();
 
@@ -33,8 +33,8 @@ export const createUserValidator = [
     .withMessage(i18n.__('PHONE_REQUIRED'))
     .isMobilePhone(['ar-AE', 'ar-SA'])
     .withMessage(i18n.__('INVALID_PHONE_FORMAT'))
-    .custom(async (phone)=>{
-      const phoneExists = await userModel.phoneExists(phone)
+    .custom(async (phone) => {
+      const phoneExists = await userModel.phoneExists(phone);
       if (phoneExists) {
         throw new Error(i18n.__('PHONE_ALREADY_REGISTERED'));
       }

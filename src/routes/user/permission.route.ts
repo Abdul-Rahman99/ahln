@@ -5,17 +5,17 @@ import {
   getPermissionById,
   updatePermission,
   deletePermission,
-} from '../controllers/permission.controller';
+} from '../../controllers/user/permission.controller';
 
 import {
   createPermissionValidator,
   deletePermissionValidator,
   getPermissionValidator,
   updatePermissionValidator,
-} from '../validation/permission.validation';
+} from '../../validation/user/permission.validation';
 
-import verifyToken from '../middlewares/verifyToken';
-import { authorize } from '../middlewares/authorize';
+import verifyToken from '../../middlewares/verifyToken';
+import { authorize } from '../../middlewares/authorize';
 
 const router = express.Router();
 

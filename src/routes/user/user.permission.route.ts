@@ -4,9 +4,9 @@ import {
   assignPermissionToUser,
   removePermissionFromUser,
   getPermissionsByUser,
-} from '../controllers/user.permission.controller';
-import { authorize } from '../middlewares/authorize';
-import verifyToken from '../middlewares/verifyToken';
+} from '../../controllers/user/user.permission.controller';
+import { authorize } from '../../middlewares/authorize';
+import verifyToken from '../../middlewares/verifyToken';
 
 const router = express.Router();
 

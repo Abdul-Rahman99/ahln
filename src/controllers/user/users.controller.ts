@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import UserModel from '../models/users/user.model';
-import asyncHandler from '../middlewares/asyncHandler';
-import { User } from '../types/user.type';
-import i18n from '../config/i18n';
+import UserModel from '../../models/users/user.model';
+import asyncHandler from '../../middlewares/asyncHandler';
+import { User } from '../../types/user.type';
+import i18n from '../../config/i18n';
 
 const userModel = new UserModel();
 

@@ -5,17 +5,17 @@ import {
   getRoleById,
   updateRole,
   deleteRole,
-} from '../controllers/role.controller';
+} from '../../controllers/user/role.controller';
 
 import {
   createRoleValidator,
   deleteRoleValidator,
   getRoleValidator,
   updateRoleValidator,
-} from '../validation/role.validation';
+} from '../../validation/user/role.validation';
 
-import verifyToken from '../middlewares/verifyToken';
-import { authorize } from '../middlewares/authorize';
+import verifyToken from '../../middlewares/verifyToken';
+import { authorize } from '../../middlewares/authorize';
 
 const router = express.Router();
 

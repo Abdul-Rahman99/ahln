@@ -175,8 +175,8 @@ CREATE TABLE IF NOT EXISTS users (
     email_verified BOOLEAN DEFAULT false
 );
 
-INSERT INTO users (id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) VALUES
-('Ahln_24_U0000001', 'Admin', 1, 'token1', NOW(), NOW(), TRUE, '527048530', 'admin@dcc.ai', 'admin654', 'en');
+INSERT INTO users (id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) VALUES
+('Ahln_24_U0000001', 'Admin', 1, NOW(), NOW(), TRUE, '527048530', 'admin@dcc.ai', 'admin654', 'en');
 
 -- Create the User_Permission table
 CREATE TABLE IF NOT EXISTS user_permission (

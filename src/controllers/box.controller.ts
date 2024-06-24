@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import BoxModel from '../models/box.model';
+import BoxModel from '../models/box/box.model';
 import Box from '../types/box.type';
-import i18n from '../config/i18n'; 
+import i18n from '../config/i18n';
 
 const boxModel = new BoxModel();
 

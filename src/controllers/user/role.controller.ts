@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/controllers/role.controller.ts
 import { Request, Response } from 'express';
-import RoleModel from '../models/users/role.model';
+import RoleModel from '../../models/users/role.model';
 
 const roleModel = new RoleModel();
 

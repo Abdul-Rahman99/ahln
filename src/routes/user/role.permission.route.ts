@@ -4,9 +4,9 @@ import {
   assignPermissionToRole,
   removePermissionFromRole,
   getPermissionsByRole,
-} from '../controllers/role.permission.controller';
-import { authorize } from '../middlewares/authorize';
-import verifyToken from '../middlewares/verifyToken';
+} from '../../controllers/user/role.permission.controller';
+import { authorize } from '../../middlewares/authorize';
+import verifyToken from '../../middlewares/verifyToken';
 
 const router = express.Router();
 

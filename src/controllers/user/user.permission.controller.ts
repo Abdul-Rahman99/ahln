@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
-import UserPermissionModel from '../models/users/user.permission.model';
+import UserPermissionModel from '../../models/users/user.permission.model';
 
 const userPermissionModel = new UserPermissionModel();
 

@@ -5,8 +5,10 @@ import {
   currentUser,
   logout,
   verifyEmail,
+  resendOtp,
 } from '../controllers/auth.controller';
 import verifyToken from '../middlewares/verifyToken';
+// import { sendVerificationEmail } from '../controllers/auth.controller';
 
 import {
   loginValidator,
@@ -24,4 +26,7 @@ router.get('/current', verifyToken, currentUser);
 router.post('/logout', verifyToken, logout);
 
 router.post('/verify-email', verifyEmail);
+
+router.post('/resend-otp', resendOtp);
+
 export default router;

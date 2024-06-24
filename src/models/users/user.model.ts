@@ -90,8 +90,8 @@ class UserModel {
       ];
 
       const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
-                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
       const result = await connection.query(sql, sqlParams);
 

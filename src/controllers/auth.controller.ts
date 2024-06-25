@@ -142,7 +142,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     !user ||
     !bcrypt.hashSync(password + config.JWT_SECRET_KEY, user.password)
   ) {
-    res.status(401);
+    res.status(400);
     throw new Error(i18n.__('INVALID_CREDENTIALS'));
   } else if (!user.is_active || !user.email_verified) {
     res.status(401);

@@ -12,7 +12,9 @@ const asyncHandler_1 = __importDefault(require("../middlewares/asyncHandler"));
 const config_1 = __importDefault(require("../../config"));
 const i18n_1 = __importDefault(require("../config/i18n"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
+const user_devices_model_1 = __importDefault(require("../models/users/user.devices.model"));
 const userModel = new user_model_1.default();
+const userDevicesModel = new user_devices_model_1.default();
 const generateToken = (user) => {
     return jsonwebtoken_1.default.sign({ id: user.id, email_verified: user.email_verified }, config_1.default.JWT_SECRET_KEY);
 };
@@ -61,7 +63,7 @@ exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     res.status(201).json({ message: i18n_1.default.__('REGISTER_SUCCESS'), token });
 });
 exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
-    const { email, otp } = req.body;
+    const { email, otp, fcmToken } = req.body;
     (0, auth_middleware_1.authMiddleware)(req, res, async () => {
         const currentUser = req.currentUser;
         const emailLower = email.toLowerCase();
@@ -79,6 +81,9 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
                 email_verified: true,
                 register_otp: null,
             });
+            if (fcmToken) {
+                await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
+            }
             res.status(200).json({
                 message: i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'),
                 user: currentUser,
@@ -90,7 +95,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     });
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, fcmToken } = req.body;
     if (!email || !password) {
         res.status(400);
         throw new Error(i18n_1.default.__('MISSING_CREDENTIALS'));
@@ -110,6 +115,9 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
     }
     const userRes = user;
     const token = generateToken(user);
+    if (fcmToken) {
+        await userDevicesModel.saveUserDevice(userRes.id, fcmToken);
+    }
     res.json({
         message: i18n_1.default.__('LOGIN_SUCCESS'),
         userRes,

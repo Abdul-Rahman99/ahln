@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDevicesByUser = exports.updateDevice = exports.deleteDevice = exports.registerDevice = void 0;
+exports.getUserDeviceById = exports.getDevicesByUser = exports.updateDevice = exports.deleteDevice = exports.registerDevice = void 0;
 const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
 const userDevicesModel = new user_devices_model_1.default();
 const registerDevice = async (req, res) => {
@@ -56,4 +56,20 @@ const getDevicesByUser = async (req, res) => {
     }
 };
 exports.getDevicesByUser = getDevicesByUser;
+const getUserDeviceById = async (req, res) => {
+    try {
+        const { deviceId } = req.params;
+        const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
+        if (!device) {
+            return res.status(404).json({
+                message: i18n.__('USER_DEVICE_NOT_FOUND', { deviceId }),
+            });
+        }
+        res.status(200).json(device);
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.getUserDeviceById = getUserDeviceById;
 //# sourceMappingURL=user.device.controller.js.map

@@ -1,2 +1,2 @@
 import { MqttClient } from 'mqtt';
-export declare const client: MqttClient;
+export declare let client: MqttClient;

@@ -11,7 +11,7 @@ const options = {
   password: config.MQTT_PASSWORD,
 };
 
-let client: MqttClient;
+export let client: MqttClient;
 
 function connect() {
   client = mqtt.connect(options as any);

@@ -44,7 +44,6 @@ class UserModel {
             const sqlFields = [
                 'id',
                 'user_name',
-                'fcm_token',
                 'createdAt',
                 'updatedAt',
                 'is_active',
@@ -52,22 +51,23 @@ class UserModel {
                 'email',
                 'password',
                 'preferred_language',
+                'role_id',
             ];
             const sqlParams = [
                 id,
-                u.user_name,
-                u.fcm_token || null,
+                u.user_name?.toLowerCase(),
                 createdAt,
                 updatedAt,
                 u.is_active !== undefined ? u.is_active : true,
                 u.phone_number,
-                u.email,
+                u.email?.toLowerCase(),
                 hashedPassword,
                 u.preferred_language || null,
+                2,
             ];
             const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
-                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+              VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
@@ -79,7 +79,7 @@ class UserModel {
     async getMany() {
         try {
             const connection = await database_1.default.connect();
-            const sql = 'SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
+            const sql = 'SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
             const result = await connection.query(sql);
             if (result.rows.length === 0) {
                 throw new Error(`No users in the database`);
@@ -96,7 +96,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `SELECT id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
+            const sql = `SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
                     WHERE id=$1`;
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
@@ -136,6 +136,9 @@ class UserModel {
                     if (key === 'password') {
                         queryParams.push(bcrypt_1.default.hashSync(u.password + config_1.default.JWT_SECRET_KEY, 10));
                     }
+                    else if (key === 'email') {
+                        queryParams.push(u[key].toLowerCase());
+                    }
                     else {
                         queryParams.push(u[key]);
                     }
@@ -147,7 +150,7 @@ class UserModel {
             queryParams.push(updatedAt);
             updateFields.push(`updatedAt=$${paramIndex++}`);
             queryParams.push(id);
-            const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
+            const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
             const result = await connection.query(sql, queryParams);
             connection.release();
             return result.rows[0];
@@ -162,7 +165,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, fcm_token, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+            const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
             const result = await connection.query(sql, [id]);
             if (result.rows.length === 0) {
                 throw new Error(`Could not find user with ID ${id}`);

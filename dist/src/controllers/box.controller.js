@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBox = exports.updateBox = exports.getBoxById = exports.getAllBoxes = exports.createBox = void 0;
 const asyncHandler_1 = __importDefault(require("../middlewares/asyncHandler"));
-const box_model_1 = __importDefault(require("../models/box.model"));
+const box_model_1 = __importDefault(require("../models/box/box.model"));
 const i18n_1 = __importDefault(require("../config/i18n"));
 const boxModel = new box_model_1.default();
 exports.createBox = (0, asyncHandler_1.default)(async (req, res) => {

@@ -11,58 +11,69 @@ const options = {
   password: config.MQTT_PASSWORD,
 };
 
-export const client: MqttClient = mqtt.connect(options as any);
+let client: MqttClient;
 
-client.on('connect', () => {
-  console.log('MQTT Connected');
+function connect() {
+  client = mqtt.connect(options as any);
 
-  // subscribe to all topics under 'data/' --<adjust as needed>--
-  const wildcardTopic = 'data/#';
-  client.subscribe(wildcardTopic, { qos: 1 }, (err, granted) => {
-    if (err) {
-      console.error('Subscription error:', err);
-    } else {
-      console.log('Subscribed to wildcard topic:', granted);
-    }
-  });
-});
+  client.on('connect', () => {
+    console.log('MQTT Connected');
 
-client.on('message', (topic, message) => {
-  console.log(`Received message on topic ${topic}: ${message.toString()}`);
-  try {
-    const parsedMessage = JSON.parse(message.toString());
-    console.log('Parsed message:', parsedMessage);
-  } catch (err) {
-    console.log('Received non-JSON message:', message.toString());
-  }
-
-  if (shouldSubscribeToTopic(topic)) {
-    const specificTopic = topic;
-    client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
+    // subscribe to all topics under 'data/' --<adjust as needed>--
+    const wildcardTopic = '#';
+    client.subscribe(wildcardTopic, { qos: 1 }, (err, granted) => {
       if (err) {
-        console.error(`Subscription error for topic ${specificTopic}:`, err);
+        console.error('Subscription error:', err);
       } else {
-        console.log(`Subscribed to new topic: ${specificTopic}`, granted);
+        console.log('Subscribed to wildcard topic:', granted);
       }
     });
-  }
-});
+  });
 
-client.on('error', function (error) {
-  console.log('MQTT connection error:', error);
-  process.exit(1);
-});
+  client.on('message', (topic, message) => {
+    console.log(`Received message on topic ${topic}: ${message.toString()}`);
+    try {
+      const parsedMessage = JSON.parse(message.toString());
+      console.log('Parsed message:', parsedMessage);
+    } catch (err) {
+      console.log('Received non-JSON message:', message.toString());
+    }
 
-client.on('reconnect', () => {
-  console.log('Reconnecting to MQTT broker');
-});
+    if (shouldSubscribeToTopic(topic)) {
+      const specificTopic = topic;
+      client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
+        if (err) {
+          console.error(`Subscription error for topic ${specificTopic}:`, err);
+        } else {
+          console.log(`Subscribed to new topic: ${specificTopic}`, granted);
+        }
+      });
+    }
+  });
 
-client.on('end', () => {
-  console.log('Connection to MQTT broker ended');
-});
+  client.on('error', function (error) {
+    console.log('MQTT connection error:', error);
+    // Disconnect and attempt to reconnect
+    client.end();
+    setTimeout(connect, 3000); // try to reconnect after 3 seconds
+  });
+
+  client.on('reconnect', () => {
+    console.log('Reconnecting to MQTT broker');
+  });
+
+  client.on('end', () => {
+    console.log('Connection to MQTT broker ended');
+    // Handle disconnection, attempt to reconnect
+    setTimeout(connect, 3000); // try to reconnect after 3 seconds
+  });
+}
+
+// Start initial MQTT connection
+connect();
 
 const shouldSubscribeToTopic = (topic: string): boolean => {
-  //add logic to determine if a specific topic should be subscribed to
+  // add logic to determine if a specific topic should be subscribed to
   // for example subscribe to certain patterns or newly discovered topics
-  return true; // for demonstration  subscribe to all
+  return true; // for demonstration, subscribe to all
 };

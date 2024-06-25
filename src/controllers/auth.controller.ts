@@ -9,8 +9,9 @@ import config from '../../config';
 import { User } from '../types/user.type';
 import i18n from '../config/i18n';
 import { authMiddleware } from '../middlewares/auth.middleware';
-
+import UserDevicesModel from '../models/users/user.devices.model';
 const userModel = new UserModel();
+const userDevicesModel = new UserDevicesModel();
 
 const generateToken = (user: User) => {
   return jwt.sign(
@@ -82,7 +83,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
+  const { email, otp, fcmToken } = req.body;
 
   // Verify token using authMiddleware
   authMiddleware(req, res, async () => {
@@ -108,6 +109,11 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
         register_otp: null,
       });
 
+      // Save the FCM token and user ID to the user_devices table
+      if (fcmToken) {
+        await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
+      }
+
       res.status(200).json({
         message: i18n.__('EMAIL_VERIFIED_SUCCESS'),
         user: currentUser,
@@ -120,7 +126,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, fcmToken } = req.body;
 
   // Check if both email and password are provided
   if (!email || !password) {
@@ -149,6 +155,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   // Generate token
   const token = generateToken(user);
 
+  // Save the FCM token and user ID to the user_devices table
+  if (fcmToken) {
+    await userDevicesModel.saveUserDevice(userRes.id, fcmToken);
+  }
   // Send response
   res.json({
     message: i18n.__('LOGIN_SUCCESS'),
@@ -190,4 +200,3 @@ export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json({ message: i18n.__('OTP_RESENT_SUCCESS') });
 });
-

@@ -62,3 +62,20 @@ export const getDevicesByUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getUserDeviceById = async (req: Request, res: Response) => {
+  try {
+    const { deviceId } = req.params;
+    const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
+
+    if (!device) {
+      return res.status(404).json({
+        message: i18n.__('USER_DEVICE_NOT_FOUND', { deviceId }),
+      });
+    }
+
+    res.status(200).json(device);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -64,22 +64,29 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, otp } = req.body;
     (0, auth_middleware_1.authMiddleware)(req, res, async () => {
         const currentUser = req.currentUser;
-        if (currentUser.email !== email) {
-            res.status(401);
-            throw new Error(i18n_1.default.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
+        const emailLower = email.toLowerCase();
+        try {
+            if (currentUser.email !== emailLower) {
+                res.status(401);
+                throw new Error(i18n_1.default.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
+            }
+            const isOtpValid = await userModel.verifyOtp(emailLower, otp);
+            if (!isOtpValid) {
+                res.status(400).json({ message: i18n_1.default.__('INVALID_OTP') });
+                return;
+            }
+            await userModel.updateUser(emailLower, {
+                email_verified: true,
+                register_otp: null,
+            });
+            res.status(200).json({
+                message: i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'),
+                user: currentUser,
+            });
         }
-        const isOtpValid = await userModel.verifyOtp(email, otp);
-        if (!isOtpValid) {
-            res.status(400);
-            throw new Error(i18n_1.default.__('INVALID_OTP'));
+        catch (error) {
+            res.status(500).json({ message: error.message });
         }
-        await userModel.updateUser(email, {
-            email_verified: true,
-            register_otp: null,
-        });
-        res
-            .status(200)
-            .json({ message: i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), user: currentUser });
     });
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res) => {

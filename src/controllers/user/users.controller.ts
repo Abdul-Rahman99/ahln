@@ -9,7 +9,7 @@ const userModel = new UserModel();
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const newUser: User = req.body;
   const createdUser = await userModel.createUser(newUser);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: i18n.__('USER_CREATED_SUCCESSFULLY'),
     data: createdUser,

@@ -11,6 +11,7 @@ export const createTablet = asyncHandler(
     const newTablet: Tablet = req.body;
     const createdTablet = await tabletModel.createTablet(newTablet);
     res.status(201).json({
+      success: true,
       message: i18n.__('TABLET_CREATED_SUCCESSFULLY'),
       data: createdTablet,
     });
@@ -20,7 +21,7 @@ export const createTablet = asyncHandler(
 export const getAllTablets = asyncHandler(
   async (req: Request, res: Response) => {
     const tablets = await tabletModel.getMany();
-    res.json(tablets);
+    res.json({ success: true, data: tablets });
   },
 );
 
@@ -28,7 +29,7 @@ export const getTabletById = asyncHandler(
   async (req: Request, res: Response) => {
     const tabletId = req.params.id;
     const tablet = await tabletModel.getOne(tabletId);
-    res.json(tablet);
+    res.json({ success: true, tablet });
   },
 );
 
@@ -39,7 +40,8 @@ export const updateTablet = asyncHandler(
     const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
     res.json({
       message: i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
-      updatedTablet,
+      data: updatedTablet,
+      success: true,
     });
   },
 );
@@ -50,7 +52,8 @@ export const deleteTablet = asyncHandler(
     const deletedTablet = await tabletModel.deleteOne(tabletId);
     res.json({
       message: i18n.__('TABLET_DELETED_SUCCESSFULLY'),
-      deletedTablet,
+      data: deletedTablet,
+      success: true,
     });
   },
 );

@@ -10,6 +10,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const newUser: User = req.body;
   const createdUser = await userModel.createUser(newUser);
   res.status(201).json({
+    success: true,
     message: i18n.__('USER_CREATED_SUCCESSFULLY'),
     data: createdUser,
   });
@@ -17,24 +18,32 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await userModel.getMany();
-  res.json(users);
+  res.json({ success: true, data: users });
 });
 
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.id;
   const user = await userModel.getOne(userId);
-  res.json(user);
+  res.json({ success: true, data: user });
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.id;
   const userData: Partial<User> = req.body;
   const updatedUser = await userModel.updateOne(userData, userId);
-  res.json({ message: i18n.__('USER_UPDATED_SUCCESSFULLY'), updatedUser });
+  res.json({
+    success: true,
+    message: i18n.__('USER_UPDATED_SUCCESSFULLY'),
+    data: updatedUser,
+  });
 });
 
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.id;
   const deletedUser = await userModel.deleteOne(userId);
-  res.json({ message: i18n.__('USER_DELETED_SUCCESSFULLY'), deletedUser });
+  res.json({
+    success: true,
+    message: i18n.__('USER_DELETED_SUCCESSFULLY'),
+    data: deletedUser,
+  });
 });

@@ -9,11 +9,17 @@ export const registerDevice = async (req: Request, res: Response) => {
   const { id: user_id } = req.currentUser as { id: string }; // Assuming user_id is retrieved from authenticated user
 
   try {
-    await userDevicesModel.saveUserDevice(user_id, fcm_token);
-
-    res.status(201).json({ message: 'Device registered successfully' });
+    const savedDevice = await userDevicesModel.saveUserDevice(
+      user_id,
+      fcm_token,
+    );
+    res.status(201).json({
+      success: true,
+      message: 'Device registered successfully',
+      data: savedDevice,
+    });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -25,11 +31,13 @@ export const deleteDevice = async (req: Request, res: Response) => {
       parseInt(deviceId, 10),
     );
 
-    res
-      .status(200)
-      .json({ message: 'Device deleted successfully', device: deletedDevice });
+    res.status(200).json({
+      success: true,
+      message: 'Device deleted successfully',
+      data: deletedDevice,
+    });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -43,11 +51,13 @@ export const updateDevice = async (req: Request, res: Response) => {
       fcm_token,
     );
 
-    res
-      .status(200)
-      .json({ message: 'Device updated successfully', device: updatedDevice });
+    res.status(200).json({
+      success: true,
+      message: 'Device updated successfully',
+      data: updatedDevice,
+    });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -57,9 +67,9 @@ export const getDevicesByUser = async (req: Request, res: Response) => {
   try {
     const devices = await userDevicesModel.getAllUserDevices(userId);
 
-    res.status(200).json(devices);
+    res.status(200).json({ success: true, data: devices });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -74,8 +84,8 @@ export const getUserDeviceById = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json(device);
+    res.status(200).json({ success: true, data: device });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

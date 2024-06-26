@@ -9,18 +9,18 @@ export const createPermission = async (req: Request, res: Response) => {
   try {
     const { title, description } = req.body;
     const permission = await permissionModel.create(title, description);
-    res.status(201).json(permission);
+    res.status(201).json({ success: true, data: permission });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const getAllPermissions = async (req: Request, res: Response) => {
   try {
     const permissions = await permissionModel.getAll();
-    res.status(200).json(permissions);
+    res.status(200).json({ success: true, data: permissions });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -28,9 +28,9 @@ export const getPermissionById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const permission = await permissionModel.getById(Number(id));
-    res.status(200).json(permission);
+    res.status(200).json({ success: true, data: permission });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -43,9 +43,9 @@ export const updatePermission = async (req: Request, res: Response) => {
       title,
       description,
     );
-    res.status(200).json(permission);
+    res.status(200).json({ success: true, data: permission });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -53,8 +53,8 @@ export const deletePermission = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const permission = await permissionModel.delete(Number(id));
-    res.status(200).json(permission);
+    res.status(200).json({ success: true, data: permission });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

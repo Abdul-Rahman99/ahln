@@ -25,8 +25,8 @@ const sendVerificationEmail = (email: string, otp: string) => {
     host: 'smtp.gmail.com',
     port: 587,
     auth: {
-      user: 'developer@dccme.ai', // replace this with developer@dccme.ai
-      pass: 'yfen ping pjfh emkp', // replace this with google app password
+      user: 'developer@dccme.ai',
+      pass: 'yfen ping pjfh emkp',
     },
   });
 
@@ -47,17 +47,21 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const emailExists = await userModel.emailExists(email);
   if (emailExists) {
     res.status(400);
-    throw new Error(i18n.__('EMAIL_ALREADY_REGISTERED'));
+    res.json({ message: i18n.__('EMAIL_ALREADY_REGISTERED'), success: false });
   }
 
   const phoneExists = await userModel.phoneExists(phone_number);
   if (phoneExists) {
     res.status(400);
-    throw new Error(i18n.__('PHONE_ALREADY_REGISTERED'));
+    res.json({ message: i18n.__('PHONE_ALREADY_REGISTERED'), success: false });
   }
 
   // Hash the password
-  const hashedPassword = bcrypt.hashSync(password + config.JWT_SECRET_KEY, 10);
+  console.log('plainPassword ' + password);
+
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  console.log('hashedPassword ' + hashedPassword);
+  console.log('valueCompared ' + bcrypt.compareSync(password, hashedPassword));
 
   // Create the user
   const user = await userModel.createUser({
@@ -79,7 +83,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Generate JWT token
   const token = generateToken(user);
 
-  res.status(201).json({ message: i18n.__('REGISTER_SUCCESS'), token });
+  res
+    .status(201)
+    .json({ success: true, message: i18n.__('REGISTER_SUCCESS'), token });
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -93,13 +99,18 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
       // Check if the provided email matches the token's email
       if (currentUser.email !== emailLower) {
         res.status(401);
-        throw new Error(i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
+        res.json({
+          message: i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
+          success: false,
+        });
       }
 
       // Check if the provided OTP matches the user's OTP
       const isOtpValid = await userModel.verifyOtp(emailLower, otp);
       if (!isOtpValid) {
-        res.status(400).json({ message: i18n.__('INVALID_OTP') });
+        res
+          .status(400)
+          .json({ success: false, message: i18n.__('INVALID_OTP') });
         return; // Return to exit the function
       }
 
@@ -115,12 +126,13 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
       }
 
       res.status(200).json({
+        success: true,
         message: i18n.__('EMAIL_VERIFIED_SUCCESS'),
         user: currentUser,
       });
     } catch (error: any) {
       // Handle any errors that occur during verification
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   });
 });
@@ -130,39 +142,50 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   // Check if both email and password are provided
   if (!email || !password) {
-    res.status(400);
-    throw new Error(i18n.__('MISSING_CREDENTIALS'));
+    return res
+      .status(400)
+      .json({ success: false, message: i18n.__('MISSING_CREDENTIALS') });
   }
 
   // Find the user by email
   const user = await userModel.findByEmail(email);
+  if (user === null) {
+    return res
+      .status(400)
+      .json({ success: false, message: i18n.__('INVALID_CREDENTIALS') });
+  }
 
-  // Check if the user exists and if the password is correct
-  if (
-    !user ||
-    !bcrypt.hashSync(password + config.JWT_SECRET_KEY, user.password)
-  ) {
-    res.status(400);
-    throw new Error(i18n.__('INVALID_CREDENTIALS'));
-  } else if (!user.is_active || !user.email_verified) {
-    res.status(401);
-    res.json({
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
+  console.log(isPasswordValid);
+
+  if (!isPasswordValid) {
+    return res
+      .status(400)
+      .json({ success: false, message: i18n.__('INVALID_CREDENTIALS') });
+  }
+
+  // Check if the user is active and email is verified
+  if (!user.is_active || !user.email_verified) {
+    return res.status(400).json({
+      success: false,
       is_active: user.is_active,
       email_verified: user.email_verified,
     });
   }
-  const userRes = user;
+
   // Generate token
   const token = generateToken(user);
 
   // Save the FCM token and user ID to the user_devices table
   if (fcmToken) {
-    await userDevicesModel.saveUserDevice(userRes.id, fcmToken);
+    await userDevicesModel.saveUserDevice(user.id, fcmToken);
   }
+
   // Send response
   res.json({
+    success: true,
     message: i18n.__('LOGIN_SUCCESS'),
-    userRes,
+    user: user,
     is_active: user.is_active,
     email_verified: user.email_verified,
     token,
@@ -171,12 +194,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.currentUser;
-  res.json(user);
+  res.json({ success: true, data: user });
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   // Invalidate token (handled on the client side)
-  res.status(200).json({ message: i18n.__('LOGOUT_SUCCESS') });
+  res.status(200).json({ success: true, message: i18n.__('LOGOUT_SUCCESS') });
 });
 
 export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
@@ -186,7 +209,7 @@ export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
   const user = await userModel.findByEmail(email);
   if (!user) {
     res.status(404);
-    throw new Error(i18n.__('USER_NOT_FOUND'));
+    res.json({ success: false, message: i18n.__('USER_NOT_FOUND') });
   }
 
   // Generate new OTP
@@ -198,5 +221,7 @@ export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
   // Resend verification email with new OTP
   await sendVerificationEmail(email, otp);
 
-  res.status(200).json({ message: i18n.__('OTP_RESENT_SUCCESS') });
+  res
+    .status(200)
+    .json({ success: true, message: i18n.__('OTP_RESENT_SUCCESS') });
 });

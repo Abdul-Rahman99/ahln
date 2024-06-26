@@ -65,7 +65,7 @@ export const loginValidator = [
       await validateLoginCredentials(email, password);
       next();
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.status(400).json({ success: false, message: error.message });
     }
   },
   validatorMiddleware,

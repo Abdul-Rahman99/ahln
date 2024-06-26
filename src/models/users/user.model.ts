@@ -5,11 +5,6 @@ import bcrypt from 'bcrypt';
 import config from '../../../config';
 import pool from '../../config/database';
 
-const hashPassword = (password: string) => {
-  const salt = parseInt(config.SALT_ROUNDS as string, 10);
-  return bcrypt.hashSync(`${password}${config.JWT_SECRET_KEY}`, salt);
-};
-
 class UserModel {
   // create new user
   async createUser(u: Partial<User>): Promise<User> {
@@ -60,9 +55,6 @@ class UserModel {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      // Hash the password
-      const hashedPassword = u.password ? await hashPassword(u.password) : null;
-
       // Prepare SQL query based on provided fields
       const sqlFields: string[] = [
         'id',
@@ -74,7 +66,7 @@ class UserModel {
         'email',
         'password',
         'preferred_language',
-        'role_id', // Include role_id in the SQL fields
+        'role_id',
       ];
       const sqlParams: unknown[] = [
         id,
@@ -84,7 +76,7 @@ class UserModel {
         u.is_active !== undefined ? u.is_active : true,
         u.phone_number,
         u.email?.toLowerCase(),
-        hashedPassword,
+        u.password,
         u.preferred_language || null,
         2,
       ];

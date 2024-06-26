@@ -57,12 +57,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Hash the password
-  console.log('plainPassword ' + password);
-
   const hashedPassword = bcrypt.hashSync(password, 10);
-  console.log('hashedPassword ' + hashedPassword);
-  console.log('valueCompared ' + bcrypt.compareSync(password, hashedPassword));
-
+  
   // Create the user
   const user = await userModel.createUser({
     email,
@@ -128,7 +124,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: i18n.__('EMAIL_VERIFIED_SUCCESS'),
-        user: currentUser,
+        data: currentUser,
       });
     } catch (error: any) {
       // Handle any errors that occur during verification
@@ -185,7 +181,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   res.json({
     success: true,
     message: i18n.__('LOGIN_SUCCESS'),
-    user: user,
+    data: user,
     is_active: user.is_active,
     email_verified: user.email_verified,
     token,

@@ -69,7 +69,7 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({ success: true, message: permissions });
+    res.status(200).json({ success: true, data: permissions });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }

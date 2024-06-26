@@ -24,7 +24,7 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.id;
   const user = await userModel.getOne(userId);
-  res.json({ success: true, message: user });
+  res.json({ success: true, data: user });
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {

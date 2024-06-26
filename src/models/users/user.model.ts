@@ -315,6 +315,49 @@ class UserModel {
       );
     }
   }
+
+  async updateUserPassword(email: string, newPassword: string): Promise<void> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET password = $1 WHERE email = $2`;
+      await connection.query(sql, [newPassword, email]);
+      connection.release();
+    } catch (error) {
+      throw new Error(
+        `Could not update password for user ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async checkResetPasswordOTP(email: string, otp: string): Promise<boolean> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT * FROM users WHERE email = $1 AND register_otp = $2`;
+      const result = await connection.query(sql, [email, otp]);
+      connection.release();
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error(
+        `Could not verify OTP for user ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async updateResetPasswordOTP(
+    email: string,
+    otp: string | null,
+  ): Promise<void> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET register_otp = $1 WHERE email = $2`;
+      await connection.query(sql, [otp, email]);
+      connection.release();
+    } catch (error) {
+      throw new Error(
+        `Could not update OTP for user ${email}: ${(error as Error).message}`,
+      );
+    }
+  }
 }
 
 export default UserModel;

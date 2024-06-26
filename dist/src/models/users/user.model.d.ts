@@ -12,5 +12,8 @@ declare class UserModel {
     updateOtpHash(userId: string, otpHash: string, otpExpiration: Date): Promise<void>;
     saveOtp(email: string, otp: string): Promise<void>;
     verifyOtp(email: string, otp: string): Promise<boolean>;
+    updateUserPassword(email: string, newPassword: string): Promise<void>;
+    checkResetPasswordOTP(email: string, otp: string): Promise<boolean>;
+    updateResetPasswordOTP(email: string, otp: string | null): Promise<void>;
 }
 export default UserModel;

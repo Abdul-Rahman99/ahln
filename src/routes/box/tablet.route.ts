@@ -8,7 +8,7 @@ import {
 } from '../../controllers/box/tablet.controller';
 
 import {
-  createTabletValidator,
+  // createTabletValidator,
   deleteTabletValidator,
   getTabletValidator,
   updateTabletValidator,
@@ -23,7 +23,7 @@ router.post(
   '/new',
   verifyToken,
   authorize(['create_tablet']),
-    createTabletValidator,
+  // createTabletValidator,
   createTablet,
 );
 
@@ -33,7 +33,7 @@ router.get(
   '/get-one/:id',
   verifyToken,
   authorize(['read_tablet']),
-    getTabletValidator,
+  getTabletValidator,
   getTabletById,
 );
 
@@ -41,7 +41,7 @@ router.put(
   '/update/:id',
   verifyToken,
   authorize(['update_tablet']),
-    updateTabletValidator,
+  updateTabletValidator,
   updateTablet,
 );
 
@@ -49,7 +49,7 @@ router.delete(
   '/delete/:id',
   verifyToken,
   authorize(['delete_tablet']),
-    deleteTabletValidator,
+  deleteTabletValidator,
   deleteTablet,
 );
 

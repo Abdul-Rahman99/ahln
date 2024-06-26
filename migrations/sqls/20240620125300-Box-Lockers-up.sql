@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Box (
     has_empty_lockers BOOLEAN,
     current_tablet_id INTEGER REFERENCES Tablet(id),
     previous_tablet_id INTEGER REFERENCES Tablet(id),
-    box_model_id VARCHAR(20) REFERENCES Box_Model(id),
+    box_model_id VARCHAR(20) REFERENCES Box_Generation(id),
     address_id INTEGER REFERENCES Address(id)
 );
 

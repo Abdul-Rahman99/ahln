@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) VALUES
-('Ahln_24_U0000001', 'Admin', 1, NOW(), NOW(), TRUE, '527048530', 'admin@dcc.ai', 'admin654', 'en');
+('Ahln_24_U0000001', 'Admin', 1, NOW(), NOW(), TRUE, '527048530', 'abdelrahmanaosman99@gmail.com', 'admin654', 'en');
 
 -- Create the User_Permission table
 CREATE TABLE IF NOT EXISTS user_permission (

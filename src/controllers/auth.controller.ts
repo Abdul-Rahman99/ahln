@@ -190,27 +190,51 @@ export const currentUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  // Invalidate token (handled on the client side)
   ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
 });
 
-export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
-  const { email } = req.body;
+// Function to resend OTP and update database
+export const resendOtpAndUpdateDB = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email } = req.body;
 
-  // Find the user by email
-  const user = await userModel.findByEmail(email);
-  if (!user) {
-    ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
-  }
+    // Generate new OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // Generate new OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Update OTP in the database
+    await userModel.updateResetPasswordOTP(email, otp);
 
-  // Update OTP in the database
-  await userModel.saveOtp(email, otp);
+    // Resend verification email with new OTP
+    await sendVerificationEmail(email, otp); // Implement this function to send OTP via email
 
-  // Resend verification email with new OTP
-  await sendVerificationEmail(email, otp);
+    ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
+  },
+);
 
-  ResponseHandler.success(res, i18n.__('OTP_RESENT_SUCCESS'));
-});
+// Function to update user password based on OTP
+export const updatePasswordWithOTP = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email, otp, newPassword } = req.body;
+
+    // Step 1: Validate OTP
+    const isValidOTP = await userModel.checkResetPasswordOTP(email, otp);
+
+    if (!isValidOTP) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
+    } // Hash the password
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    // Step 2: Update password
+    await userModel.updateUserPassword(email, hashedPassword);
+
+    // Step 3: Remove/reset OTP (optional, depending on your workflow)
+    await userModel.updateResetPasswordOTP(email, null);
+
+    // Respond with success message
+    return ResponseHandler.success(
+      res,
+      i18n.__('PASSWORD_RESET_SUCCESS'),
+      null,
+    );
+  },
+);

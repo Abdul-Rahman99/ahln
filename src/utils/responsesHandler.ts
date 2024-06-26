@@ -26,12 +26,19 @@ class ResponseHandler {
     res: Response,
     message: string,
     data: any = null,
+    token: string | null = null,
   ): Response {
-    return res.status(400).json({
+    const responseBody: any = {
       success: false,
       message,
       data,
-    });
+    };
+
+    if (token) {
+      responseBody.token = token;
+    }
+
+    return res.status(400).json(responseBody);
   }
 
   static internalError(

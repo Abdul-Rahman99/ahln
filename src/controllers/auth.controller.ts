@@ -78,7 +78,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Generate JWT token
   const token = generateToken(user);
 
-  ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), user, token);
+  ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), token);
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -114,7 +114,11 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
       if (fcmToken) {
         await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
       }
-      ResponseHandler.success(res, i18n.__('EMAIL_VERIFIED_SUCCESS'));
+      ResponseHandler.success(
+        res,
+        i18n.__('EMAIL_VERIFIED_SUCCESS'),
+        currentUser,
+      );
     } catch (error: any) {
       // Handle any errors that occur during verification
       ResponseHandler.internalError(res, error.message);
@@ -137,7 +141,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const isPasswordValid = bcrypt.compareSync(password, user.password);
-  console.log(isPasswordValid);
+  // console.log(isPasswordValid);
 
   if (!isPasswordValid) {
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
@@ -152,8 +156,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       {
         is_active: user.is_active,
         email_verified: user.email_verified,
-        token,
       },
+      token,
     );
   }
 
@@ -163,7 +167,20 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Send response
-  ResponseHandler.success(res, i18n.__('LOGIN_SUCCESS'), user, token);
+  ResponseHandler.success(
+    res,
+    i18n.__('LOGIN_SUCCESS'),
+    {
+      id: user.id,
+      user_name: user.user_name,
+      role_id: user.role_id,
+      is_active: user.is_active,
+      phone_number: user.phone_number,
+      email: user.email,
+      preferred_language: user.preferred_language,
+    },
+    token,
+  );
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {

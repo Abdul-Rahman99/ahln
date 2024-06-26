@@ -80,7 +80,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const token = generateToken(user);
 
   res
-    .status(201)
+    .status(200)
     .json({ success: true, message: i18n.__('REGISTER_SUCCESS'), token });
 });
 

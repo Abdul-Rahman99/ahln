@@ -1,6 +1,5 @@
 import { Tablet } from '../../types/tablet.type';
 declare class TabletModel {
-    generateTabletId(): Promise<string>;
     createTablet(t: Partial<Tablet>): Promise<Tablet>;
     getMany(): Promise<Tablet[]>;
     getOne(id: string): Promise<Tablet>;

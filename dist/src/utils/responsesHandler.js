@@ -6,18 +6,24 @@ class ResponseHandler {
             success: true,
             message,
             data,
+            token,
+        };
+        if (data === null)
+            if (token) {
+                responseBody.token = token;
+            }
+        return res.status(200).json(responseBody);
+    }
+    static badRequest(res, message, data = null, token = null) {
+        const responseBody = {
+            success: false,
+            message,
+            data,
         };
         if (token) {
             responseBody.token = token;
         }
-        return res.status(200).json(responseBody);
-    }
-    static badRequest(res, message, data = null) {
-        return res.status(400).json({
-            success: false,
-            message,
-            data,
-        });
+        return res.status(400).json(responseBody);
     }
     static internalError(res, message, data = null) {
         return res.status(500).json({

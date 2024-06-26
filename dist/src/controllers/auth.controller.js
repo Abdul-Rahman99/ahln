@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resendOtp = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
+exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -59,7 +59,7 @@ exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     await userModel.saveOtp(email, otp);
     sendVerificationEmail(email, otp);
     const token = generateToken(user);
-    responsesHandler_1.default.success(res, i18n_1.default.__('REGISTER_SUCCESS'), user, token);
+    responsesHandler_1.default.success(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
 });
 exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, otp, fcmToken } = req.body;
@@ -79,10 +79,11 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
                 email_verified: true,
                 register_otp: null,
             });
+            const token = generateToken(currentUser);
             if (fcmToken) {
                 await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
             }
-            responsesHandler_1.default.success(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'));
+            responsesHandler_1.default.success(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), currentUser, token);
         }
         catch (error) {
             responsesHandler_1.default.internalError(res, error.message);
@@ -99,7 +100,6 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const isPasswordValid = bcrypt_1.default.compareSync(password, user.password);
-    console.log(isPasswordValid);
     if (!isPasswordValid) {
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
@@ -108,13 +108,20 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_INACTIVE_OR_UNVERIFIED'), {
             is_active: user.is_active,
             email_verified: user.email_verified,
-            token,
-        });
+        }, token);
     }
     if (fcmToken) {
         await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
-    responsesHandler_1.default.success(res, i18n_1.default.__('LOGIN_SUCCESS'), user, token);
+    responsesHandler_1.default.success(res, i18n_1.default.__('LOGIN_SUCCESS'), {
+        id: user.id,
+        user_name: user.user_name,
+        role_id: user.role_id,
+        is_active: user.is_active,
+        phone_number: user.phone_number,
+        email: user.email,
+        preferred_language: user.preferred_language,
+    }, token);
 });
 exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {
     const user = req.currentUser;
@@ -123,15 +130,22 @@ exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {
 exports.logout = (0, asyncHandler_1.default)(async (req, res) => {
     responsesHandler_1.default.success(res, i18n_1.default.__('LOGOUT_SUCCESS'));
 });
-exports.resendOtp = (0, asyncHandler_1.default)(async (req, res) => {
+exports.resendOtpAndUpdateDB = (0, asyncHandler_1.default)(async (req, res) => {
     const { email } = req.body;
-    const user = await userModel.findByEmail(email);
-    if (!user) {
-        responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
-    }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await userModel.saveOtp(email, otp);
+    await userModel.updateResetPasswordOTP(email, otp);
     await sendVerificationEmail(email, otp);
-    responsesHandler_1.default.success(res, i18n_1.default.__('OTP_RESENT_SUCCESS'));
+    responsesHandler_1.default.success(res, i18n_1.default.__('OTP_SENT_SUCCESSFULLY'));
+});
+exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+    const isValidOTP = await userModel.checkResetPasswordOTP(email, otp);
+    if (!isValidOTP) {
+        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'));
+    }
+    const hashedPassword = bcrypt_1.default.hashSync(newPassword, 10);
+    await userModel.updateUserPassword(email, hashedPassword);
+    await userModel.updateResetPasswordOTP(email, null);
+    return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
 });
 //# sourceMappingURL=auth.controller.js.map

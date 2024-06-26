@@ -249,6 +249,40 @@ class UserModel {
             throw new Error(`Could not verify OTP for ${email}: ${error.message}`);
         }
     }
+    async updateUserPassword(email, newPassword) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `UPDATE users SET password = $1 WHERE email = $2`;
+            await connection.query(sql, [newPassword, email]);
+            connection.release();
+        }
+        catch (error) {
+            throw new Error(`Could not update password for user ${email}: ${error.message}`);
+        }
+    }
+    async checkResetPasswordOTP(email, otp) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `SELECT * FROM users WHERE email = $1 AND register_otp = $2`;
+            const result = await connection.query(sql, [email, otp]);
+            connection.release();
+            return result.rows.length > 0;
+        }
+        catch (error) {
+            throw new Error(`Could not verify OTP for user ${email}: ${error.message}`);
+        }
+    }
+    async updateResetPasswordOTP(email, otp) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `UPDATE users SET register_otp = $1 WHERE email = $2`;
+            await connection.query(sql, [otp, email]);
+            connection.release();
+        }
+        catch (error) {
+            throw new Error(`Could not update OTP for user ${email}: ${error.message}`);
+        }
+    }
 }
 exports.default = UserModel;
 //# sourceMappingURL=user.model.js.map

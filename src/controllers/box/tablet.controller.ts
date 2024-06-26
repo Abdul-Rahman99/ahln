@@ -3,57 +3,106 @@ import TabletModel from '../../models/box/tablet.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Tablet } from '../../types/tablet.type';
 import i18n from '../../config/i18n';
+import ResponseHandler from '../../utils/responsesHandler';
 
 const tabletModel = new TabletModel();
 
 export const createTablet = asyncHandler(
   async (req: Request, res: Response) => {
-    const newTablet: Tablet = req.body;
-    const createdTablet = await tabletModel.createTablet(newTablet);
-    res.status(201).json({
-      success: true,
-      message: i18n.__('TABLET_CREATED_SUCCESSFULLY'),
-      data: createdTablet,
-    });
+    try {
+      const newTablet: Tablet = req.body;
+      const createdTablet = await tabletModel.createTablet(newTablet);
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
+        createdTablet,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_CREATION_FAILED'),
+        (error as Error).message,
+      );
+    }
   },
 );
 
 export const getAllTablets = asyncHandler(
   async (req: Request, res: Response) => {
-    const tablets = await tabletModel.getMany();
-    res.json({ success: true, data: tablets });
+    try {
+      const tablets = await tabletModel.getMany();
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLETS_RETRIEVED_SUCCESSFULLY'),
+        tablets,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLETS_RETRIEVAL_FAILED'),
+        (error as Error).message,
+      );
+    }
   },
 );
 
 export const getTabletById = asyncHandler(
   async (req: Request, res: Response) => {
-    const tabletId = req.params.id;
-    const tablet = await tabletModel.getOne(tabletId);
-    res.json({ success: true, tablet });
+    try {
+      const tabletId = req.params.id;
+      const tablet = await tabletModel.getOne(tabletId);
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_RETRIEVED_SUCCESSFULLY'),
+        tablet,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_RETRIEVAL_FAILED'),
+        (error as Error).message,
+      );
+    }
   },
 );
 
 export const updateTablet = asyncHandler(
   async (req: Request, res: Response) => {
-    const tabletId = req.params.id;
-    const tabletData: Partial<Tablet> = req.body;
-    const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
-    res.json({
-      message: i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
-      data: updatedTablet,
-      success: true,
-    });
+    try {
+      const tabletId = req.params.id;
+      const tabletData: Partial<Tablet> = req.body;
+      const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
+        updatedTablet,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_UPDATE_FAILED'),
+        (error as Error).message,
+      );
+    }
   },
 );
 
 export const deleteTablet = asyncHandler(
   async (req: Request, res: Response) => {
-    const tabletId = req.params.id;
-    const deletedTablet = await tabletModel.deleteOne(tabletId);
-    res.json({
-      message: i18n.__('TABLET_DELETED_SUCCESSFULLY'),
-      data: deletedTablet,
-      success: true,
-    });
+    try {
+      const tabletId = req.params.id;
+      const deletedTablet = await tabletModel.deleteOne(tabletId);
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
+        deletedTablet,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_DELETION_FAILED'),
+        (error as Error).message,
+      );
+    }
   },
 );

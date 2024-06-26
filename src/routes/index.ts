@@ -7,6 +7,8 @@ import rolePermissionRoutes from './user/role.permission.route';
 import userPermissionRoutes from './user/user.permission.route';
 import tabletRoute from './box/tablet.route';
 import userDevicesRoute from './user/user.device.route';
+import boxGenerationRoute from './box/box.generation.route';
+import addressRoute from './box/address.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -15,8 +17,10 @@ const mountRoutes = (app: Express) => {
   app.use('/api/permission', permissionRoute);
   app.use('/api/role-permissions', rolePermissionRoutes);
   app.use('/api/user-permissions', userPermissionRoutes);
-  app.use('/api/tablet', tabletRoute);
   app.use('/api/user-devices', userDevicesRoute);
+  app.use('/api/tablet', tabletRoute);
+  app.use('/api/box-generation', boxGenerationRoute);
+  app.use('/api/address', addressRoute);
   // app.use('/api/box', boxRoute);
 };
 

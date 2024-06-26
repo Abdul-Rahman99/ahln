@@ -12,18 +12,19 @@ exports.createTablet = (0, asyncHandler_1.default)(async (req, res) => {
     const newTablet = req.body;
     const createdTablet = await tabletModel.createTablet(newTablet);
     res.status(201).json({
+        success: true,
         message: i18n_1.default.__('TABLET_CREATED_SUCCESSFULLY'),
         data: createdTablet,
     });
 });
 exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res) => {
     const tablets = await tabletModel.getMany();
-    res.json(tablets);
+    res.json({ success: true, data: tablets });
 });
 exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
     const tabletId = req.params.id;
     const tablet = await tabletModel.getOne(tabletId);
-    res.json(tablet);
+    res.json({ success: true, tablet });
 });
 exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
     const tabletId = req.params.id;
@@ -31,7 +32,8 @@ exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
     const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
     res.json({
         message: i18n_1.default.__('TABLET_UPDATED_SUCCESSFULLY'),
-        updatedTablet,
+        data: updatedTablet,
+        success: true,
     });
 });
 exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
@@ -39,7 +41,8 @@ exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
     const deletedTablet = await tabletModel.deleteOne(tabletId);
     res.json({
         message: i18n_1.default.__('TABLET_DELETED_SUCCESSFULLY'),
-        deletedTablet,
+        data: deletedTablet,
+        success: true,
     });
 });
 //# sourceMappingURL=tablet.controller.js.map

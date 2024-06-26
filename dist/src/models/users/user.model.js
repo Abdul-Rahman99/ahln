@@ -7,10 +7,6 @@ const database_1 = __importDefault(require("../../config/database"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../../config"));
 const database_2 = __importDefault(require("../../config/database"));
-const hashPassword = (password) => {
-    const salt = parseInt(config_1.default.SALT_ROUNDS, 10);
-    return bcrypt_1.default.hashSync(`${password}${config_1.default.JWT_SECRET_KEY}`, salt);
-};
 class UserModel {
     async createUser(u) {
         try {
@@ -40,7 +36,6 @@ class UserModel {
             const id = await generateUserId();
             const createdAt = new Date();
             const updatedAt = new Date();
-            const hashedPassword = u.password ? await hashPassword(u.password) : null;
             const sqlFields = [
                 'id',
                 'user_name',
@@ -61,7 +56,7 @@ class UserModel {
                 u.is_active !== undefined ? u.is_active : true,
                 u.phone_number,
                 u.email?.toLowerCase(),
-                hashedPassword,
+                u.password,
                 u.preferred_language || null,
                 2,
             ];

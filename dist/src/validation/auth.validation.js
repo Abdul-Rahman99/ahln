@@ -10,19 +10,14 @@ const validatorMiddleware_1 = __importDefault(require("../middlewares/validatorM
 const config_1 = __importDefault(require("../../config"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const i18n_1 = __importDefault(require("../config/i18n"));
+const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const userModel = new user_model_1.default();
 exports.registerValidator = [
     (0, express_validator_1.body)('email')
         .notEmpty()
         .withMessage(i18n_1.default.__('EMAIL_REQUIRED'))
         .isEmail()
-        .withMessage(i18n_1.default.__('EMAIL_INVALID'))
-        .custom(async (email) => {
-        const emailExists = await userModel.emailExists(email);
-        if (emailExists) {
-            throw new Error(i18n_1.default.__('EMAIL_IN_USE'));
-        }
-    }),
+        .withMessage(i18n_1.default.__('EMAIL_INVALID')),
     (0, express_validator_1.body)('user_name').notEmpty().withMessage(i18n_1.default.__('NAME_REQUIRED')),
     (0, express_validator_1.body)('password')
         .notEmpty()
@@ -33,13 +28,7 @@ exports.registerValidator = [
         .notEmpty()
         .withMessage(i18n_1.default.__('PHONE_REQUIRED'))
         .isMobilePhone(['ar-AE', 'ar-SA'])
-        .withMessage(i18n_1.default.__('INVALID_PHONE_FORMAT'))
-        .custom(async (phone) => {
-        const phoneExists = await userModel.phoneExists(phone);
-        if (phoneExists) {
-            throw new Error(i18n_1.default.__('PHONE_ALREADY_REGISTERED'));
-        }
-    }),
+        .withMessage(i18n_1.default.__('INVALID_PHONE_FORMAT')),
     validatorMiddleware_1.default,
 ];
 const validateLoginCredentials = async (email, password) => {
@@ -63,7 +52,7 @@ exports.loginValidator = [
             next();
         }
         catch (error) {
-            res.status(401).json({ message: error.message });
+            return responsesHandler_1.default.badRequest(res, 'Validation errors', error.array());
         }
     },
     validatorMiddleware_1.default,

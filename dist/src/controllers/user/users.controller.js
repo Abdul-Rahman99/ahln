@@ -11,29 +11,38 @@ const userModel = new user_model_1.default();
 exports.createUser = (0, asyncHandler_1.default)(async (req, res) => {
     const newUser = req.body;
     const createdUser = await userModel.createUser(newUser);
-    res.status(201).json({
+    res.status(200).json({
+        success: true,
         message: i18n_1.default.__('USER_CREATED_SUCCESSFULLY'),
         data: createdUser,
     });
 });
 exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res) => {
     const users = await userModel.getMany();
-    res.json(users);
+    res.json({ success: true, data: users });
 });
 exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
     const userId = req.params.id;
     const user = await userModel.getOne(userId);
-    res.json(user);
+    res.json({ success: true, data: user });
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
     const userId = req.params.id;
     const userData = req.body;
     const updatedUser = await userModel.updateOne(userData, userId);
-    res.json({ message: i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser });
+    res.json({
+        success: true,
+        message: i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'),
+        data: updatedUser,
+    });
 });
 exports.deleteUser = (0, asyncHandler_1.default)(async (req, res) => {
     const userId = req.params.id;
     const deletedUser = await userModel.deleteOne(userId);
-    res.json({ message: i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser });
+    res.json({
+        success: true,
+        message: i18n_1.default.__('USER_DELETED_SUCCESSFULLY'),
+        data: deletedUser,
+    });
 });
 //# sourceMappingURL=users.controller.js.map

@@ -11,15 +11,21 @@ const assignPermissionToRole = async (req, res) => {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (isAssigned) {
-            return res
-                .status(400)
-                .json({ message: 'Permission is already assigned to the role.' });
+            return res.status(400).json({
+                success: false,
+                message: 'Permission is already assigned to the role.',
+            });
         }
         await rolePermissionModel.assignPermission(role_id, permission_id);
-        res.status(201).json({ message: 'Permission assigned to role' });
+        res
+            .status(201)
+            .json({ success: true, message: 'Permission assigned to role' });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 };
 exports.assignPermissionToRole = assignPermissionToRole;
@@ -28,15 +34,18 @@ const removePermissionFromRole = async (req, res) => {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (!isAssigned) {
-            return res
-                .status(400)
-                .json({ message: 'Permission is not assigned to the role.' });
+            return res.status(400).json({
+                success: false,
+                message: 'Permission is not assigned to the role.',
+            });
         }
         await rolePermissionModel.revokePermission(role_id, permission_id);
-        res.status(200).json({ message: 'Permission removed from role' });
+        res
+            .status(200)
+            .json({ success: true, message: 'Permission removed from role' });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.removePermissionFromRole = removePermissionFromRole;
@@ -46,19 +55,19 @@ const getPermissionsByRole = async (req, res) => {
         if (!roleId) {
             return res
                 .status(400)
-                .json({ message: 'Role ID parameter is required.' });
+                .json({ success: false, message: 'Role ID parameter is required.' });
         }
         const roleIdNumber = Number(roleId);
         if (isNaN(roleIdNumber)) {
             return res
                 .status(400)
-                .json({ message: 'Role ID must be a valid number.' });
+                .json({ success: false, message: 'Role ID must be a valid number.' });
         }
         const permissions = await rolePermissionModel.getPermissionsByRole(roleIdNumber);
-        res.status(200).json(permissions);
+        res.status(200).json({ success: true, data: permissions });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.getPermissionsByRole = getPermissionsByRole;

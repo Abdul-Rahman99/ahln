@@ -10,20 +10,20 @@ const createPermission = async (req, res) => {
     try {
         const { title, description } = req.body;
         const permission = await permissionModel.create(title, description);
-        res.status(201).json(permission);
+        res.status(201).json({ success: true, data: permission });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.createPermission = createPermission;
 const getAllPermissions = async (req, res) => {
     try {
         const permissions = await permissionModel.getAll();
-        res.status(200).json(permissions);
+        res.status(200).json({ success: true, data: permissions });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.getAllPermissions = getAllPermissions;
@@ -31,10 +31,10 @@ const getPermissionById = async (req, res) => {
     try {
         const { id } = req.params;
         const permission = await permissionModel.getById(Number(id));
-        res.status(200).json(permission);
+        res.status(200).json({ success: true, data: permission });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.getPermissionById = getPermissionById;
@@ -43,10 +43,10 @@ const updatePermission = async (req, res) => {
         const { id } = req.params;
         const { title, description } = req.body;
         const permission = await permissionModel.update(Number(id), title, description);
-        res.status(200).json(permission);
+        res.status(200).json({ success: true, data: permission });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.updatePermission = updatePermission;
@@ -54,10 +54,10 @@ const deletePermission = async (req, res) => {
     try {
         const { id } = req.params;
         const permission = await permissionModel.delete(Number(id));
-        res.status(200).json(permission);
+        res.status(200).json({ success: true, data: permission });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.deletePermission = deletePermission;

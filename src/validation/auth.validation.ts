@@ -5,7 +5,8 @@ import validatorMiddleware from '../middlewares/validatorMiddleware';
 import config from '../../config';
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import i18n from '../config/i18n'; // Import i18n for localization
+import i18n from '../config/i18n';
+import ResponseHandler from '../utils/responsesHandler';
 
 const userModel = new UserModel();
 
@@ -14,13 +15,7 @@ export const registerValidator = [
     .notEmpty()
     .withMessage(i18n.__('EMAIL_REQUIRED'))
     .isEmail()
-    .withMessage(i18n.__('EMAIL_INVALID'))
-    .custom(async (email) => {
-      const emailExists = await userModel.emailExists(email);
-      if (emailExists) {
-        throw new Error(i18n.__('EMAIL_IN_USE'));
-      }
-    }),
+    .withMessage(i18n.__('EMAIL_INVALID')),
   body('user_name').notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
   body('password')
     .notEmpty()
@@ -31,13 +26,7 @@ export const registerValidator = [
     .notEmpty()
     .withMessage(i18n.__('PHONE_REQUIRED'))
     .isMobilePhone(['ar-AE', 'ar-SA'])
-    .withMessage(i18n.__('INVALID_PHONE_FORMAT'))
-    .custom(async (phone) => {
-      const phoneExists = await userModel.phoneExists(phone);
-      if (phoneExists) {
-        throw new Error(i18n.__('PHONE_ALREADY_REGISTERED'));
-      }
-    }),
+    .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
   validatorMiddleware,
 ];
 
@@ -65,7 +54,11 @@ export const loginValidator = [
       await validateLoginCredentials(email, password);
       next();
     } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
+      return ResponseHandler.badRequest(
+        res,
+        'Validation errors',
+        error.array(),
+      );
     }
   },
   validatorMiddleware,

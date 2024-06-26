@@ -10,16 +10,11 @@ import {
 import verifyToken from '../middlewares/verifyToken';
 // import { sendVerificationEmail } from '../controllers/auth.controller';
 
-import {
-  loginValidator,
-  registerValidator,
-} from '../validation/auth.validation';
-
 const router = express.Router();
 
-router.post('/register', registerValidator, register);
+router.post('/register', register);
 
-router.post('/login', loginValidator, login);
+router.post('/login', login);
 
 router.get('/current', verifyToken, currentUser);
 

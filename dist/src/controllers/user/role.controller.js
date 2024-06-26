@@ -10,20 +10,20 @@ const createRole = async (req, res) => {
     try {
         const { title, description } = req.body;
         const role = await roleModel.create(title, description);
-        res.status(201).json(role);
+        res.status(201).json({ success: true, data: role });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.createRole = createRole;
 const getAllRoles = async (req, res) => {
     try {
         const roles = await roleModel.getAll();
-        res.status(200).json(roles);
+        res.status(200).json({ success: true, data: roles });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.getAllRoles = getAllRoles;
@@ -31,10 +31,10 @@ const getRoleById = async (req, res) => {
     try {
         const { id } = req.params;
         const role = await roleModel.getById(Number(id));
-        res.status(200).json(role);
+        res.status(200).json({ success: true, data: role });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.getRoleById = getRoleById;
@@ -43,10 +43,10 @@ const updateRole = async (req, res) => {
         const { id } = req.params;
         const { title, description } = req.body;
         const role = await roleModel.update(Number(id), title, description);
-        res.status(200).json(role);
+        res.status(200).json({ success: true, data: role });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.updateRole = updateRole;
@@ -54,10 +54,10 @@ const deleteRole = async (req, res) => {
     try {
         const { id } = req.params;
         const role = await roleModel.delete(Number(id));
-        res.status(200).json(role);
+        res.status(200).json({ success: true, data: role });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 exports.deleteRole = deleteRole;

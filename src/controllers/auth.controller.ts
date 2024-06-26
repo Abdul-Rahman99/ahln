@@ -58,7 +58,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   // Hash the password
   const hashedPassword = bcrypt.hashSync(password, 10);
-  
+
   // Create the user
   const user = await userModel.createUser({
     email,
@@ -159,18 +159,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       .status(400)
       .json({ success: false, message: i18n.__('INVALID_CREDENTIALS') });
   }
-
+  // Generate token
+  const token = generateToken(user);
   // Check if the user is active and email is verified
   if (!user.is_active || !user.email_verified) {
     return res.status(400).json({
       success: false,
       is_active: user.is_active,
       email_verified: user.email_verified,
+      token,
     });
   }
-
-  // Generate token
-  const token = generateToken(user);
 
   // Save the FCM token and user ID to the user_devices table
   if (fcmToken) {

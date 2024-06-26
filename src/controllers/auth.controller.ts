@@ -78,7 +78,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Generate JWT token
   const token = generateToken(user);
 
-  ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), token);
+  ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), null, token);
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {

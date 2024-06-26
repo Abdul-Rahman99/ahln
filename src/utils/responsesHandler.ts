@@ -13,11 +13,12 @@ class ResponseHandler {
       success: true,
       message,
       data,
+      token,
     };
-
-    if (token) {
-      responseBody.token = token;
-    }
+    if (data === null)
+      if (token) {
+        responseBody.token = token;
+      }
 
     return res.status(200).json(responseBody);
   }

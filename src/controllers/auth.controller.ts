@@ -109,7 +109,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
         email_verified: true,
         register_otp: null,
       });
-
+      const token = generateToken(currentUser);
       // Save the FCM token and user ID to the user_devices table
       if (fcmToken) {
         await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
@@ -118,6 +118,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
         res,
         i18n.__('EMAIL_VERIFIED_SUCCESS'),
         currentUser,
+        token,
       );
     } catch (error: any) {
       // Handle any errors that occur during verification

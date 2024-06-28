@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const config_1 = __importDefault(require("../../../config"));
 const database_2 = __importDefault(require("../../config/database"));
 class UserModel {
     async createUser(u) {
@@ -120,6 +119,11 @@ class UserModel {
     async updateOne(u, id) {
         try {
             const connection = await database_1.default.connect();
+            const checkSql = 'SELECT * FROM users WHERE id=$1';
+            const checkResult = await connection.query(checkSql, [id]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`User with ID ${id} does not exist`);
+            }
             const queryParams = [];
             let paramIndex = 1;
             const updatedAt = new Date();
@@ -129,7 +133,7 @@ class UserModel {
                     key !== 'id' &&
                     key !== 'createdAt') {
                     if (key === 'password') {
-                        queryParams.push(bcrypt_1.default.hashSync(u.password + config_1.default.JWT_SECRET_KEY, 10));
+                        queryParams.push(bcrypt_1.default.hashSync(u.password, 10));
                     }
                     else if (key === 'email') {
                         queryParams.push(u[key].toLowerCase());

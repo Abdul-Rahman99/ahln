@@ -11,7 +11,7 @@ class BoxGenerationModel {
 
       // Fetch the next sequence value (box generation number)
       const result = await db.query(
-        'SELECT MAX(CAST(SUBSTRING(id FROM 6 FOR 7) AS INTEGER)) AS max_id FROM Box_Generation',
+        'SELECT MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)) AS max_id FROM Box_Generation',
       );
       if (result.rows.length > 0) {
         nextId = (result.rows[0].max_id || 0) + 1;
@@ -145,6 +145,15 @@ class BoxGenerationModel {
   ): Promise<BoxGeneration> {
     try {
       const connection = await db.connect();
+
+      // Check if the box generation exists
+      const checkSql = 'SELECT * FROM Box_Generation WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Box Generation with ID ${id} does not exist`);
+      }
+
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 

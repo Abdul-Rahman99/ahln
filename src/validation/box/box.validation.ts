@@ -1,65 +1,66 @@
-import { body, param } from 'express-validator';
-import validatorMiddleware from '../../middlewares/validatorMiddleware';
-import i18n from '../../config/i18n'; // Import i18n for localization
+import { check } from 'express-validator';
 
 export const createBoxValidator = [
-  body('compartments_number')
-    .optional()
-    .isInt({ min: 1, max: 3 })
-    .withMessage(i18n.__('COMPARTMENTS_NUMBER_INVALID')),
-  body('compartment1')
-    .optional()
+  check('id').notEmpty().withMessage('ID is required'),
+  check('serial_number').notEmpty().withMessage('Serial number is required'),
+  check('box_label').notEmpty().withMessage('Box label is required'),
+  check('has_empty_lockers')
     .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT1_STATUS_INVALID')),
-  body('compartment2')
+    .withMessage('Has empty lockers must be a boolean'),
+  check('current_tablet_id')
     .optional()
-    .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT2_STATUS_INVALID')),
-  body('compartment3')
+    .isInt()
+    .withMessage('Current tablet ID must be an integer'),
+  check('previous_tablet_id')
     .optional()
-    .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT3_STATUS_INVALID')),
-  body('video_id').isInt({ min: 1 }).withMessage(i18n.__('VIDEO_ID_REQUIRED')),
-  validatorMiddleware,
-];
-
-export const updateBoxValidator = [
-  param('id')
-    .isInt({ min: 1000000, max: 9999999 })
-    .withMessage(i18n.__('INVALID_ID')),
-  body('compartments_number')
+    .isInt()
+    .withMessage('Previous tablet ID must be an integer'),
+  check('box_model_id')
     .optional()
-    .isInt({ min: 1, max: 3 })
-    .withMessage(i18n.__('COMPARTMENTS_NUMBER_INVALID')),
-  body('compartment1')
+    .notEmpty()
+    .withMessage('Box model ID cannot be empty'),
+  check('address_id')
     .optional()
-    .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT1_STATUS_INVALID')),
-  body('compartment2')
-    .optional()
-    .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT2_STATUS_INVALID')),
-  body('compartment3')
-    .optional()
-    .isBoolean()
-    .withMessage(i18n.__('COMPARTMENT3_STATUS_INVALID')),
-  body('video_id')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage(i18n.__('VIDEO_ID_REQUIRED')),
-  validatorMiddleware,
+    .isInt()
+    .withMessage('Address ID must be an integer'),
 ];
 
 export const getBoxValidator = [
-  param('id')
-    .isInt({ min: 1000000, max: 9999999 })
-    .withMessage(i18n.__('INVALID_ID')),
-  validatorMiddleware,
+  check('id').notEmpty().withMessage('Box ID is required'),
+];
+
+export const updateBoxValidator = [
+  check('id').optional().notEmpty().withMessage('ID cannot be empty'),
+  check('serial_number')
+    .optional()
+    .notEmpty()
+    .withMessage('Serial number cannot be empty'),
+  check('box_label')
+    .optional()
+    .notEmpty()
+    .withMessage('Box label cannot be empty'),
+  check('has_empty_lockers')
+    .optional()
+    .isBoolean()
+    .withMessage('Has empty lockers must be a boolean'),
+  check('current_tablet_id')
+    .optional()
+    .isInt()
+    .withMessage('Current tablet ID must be an integer'),
+  check('previous_tablet_id')
+    .optional()
+    .isInt()
+    .withMessage('Previous tablet ID must be an integer'),
+  check('box_model_id')
+    .optional()
+    .notEmpty()
+    .withMessage('Box model ID cannot be empty'),
+  check('address_id')
+    .optional()
+    .isInt()
+    .withMessage('Address ID must be an integer'),
 ];
 
 export const deleteBoxValidator = [
-  param('id')
-    .isInt({ min: 1000000, max: 9999999 })
-    .withMessage(i18n.__('INVALID_ID')),
-  validatorMiddleware,
+  check('id').notEmpty().withMessage('Box ID is required'),
 ];

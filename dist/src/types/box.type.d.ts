@@ -1,11 +1,12 @@
-type Box = {
-    id?: string;
-    compartments_number: number;
-    compartment1: boolean;
-    compartment2: boolean;
-    compartment3: boolean;
-    video_id: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-};
-export default Box;
+export interface Box {
+    id: string;
+    serial_number: string;
+    box_label: string;
+    createdAt: Date;
+    updatedAt: Date;
+    has_empty_lockers: boolean;
+    current_tablet_id?: number;
+    previous_tablet_id?: number;
+    box_model_id?: string;
+    address_id?: number;
+}

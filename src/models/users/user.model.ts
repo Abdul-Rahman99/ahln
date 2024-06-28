@@ -2,7 +2,6 @@
 import { User } from '../../types/user.type';
 import db from '../../config/database';
 import bcrypt from 'bcrypt';
-import config from '../../../config';
 import pool from '../../config/database';
 
 class UserModel {
@@ -152,6 +151,13 @@ class UserModel {
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
       const connection = await db.connect();
+      // Check if the user exists
+      const checkSql = 'SELECT * FROM users WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`User with ID ${id} does not exist`);
+      }
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
@@ -165,12 +171,7 @@ class UserModel {
             key !== 'createdAt'
           ) {
             if (key === 'password') {
-              queryParams.push(
-                bcrypt.hashSync(
-                  (u.password as string) + config.JWT_SECRET_KEY,
-                  10,
-                ),
-              ); // Hash the password if provided
+              queryParams.push(bcrypt.hashSync(u.password as string, 10)); // Hash the password if provided
             } else if (key === 'email') {
               queryParams.push((u[key as keyof User] as string).toLowerCase()); // Convert email to lowercase
             } else {

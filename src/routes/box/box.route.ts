@@ -1,55 +1,64 @@
-// import express from 'express';
-// import {
-//   createBox,
-//   getAllBoxes,
-//   getBoxById,
-//   updateBox,
-//   deleteBox,
-// } from '../controllers/box.controller';
+import express from 'express';
+import {
+  createBox,
+  getAllBoxes,
+  getBoxById,
+  updateBox,
+  deleteBox,
+  getBoxesByGenerationId,
+} from '../../controllers/box/box.controller';
+
 // import {
 //   createBoxValidator,
-//   updateBoxValidator,
-//   getBoxValidator,
 //   deleteBoxValidator,
-// } from '../validation/box.validation';
-// import verifyToken from '../middlewares/verifyToken';
-// import {authorize} from '../middlewares/authorize';
-
-// const router = express.Router();
-
-// router.post(
-//   '/new',
-//   verifyToken,
-//   authorize('admin', 'super admin', 'operations'),
-//   createBoxValidator,
-//   createBox,
-// );
-// router.get(
-//   '/get-all',
-//   verifyToken,
-//   authorize('admin', 'super admin', 'operations'),
-//   getAllBoxes,
-// );
-// router.get(
-//   '/get-one/:id',
-//   verifyToken,
-//   authorize('admin', 'super admin', 'vendor', 'operations', 'customer'),
 //   getBoxValidator,
-//   getBoxById,
-// );
-// router.put(
-//   '/update/:id',
-//   verifyToken,
-//   authorize('admin', 'super admin'),
 //   updateBoxValidator,
-//   updateBox,
-// );
-// router.delete(
-//   '/delete/:id',
-//   verifyToken,
-//   authorize('admin', 'super admin'),
-//   deleteBoxValidator,
-//   deleteBox,
-// );
+// } from '../../validation/box/box.validation';
 
-// export default router;
+import verifyToken from '../../middlewares/verifyToken';
+import { authorize } from '../../middlewares/authorize';
+
+const router = express.Router();
+
+router.post(
+  '/new',
+  verifyToken,
+  authorize(['create_box']),
+  //   createBoxValidator,
+  createBox,
+);
+
+router.get('/get-all', verifyToken, authorize(['read_box']), getAllBoxes);
+
+router.get(
+  '/get-one/:id',
+  verifyToken,
+  authorize(['read_box']),
+  //   getBoxValidator,
+  getBoxById,
+);
+
+router.put(
+  '/update/:id',
+  verifyToken,
+  authorize(['update_box']),
+  //   updateBoxValidator,
+  updateBox,
+);
+
+router.delete(
+  '/delete/:id',
+  verifyToken,
+  authorize(['delete_box']),
+  //   deleteBoxValidator,
+  deleteBox,
+);
+
+router.get(
+  '/get-all/boxes-generation/:generationId',
+  verifyToken,
+  authorize(['read_box']),
+  getBoxesByGenerationId,
+);
+
+export default router;

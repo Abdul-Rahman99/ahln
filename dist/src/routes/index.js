@@ -13,6 +13,9 @@ const tablet_route_1 = __importDefault(require("./box/tablet.route"));
 const user_device_route_1 = __importDefault(require("./user/user.device.route"));
 const box_generation_route_1 = __importDefault(require("./box/box.generation.route"));
 const address_route_1 = __importDefault(require("./box/address.route"));
+const box_route_1 = __importDefault(require("./box/box.route"));
+const box_locker_route_1 = __importDefault(require("./box/box.locker.route"));
+const box_image_route_1 = __importDefault(require("./box/box.image.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -24,6 +27,9 @@ const mountRoutes = (app) => {
     app.use('/api/tablet', tablet_route_1.default);
     app.use('/api/box-generation', box_generation_route_1.default);
     app.use('/api/address', address_route_1.default);
+    app.use('/api/box', box_route_1.default);
+    app.use('/api/box-locker', box_locker_route_1.default);
+    app.use('/api/box-image', box_image_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

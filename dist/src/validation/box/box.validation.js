@@ -1,68 +1,66 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBoxValidator = exports.getBoxValidator = exports.updateBoxValidator = exports.createBoxValidator = void 0;
+exports.deleteBoxValidator = exports.updateBoxValidator = exports.getBoxValidator = exports.createBoxValidator = void 0;
 const express_validator_1 = require("express-validator");
-const validatorMiddleware_1 = __importDefault(require("../../middlewares/validatorMiddleware"));
-const i18n_1 = __importDefault(require("../../config/i18n"));
 exports.createBoxValidator = [
-    (0, express_validator_1.body)('compartments_number')
-        .optional()
-        .isInt({ min: 1, max: 3 })
-        .withMessage(i18n_1.default.__('COMPARTMENTS_NUMBER_INVALID')),
-    (0, express_validator_1.body)('compartment1')
-        .optional()
+    (0, express_validator_1.check)('id').notEmpty().withMessage('ID is required'),
+    (0, express_validator_1.check)('serial_number').notEmpty().withMessage('Serial number is required'),
+    (0, express_validator_1.check)('box_label').notEmpty().withMessage('Box label is required'),
+    (0, express_validator_1.check)('has_empty_lockers')
         .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT1_STATUS_INVALID')),
-    (0, express_validator_1.body)('compartment2')
+        .withMessage('Has empty lockers must be a boolean'),
+    (0, express_validator_1.check)('current_tablet_id')
         .optional()
-        .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT2_STATUS_INVALID')),
-    (0, express_validator_1.body)('compartment3')
+        .isInt()
+        .withMessage('Current tablet ID must be an integer'),
+    (0, express_validator_1.check)('previous_tablet_id')
         .optional()
-        .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT3_STATUS_INVALID')),
-    (0, express_validator_1.body)('video_id').isInt({ min: 1 }).withMessage(i18n_1.default.__('VIDEO_ID_REQUIRED')),
-    validatorMiddleware_1.default,
-];
-exports.updateBoxValidator = [
-    (0, express_validator_1.param)('id')
-        .isInt({ min: 1000000, max: 9999999 })
-        .withMessage(i18n_1.default.__('INVALID_ID')),
-    (0, express_validator_1.body)('compartments_number')
+        .isInt()
+        .withMessage('Previous tablet ID must be an integer'),
+    (0, express_validator_1.check)('box_model_id')
         .optional()
-        .isInt({ min: 1, max: 3 })
-        .withMessage(i18n_1.default.__('COMPARTMENTS_NUMBER_INVALID')),
-    (0, express_validator_1.body)('compartment1')
+        .notEmpty()
+        .withMessage('Box model ID cannot be empty'),
+    (0, express_validator_1.check)('address_id')
         .optional()
-        .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT1_STATUS_INVALID')),
-    (0, express_validator_1.body)('compartment2')
-        .optional()
-        .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT2_STATUS_INVALID')),
-    (0, express_validator_1.body)('compartment3')
-        .optional()
-        .isBoolean()
-        .withMessage(i18n_1.default.__('COMPARTMENT3_STATUS_INVALID')),
-    (0, express_validator_1.body)('video_id')
-        .optional()
-        .isInt({ min: 1 })
-        .withMessage(i18n_1.default.__('VIDEO_ID_REQUIRED')),
-    validatorMiddleware_1.default,
+        .isInt()
+        .withMessage('Address ID must be an integer'),
 ];
 exports.getBoxValidator = [
-    (0, express_validator_1.param)('id')
-        .isInt({ min: 1000000, max: 9999999 })
-        .withMessage(i18n_1.default.__('INVALID_ID')),
-    validatorMiddleware_1.default,
+    (0, express_validator_1.check)('id').notEmpty().withMessage('Box ID is required'),
+];
+exports.updateBoxValidator = [
+    (0, express_validator_1.check)('id').optional().notEmpty().withMessage('ID cannot be empty'),
+    (0, express_validator_1.check)('serial_number')
+        .optional()
+        .notEmpty()
+        .withMessage('Serial number cannot be empty'),
+    (0, express_validator_1.check)('box_label')
+        .optional()
+        .notEmpty()
+        .withMessage('Box label cannot be empty'),
+    (0, express_validator_1.check)('has_empty_lockers')
+        .optional()
+        .isBoolean()
+        .withMessage('Has empty lockers must be a boolean'),
+    (0, express_validator_1.check)('current_tablet_id')
+        .optional()
+        .isInt()
+        .withMessage('Current tablet ID must be an integer'),
+    (0, express_validator_1.check)('previous_tablet_id')
+        .optional()
+        .isInt()
+        .withMessage('Previous tablet ID must be an integer'),
+    (0, express_validator_1.check)('box_model_id')
+        .optional()
+        .notEmpty()
+        .withMessage('Box model ID cannot be empty'),
+    (0, express_validator_1.check)('address_id')
+        .optional()
+        .isInt()
+        .withMessage('Address ID must be an integer'),
 ];
 exports.deleteBoxValidator = [
-    (0, express_validator_1.param)('id')
-        .isInt({ min: 1000000, max: 9999999 })
-        .withMessage(i18n_1.default.__('INVALID_ID')),
-    validatorMiddleware_1.default,
+    (0, express_validator_1.check)('id').notEmpty().withMessage('Box ID is required'),
 ];
 //# sourceMappingURL=box.validation.js.map

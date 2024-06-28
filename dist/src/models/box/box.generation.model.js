@@ -9,7 +9,7 @@ class BoxGenerationModel {
         try {
             const currentYear = new Date().getFullYear().toString().slice(-2);
             let nextId = 1;
-            const result = await database_1.default.query('SELECT MAX(CAST(SUBSTRING(id FROM 6 FOR 7) AS INTEGER)) AS max_id FROM Box_Generation');
+            const result = await database_1.default.query('SELECT MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)) AS max_id FROM Box_Generation');
             if (result.rows.length > 0) {
                 nextId = (result.rows[0].max_id || 0) + 1;
             }
@@ -108,6 +108,11 @@ class BoxGenerationModel {
     async updateOne(b, id) {
         try {
             const connection = await database_1.default.connect();
+            const checkSql = 'SELECT * FROM Box_Generation WHERE id=$1';
+            const checkResult = await connection.query(checkSql, [id]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`Box Generation with ID ${id} does not exist`);
+            }
             const queryParams = [];
             let paramIndex = 1;
             const updatedAt = new Date();

@@ -95,6 +95,15 @@ class TabletModel {
   async updateOne(t: Partial<Tablet>, id: string): Promise<Tablet> {
     try {
       const connection = await db.connect();
+
+      // Check if the tablet exists
+      const checkSql = 'SELECT * FROM tablet WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Tablet with ID ${id} does not exist`);
+      }
+
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 

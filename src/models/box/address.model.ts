@@ -36,8 +36,8 @@ class AddressModel {
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                   RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
+                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
 
       const result = await connection.query(sql, sqlParams);
       connection.release();
@@ -95,6 +95,14 @@ class AddressModel {
   async updateOne(address: Partial<Address>, id: number): Promise<Address> {
     try {
       const connection = await db.connect();
+
+      // Check if the address exists
+      const checkSql = 'SELECT * FROM address WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Address with ID ${id} does not exist`);
+      }
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 

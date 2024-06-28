@@ -81,6 +81,11 @@ class AddressModel {
     async updateOne(address, id) {
         try {
             const connection = await database_1.default.connect();
+            const checkSql = 'SELECT * FROM address WHERE id=$1';
+            const checkResult = await connection.query(checkSql, [id]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`Address with ID ${id} does not exist`);
+            }
             const queryParams = [];
             let paramIndex = 1;
             const updatedAt = new Date();

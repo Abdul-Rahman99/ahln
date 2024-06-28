@@ -6,10 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class BoxImageModel {
     async createBoxImage(boxImage) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
+            const checkBoxIdSql = 'SELECT id FROM Box WHERE id=$1';
+            const checkBoxIdResult = await connection.query(checkBoxIdSql, [
+                boxImage.box_id,
+            ]);
+            if (checkBoxIdResult.rows.length === 0) {
+                throw new Error(`Box with ID ${boxImage.box_id} does not exist`);
+            }
             const sqlFields = [
                 'createdAt',
                 'updatedAt',
@@ -25,21 +32,39 @@ class BoxImageModel {
                 boxImage.delivery_package_id,
             ];
             const sql = `INSERT INTO Box_IMAGE (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                   RETURNING *`;
+                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                 RETURNING *`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
         }
         catch (error) {
+            connection.release();
             throw new Error(`Unable to create box image: ${error.message}`);
         }
     }
-    async getMany() {
+    async getMany({ date, deliveryPackageId, boxId, }) {
         try {
             const connection = await database_1.default.connect();
-            const sql = 'SELECT * FROM Box_IMAGE';
-            const result = await connection.query(sql);
+            let sql = 'SELECT * FROM Box_IMAGE WHERE 1=1';
+            const results = await connection.query(sql);
+            if (results.rows.length === 0) {
+                throw new Error('No addresses in the database');
+            }
+            const queryParams = [];
+            if (date) {
+                sql += ' AND DATE(createdAt) = $1';
+                queryParams.push(date);
+            }
+            if (deliveryPackageId) {
+                sql += ' AND delivery_package_id = $2';
+                queryParams.push(deliveryPackageId);
+            }
+            if (boxId) {
+                sql += ' AND box_id = $3';
+                queryParams.push(boxId);
+            }
+            const result = await connection.query(sql, queryParams);
             connection.release();
             return result.rows;
         }
@@ -47,11 +72,24 @@ class BoxImageModel {
             throw new Error(`Error retrieving box images: ${error.message}`);
         }
     }
-    async getOne(id) {
+    async getOne({ id, date, deliveryPackageId, boxId, }) {
         try {
             const connection = await database_1.default.connect();
-            const sql = 'SELECT * FROM Box_IMAGE WHERE id=$1';
-            const result = await connection.query(sql, [id]);
+            let sql = 'SELECT * FROM Box_IMAGE WHERE id=$1';
+            const queryParams = [id];
+            if (date) {
+                sql += ' AND DATE(createdAt) = $2';
+                queryParams.push(date);
+            }
+            if (deliveryPackageId) {
+                sql += ' AND delivery_package_id = $3';
+                queryParams.push(deliveryPackageId);
+            }
+            if (boxId) {
+                sql += ' AND box_id = $4';
+                queryParams.push(boxId);
+            }
+            const result = await connection.query(sql, queryParams);
             connection.release();
             if (result.rows.length === 0) {
                 throw new Error(`Could not find box image with ID ${id}`);

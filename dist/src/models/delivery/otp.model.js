@@ -40,6 +40,9 @@ class OTPModel {
             const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM OTP';
             const result = await connection.query(sql);
+            if (result.rows.length === 0) {
+                throw new Error('No boxes in the database');
+            }
             connection.release();
             return result.rows;
         }
@@ -99,6 +102,9 @@ class OTPModel {
     async deleteOne(id) {
         try {
             const connection = await database_1.default.connect();
+            if (!id) {
+                throw new Error('ID cannot be null. Please provide a valid OTP ID.');
+            }
             const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
             connection.release();

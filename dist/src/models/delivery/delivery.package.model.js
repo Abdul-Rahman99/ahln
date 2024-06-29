@@ -132,6 +132,9 @@ class DeliveryPackageModel {
     async deleteOne(id) {
         try {
             const connection = await database_1.default.connect();
+            if (!id) {
+                throw new Error('ID cannot be null. Please provide a valid Delivery Package ID.');
+            }
             const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
             connection.release();

@@ -4,5 +4,8 @@ CREATE TABLE IF NOT EXISTS OTP (
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     box_id VARCHAR(20) REFERENCES Box(id),
     box_locker_id VARCHAR(20) REFERENCES Box_Locker(id),
-    is_used BOOLEAN
+    is_used BOOLEAN DEFAULT FALSE,
+    otp VARCHAR(6) NOT NULL,
+    box_locker_string VARCHAR(255) NOT NULL,
+    delivery_package_id VARCHAR(20) REFERENCES Delivery_Package(id)
 );

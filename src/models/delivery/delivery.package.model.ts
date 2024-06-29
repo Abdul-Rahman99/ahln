@@ -89,6 +89,9 @@ class DeliveryPackageModel {
       const connection = await db.connect();
       const sql = 'SELECT * FROM Delivery_Package';
       const result = await connection.query(sql);
+      if (result.rows.length === 0) {
+        throw new Error('No Delivery Packages in the database');
+      }
       connection.release();
       return result.rows as DeliveryPackage[];
     } catch (error) {
@@ -172,6 +175,11 @@ class DeliveryPackageModel {
   async deleteOne(id: string): Promise<DeliveryPackage> {
     try {
       const connection = await db.connect();
+      if (!id) {
+        throw new Error(
+          'ID cannot be null. Please provide a valid Delivery Package ID.',
+        );
+      }
       const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
       const result = await connection.query(sql, [id]);
       connection.release();

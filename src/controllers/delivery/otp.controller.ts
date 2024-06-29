@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
-import OTPModel from '../../models/delivery/otp.model'
+import OTPModel from '../../models/delivery/otp.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
@@ -85,6 +85,49 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
     ResponseHandler.internalError(
       res,
       i18n.__('OTP_DELETION_FAILED'),
+      error.message,
+    );
+  }
+});
+
+export const getOTPsByUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.userId;
+      const otps = await otpModel.getOTPsByUser(userId);
+      ResponseHandler.success(
+        res,
+        i18n.__('OTPS_RETRIEVED_SUCCESSFULLY'),
+        otps,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('OTPS_RETRIEVAL_FAILED'),
+        error.message,
+      );
+    }
+  },
+);
+
+//function to check OTP
+export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { otp} = req.body;
+    const verifiedOTP = await otpModel.checkOTP(otp);
+    if (verifiedOTP) {
+      ResponseHandler.success(
+        res,
+        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+        verifiedOTP,
+      );
+    } else {
+      ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
+    }
+  } catch (error: any) {
+    ResponseHandler.internalError(
+      res,
+      i18n.__('OTP_VERIFICATION_FAILED'),
       error.message,
     );
   }

@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS Box_IMAGE (
     updatedAt TIMESTAMP DEFAULT now() NOT NULL,
     box_id VARCHAR(20) REFERENCES Box(id),
     image TEXT,
-    delivery_package_id INTEGER REFERENCES Delivery_Package(id)
+    delivery_package_id VARCHAR(20) REFERENCES Delivery_Package(id)
 );

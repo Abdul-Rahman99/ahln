@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
-<<<<<<< HEAD
 import OTPModel from '../../models/delivery/otp.model';
-=======
-import OTPModel from '../../models/delivery/otp.model'
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
 import asyncHandler from '../../middlewares/asyncHandler';
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
@@ -93,7 +89,6 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 });
-<<<<<<< HEAD
 
 export const getOTPsByUser = asyncHandler(
   async (req: Request, res: Response) => {
@@ -137,5 +132,3 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 });
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6

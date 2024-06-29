@@ -1,45 +1,30 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
 import db from '../../config/database';
 import { OTP } from '../../types/otp.type';
 
 class OTPModel {
   // Create OTP
-<<<<<<< HEAD
   async createOTP(otpData: Partial<OTP>): Promise<OTP> {
-=======
-  async createOTP(otp: Partial<OTP>): Promise<OTP> {
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
     try {
       const connection = await db.connect();
       const createdAt = new Date();
       const updatedAt = new Date();
 
-<<<<<<< HEAD
       // Generate the OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
       const sqlFields = [
         'createdAt',
         'updatedAt',
         'box_id',
         'box_locker_id',
         'is_used',
-<<<<<<< HEAD
         'otp',
         'box_locker_string',
         'delivery_package_id',
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
       ];
       const sqlParams = [
         createdAt,
         updatedAt,
-<<<<<<< HEAD
         otpData.box_id,
         otpData.box_locker_id,
         false, // is_used is set to false by default
@@ -50,15 +35,6 @@ class OTPModel {
 
       const sql = `INSERT INTO OTP (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-=======
-        otp.box_id,
-        otp.box_locker_id,
-        otp.is_used,
-      ];
-
-      const sql = `INSERT INTO OTP (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
@@ -70,7 +46,6 @@ class OTPModel {
     }
   }
 
-<<<<<<< HEAD
   async checkOTP(otp: string): Promise<OTP | null> {
     const connection = await db.connect();
     try {
@@ -99,21 +74,16 @@ class OTPModel {
     }
   }
 
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
   // Get all OTPs
   async getMany(): Promise<OTP[]> {
     try {
       const connection = await db.connect();
       const sql = 'SELECT * FROM OTP';
       const result = await connection.query(sql);
-<<<<<<< HEAD
 
       if (result.rows.length === 0) {
         throw new Error('No otpes in the database');
       }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
       connection.release();
 
       return result.rows as OTP[];
@@ -126,12 +96,9 @@ class OTPModel {
   async getOne(id: number): Promise<OTP> {
     try {
       const connection = await db.connect();
-<<<<<<< HEAD
       if (!id) {
         throw new Error('Please provide in id');
       }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
       const sql = 'SELECT * FROM OTP WHERE id=$1';
       const result = await connection.query(sql, [id]);
       connection.release();
@@ -178,17 +145,10 @@ class OTPModel {
         })
         .filter((field) => field !== null);
 
-<<<<<<< HEAD
       queryParams.push(updatedAt);
       updateFields.push(`updatedAt=$${paramIndex++}`);
 
       queryParams.push(id);
-=======
-      queryParams.push(updatedAt); // Add the updatedAt timestamp
-      updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
-
-      queryParams.push(id); // Add the OTP ID to the query parameters
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
 
       const sql = `UPDATE OTP SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
@@ -202,20 +162,13 @@ class OTPModel {
       );
     }
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
   // Delete OTP
   async deleteOne(id: number): Promise<OTP> {
     try {
       const connection = await db.connect();
-<<<<<<< HEAD
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid OTP ID.');
       }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
       const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
@@ -232,7 +185,6 @@ class OTPModel {
       );
     }
   }
-<<<<<<< HEAD
 
   // Get OTPs by User
   async getOTPsByUser(userId: string): Promise<OTP[]> {
@@ -267,8 +219,6 @@ class OTPModel {
       );
     }
   }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
 }
 
 export default OTPModel;

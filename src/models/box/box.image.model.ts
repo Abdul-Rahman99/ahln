@@ -198,6 +198,11 @@ class BoxImageModel {
   async deleteOne(id: number): Promise<BoxImage> {
     try {
       const connection = await db.connect();
+      if (!id) {
+        throw new Error(
+          'ID cannot be null. Please provide a valid box Image ID.',
+        );
+      }
       const sql = `DELETE FROM Box_IMAGE WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);

@@ -8,18 +8,15 @@ import asyncHandler from '../middlewares/asyncHandler';
 import config from '../../config';
 import { User } from '../types/user.type';
 import i18n from '../config/i18n';
-import { authMiddleware } from '../middlewares/auth.middleware';
 import UserDevicesModel from '../models/users/user.devices.model';
 import ResponseHandler from '../utils/responsesHandler';
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 
-const generateToken = (user: User) => {
-  return jwt.sign(
-    { id: user.id, email_verified: user.email_verified },
-    config.JWT_SECRET_KEY!,
-  );
-};
+// const generateToken = (token: string) => {
+//   return jwt.sign({ token }, config.JWT_SECRET_KEY!);
+// };
+
 const sendVerificationEmail = (email: string, otp: string) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -76,7 +73,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   sendVerificationEmail(email, otp);
 
   // Generate JWT token
-  const token = generateToken(user);
+  const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+
+  // Update user token in the database
+  await userModel.updateUserToken(user.id, token);
 
   ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), null, token);
 });
@@ -84,104 +84,109 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   const { email, otp, fcmToken } = req.body;
 
-  // Verify token using authMiddleware
-  authMiddleware(req, res, async () => {
-    const currentUser = req.currentUser as User;
+  try {
     const emailLower = email.toLowerCase();
-    try {
-      // Check if the provided email matches the token's email
-      if (currentUser.email !== emailLower) {
-        ResponseHandler.badRequest(
-          res,
-          i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
-        );
-      }
-
-      // Check if the provided OTP matches the user's OTP
-      const isOtpValid = await userModel.verifyOtp(emailLower, otp);
-      if (!isOtpValid) {
-        ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
-        return; // Return to exit the function
-      }
-
-      // Update the user's email_verified status
-      await userModel.updateUser(emailLower, {
-        email_verified: true,
-        register_otp: null,
-      });
-      const token = generateToken(currentUser);
-      // Save the FCM token and user ID to the user_devices table
-      if (fcmToken) {
-        await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
-      }
-      ResponseHandler.success(
-        res,
-        i18n.__('EMAIL_VERIFIED_SUCCESS'),
-        currentUser,
-        token,
-      );
-    } catch (error: any) {
-      // Handle any errors that occur during verification
-      ResponseHandler.internalError(res, error.message);
+    const currentUser = await userModel.findByEmail(emailLower);
+    // Fetch the user from the database
+    const userFromDb = await userModel.findByEmail(emailLower);
+    if (!userFromDb) {
+      return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
     }
-  });
-});
+    console.log(currentUser);
 
-export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password, fcmToken } = req.body;
+    // Verify the token from the request matches the one in the database
+    if (!currentUser || currentUser.token !== userFromDb.token) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+    }
 
-  // Check if both email and password are provided
-  if (!email || !password) {
-    return ResponseHandler.badRequest(res, i18n.__('MISSING_CREDENTIALS'));
-  }
+    // Check if the provided email matches the current user's email
+    if (currentUser.email.toLowerCase() !== emailLower) {
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
+      );
+    }
 
-  // Find the user by email
-  const user = await userModel.findByEmail(email);
-  if (user === null) {
-    return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
-  }
+    // Check if the provided OTP matches the user's OTP
+    const isOtpValid = await userModel.verifyOtp(emailLower, otp);
+    if (!isOtpValid) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
+    }
 
-  const isPasswordValid = bcrypt.compareSync(password, user.password);
-  // console.log(isPasswordValid);
+    // Update the user's email_verified status
+    await userModel.updateUser(emailLower, {
+      email_verified: true,
+      register_otp: null,
+    });
 
-  if (!isPasswordValid) {
-    return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
-  }
-  // Generate token
-  const token = generateToken(user);
-  // Check if the user is active and email is verified
-  if (!user.is_active || !user.email_verified) {
-    return ResponseHandler.badRequest(
+    // Retrieve the token from the database user
+    const token = userFromDb.token;
+
+    // Save the FCM token and user ID to the user_devices table
+    if (fcmToken) {
+      await userDevicesModel.saveUserDevice(userFromDb.id, fcmToken);
+    }
+
+    // Send success response
+    ResponseHandler.success(
       res,
-      i18n.__('USER_INACTIVE_OR_UNVERIFIED'),
+      i18n.__('EMAIL_VERIFIED_SUCCESS'),
       {
-        is_active: user.is_active,
-        email_verified: user.email_verified,
+        id: currentUser.id,
+        user_name: currentUser.user_name,
+        role_id: currentUser.role_id,
+        is_active: currentUser.is_active,
+        phone_number: currentUser.phone_number,
+        email: currentUser.email,
+        preferred_language: currentUser.preferred_language,
       },
       token,
     );
+  } catch (error: any) {
+    // Handle any errors that occur during verification
+    ResponseHandler.internalError(res, error.message);
   }
+});
 
-  // Save the FCM token and user ID to the user_devices table
-  if (fcmToken) {
-    await userDevicesModel.saveUserDevice(user.id, fcmToken);
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await userModel.findByEmail(email);
+    if (!user) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+    }
+    // Verify password
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    if (!isPasswordValid) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+
+    // Update user token in the database
+    await userModel.updateUserToken(user.id, token);
+
+    // Send success response with token
+    ResponseHandler.success(
+      res,
+      i18n.__('LOGIN_SUCCESS'),
+      {
+        id: user.id,
+        user_name: user.user_name,
+        role_id: user.role_id,
+        is_active: user.is_active,
+        phone_number: user.phone_number,
+        email: user.email,
+        preferred_language: user.preferred_language,
+      },
+      token,
+    );
+  } catch (error: any) {
+    ResponseHandler.internalError(res, error.message);
   }
-
-  // Send response
-  ResponseHandler.success(
-    res,
-    i18n.__('LOGIN_SUCCESS'),
-    {
-      id: user.id,
-      user_name: user.user_name,
-      role_id: user.role_id,
-      is_active: user.is_active,
-      phone_number: user.phone_number,
-      email: user.email,
-      preferred_language: user.preferred_language,
-    },
-    token,
-  );
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
@@ -190,7 +195,28 @@ export const currentUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
+  // Extract token from the request headers
+  const token = req.headers.authorization?.replace('Bearer ', '');
+
+  if (!token) {
+    return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+  }
+
+  try {
+    // Find the user by the token
+    const user = await userModel.findByToken(token);
+    if (!user) {
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+    }
+    console.log(user);
+    
+    await userModel.updateUserToken(user, null);
+    // Send a success response
+    ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
+  } catch (error: any) {
+    // Handle any errors that occur during logout
+    ResponseHandler.internalError(res, error.message);
+  }
 });
 
 // Function to resend OTP and update database

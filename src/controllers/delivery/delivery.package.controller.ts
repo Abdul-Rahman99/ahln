@@ -5,30 +5,49 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { DeliveryPackage } from '../../types/delivery.package.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import UserModel from '../../models/users/user.model';
+const userModel = new UserModel();
 
 const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const newDeliveryPackage: DeliveryPackage = req.body;
-      const createdDeliveryPackage = await deliveryPackageModel.createDeliveryPackage(
-        newDeliveryPackage
-      );
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      // Find the user by the token
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+
+      const newDeliveryPackage: Partial<DeliveryPackage> = req.body;
+      const createdDeliveryPackage =
+        await deliveryPackageModel.createDeliveryPackage(
+          user,
+          newDeliveryPackage,
+        );
+
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
-        createdDeliveryPackage
+        createdDeliveryPackage,
       );
     } catch (error: any) {
       ResponseHandler.internalError(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATION_FAILED'),
-        error.message
+        error.message,
       );
     }
-  }
+  },
 );
+
 
 export const getAllDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
@@ -37,38 +56,37 @@ export const getAllDeliveryPackages = asyncHandler(
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'),
-        deliveryPackages
+        deliveryPackages,
       );
     } catch (error: any) {
       ResponseHandler.internalError(
         res,
         i18n.__('DELIVERY_PACKAGES_RETRIEVAL_FAILED'),
-        error.message
+        error.message,
       );
     }
-  }
+  },
 );
 
 export const getDeliveryPackageById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
       const deliveryPackageId = req.params.id;
-      const deliveryPackage = await deliveryPackageModel.getOne(
-        deliveryPackageId
-      );
+      const deliveryPackage =
+        await deliveryPackageModel.getOne(deliveryPackageId);
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'),
-        deliveryPackage
+        deliveryPackage,
       );
     } catch (error: any) {
       ResponseHandler.internalError(
         res,
         i18n.__('DELIVERY_PACKAGE_RETRIEVAL_FAILED'),
-        error.message
+        error.message,
       );
     }
-  }
+  },
 );
 
 export const updateDeliveryPackage = asyncHandler(
@@ -78,21 +96,21 @@ export const updateDeliveryPackage = asyncHandler(
       const deliveryPackageData: Partial<DeliveryPackage> = req.body;
       const updatedDeliveryPackage = await deliveryPackageModel.updateOne(
         deliveryPackageData,
-        deliveryPackageId
+        deliveryPackageId,
       );
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
-        updatedDeliveryPackage
+        updatedDeliveryPackage,
       );
     } catch (error: any) {
       ResponseHandler.internalError(
         res,
         i18n.__('DELIVERY_PACKAGE_UPDATE_FAILED'),
-        error.message
+        error.message,
       );
     }
-  }
+  },
 );
 
 export const deleteDeliveryPackage = asyncHandler(

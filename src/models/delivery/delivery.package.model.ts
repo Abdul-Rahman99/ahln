@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import pool from '../../config/database';
 import db from '../../config/database';
 import { DeliveryPackage } from '../../types/delivery.package.type';
 
@@ -6,24 +7,38 @@ class DeliveryPackageModel {
   // Function to generate custom ID
   async generateCustomId(userId: string): Promise<string> {
     try {
-      const result = await db.query(
-        'SELECT MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)) AS max_id FROM Delivery_Package WHERE id LIKE $1',
-        [`${userId}%`],
+      // Extract the numeric part from userId, assuming it follows the pattern Ahln_{userId}_U0000002
+      const regexMatch = userId.match(/Ahln_(\d+)_U(\d+)/);
+      if (!regexMatch || regexMatch.length < 3) {
+        throw new Error('Invalid userId format');
+      }
+      const numericPart = regexMatch[2]; // Extract the numeric part after 'U'
+
+      // Query to get the maximum numeric part of the ID for the given user
+      const result = await pool.query(
+        'SELECT MAX(CAST(SUBSTRING(id FROM 17) AS INTEGER)) AS max_id FROM Delivery_Package WHERE id LIKE $1',
+        [`Ahln_${numericPart}_U%`],
       );
+
       let nextId = 1;
-      if (result.rows.length > 0 && result.rows[0].max_id) {
+      // Calculate the next numeric part
+      if (result.rows.length > 0 && result.rows[0].max_id !== null) {
         nextId = result.rows[0].max_id + 1;
       }
-      const nextIdFormatted = nextId.toString().padStart(7, '0');
-      return `${userId}_${nextIdFormatted}`;
+
+      // Format the next numeric part with zero-padding
+      const nextIdFormatted = nextId.toString().padStart(7, '0'); // Adjust padding as needed
+
+      // Construct and return the custom ID
+      return `Ahln_${numericPart}_U${nextIdFormatted}`;
     } catch (error: any) {
       console.error('Error generating custom ID:', error.message);
       throw error;
     }
   }
 
-  // Create new delivery package
   async createDeliveryPackage(
+    userId: string,
     deliveryPackage: Partial<DeliveryPackage>,
   ): Promise<DeliveryPackage> {
     const connection = await db.connect();
@@ -32,9 +47,7 @@ class DeliveryPackageModel {
       const updatedAt = new Date();
 
       // Generate custom ID
-      const customId = await this.generateCustomId(
-        deliveryPackage.customer_id as string,
-      );
+      const customId = await this.generateCustomId(userId);
 
       const sqlFields = [
         'id',
@@ -55,21 +68,21 @@ class DeliveryPackageModel {
         customId,
         createdAt,
         updatedAt,
-        deliveryPackage.customer_id,
-        deliveryPackage.vendor_id,
-        deliveryPackage.delivery_id,
-        deliveryPackage.tracking_number,
-        deliveryPackage.address_id,
-        deliveryPackage.shipping_company_id,
-        deliveryPackage.box_id,
-        deliveryPackage.box_locker_id,
-        deliveryPackage.shipment_status,
-        deliveryPackage.is_delivered,
+        userId,
+        deliveryPackage.vendor_id || null,
+        deliveryPackage.delivery_id || null,
+        deliveryPackage.tracking_number || null,
+        deliveryPackage.address_id || null,
+        deliveryPackage.shipping_company_id || null,
+        deliveryPackage.box_id || null,
+        deliveryPackage.box_locker_id || null,
+        deliveryPackage.shipment_status || 'pending',
+        deliveryPackage.is_delivered || false,
       ];
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                   RETURNING *`;
+                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                 RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
       connection.release();

@@ -12,8 +12,10 @@ import addressRoute from './box/address.route';
 import boxRoute from './box/box.route';
 import boxLockerRoute from './box/box.locker.route';
 import boxImageRoute from './box/box.image.route';
+import userBoxRoute from './box/user.box.route';
 import deliveryPackageRoute from './delivery/delivery.package.route';
 import otpRoute from './delivery/otp.route';
+import shippingCompanyRoute from './delivery/shipping.company.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -32,9 +34,11 @@ const mountRoutes = (app: Express) => {
   app.use('/api/box', boxRoute);
   app.use('/api/box-locker', boxLockerRoute);
   app.use('/api/box-image', boxImageRoute);
+  app.use('/api/user-box', userBoxRoute);
 
   app.use('/api/delivery-package', deliveryPackageRoute);
   app.use('/api/otp', otpRoute);
+  app.use('/api/shipping-company', shippingCompanyRoute);
 };
 
 export default mountRoutes;

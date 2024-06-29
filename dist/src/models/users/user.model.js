@@ -132,11 +132,11 @@ class UserModel {
                 if (u[key] !== undefined &&
                     key !== 'id' &&
                     key !== 'createdAt') {
-                    if (key === 'password') {
+                    if (key === 'password' && u.password) {
                         queryParams.push(bcrypt_1.default.hashSync(u.password, 10));
                     }
-                    else if (key === 'email') {
-                        queryParams.push(u[key].toLowerCase());
+                    else if (key === 'email' && u.email) {
+                        queryParams.push(u.email.toLowerCase());
                     }
                     else {
                         queryParams.push(u[key]);
@@ -286,6 +286,36 @@ class UserModel {
         catch (error) {
             throw new Error(`Could not update OTP for user ${email}: ${error.message}`);
         }
+    }
+    async updateUserToken(userId, token) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `UPDATE users SET token = $1 WHERE id = $2`;
+            await connection.query(sql, [token, userId]);
+            connection.release();
+        }
+        catch (error) {
+            throw new Error(`Failed to update user token: ${error.message}`);
+        }
+    }
+    async deleteUserToken(userId, token) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `UPDATE users SET token = null WHERE id = $2`;
+            await connection.query(sql, [token, userId]);
+            connection.release();
+        }
+        catch (error) {
+            throw new Error(`Failed to delete user token: ${error.message}`);
+        }
+    }
+    async findByToken(token) {
+        const sql = 'SELECT id FROM users WHERE token=$1';
+        const result = await database_1.default.query(sql, [token]);
+        if (result.rows.length) {
+            return result.rows[0].id;
+        }
+        return null;
     }
 }
 exports.default = UserModel;

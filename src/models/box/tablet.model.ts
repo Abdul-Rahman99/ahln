@@ -3,8 +3,6 @@ import { Tablet } from '../../types/tablet.type';
 import db from '../../config/database';
 
 class TabletModel {
-  // Generate a unique tablet ID
-
   // Create new tablet
   async createTablet(t: Partial<Tablet>): Promise<Tablet> {
     try {

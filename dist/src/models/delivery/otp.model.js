@@ -5,27 +5,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class OTPModel {
-    async createOTP(otp) {
+    async createOTP(otpData) {
         try {
             const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
             const sqlFields = [
                 'createdAt',
                 'updatedAt',
                 'box_id',
                 'box_locker_id',
                 'is_used',
+                'otp',
+                'box_locker_string',
+                'delivery_package_id',
             ];
             const sqlParams = [
                 createdAt,
                 updatedAt,
-                otp.box_id,
-                otp.box_locker_id,
-                otp.is_used,
+                otpData.box_id,
+                otpData.box_locker_id,
+                false,
+                otp,
+                otpData.box_locker_string,
+                otpData.delivery_package_id,
             ];
             const sql = `INSERT INTO OTP (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
@@ -35,17 +42,35 @@ class OTPModel {
             throw new Error(`Unable to create OTP: ${error.message}`);
         }
     }
+    async checkOTP(otp) {
+        const connection = await database_1.default.connect();
+        try {
+            if (!otp) {
+                throw new Error('Please provide an otp');
+            }
+            const result = await connection.query('SELECT * FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
+            if (result.rows.length === 0) {
+                return null;
+            }
+            const otpRecord = result.rows[0];
+            await connection.query('DELETE FROM OTP WHERE id = $1', [otpRecord.id]);
+            return otpRecord;
+        }
+        catch (error) {
+            throw new Error(`Unable to check OTP: ${error.message}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
     async getMany() {
         try {
             const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM OTP';
             const result = await connection.query(sql);
-<<<<<<< HEAD
             if (result.rows.length === 0) {
-                throw new Error('No boxes in the database');
+                throw new Error('No otpes in the database');
             }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
             connection.release();
             return result.rows;
         }
@@ -56,6 +81,9 @@ class OTPModel {
     async getOne(id) {
         try {
             const connection = await database_1.default.connect();
+            if (!id) {
+                throw new Error('Please provide in id');
+            }
             const sql = 'SELECT * FROM OTP WHERE id=$1';
             const result = await connection.query(sql, [id]);
             connection.release();
@@ -105,12 +133,9 @@ class OTPModel {
     async deleteOne(id) {
         try {
             const connection = await database_1.default.connect();
-<<<<<<< HEAD
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid OTP ID.');
             }
-=======
->>>>>>> ce58a39bd331e5af6e237f641e42a06c0bd628f6
             const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
             connection.release();
@@ -121,6 +146,32 @@ class OTPModel {
         }
         catch (error) {
             throw new Error(`Could not delete OTP ${id}: ${error.message}`);
+        }
+    }
+    async getOTPsByUser(userId) {
+        try {
+            const connection = await database_1.default.connect();
+            if (!userId) {
+                throw new Error('ID cannot be null. Please provide a valid User ID.');
+            }
+            const checkSql = 'SELECT * FROM users WHERE id=$1';
+            const checkResult = await connection.query(checkSql, [userId]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`OTP with ID ${userId} does not exist`);
+            }
+            const sql = `SELECT OTP.* FROM OTP
+                   INNER JOIN Box ON OTP.box_id = Box.id
+                   INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
+                   WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`;
+            const result = await connection.query(sql, [userId]);
+            if (result.rows.length === 0) {
+                throw new Error('No otp in the database');
+            }
+            connection.release();
+            return result.rows;
+        }
+        catch (error) {
+            throw new Error(`Error retrieving OTPs for user ${userId}: ${error.message}`);
         }
     }
 }

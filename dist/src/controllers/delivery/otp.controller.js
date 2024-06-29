@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOTP = exports.updateOTP = exports.getOTPById = exports.getAllOTPs = exports.createOTP = void 0;
+exports.checkOTP = exports.getOTPsByUser = exports.deleteOTP = exports.updateOTP = exports.getOTPById = exports.getAllOTPs = exports.createOTP = void 0;
 const otp_model_1 = __importDefault(require("../../models/delivery/otp.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -57,6 +57,31 @@ exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_DELETION_FAILED'), error.message);
+    }
+});
+exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const otps = await otpModel.getOTPsByUser(userId);
+        responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTPS_RETRIEVAL_FAILED'), error.message);
+    }
+});
+exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const verifiedOTP = await otpModel.checkOTP(otp);
+        if (verifiedOTP) {
+            responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), verifiedOTP);
+        }
+        else {
+            responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'), null);
+        }
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_VERIFICATION_FAILED'), error.message);
     }
 });
 //# sourceMappingURL=otp.controller.js.map

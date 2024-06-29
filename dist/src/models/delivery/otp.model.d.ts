@@ -1,9 +1,11 @@
 import { OTP } from '../../types/otp.type';
 declare class OTPModel {
-    createOTP(otp: Partial<OTP>): Promise<OTP>;
+    createOTP(otpData: Partial<OTP>): Promise<OTP>;
+    checkOTP(otp: string): Promise<OTP | null>;
     getMany(): Promise<OTP[]>;
     getOne(id: number): Promise<OTP>;
     updateOne(otp: Partial<OTP>, id: number): Promise<OTP>;
     deleteOne(id: number): Promise<OTP>;
+    getOTPsByUser(userId: string): Promise<OTP[]>;
 }
 export default OTPModel;

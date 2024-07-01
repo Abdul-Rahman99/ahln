@@ -46,19 +46,38 @@ class OTPModel {
     }
   }
 
-  async checkOTP(otp: string): Promise<OTP | null> {
+  async checkOTP(otp: string, deliveryPackageId: string): Promise<OTP | null> {
     const connection = await db.connect();
     try {
       if (!otp) {
         throw new Error('Please provide an otp');
       }
+
       const result = await connection.query(
         'SELECT * FROM OTP WHERE otp = $1 AND is_used = FALSE',
         [otp],
       );
 
       if (result.rows.length === 0) {
-        return null;
+        throw new Error('OTP not found for in OTP model');
+      }
+
+      if (!deliveryPackageId) {
+        throw new Error('Please provide a delivery package id');
+      }
+      const deliveryPackageResult = (
+        await connection.query(
+          'SELECT delivery_package_id FROM OTP WHERE OTP = $1',
+          [otp],
+        )
+      ).rows[0].delivery_package_id;
+
+      if (deliveryPackageResult != null) {
+        const updatedAt = new Date();
+        await connection.query(
+          'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE delivery_package_id = $4',
+          ['delivered', true, updatedAt, deliveryPackageId],
+        );
       }
 
       const otpRecord = result.rows[0];

@@ -4,28 +4,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
+const database_2 = __importDefault(require("../../config/database"));
 class DeliveryPackageModel {
     async generateCustomId(userId) {
         try {
-            const result = await database_1.default.query('SELECT MAX(CAST(SUBSTRING(id FROM 11 FOR 7) AS INTEGER)) AS max_id FROM Delivery_Package WHERE id LIKE $1', [`${userId}%`]);
+            const regexMatch = userId.match(/Ahln_(\d+)_U(\d+)/);
+            if (!regexMatch || regexMatch.length < 3) {
+                throw new Error('Invalid userId format');
+            }
+            const numericPart = regexMatch[2];
+            const result = await database_1.default.query('SELECT MAX(CAST(SUBSTRING(id FROM 17) AS INTEGER)) AS max_id FROM Delivery_Package WHERE id LIKE $1', [`Ahln_${numericPart}_U%`]);
             let nextId = 1;
-            if (result.rows.length > 0 && result.rows[0].max_id) {
+            if (result.rows.length > 0 && result.rows[0].max_id !== null) {
                 nextId = result.rows[0].max_id + 1;
             }
             const nextIdFormatted = nextId.toString().padStart(7, '0');
-            return `${userId}_${nextIdFormatted}`;
+            return `Ahln_${numericPart}_U${nextIdFormatted}`;
         }
         catch (error) {
             console.error('Error generating custom ID:', error.message);
             throw error;
         }
     }
-    async createDeliveryPackage(deliveryPackage) {
-        const connection = await database_1.default.connect();
+    async createDeliveryPackage(userId, deliveryPackage) {
+        const connection = await database_2.default.connect();
         try {
             const createdAt = new Date();
             const updatedAt = new Date();
-            const customId = await this.generateCustomId(deliveryPackage.customer_id);
+            const customId = await this.generateCustomId(userId);
             const sqlFields = [
                 'id',
                 'createdAt',
@@ -45,20 +51,20 @@ class DeliveryPackageModel {
                 customId,
                 createdAt,
                 updatedAt,
-                deliveryPackage.customer_id,
-                deliveryPackage.vendor_id,
-                deliveryPackage.delivery_id,
-                deliveryPackage.tracking_number,
-                deliveryPackage.address_id,
-                deliveryPackage.shipping_company_id,
-                deliveryPackage.box_id,
-                deliveryPackage.box_locker_id,
-                deliveryPackage.shipment_status,
-                deliveryPackage.is_delivered,
+                userId,
+                deliveryPackage.vendor_id || null,
+                deliveryPackage.delivery_id || null,
+                deliveryPackage.tracking_number || null,
+                deliveryPackage.address_id || null,
+                deliveryPackage.shipping_company_id || null,
+                deliveryPackage.box_id || null,
+                deliveryPackage.box_locker_id || null,
+                deliveryPackage.shipment_status || 'pending',
+                deliveryPackage.is_delivered || false,
             ];
             const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                   RETURNING *`;
+                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                 RETURNING *`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
@@ -70,7 +76,7 @@ class DeliveryPackageModel {
     }
     async getMany() {
         try {
-            const connection = await database_1.default.connect();
+            const connection = await database_2.default.connect();
             const sql = 'SELECT * FROM Delivery_Package';
             const result = await connection.query(sql);
             if (result.rows.length === 0) {
@@ -85,7 +91,7 @@ class DeliveryPackageModel {
     }
     async getOne(id) {
         try {
-            const connection = await database_1.default.connect();
+            const connection = await database_2.default.connect();
             const sql = 'SELECT * FROM Delivery_Package WHERE id=$1';
             const result = await connection.query(sql, [id]);
             connection.release();
@@ -100,7 +106,7 @@ class DeliveryPackageModel {
     }
     async updateOne(deliveryPackage, id) {
         try {
-            const connection = await database_1.default.connect();
+            const connection = await database_2.default.connect();
             const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -134,7 +140,7 @@ class DeliveryPackageModel {
     }
     async deleteOne(id) {
         try {
-            const connection = await database_1.default.connect();
+            const connection = await database_2.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid Delivery Package ID.');
             }
@@ -148,6 +154,21 @@ class DeliveryPackageModel {
         }
         catch (error) {
             throw new Error(`Could not delete delivery package ${id}: ${error.message}`);
+        }
+    }
+    async getPackagesByUser(userId) {
+        try {
+            const connection = await database_2.default.connect();
+            const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1';
+            const result = await connection.query(sql, [userId]);
+            connection.release();
+            if (result.rows.length === 0) {
+                throw new Error('No Delivery Packages found for this user');
+            }
+            return result.rows;
+        }
+        catch (error) {
+            throw new Error(`Error retrieving delivery packages for user ${userId}: ${error.message}`);
         }
     }
 }

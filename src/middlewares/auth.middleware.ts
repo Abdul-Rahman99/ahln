@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import config from '../../config';
 import UserModel from '../models/users/user.model';
+import ResponseHandler from '../utils/responsesHandler';
+import i18n from '../config/i18n';
 
 const userModel = new UserModel();
 
@@ -11,23 +12,29 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-
-  if (!token) {
-    return res.status(401).json({ message: 'Token not provided' });
-  }
-
   try {
-    const decoded: any = jwt.verify(token, config.JWT_SECRET_KEY!);
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+    };
     const user = await userModel.getOne(decoded.id);
 
     if (!user) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
     }
 
-    req.currentUser = user;
+    req.user = user;
     next();
-  } catch (error) {
-    return res.status(401).json({ message: 'Unauthorized' });
+  } catch (error: any) {
+    ResponseHandler.internalError(
+      res,
+      i18n.__('AUTHENTICATION_FAILED'),
+      error.message,
+    );
   }
 };

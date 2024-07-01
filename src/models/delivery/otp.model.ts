@@ -75,7 +75,7 @@ class OTPModel {
       if (deliveryPackageResult != null) {
         const updatedAt = new Date();
         await connection.query(
-          'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE delivery_package_id = $4',
+          'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE id = $4',
           ['delivered', true, updatedAt, deliveryPackageId],
         );
       }

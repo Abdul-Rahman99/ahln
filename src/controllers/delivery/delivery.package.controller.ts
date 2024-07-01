@@ -48,7 +48,6 @@ export const createDeliveryPackage = asyncHandler(
   },
 );
 
-
 export const getAllDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -128,6 +127,43 @@ export const deleteDeliveryPackage = asyncHandler(
       ResponseHandler.internalError(
         res,
         i18n.__('DELIVERY_PACKAGE_DELETION_FAILED'),
+        error.message,
+      );
+    }
+  },
+);
+
+// Controller function to get all delivery packages for the current user
+export const getUserDeliveryPackages = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+      
+      const user = await userModel.findByToken(token);
+
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+
+      console.log(user);
+      
+      const deliveryPackages =
+        await deliveryPackageModel.getPackagesByUser(user);
+
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'),
+        deliveryPackages,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('DELIVERY_PACKAGES_FETCH_FAILED'),
         error.message,
       );
     }

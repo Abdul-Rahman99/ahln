@@ -208,6 +208,26 @@ class DeliveryPackageModel {
       );
     }
   }
+
+  // Get all delivery packages for a specific user
+  async getPackagesByUser(userId: string): Promise<DeliveryPackage[]> {
+    try {
+      const connection = await db.connect();
+      const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1';
+      const result = await connection.query(sql, [userId]);
+      connection.release();
+
+      if (result.rows.length === 0) {
+        throw new Error('No Delivery Packages found for this user');
+      }
+
+      return result.rows as DeliveryPackage[];
+    } catch (error) {
+      throw new Error(
+        `Error retrieving delivery packages for user ${userId}: ${(error as Error).message}`,
+      );
+    }
+  }
 }
 
 export default DeliveryPackageModel;

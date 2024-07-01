@@ -10,7 +10,7 @@ class UserBoxModel {
             const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
-            const userBoxId = `Ahln_${userBox.user_id}_${userBox.box_id}_${createdAt.getTime()}`;
+            const userBoxId = `Ahln_${userBox.user_id}_${userBox.box_id}`;
             const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
             const sqlParams = [
                 userBoxId,

@@ -19,6 +19,7 @@ const box_image_route_1 = __importDefault(require("./box/box.image.route"));
 const user_box_route_1 = __importDefault(require("./box/user.box.route"));
 const delivery_package_route_1 = __importDefault(require("./delivery/delivery.package.route"));
 const otp_route_1 = __importDefault(require("./delivery/otp.route"));
+const shipping_company_route_1 = __importDefault(require("./delivery/shipping.company.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -36,6 +37,7 @@ const mountRoutes = (app) => {
     app.use('/api/user-box', user_box_route_1.default);
     app.use('/api/delivery-package', delivery_package_route_1.default);
     app.use('/api/otp', otp_route_1.default);
+    app.use('/api/shipping-company', shipping_company_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

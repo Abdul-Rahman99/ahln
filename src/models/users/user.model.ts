@@ -398,10 +398,10 @@ class UserModel {
   }
 
   async findRoleById(id: string): Promise<number> {
-    const sql = 'SELECT role FROM users WHERE id=$1';
+    const sql = 'SELECT role_id FROM users WHERE id=$1';
     const result = await db.query(sql, [id]);
     if (result.rows.length) {
-      return result.rows[0].role as number;
+      return result.rows[0].role_id as number;
     }
     return 0;
   }

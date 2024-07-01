@@ -50,9 +50,9 @@ class DeliveryPackageModel {
       const customId = await this.generateCustomId(userId);
 
       const sqlBox = `SELECT address_id FROM Box WHERE id=$1`;
-      const address_id = await connection.query(sqlBox, [
-        deliveryPackage.box_id,
-      ]);
+      const address_id = (
+        await connection.query(sqlBox, [deliveryPackage.box_id])
+      ).rows[0].address_id;
 
       const sqlFields = [
         'id',

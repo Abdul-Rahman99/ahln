@@ -149,7 +149,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, fcmToken } = req.body;
 
   try {
     // Find the user by email
@@ -168,6 +168,22 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
     // Update user token in the database
     await userModel.updateUserToken(user.id, token);
+
+    if (!user.is_active || !user.email_verified) {
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('USER_INACTIVE_OR_UNVERIFED'),
+        {
+          is_active: user.is_active,
+          email_verified: user.email_verified,
+        },
+        token,
+      );
+    }
+
+    if (fcmToken) {
+      await userDevicesModel.saveUserDevice(user.id, fcmToken);
+    }
 
     // Send success response with token
     ResponseHandler.success(
@@ -209,7 +225,7 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
       return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
     }
     console.log(user);
-    
+
     await userModel.updateUserToken(user, null);
     // Send a success response
     ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));

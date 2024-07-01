@@ -4,6 +4,8 @@ import { Request, Response, NextFunction } from 'express';
 import RolePermissionModel from '../models/users/role.permission.model';
 import UserModel from '../models/users/user.model';
 import UserPermissionModel from '../models/users/user.permission.model';
+import ResponseHandler from '../utils/responsesHandler';
+import i18n from '../config/i18n';
 
 const userModel = new UserModel();
 const rolePermissionModel = new RolePermissionModel();
@@ -12,20 +14,30 @@ const userPermissionModel = new UserPermissionModel();
 export const authorize = (requiredPermissions: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = (req.user as any).id; 
-      const user = await userModel.getOne(userId);
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      // Find the user by the token
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+      const userRole = await userModel.findRoleById(user);
 
       // Get permissions from the user's role
-      const rolePermissions = await rolePermissionModel.getPermissionsByRole(
-        user.role_id,
-      );
+      const rolePermissions =
+        await rolePermissionModel.getPermissionsByRole(userRole);
       const rolePermissionTitles = rolePermissions.map(
         (permission) => permission.title,
       );
 
       // Get user-specific permissions
       const userPermissions =
-        await userPermissionModel.getPermissionsByUser(userId);
+        await userPermissionModel.getPermissionsByUser(user);
       const userPermissionTitles = userPermissions.map(
         (permission) => permission.title,
       );

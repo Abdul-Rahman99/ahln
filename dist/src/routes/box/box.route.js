@@ -8,7 +8,7 @@ const box_controller_1 = require("../../controllers/box/box.controller");
 const verifyToken_1 = __importDefault(require("../../middlewares/verifyToken"));
 const authorize_1 = require("../../middlewares/authorize");
 const router = express_1.default.Router();
-router.post('/new', verifyToken_1.default, (0, authorize_1.authorize)(['create_box']), box_controller_1.createBox);
+router.post('/new', box_controller_1.createBox);
 router.get('/get-all', verifyToken_1.default, (0, authorize_1.authorize)(['read_box']), box_controller_1.getAllBoxes);
 router.get('/get-one/:id', verifyToken_1.default, (0, authorize_1.authorize)(['read_box']), box_controller_1.getBoxById);
 router.put('/update/:id', verifyToken_1.default, (0, authorize_1.authorize)(['update_box']), box_controller_1.updateBox);

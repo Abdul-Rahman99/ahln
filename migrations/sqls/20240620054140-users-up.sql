@@ -172,7 +172,8 @@ CREATE TABLE IF NOT EXISTS users (
     preferred_language VARCHAR(20),    
     FOREIGN KEY (role_id) REFERENCES role(id),
     register_otp VARCHAR(255),
-    email_verified BOOLEAN DEFAULT false
+    email_verified BOOLEAN DEFAULT false,
+    token TEXT 
 );
 
 INSERT INTO users (id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, password, preferred_language) VALUES

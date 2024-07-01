@@ -15,5 +15,8 @@ declare class UserModel {
     updateUserPassword(email: string, newPassword: string): Promise<void>;
     checkResetPasswordOTP(email: string, otp: string): Promise<boolean>;
     updateResetPasswordOTP(email: string, otp: string | null): Promise<void>;
+    updateUserToken(userId: string, token: string | null): Promise<void>;
+    deleteUserToken(userId: string, token: string): Promise<void>;
+    findByToken(token: string): Promise<string | null>;
 }
 export default UserModel;

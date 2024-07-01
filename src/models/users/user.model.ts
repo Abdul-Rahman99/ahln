@@ -151,6 +151,7 @@ class UserModel {
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
       const connection = await db.connect();
+
       // Check if the user exists
       const checkSql = 'SELECT * FROM users WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -158,9 +159,9 @@ class UserModel {
       if (checkResult.rows.length === 0) {
         throw new Error(`User with ID ${id} does not exist`);
       }
+
       const queryParams: unknown[] = [];
       let paramIndex = 1;
-
       const updatedAt = new Date();
 
       const updateFields = Object.keys(u)
@@ -170,10 +171,10 @@ class UserModel {
             key !== 'id' &&
             key !== 'createdAt'
           ) {
-            if (key === 'password') {
-              queryParams.push(bcrypt.hashSync(u.password as string, 10)); // Hash the password if provided
-            } else if (key === 'email') {
-              queryParams.push((u[key as keyof User] as string).toLowerCase()); // Convert email to lowercase
+            if (key === 'password' && u.password) {
+              queryParams.push(bcrypt.hashSync(u.password, 10)); // Hash the password if provided
+            } else if (key === 'email' && u.email) {
+              queryParams.push(u.email.toLowerCase()); // Convert email to lowercase
             } else {
               queryParams.push(u[key as keyof User]);
             }
@@ -358,6 +359,42 @@ class UserModel {
         `Could not update OTP for user ${email}: ${(error as Error).message}`,
       );
     }
+  }
+
+  // Function to update the user token filed while login
+  async updateUserToken(userId: string, token: string | null): Promise<void> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET token = $1 WHERE id = $2`;
+      await connection.query(sql, [token, userId]);
+      connection.release();
+    } catch (error) {
+      throw new Error(
+        `Failed to update user token: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async deleteUserToken(userId: string, token: string): Promise<void> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET token = null WHERE id = $2`;
+      await connection.query(sql, [token, userId]);
+      connection.release();
+    } catch (error) {
+      throw new Error(
+        `Failed to delete user token: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async findByToken(token: string): Promise<string | null> {
+    const sql = 'SELECT id FROM users WHERE token=$1';
+    const result = await db.query(sql, [token]);
+    if (result.rows.length) {
+      return result.rows[0].id as string;
+    }
+    return null;
   }
 }
 

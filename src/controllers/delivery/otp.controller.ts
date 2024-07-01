@@ -146,7 +146,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       ResponseHandler.success(
         res,
         i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
-        result,
+        {box_locker_string: result},
       );
     } catch (error) {
       ResponseHandler.internalError(res, i18n.__('TRACKING_NUMBER_REQUIRED'));

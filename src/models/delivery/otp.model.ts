@@ -82,7 +82,7 @@ class OTPModel {
       // Mark the OTP as used and delete the record
       await connection.query('DELETE FROM OTP WHERE id = $1', [otpRecord.id]);
 
-      return otpRecord;
+      return otpRecord.box_locker_string;
     } catch (error) {
       throw new Error(`Unable to check OTP: ${(error as Error).message}`);
     } finally {

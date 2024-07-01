@@ -164,6 +164,28 @@ class BoxLockerModel {
       );
     }
   }
+
+  // Get All Lockers related to a Box
+  async getAllLockersById(boxId: string): Promise<BoxLocker[]> {
+    try {
+      const connection = await db.connect();
+      if (!boxId) {
+        throw new Error(`Box id cannot be null ${boxId}`);
+      }
+      const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
+      const result = await connection.query(sql, [boxId]);
+      if (result.rows.length === 0) {
+        throw new Error(`Could not find box locker with For Box ID ${boxId}`);
+      }
+      
+      connection.release();
+      return result.rows;
+    } catch (error) {
+      throw new Error(
+        `Could not Find box locker ${boxId}: ${(error as Error).message}`,
+      );
+    }
+  }
 }
 
 export default BoxLockerModel;

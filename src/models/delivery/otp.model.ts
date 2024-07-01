@@ -62,9 +62,6 @@ class OTPModel {
         throw new Error('OTP not found for in OTP model');
       }
 
-      if (!deliveryPackageId) {
-        throw new Error('Please provide a delivery package id');
-      }
       const deliveryPackageResult = (
         await connection.query(
           'SELECT delivery_package_id FROM OTP WHERE OTP = $1',
@@ -275,7 +272,7 @@ class OTPModel {
         ['delivered', true, updatedAt, trackingNumber],
       );
 
-      return 'The package has been updated to delivered';
+      return deliveryPackage.box_locker_string;
     } catch (error) {
       throw new Error(
         `Error checking tracking number and updating status: ${(error as Error).message}`,

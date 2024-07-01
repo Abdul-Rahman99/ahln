@@ -10,5 +10,6 @@ router.put('/update/:id', otp_controller_1.updateOTP);
 router.delete('/delete/:id', otp_controller_1.deleteOTP);
 router.get('/user-otp/:userId', otp_controller_1.getOTPsByUser);
 router.post('/check-otp', otp_controller_1.checkOTP);
+router.post('/check-tracking-number', otp_controller_1.checkTrackingNumberAndUpdateStatus);
 exports.default = router;
 //# sourceMappingURL=otp.route.js.map

@@ -317,6 +317,14 @@ class UserModel {
         }
         return null;
     }
+    async findRoleById(id) {
+        const sql = 'SELECT role_id FROM users WHERE id=$1';
+        const result = await database_1.default.query(sql, [id]);
+        if (result.rows.length) {
+            return result.rows[0].role_id;
+        }
+        return 0;
+    }
 }
 exports.default = UserModel;
 //# sourceMappingURL=user.model.js.map

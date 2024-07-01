@@ -7,17 +7,26 @@ exports.authorize = void 0;
 const role_permission_model_1 = __importDefault(require("../models/users/role.permission.model"));
 const user_model_1 = __importDefault(require("../models/users/user.model"));
 const user_permission_model_1 = __importDefault(require("../models/users/user.permission.model"));
+const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
+const i18n_1 = __importDefault(require("../config/i18n"));
 const userModel = new user_model_1.default();
 const rolePermissionModel = new role_permission_model_1.default();
 const userPermissionModel = new user_permission_model_1.default();
 const authorize = (requiredPermissions) => {
     return async (req, res, next) => {
         try {
-            const userId = req.user.id;
-            const user = await userModel.getOne(userId);
-            const rolePermissions = await rolePermissionModel.getPermissionsByRole(user.role_id);
+            const token = req.headers.authorization?.replace('Bearer ', '');
+            if (!token) {
+                return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
+            }
+            const user = await userModel.findByToken(token);
+            if (!user) {
+                return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+            }
+            const userRole = await userModel.findRoleById(user);
+            const rolePermissions = await rolePermissionModel.getPermissionsByRole(userRole);
             const rolePermissionTitles = rolePermissions.map((permission) => permission.title);
-            const userPermissions = await userPermissionModel.getPermissionsByUser(userId);
+            const userPermissions = await userPermissionModel.getPermissionsByUser(user);
             const userPermissionTitles = userPermissions.map((permission) => permission.title);
             const allPermissions = new Set([
                 ...rolePermissionTitles,

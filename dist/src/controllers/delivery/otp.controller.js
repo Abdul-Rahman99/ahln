@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkOTP = exports.getOTPsByUser = exports.deleteOTP = exports.updateOTP = exports.getOTPById = exports.getAllOTPs = exports.createOTP = void 0;
+exports.checkTrackingNumberAndUpdateStatus = exports.checkOTP = exports.getOTPsByUser = exports.deleteOTP = exports.updateOTP = exports.getOTPById = exports.getAllOTPs = exports.createOTP = void 0;
 const otp_model_1 = __importDefault(require("../../models/delivery/otp.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -82,6 +82,20 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_VERIFICATION_FAILED'), error.message);
+    }
+});
+exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const { trackingNumber } = req.body;
+        if (!trackingNumber) {
+            responsesHandler_1.default.badRequest(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));
+            return;
+        }
+        const result = await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber);
+        responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), result);
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));
     }
 });
 //# sourceMappingURL=otp.controller.js.map

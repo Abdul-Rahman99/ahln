@@ -65,11 +65,12 @@ class BoxImageModel {
 
       let sql = 'SELECT * FROM Box_IMAGE WHERE 1=1';
 
-      const results = await connection.query(sql);
+      // const results = 
+      await connection.query(sql);
 
-      if (results.rows.length === 0) {
-        throw new Error('No addresses in the database');
-      }
+      // if (results.rows.length === 0) {
+      //   throw new Error('No addresses in the database');
+      // }
       const queryParams: (string | number)[] = [];
 
       if (date) {
@@ -133,9 +134,9 @@ class BoxImageModel {
       const result = await connection.query(sql, queryParams);
       connection.release();
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box image with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box image with ID ${id}`);
+      // }
 
       return result.rows[0] as BoxImage;
     } catch (error) {

@@ -55,9 +55,9 @@ class AddressModel {
       const sql = 'SELECT * FROM Address';
       const result = await connection.query(sql);
 
-      if (result.rows.length === 0) {
-        throw new Error('No addresses in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No addresses in the database');
+      // }
       connection.release();
       return result.rows as Address[];
     } catch (error) {
@@ -79,9 +79,9 @@ class AddressModel {
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find address with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find address with ID ${id}`);
+      // }
       connection.release();
       return result.rows[0] as Address;
     } catch (error) {

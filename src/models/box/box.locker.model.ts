@@ -51,9 +51,9 @@ class BoxLockerModel {
       const sql = 'SELECT * FROM Box_Locker';
       const result = await connection.query(sql);
 
-      if (result.rows.length === 0) {
-        throw new Error('No box lockers in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No box lockers in the database');
+      // }
       connection.release();
       return result.rows as BoxLocker[];
     } catch (error) {
@@ -75,9 +75,9 @@ class BoxLockerModel {
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box locker with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box locker with ID ${id}`);
+      // }
       connection.release();
       return result.rows[0] as BoxLocker;
     } catch (error) {
@@ -174,9 +174,9 @@ class BoxLockerModel {
       }
       const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
       const result = await connection.query(sql, [boxId]);
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box locker with For Box ID ${boxId}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box locker with For Box ID ${boxId}`);
+      // }
       
       connection.release();
       return result.rows;

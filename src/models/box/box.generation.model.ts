@@ -103,9 +103,9 @@ class BoxGenerationModel {
       const result = await connection.query(sql);
       connection.release();
 
-      if (result.rows.length === 0) {
-        throw new Error('No box generations in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No box generations in the database');
+      // }
       return result.rows as BoxGeneration[];
     } catch (error) {
       throw new Error(
@@ -126,9 +126,9 @@ class BoxGenerationModel {
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box generation with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box generation with ID ${id}`);
+      // }
       connection.release();
       return result.rows[0] as BoxGeneration;
     } catch (error) {

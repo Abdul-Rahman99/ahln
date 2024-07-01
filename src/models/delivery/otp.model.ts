@@ -97,9 +97,9 @@ class OTPModel {
       const sql = 'SELECT * FROM OTP';
       const result = await connection.query(sql);
 
-      if (result.rows.length === 0) {
-        throw new Error('No otpes in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No otpes in the database');
+      // }
       connection.release();
 
       return result.rows as OTP[];
@@ -119,9 +119,9 @@ class OTPModel {
       const result = await connection.query(sql, [id]);
       connection.release();
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find OTP with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find OTP with ID ${id}`);
+      // }
 
       return result.rows[0] as OTP;
     } catch (error) {
@@ -223,9 +223,9 @@ class OTPModel {
                    INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
                    WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`;
       const result = await connection.query(sql, [userId]);
-      if (result.rows.length === 0) {
-        throw new Error('No otp in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No otp in the database');
+      // }
       connection.release();
 
       return result.rows as OTP[];

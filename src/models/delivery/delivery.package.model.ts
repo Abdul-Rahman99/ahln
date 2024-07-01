@@ -109,9 +109,9 @@ class DeliveryPackageModel {
       const connection = await db.connect();
       const sql = 'SELECT * FROM Delivery_Package';
       const result = await connection.query(sql);
-      if (result.rows.length === 0) {
-        throw new Error('No Delivery Packages in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No Delivery Packages in the database');
+      // }
       connection.release();
       return result.rows as DeliveryPackage[];
     } catch (error) {
@@ -128,9 +128,9 @@ class DeliveryPackageModel {
       const sql = 'SELECT * FROM Delivery_Package WHERE id=$1';
       const result = await connection.query(sql, [id]);
       connection.release();
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find delivery package with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find delivery package with ID ${id}`);
+      // }
       return result.rows[0] as DeliveryPackage;
     } catch (error) {
       throw new Error(
@@ -224,9 +224,9 @@ class DeliveryPackageModel {
       const result = await connection.query(sql, [userId]);
       connection.release();
 
-      if (result.rows.length === 0) {
-        throw new Error('No Delivery Packages found for this user');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No Delivery Packages found for this user');
+      // }
 
       return result.rows as DeliveryPackage[];
     } catch (error) {

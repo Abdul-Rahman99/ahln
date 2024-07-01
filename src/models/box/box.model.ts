@@ -119,9 +119,9 @@ class BoxModel {
       const sql = 'SELECT * FROM Box';
       const result = await connection.query(sql);
 
-      if (result.rows.length === 0) {
-        throw new Error('No boxes in the database');
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error('No boxes in the database');
+      // }
       connection.release();
       return result.rows as Box[];
     } catch (error) {
@@ -139,9 +139,9 @@ class BoxModel {
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box with ID ${id}`);
+      // }
       connection.release();
       return result.rows[0] as Box;
     } catch (error) {
@@ -156,11 +156,12 @@ class BoxModel {
 
       // Check if the box exists
       const checkSql = 'SELECT * FROM Box WHERE id=$1';
-      const checkResult = await connection.query(checkSql, [id]);
+      // const checkResult =
+      await connection.query(checkSql, [id]);
 
-      if (checkResult.rows.length === 0) {
-        throw new Error(`Box with ID ${id} does not exist`);
-      }
+      // if (checkResult.rows.length === 0) {
+      //   throw new Error(`Box with ID ${id} does not exist`);
+      // }
 
       const queryParams: unknown[] = [];
       let paramIndex = 1;
@@ -228,11 +229,12 @@ class BoxModel {
       const connection = await db.connect();
       // Check if the box generation id exists
       const checkSql = 'SELECT * FROM Box_Generation WHERE id=$1';
-      const checkResult = await connection.query(checkSql, [boxGenerationId]);
+      // const checkResult =
+      await connection.query(checkSql, [boxGenerationId]);
 
-      if (checkResult.rows.length === 0) {
-        throw new Error(`Box with ID ${boxGenerationId} does not exist`);
-      }
+      // if (checkResult.rows.length === 0) {
+      //   throw new Error(`Box with ID ${boxGenerationId} does not exist`);
+      // }
       const sql = `
         SELECT * FROM Box
         WHERE box_model_id = $1

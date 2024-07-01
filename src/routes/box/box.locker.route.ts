@@ -5,6 +5,7 @@ import {
   getBoxLockerById,
   updateBoxLocker,
   deleteBoxLocker,
+  getAllLockersById,
 } from '../../controllers/box/box.locker.controller';
 // import {
 //   createBoxLockerValidator,
@@ -22,7 +23,7 @@ router.post(
   '/new',
   verifyToken,
   authorize(['create_box_locker']),
-//   createBoxLockerValidator,
+  //   createBoxLockerValidator,
   createBoxLocker,
 );
 
@@ -37,7 +38,7 @@ router.get(
   '/get-one/:id',
   verifyToken,
   authorize(['read_box_locker']),
-//   getBoxLockerValidator,
+  //   getBoxLockerValidator,
   getBoxLockerById,
 );
 
@@ -45,7 +46,7 @@ router.put(
   '/update/:id',
   verifyToken,
   authorize(['update_box_locker']),
-//   updateBoxLockerValidator,
+  //   updateBoxLockerValidator,
   updateBoxLocker,
 );
 
@@ -53,8 +54,9 @@ router.delete(
   '/delete/:id',
   verifyToken,
   authorize(['delete_box_locker']),
-//   deleteBoxLockerValidator,
+  //   deleteBoxLockerValidator,
   deleteBoxLocker,
 );
 
+router.get('/get-lockers-by-box', getAllLockersById);
 export default router;

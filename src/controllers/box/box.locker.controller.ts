@@ -113,3 +113,24 @@ export const deleteBoxLocker = asyncHandler(
     }
   },
 );
+
+export const getAllLockersById = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const boxId = req.body.boxId;
+
+      const boxLockers = await boxLockerModel.getAllLockersById(boxId);
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'),
+        boxLockers,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('BOX_LOCKERS_RETRIEVAL_FAILED'),
+        error.message,
+      );
+    }
+  },
+);

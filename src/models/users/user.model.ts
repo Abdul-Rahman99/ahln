@@ -101,9 +101,9 @@ class UserModel {
         'SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
       const result = await connection.query(sql);
 
-      if (result.rows.length === 0) {
-        throw new Error(`No users in the database`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`No users in the database`);
+      // }
       connection.release();
       return result.rows as User[];
     } catch (error) {
@@ -122,9 +122,9 @@ class UserModel {
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find user with ID ${id}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find user with ID ${id}`);
+      // }
       connection.release();
       return result.rows[0] as User;
     } catch (error) {

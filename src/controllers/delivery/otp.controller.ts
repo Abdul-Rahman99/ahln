@@ -116,11 +116,9 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     const { otp, deliveryPackageId } = req.body;
     const verifiedOTP = await otpModel.checkOTP(otp, deliveryPackageId);
     if (verifiedOTP) {
-      ResponseHandler.success(
-        res,
-        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
-        verifiedOTP,
-      );
+      ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
+        box_locker_string: verifiedOTP,
+      });
     } else {
       ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
     }
@@ -143,11 +141,9 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       }
       const result =
         await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber);
-      ResponseHandler.success(
-        res,
-        i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
-        {box_locker_string: result},
-      );
+      ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
+        box_locker_string: result,
+      });
     } catch (error) {
       ResponseHandler.internalError(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
     }

@@ -62,7 +62,13 @@ class UserBoxModel {
     try {
       const connection = await db.connect();
       const sql = `
-      SELECT ub.*, b.*
+      SELECT ub.id as user_box_id,
+      b.id as box_id,
+      b.serial_number,
+      b.box_label,
+      b.box_model_id,
+      b.address_id,
+      b.current_tablet_id
       FROM User_Box ub
       INNER JOIN Box b ON ub.box_id = b.id
       WHERE ub.user_id = $1

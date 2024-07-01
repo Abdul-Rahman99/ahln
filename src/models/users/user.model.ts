@@ -396,6 +396,15 @@ class UserModel {
     }
     return null;
   }
+
+  async findRoleById(id: string): Promise<number> {
+    const sql = 'SELECT role FROM users WHERE id=$1';
+    const result = await db.query(sql, [id]);
+    if (result.rows.length) {
+      return result.rows[0].role as number;
+    }
+    return 0;
+  }
 }
 
 export default UserModel;

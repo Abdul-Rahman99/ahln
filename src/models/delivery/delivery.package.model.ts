@@ -49,6 +49,11 @@ class DeliveryPackageModel {
       // Generate custom ID
       const customId = await this.generateCustomId(userId);
 
+      const sqlBox = `SELECT address_id FROM Box WHERE id=$1`;
+      const address_id = await connection.query(sqlBox, [
+        deliveryPackage.box_id,
+      ]);
+
       const sqlFields = [
         'id',
         'createdAt',
@@ -63,6 +68,7 @@ class DeliveryPackageModel {
         'box_locker_id',
         'shipment_status',
         'is_delivered',
+        'box_locker_string',
       ];
       const sqlParams = [
         customId,
@@ -72,12 +78,13 @@ class DeliveryPackageModel {
         deliveryPackage.vendor_id || null,
         deliveryPackage.delivery_id || null,
         deliveryPackage.tracking_number || null,
-        deliveryPackage.address_id || null,
+        address_id,
         deliveryPackage.shipping_company_id || null,
         deliveryPackage.box_id || null,
         deliveryPackage.box_locker_id || null,
         deliveryPackage.shipment_status || 'pending',
         deliveryPackage.is_delivered || false,
+        deliveryPackage.box_locker_string || null,
       ];
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 

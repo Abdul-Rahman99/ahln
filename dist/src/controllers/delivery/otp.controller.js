@@ -74,7 +74,9 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
         const { otp, deliveryPackageId } = req.body;
         const verifiedOTP = await otpModel.checkOTP(otp, deliveryPackageId);
         if (verifiedOTP) {
-            responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), verifiedOTP);
+            responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), {
+                box_locker_string: verifiedOTP,
+            });
         }
         else {
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'), null);
@@ -92,7 +94,9 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
             return;
         }
         const result = await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber);
-        responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), result);
+        responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
+            box_locker_string: result,
+        });
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));

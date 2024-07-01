@@ -13,5 +13,6 @@ router.get('/get-all', verifyToken_1.default, (0, authorize_1.authorize)(['read_
 router.get('/get-one/:id', verifyToken_1.default, (0, authorize_1.authorize)(['read_box_locker']), box_locker_controller_1.getBoxLockerById);
 router.put('/update/:id', verifyToken_1.default, (0, authorize_1.authorize)(['update_box_locker']), box_locker_controller_1.updateBoxLocker);
 router.delete('/delete/:id', verifyToken_1.default, (0, authorize_1.authorize)(['delete_box_locker']), box_locker_controller_1.deleteBoxLocker);
+router.get('/get-lockers-by-box', box_locker_controller_1.getAllLockersById);
 exports.default = router;
 //# sourceMappingURL=box.locker.route.js.map

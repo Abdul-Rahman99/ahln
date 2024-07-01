@@ -44,9 +44,6 @@ class BoxLockerModel {
             const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM Box_Locker';
             const result = await connection.query(sql);
-            if (result.rows.length === 0) {
-                throw new Error('No box lockers in the database');
-            }
             connection.release();
             return result.rows;
         }
@@ -62,9 +59,6 @@ class BoxLockerModel {
             const sql = 'SELECT * FROM Box_Locker WHERE id=$1';
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find box locker with ID ${id}`);
-            }
             connection.release();
             return result.rows[0];
         }
@@ -122,6 +116,21 @@ class BoxLockerModel {
         }
         catch (error) {
             throw new Error(`Could not delete box locker ${id}: ${error.message}`);
+        }
+    }
+    async getAllLockersById(boxId) {
+        try {
+            const connection = await database_1.default.connect();
+            if (!boxId) {
+                throw new Error(`Box id cannot be null ${boxId}`);
+            }
+            const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
+            const result = await connection.query(sql, [boxId]);
+            connection.release();
+            return result.rows;
+        }
+        catch (error) {
+            throw new Error(`Could not Find box locker ${boxId}: ${error.message}`);
         }
     }
 }

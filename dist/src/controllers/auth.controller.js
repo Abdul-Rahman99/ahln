@@ -101,7 +101,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     }
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, fcmToken } = req.body;
     try {
         const user = await userModel.findByEmail(email);
         if (!user) {
@@ -113,6 +113,15 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         }
         const token = jsonwebtoken_1.default.sign({ email, password }, config_1.default.JWT_SECRET_KEY);
         await userModel.updateUserToken(user.id, token);
+        if (!user.is_active || !user.email_verified) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_INACTIVE_OR_UNVERIFED'), {
+                is_active: user.is_active,
+                email_verified: user.email_verified,
+            }, token);
+        }
+        if (fcmToken) {
+            await userDevicesModel.saveUserDevice(user.id, fcmToken);
+        }
         responsesHandler_1.default.success(res, i18n_1.default.__('LOGIN_SUCCESS'), {
             id: user.id,
             user_name: user.user_name,

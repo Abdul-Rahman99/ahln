@@ -5,5 +5,6 @@ declare class BoxLockerModel {
     getOne(id: number): Promise<BoxLocker>;
     updateOne(boxLocker: Partial<BoxLocker>, id: number): Promise<BoxLocker>;
     deleteOne(id: number): Promise<BoxLocker>;
+    getAllLockersById(boxId: string): Promise<BoxLocker[]>;
 }
 export default BoxLockerModel;

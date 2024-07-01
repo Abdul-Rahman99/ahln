@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBoxLocker = exports.updateBoxLocker = exports.getBoxLockerById = exports.getAllBoxLockers = exports.createBoxLocker = void 0;
+exports.getAllLockersById = exports.deleteBoxLocker = exports.updateBoxLocker = exports.getBoxLockerById = exports.getAllBoxLockers = exports.createBoxLocker = void 0;
 const box_locker_model_1 = __importDefault(require("../../models/box/box.locker.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -57,6 +57,16 @@ exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_LOCKER_DELETION_FAILED'), error.message);
+    }
+});
+exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const boxId = req.body.boxId;
+        const boxLockers = await boxLockerModel.getAllLockersById(boxId);
+        responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVAL_FAILED'), error.message);
     }
 });
 //# sourceMappingURL=box.locker.controller.js.map

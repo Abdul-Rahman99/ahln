@@ -78,9 +78,6 @@ class BoxGenerationModel {
             const sql = 'SELECT * FROM Box_Generation';
             const result = await connection.query(sql);
             connection.release();
-            if (result.rows.length === 0) {
-                throw new Error('No box generations in the database');
-            }
             return result.rows;
         }
         catch (error) {
@@ -95,9 +92,6 @@ class BoxGenerationModel {
             const sql = `SELECT * FROM Box_Generation WHERE id=$1`;
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find box generation with ID ${id}`);
-            }
             connection.release();
             return result.rows[0];
         }

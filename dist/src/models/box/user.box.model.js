@@ -39,9 +39,6 @@ class UserBoxModel {
         INNER JOIN Box b ON ub.box_id = b.id
       `;
             const result = await connection.query(sql);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find boxess`);
-            }
             connection.release();
             return result.rows;
         }
@@ -114,9 +111,6 @@ class UserBoxModel {
             const sql = 'SELECT * FROM User_Box WHERE id=$1';
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find UserBox with ID ${id}`);
-            }
             connection.release();
             return result.rows[0];
         }

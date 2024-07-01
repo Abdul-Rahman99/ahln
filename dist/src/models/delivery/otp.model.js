@@ -52,17 +52,14 @@ class OTPModel {
             if (result.rows.length === 0) {
                 throw new Error('OTP not found for in OTP model');
             }
-            if (!deliveryPackageId) {
-                throw new Error('Please provide a delivery package id');
-            }
             const deliveryPackageResult = (await connection.query('SELECT delivery_package_id FROM OTP WHERE OTP = $1', [otp])).rows[0].delivery_package_id;
             if (deliveryPackageResult != null) {
                 const updatedAt = new Date();
-                await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE delivery_package_id = $4', ['delivered', true, updatedAt, deliveryPackageId]);
+                await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE id = $4', ['delivered', true, updatedAt, deliveryPackageId]);
             }
             const otpRecord = result.rows[0];
             await connection.query('DELETE FROM OTP WHERE id = $1', [otpRecord.id]);
-            return otpRecord;
+            return otpRecord.box_locker_string;
         }
         catch (error) {
             throw new Error(`Unable to check OTP: ${error.message}`);
@@ -76,9 +73,6 @@ class OTPModel {
             const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM OTP';
             const result = await connection.query(sql);
-            if (result.rows.length === 0) {
-                throw new Error('No otpes in the database');
-            }
             connection.release();
             return result.rows;
         }
@@ -95,9 +89,6 @@ class OTPModel {
             const sql = 'SELECT * FROM OTP WHERE id=$1';
             const result = await connection.query(sql, [id]);
             connection.release();
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find OTP with ID ${id}`);
-            }
             return result.rows[0];
         }
         catch (error) {
@@ -172,9 +163,6 @@ class OTPModel {
                    INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
                    WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`;
             const result = await connection.query(sql, [userId]);
-            if (result.rows.length === 0) {
-                throw new Error('No otp in the database');
-            }
             connection.release();
             return result.rows;
         }
@@ -199,7 +187,7 @@ class OTPModel {
             }
             const updatedAt = new Date();
             await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4', ['delivered', true, updatedAt, trackingNumber]);
-            return 'The package has been updated to delivered';
+            return deliveryPackage.box_locker_string;
         }
         catch (error) {
             throw new Error(`Error checking tracking number and updating status: ${error.message}`);

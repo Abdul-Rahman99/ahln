@@ -43,9 +43,6 @@ class TabletModel {
             const connection = await database_1.default.connect();
             const sql = 'SELECT id, serial_number, android_id, createdAt, updatedAt FROM tablet';
             const result = await connection.query(sql);
-            if (result.rows.length === 0) {
-                throw new Error('No tablets in the database');
-            }
             connection.release();
             return result.rows;
         }
@@ -62,9 +59,6 @@ class TabletModel {
                     WHERE id=$1`;
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find tablet with ID ${id}`);
-            }
             connection.release();
             return result.rows[0];
         }
@@ -114,9 +108,6 @@ class TabletModel {
             }
             const sql = `DELETE FROM tablet WHERE id=$1 RETURNING id, serial_number, android_id, createdAt, updatedAt`;
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find tablet with ID ${id}`);
-            }
             connection.release();
             return result.rows[0];
         }

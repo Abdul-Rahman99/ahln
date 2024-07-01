@@ -76,9 +76,9 @@ class UserBoxModel {
       const result = await connection.query(sql, [userId]);
       connection.release();
 
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box for user with ID ${userId}`);
-      }
+      // if (result.rows.length === 0) {
+      //   throw new Error(`Could not find box for user with ID ${userId}`);
+      // }
 
       return result.rows as (UserBox & Box)[];
     } catch (error) {

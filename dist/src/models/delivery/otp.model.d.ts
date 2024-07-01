@@ -7,5 +7,6 @@ declare class OTPModel {
     updateOne(otp: Partial<OTP>, id: number): Promise<OTP>;
     deleteOne(id: number): Promise<OTP>;
     getOTPsByUser(userId: string): Promise<OTP[]>;
+    checkTrackingNumberAndUpdateStatus(trackingNumber: string): Promise<string>;
 }
 export default OTPModel;

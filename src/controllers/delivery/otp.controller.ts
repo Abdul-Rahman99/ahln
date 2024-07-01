@@ -113,7 +113,7 @@ export const getOTPsByUser = asyncHandler(
 //function to check OTP
 export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { otp} = req.body;
+    const { otp } = req.body;
     const verifiedOTP = await otpModel.checkOTP(otp);
     if (verifiedOTP) {
       ResponseHandler.success(
@@ -132,3 +132,24 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 });
+
+export const checkTrackingNumberAndUpdateStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { trackingNumber } = req.body;
+      if (!trackingNumber) {
+        ResponseHandler.badRequest(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
+        return;
+      }
+      const result =
+        await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber);
+      ResponseHandler.success(
+        res,
+        i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
+        result,
+      );
+    } catch (error) {
+      ResponseHandler.internalError(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
+    }
+  },
+);

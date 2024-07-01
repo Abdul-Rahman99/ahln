@@ -12,4 +12,5 @@ export interface DeliveryPackage {
     box_locker_id: string;
     shipment_status: string;
     is_delivered: boolean;
+    box_locker_string: string;
 }

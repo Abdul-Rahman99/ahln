@@ -219,6 +219,52 @@ class OTPModel {
       );
     }
   }
+
+  // Check tracking number and update delivery status
+  async checkTrackingNumberAndUpdateStatus(
+    trackingNumber: string,
+  ): Promise<string> {
+    const connection = await db.connect();
+    try {
+      if (!trackingNumber) {
+        throw new Error('Please provide a tracking number');
+      }
+
+      const deliveryPackageResult = await connection.query(
+        'SELECT * FROM Delivery_Package WHERE tracking_number = $1',
+        [trackingNumber],
+      );
+
+      if (deliveryPackageResult.rows.length === 0) {
+        throw new Error(
+          'Delivery package not found for the given tracking number',
+        );
+      }
+
+      const deliveryPackage = deliveryPackageResult.rows[0];
+
+      if (
+        deliveryPackage.shipment_status === 'delivered' &&
+        deliveryPackage.is_delivered === true
+      ) {
+        return 'The package has already been delivered';
+      }
+
+      const updatedAt = new Date();
+      await connection.query(
+        'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4',
+        ['delivered', true, updatedAt, trackingNumber],
+      );
+
+      return 'The package has been updated to delivered';
+    } catch (error) {
+      throw new Error(
+        `Error checking tracking number and updating status: ${(error as Error).message}`,
+      );
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default OTPModel;

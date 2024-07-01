@@ -23,21 +23,23 @@ export const authorize = (requiredPermissions: string[]) => {
 
       // Find the user by the token
       const user = await userModel.findByToken(token);
+
       if (!user) {
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
-      const userRole = await userModel.findRoleById(user);
+
+      const userRoleId = await userModel.findRoleIdByUserId(user);
 
       // Get permissions from the user's role
       const rolePermissions =
-        await rolePermissionModel.getPermissionsByRole(userRole);
+        await rolePermissionModel.getPermissionsByRole(userRoleId);
       const rolePermissionTitles = rolePermissions.map(
         (permission) => permission.title,
       );
 
       // Get user-specific permissions
       const userPermissions =
-        await userPermissionModel.getPermissionsByUser(user);
+        await userPermissionModel.getPermissionsByUserId(user);
       const userPermissionTitles = userPermissions.map(
         (permission) => permission.title,
       );

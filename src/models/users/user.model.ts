@@ -16,6 +16,7 @@ class UserModel {
         (key) => u[key as keyof User] !== undefined,
       );
 
+      // Through error on missing required fields
       if (!requiredFields.every((field) => providedFields.includes(field))) {
         throw new Error(
           'Email, phone_number, and user_name are required fields.',
@@ -80,13 +81,14 @@ class UserModel {
         2,
       ];
 
+
+      // Create Insert Query in users table
       const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
               VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
               RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
-
       const result = await connection.query(sql, sqlParams);
 
-      connection.release();
+      connection.release(); // Close transaction
       return result.rows[0];
     } catch (error) {
       throw new Error(`Unable to create user: ${(error as Error).message}`);
@@ -97,13 +99,11 @@ class UserModel {
   async getMany(): Promise<User[]> {
     try {
       const connection = await db.connect();
+      //fetch al users from db
       const sql =
-        'SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
+        'SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users';
       const result = await connection.query(sql);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error(`No users in the database`);
-      // }
       connection.release();
       return result.rows as User[];
     } catch (error) {
@@ -114,17 +114,17 @@ class UserModel {
   // get specific user
   async getOne(id: string): Promise<User> {
     try {
+      // check on required user id
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
+
+      //fetch user from db
+      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find user with ID ${id}`);
-      // }
       connection.release();
       return result.rows[0] as User;
     } catch (error) {
@@ -132,12 +132,14 @@ class UserModel {
     }
   }
 
+  //update user by his id (handler)
   async updateUser(email: string, updateFields: Partial<User>): Promise<User> {
     try {
-      const user = await this.findByEmail(email);
+      const user = await this.findByEmail(email); // check if user already exist
       if (!user) {
         throw new Error(`User with email ${email} not found`);
       }
+
       return await this.updateOne(updateFields, user.id);
     } catch (error) {
       throw new Error(
@@ -146,14 +148,13 @@ class UserModel {
     }
   }
 
-  // update user
-
+  // update user in db
   async updateOne(u: Partial<User>, id: string): Promise<User> {
     try {
       const connection = await db.connect();
 
       // Check if the user exists
-      const checkSql = 'SELECT * FROM users WHERE id=$1';
+      const checkSql = 'SELECT email FROM users WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
@@ -206,12 +207,15 @@ class UserModel {
   async deleteOne(id: string): Promise<User> {
     try {
       const connection = await db.connect();
+
+      //check required id
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
-      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
 
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
       const result = await connection.query(sql, [id]);
+      
       if (result.rows.length === 0) {
         throw new Error(`Could not find user with ID ${id}`);
       }
@@ -397,7 +401,7 @@ class UserModel {
     return null;
   }
 
-  async findRoleById(id: string): Promise<number> {
+  async findRoleIdByUserId(id: string): Promise<number> {
     const sql = 'SELECT role_id FROM users WHERE id=$1';
     const result = await db.query(sql, [id]);
     if (result.rows.length) {

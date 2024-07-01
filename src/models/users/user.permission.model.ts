@@ -29,7 +29,7 @@ class UserPermissionModel {
     }
   }
 
-  async getPermissionsByUser(userId: string): Promise<Permission[]> {
+  async getPermissionsByUserId(userId: string): Promise<Permission[]> {
     try {
       const connection = await db.connect();
       const sql = `SELECT p.* FROM permission p JOIN user_permission up ON p.id = up.permission_id WHERE up.user_id = $1`;

@@ -2,9 +2,9 @@
 export interface User {
   id: string;
   user_name: string;
-  role_id: number;
   createdAt: Date;
   updatedAt: Date;
+  role_id: number;
   is_active: boolean;
   phone_number: string;
   email: string;

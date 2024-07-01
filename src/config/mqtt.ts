@@ -55,7 +55,7 @@ function connect() {
     console.log('MQTT connection error:', error);
     // Disconnect and attempt to reconnect
     client.end();
-    setTimeout(connect, 3000); // try to reconnect after 3 seconds
+    setTimeout(connect, 10000); // try to reconnect after 10 seconds
   });
 
   client.on('reconnect', () => {
@@ -65,7 +65,7 @@ function connect() {
   client.on('end', () => {
     console.log('Connection to MQTT broker ended');
     // Handle disconnection, attempt to reconnect
-    setTimeout(connect, 3000); // try to reconnect after 3 seconds
+    setTimeout(connect, 10000); // try to reconnect after 10 seconds
   });
 }
 

@@ -1,33 +1,41 @@
-import { check } from 'express-validator';
+// addressValidation.ts
 
-export const createAddressValidator = [
-  check('country').notEmpty().withMessage('Country is required'),
-  check('city').notEmpty().withMessage('City is required'),
-  check('district').notEmpty().withMessage('District is required'),
-  check('street').notEmpty().withMessage('Street is required'),
-  check('building_type').notEmpty().withMessage('Building type is required'),
-  check('building_number').isInt({ gt: 0 }).withMessage('Building number must be a positive integer'),
-  // Optional fields
-  check('floor').optional().isInt().withMessage('Floor must be an integer'),
-  check('apartment_number').optional().isInt().withMessage('Apartment number must be an integer'),
+import { body, param } from 'express-validator';
+import i18n from '../../config/i18n';
+
+export const createAddressValidation = [
+  body('email')
+    .notEmpty()
+    .withMessage(i18n.__('EMAIL_REQUIRED'))
+    .isEmail()
+    .withMessage(i18n.__('EMAIL_INVALID')),
+  body('district').notEmpty().withMessage(i18n.__('DISTRICT_REQUIRED')),
+  body('city').notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
+  body('building_number')
+    .notEmpty()
+    .withMessage(i18n.__('BUILDING_NUMBER_REQUIRED')),
 ];
 
-export const getAddressValidator = [
-  check('id').isInt({ gt: 0 }).withMessage('Address ID must be a positive integer'),
+export const getAllAddressesValidation = [];
+
+export const getAddressByIdValidation = [
+  param('id').isInt().withMessage(i18n.__('INVALID_ADDRESS_ID')),
 ];
 
-export const updateAddressValidator = [
-  check('country').optional().notEmpty().withMessage('Country cannot be empty'),
-  check('city').optional().notEmpty().withMessage('City cannot be empty'),
-  check('district').optional().notEmpty().withMessage('District cannot be empty'),
-  check('street').optional().notEmpty().withMessage('Street cannot be empty'),
-  check('building_type').optional().notEmpty().withMessage('Building type cannot be empty'),
-  check('building_number').optional().isInt({ gt: 0 }).withMessage('Building number must be a positive integer'),
-  // Optional fields
-  check('floor').optional().isInt().withMessage('Floor must be an integer'),
-  check('apartment_number').optional().isInt().withMessage('Apartment number must be an integer'),
+export const updateAddressValidation = [
+  param('id').isInt().withMessage(i18n.__('INVALID_ADDRESS_ID')),
+  body('email').optional().isEmail().withMessage(i18n.__('EMAIL_INVALID')),
+  body('district')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('DISTRICT_REQUIRED')),
+  body('city').optional().notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
+  body('building_number')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('BUILDING_NUMBER_REQUIRED')),
 ];
 
-export const deleteAddressValidator = [
-  check('id').isInt({ gt: 0 }).withMessage('Address ID must be a positive integer'),
+export const deleteAddressValidation = [
+  param('id').isInt().withMessage(i18n.__('INVALID_ADDRESS_ID')),
 ];

@@ -29,7 +29,7 @@ app.use((0, cors_1.default)({
     origin: '*',
     credentials: true,
 }));
-app.use(express_1.default.json({ limit: '20kb' }));
+app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use((0, express_mongo_sanitize_1.default)());
 const limiter = (0, express_rate_limit_1.default)({

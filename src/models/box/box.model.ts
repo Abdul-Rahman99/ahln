@@ -89,6 +89,13 @@ class BoxModel {
 
       const result = await connection.query(sql, sqlParams);
 
+      // need to be dynamic
+      const serial_ports = [
+        "{door: 'door1', hex: 'fb01010032fefeffcdbf', statu: 'door1 is unlocked'}",
+        "{door: 'door2', hex: 'fb01020032fefdffcdbf', statu: 'door2 is unlocked'}",
+        "{door: 'door3', hex: 'fb01030032fefcffcdbf', statu: 'door3 is unlocked'}",
+      ]
+
       // Create box lockers according to the number of doors
       for (let i = 1; i <= numberOfDoors; i++) {
         const lockerId = `${id}_${i}`;
@@ -96,7 +103,7 @@ class BoxModel {
         await this.boxLockerModel.createBoxLocker({
           id: lockerId,
           locker_label: lockerLabel,
-          serial_port: `SerialPort${i}`,
+          serial_port: serial_ports[i-1],
           createdAt,
           updatedAt,
           is_empty: true,

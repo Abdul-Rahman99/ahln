@@ -58,5 +58,5 @@ router.delete(
   deleteBoxLocker,
 );
 
-router.get('/get-lockers-by-box', getAllLockersById);
+router.post('/get-lockers-by-box', getAllLockersById);
 export default router;

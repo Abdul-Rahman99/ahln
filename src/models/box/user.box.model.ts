@@ -78,11 +78,11 @@ class UserBoxModel {
       FROM
         User_Box ub
         INNER JOIN Box b ON ub.box_id = b.id
-        INNER JOIN Address a ON b.address_id = a.id
+        INNER JOIN Address a ON b.address_id = a.id OR b.address_id = ""
       WHERE
         ub.user_id = $1
     `;
-      console.log(sql); // Check the SQL query being executed
+      console.log(userId); // Check the SQL query being executed
       const result = await connection.query(sql, [userId]);
       console.log(result.rows); // Check the result rows returned from the database
       connection.release();

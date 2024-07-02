@@ -45,7 +45,7 @@ app.use(
 );
 
 // Middleware to parse JSON requests
-app.use(express.json({ limit: '20kb' }));
+app.use(express.json());
 app.use(
   express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }),
 );

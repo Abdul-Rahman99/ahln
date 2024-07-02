@@ -174,9 +174,6 @@ class BoxLockerModel {
       }
       const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
       const result = await connection.query(sql, [boxId]);
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find box locker with For Box ID ${boxId}`);
-      // }
       
       connection.release();
       return result.rows;

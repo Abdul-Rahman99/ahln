@@ -67,9 +67,9 @@ class UserBoxModel {
       const sql = `
       SELECT
         ub.id AS user_box_id,
-        b.id AS box_id,
+        b.id AS id,
         b.serial_number,
-        b.box_label,
+        b.box_label as name,
         b.box_model_id,
         a.district,
         a.city,

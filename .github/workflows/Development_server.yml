@@ -1,0 +1,26 @@
+name: NodeJS Deployment to Local Server
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x] 
+
+    steps:
+      - name: Deploying to development server
+        uses: appleboy/ssh-action@master
+        with: 
+          host: ${{secrets.AHLN_DEV_HOST}}
+          username: ${{secrets.AHLN_DEV_USERNAME}}
+          password: ${{secrets.AHLN_DEV_PASSWORD}}
+          script: 
+            cd /home/db/ahln
+            git pull
+            pm2 restart AHLN_Dev
+            
+        
+      

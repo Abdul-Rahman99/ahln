@@ -78,7 +78,7 @@ class UserBoxModel {
       FROM
         User_Box ub
         INNER JOIN Box b ON ub.box_id = b.id
-        INNER JOIN Address a ON b.address_id = a.id OR b.address_id = ""
+        LEFT JOIN Address a ON b.address_id = a.id
       WHERE
         ub.user_id = $1
     `;

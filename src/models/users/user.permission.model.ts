@@ -3,6 +3,8 @@ import { Permission } from '../../types/permission.type';
 import db from '../../config/database';
 
 class UserPermissionModel {
+
+  //Assign permission to user
   async assignPermission(userId: string, permissionId: number): Promise<void> {
     try {
       const connection = await db.connect();
@@ -16,6 +18,7 @@ class UserPermissionModel {
     }
   }
 
+  // Delete permission from user
   async revokePermission(userId: string, permissionId: number): Promise<void> {
     try {
       const connection = await db.connect();
@@ -29,6 +32,7 @@ class UserPermissionModel {
     }
   }
 
+  // Get all usdr permissions by his id
   async getPermissionsByUserId(userId: string): Promise<Permission[]> {
     try {
       const connection = await db.connect();
@@ -42,6 +46,8 @@ class UserPermissionModel {
       );
     }
   }
+
+  // check if user has a specific permission
   async checkPermissionAssignment(
     user_id: string,
     permission_id: number,

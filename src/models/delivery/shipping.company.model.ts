@@ -10,6 +10,7 @@ export default class ShippingCompanyModel {
   ): Promise<ShippingCompany> {
     try {
       const connection = await db.connect();
+
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -42,9 +43,7 @@ export default class ShippingCompanyModel {
       const sql = `SELECT id, createdAt, updatedAt, tracking_system, title, logo FROM Shipping_Company`;
       const result = await connection.query(sql);
       connection.release();
-      // if (result.rows.length === 0) {
-      //   throw new Error('No Shipping Companies found in the database');
-      // }
+
       return result.rows as ShippingCompany[];
     } catch (error) {
       throw new Error(
@@ -60,9 +59,6 @@ export default class ShippingCompanyModel {
       const result = await connection.query(sql, [id]);
       connection.release();
 
-      // if (result.rows.length === 0) {
-      //   throw new Error('No Shipping Companies found in the database');
-      // }
       return result.rows[0] || null;
     } catch (error) {
       throw new Error(

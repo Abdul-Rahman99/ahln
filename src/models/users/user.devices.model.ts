@@ -3,6 +3,8 @@ import db from '../../config/database';
 import { UserDevice } from '../../types/user.devices';
 
 class UserDevicesModel {
+
+  // Add new user device
   async saveUserDevice(userId: string, fcmToken: string): Promise<void> {
     try {
       const connection = await db.connect();
@@ -16,10 +18,11 @@ class UserDevicesModel {
     }
   }
 
+
   async getUserDeviceById(deviceId: number): Promise<UserDevice | null> {
     try {
       const connection = await db.connect();
-      const sql = `SELECT * FROM user_devices WHERE id = $1`;
+      const sql = `SELECT * FROM user_devices WHERE id = $1`; // this needs to be replaced with user id
       const result = await connection.query(sql, [deviceId]);
       connection.release();
       return result.rows.length ? (result.rows[0] as UserDevice) : null;

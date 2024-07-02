@@ -18,8 +18,10 @@ class RoleModel {
   async getAll(): Promise<Role[]> {
     try {
       const connection = await db.connect();
+
       const sql = 'SELECT * FROM role';
       const result = await connection.query(sql);
+      
       connection.release();
       return result.rows;
     } catch (error) {

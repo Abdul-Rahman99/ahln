@@ -6,6 +6,7 @@ class OTPModel {
   async createOTP(otpData: Partial<OTP>): Promise<OTP> {
     try {
       const connection = await db.connect();
+
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -54,7 +55,7 @@ class OTPModel {
       }
 
       const result = await connection.query(
-        'SELECT * FROM OTP WHERE otp = $1 AND is_used = FALSE',
+        'SELECT id, box_locker_string FROM OTP WHERE otp = $1 AND is_used = FALSE',
         [otp],
       );
 
@@ -96,10 +97,6 @@ class OTPModel {
       const connection = await db.connect();
       const sql = 'SELECT * FROM OTP';
       const result = await connection.query(sql);
-
-      // if (result.rows.length === 0) {
-      //   throw new Error('No otpes in the database');
-      // }
       connection.release();
 
       return result.rows as OTP[];
@@ -118,10 +115,6 @@ class OTPModel {
       const sql = 'SELECT * FROM OTP WHERE id=$1';
       const result = await connection.query(sql, [id]);
       connection.release();
-
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find OTP with ID ${id}`);
-      // }
 
       return result.rows[0] as OTP;
     } catch (error) {
@@ -221,11 +214,8 @@ class OTPModel {
       const sql = `SELECT OTP.* FROM OTP
                    INNER JOIN Box ON OTP.box_id = Box.id
                    INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
-                   WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`;
+                   WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`; // add another inner join for address table
       const result = await connection.query(sql, [userId]);
-      // if (result.rows.length === 0) {
-      //   throw new Error('No otp in the database');
-      // }
       connection.release();
 
       return result.rows as OTP[];

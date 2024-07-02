@@ -3,6 +3,8 @@ import { Permission } from '../../types/permission.type';
 import db from '../../config/database';
 
 class RolePermissionModel {
+
+  // Assign permission to role
   async assignPermission(roleId: number, permissionId: number): Promise<void> {
     try {
       const connection = await db.connect();
@@ -16,6 +18,7 @@ class RolePermissionModel {
     }
   }
 
+  // Remove permission from role
   async revokePermission(roleId: number, permissionId: number): Promise<void> {
     try {
       const connection = await db.connect();
@@ -43,6 +46,7 @@ class RolePermissionModel {
     }
   }
 
+  // check if role has a specific permission id
   async checkPermissionAssignment(
     role_id: number,
     permission_id: number,

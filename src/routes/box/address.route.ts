@@ -6,12 +6,13 @@ import {
   updateAddress,
   deleteAddress,
 } from '../../controllers/box/address.controller';
-// import {
-//   createAddressValidator,
-//   deleteAddressValidator,
-//   getAddressValidator,
-//   updateAddressValidator,
-// } from '../../validation/address/address.validation';
+
+import {
+  createAddressValidation,
+  deleteAddressValidation,
+  getAddressByIdValidation,
+  updateAddressValidation,
+} from '../../validation/box/address.validation';
 
 import verifyToken from '../../middlewares/verifyToken';
 import { authorize } from '../../middlewares/authorize';
@@ -22,7 +23,7 @@ router.post(
   '/new',
   verifyToken,
   authorize(['create_box']),
-  //   createAddressValidator,
+  createAddressValidation,
   createAddress,
 );
 
@@ -32,7 +33,7 @@ router.get(
   '/get-one/:id',
   verifyToken,
   authorize(['read_box']),
-  //   getAddressValidator,
+  getAddressByIdValidation,
   getAddressById,
 );
 
@@ -40,7 +41,7 @@ router.put(
   '/update/:id',
   verifyToken,
   authorize(['update_box']),
-  //   updateAddressValidator,
+  updateAddressValidation,
   updateAddress,
 );
 
@@ -48,7 +49,7 @@ router.delete(
   '/delete/:id',
   verifyToken,
   authorize(['delete_box']),
-  //   deleteAddressValidator,
+  deleteAddressValidation,
   deleteAddress,
 );
 

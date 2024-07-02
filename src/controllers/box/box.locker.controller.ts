@@ -52,7 +52,7 @@ export const getBoxLockerById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
       const boxLockerId = req.params.id;
-      const boxLocker = await boxLockerModel.getOne(Number(boxLockerId));
+      const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
       ResponseHandler.success(
         res,
         i18n.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'),
@@ -75,7 +75,7 @@ export const updateBoxLocker = asyncHandler(
       const boxLockerData: Partial<BoxLocker> = req.body;
       const updatedBoxLocker = await boxLockerModel.updateOne(
         boxLockerData,
-        Number(boxLockerId),
+        String(boxLockerId),
       );
       ResponseHandler.success(
         res,
@@ -97,7 +97,7 @@ export const deleteBoxLocker = asyncHandler(
     try {
       const boxLockerId = req.params.id;
       const deletedBoxLocker = await boxLockerModel.deleteOne(
-        Number(boxLockerId),
+        String(boxLockerId),
       );
       ResponseHandler.success(
         res,

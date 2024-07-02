@@ -2,7 +2,6 @@ import db from '../../config/database';
 import { ShippingCompany } from '../../types/shipping.company.type';
 
 export default class ShippingCompanyModel {
-    
   async createShippingCompany(
     trackingSystem: string,
     title: string,
@@ -69,28 +68,47 @@ export default class ShippingCompanyModel {
 
   async updateShippingCompany(
     id: number,
-    trackingSystem: string,
-    title: string,
-    logo: string,
+    updateFields: Partial<ShippingCompany>,
   ): Promise<ShippingCompany> {
     try {
       const connection = await db.connect();
       const updatedAt = new Date();
 
-      const sql = `
-        UPDATE Shipping_Company 
-        SET tracking_system = $1, title = $2, logo = $3, updatedAt = $4
-        WHERE id = $5
-        RETURNING id, createdAt, updatedAt, tracking_system, title, logo
-      `;
+      // Prepare the dynamic SQL query
+      const sqlFields: string[] = [];
+      const sqlParams: unknown[] = [updatedAt];
 
-      const result = await connection.query(sql, [
-        trackingSystem,
-        title,
-        logo,
-        updatedAt,
-        id,
-      ]);
+      let paramIndex = 2; // Start from 2 because updatedAt is the first parameter
+
+      if (updateFields.tracking_system) {
+        sqlFields.push(`tracking_system = $${paramIndex++}`);
+        sqlParams.push(updateFields.tracking_system);
+      }
+      if (updateFields.title) {
+        sqlFields.push(`title = $${paramIndex++}`);
+        sqlParams.push(updateFields.title);
+      }
+      if (updateFields.logo) {
+        sqlFields.push(`logo = $${paramIndex++}`);
+        sqlParams.push(updateFields.logo);
+      }
+
+      if (sqlFields.length === 0) {
+        throw new Error('No fields to update');
+      }
+
+      sqlFields.push(`updatedAt = $1`); // Ensure updatedAt is always set
+
+      const sql = `
+      UPDATE Shipping_Company 
+      SET ${sqlFields.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING id, createdAt, updatedAt, tracking_system, title, logo
+    `;
+
+      sqlParams.push(id); // Add the ID as the last parameter
+
+      const result = await connection.query(sql, sqlParams);
       connection.release();
 
       return result.rows[0] as ShippingCompany;

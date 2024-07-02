@@ -64,7 +64,7 @@ class BoxLockerModel {
   }
 
   // Get specific box locker
-  async getOne(id: number): Promise<BoxLocker> {
+  async getOne(id: string): Promise<BoxLocker> {
     try {
       if (!id) {
         throw new Error(
@@ -90,7 +90,7 @@ class BoxLockerModel {
   // Update box locker
   async updateOne(
     boxLocker: Partial<BoxLocker>,
-    id: number,
+    id: string,
   ): Promise<BoxLocker> {
     try {
       const connection = await db.connect();
@@ -141,7 +141,7 @@ class BoxLockerModel {
   }
 
   // Delete box locker
-  async deleteOne(id: number): Promise<BoxLocker> {
+  async deleteOne(id: string): Promise<BoxLocker> {
     try {
       const connection = await db.connect();
       if (!id) {

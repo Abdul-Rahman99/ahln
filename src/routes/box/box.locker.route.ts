@@ -7,12 +7,12 @@ import {
   deleteBoxLocker,
   getAllLockersById,
 } from '../../controllers/box/box.locker.controller';
-// import {
-//   createBoxLockerValidator,
-//   deleteBoxLockerValidator,
-//   getBoxLockerValidator,
-//   updateBoxLockerValidator,
-// } from '../../validation/box/box.locker.validation';
+import {
+  createBoxLockerValidation,
+  deleteBoxLockerValidation,
+  getBoxLockerByIdValidation,
+  updateBoxLockerValidation,
+} from '../../validation/box/box.locker.validation';
 
 import verifyToken from '../../middlewares/verifyToken';
 import { authorize } from '../../middlewares/authorize';
@@ -23,7 +23,7 @@ router.post(
   '/new',
   verifyToken,
   authorize(['create_box_locker']),
-  //   createBoxLockerValidator,
+  createBoxLockerValidation,
   createBoxLocker,
 );
 
@@ -38,7 +38,7 @@ router.get(
   '/get-one/:id',
   verifyToken,
   authorize(['read_box_locker']),
-  //   getBoxLockerValidator,
+  getBoxLockerByIdValidation,
   getBoxLockerById,
 );
 
@@ -46,7 +46,7 @@ router.put(
   '/update/:id',
   verifyToken,
   authorize(['update_box_locker']),
-  //   updateBoxLockerValidator,
+  updateBoxLockerValidation,
   updateBoxLocker,
 );
 
@@ -54,7 +54,7 @@ router.delete(
   '/delete/:id',
   verifyToken,
   authorize(['delete_box_locker']),
-  //   deleteBoxLockerValidator,
+  deleteBoxLockerValidation,
   deleteBoxLocker,
 );
 

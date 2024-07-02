@@ -31,7 +31,7 @@ exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res) => {
 exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
-        const boxLocker = await boxLockerModel.getOne(Number(boxLockerId));
+        const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'), boxLocker);
     }
     catch (error) {
@@ -42,7 +42,7 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
         const boxLockerData = req.body;
-        const updatedBoxLocker = await boxLockerModel.updateOne(boxLockerData, Number(boxLockerId));
+        const updatedBoxLocker = await boxLockerModel.updateOne(boxLockerData, String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'), updatedBoxLocker);
     }
     catch (error) {
@@ -52,7 +52,7 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
 exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
-        const deletedBoxLocker = await boxLockerModel.deleteOne(Number(boxLockerId));
+        const deletedBoxLocker = await boxLockerModel.deleteOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'), deletedBoxLocker);
     }
     catch (error) {

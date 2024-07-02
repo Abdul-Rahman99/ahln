@@ -25,6 +25,17 @@ class ResponseHandler {
         }
         return res.status(400).json(responseBody);
     }
+    static unauthorized(res, message, data = null, token = null) {
+        const responseBody = {
+            success: false,
+            message,
+            data,
+        };
+        if (token) {
+            responseBody.token = token;
+        }
+        return res.status(401).json(responseBody);
+    }
     static internalError(res, message, data = null) {
         return res.status(500).json({
             success: false,

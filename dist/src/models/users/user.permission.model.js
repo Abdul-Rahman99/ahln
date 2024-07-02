@@ -27,7 +27,7 @@ class UserPermissionModel {
             throw new Error(`Unable to revoke permission: ${error.message}`);
         }
     }
-    async getPermissionsByUser(userId) {
+    async getPermissionsByUserId(userId) {
         try {
             const connection = await database_1.default.connect();
             const sql = `SELECT p.* FROM permission p JOIN user_permission up ON p.id = up.permission_id WHERE up.user_id = $1`;

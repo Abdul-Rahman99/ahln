@@ -51,14 +51,14 @@ function connect() {
     exports.client.on('error', function (error) {
         console.log('MQTT connection error:', error);
         exports.client.end();
-        setTimeout(connect, 3000);
+        setTimeout(connect, 10000);
     });
     exports.client.on('reconnect', () => {
         console.log('Reconnecting to MQTT broker');
     });
     exports.client.on('end', () => {
         console.log('Connection to MQTT broker ended');
-        setTimeout(connect, 3000);
+        setTimeout(connect, 10000);
     });
 }
 connect();

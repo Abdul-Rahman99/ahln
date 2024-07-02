@@ -73,7 +73,7 @@ class UserModel {
     async getMany() {
         try {
             const connection = await database_1.default.connect();
-            const sql = 'SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users';
+            const sql = 'SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users';
             const result = await connection.query(sql);
             connection.release();
             return result.rows;
@@ -87,7 +87,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `SELECT id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language FROM users 
+            const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users 
                     WHERE id=$1`;
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
@@ -113,7 +113,7 @@ class UserModel {
     async updateOne(u, id) {
         try {
             const connection = await database_1.default.connect();
-            const checkSql = 'SELECT * FROM users WHERE id=$1';
+            const checkSql = 'SELECT email FROM users WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
                 throw new Error(`User with ID ${id} does not exist`);
@@ -311,7 +311,7 @@ class UserModel {
         }
         return null;
     }
-    async findRoleById(id) {
+    async findRoleIdByUserId(id) {
         const sql = 'SELECT role_id FROM users WHERE id=$1';
         const result = await database_1.default.query(sql, [id]);
         if (result.rows.length) {

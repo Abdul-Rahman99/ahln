@@ -23,10 +23,10 @@ const authorize = (requiredPermissions) => {
             if (!user) {
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
             }
-            const userRole = await userModel.findRoleById(user);
-            const rolePermissions = await rolePermissionModel.getPermissionsByRole(userRole);
+            const userRoleId = await userModel.findRoleIdByUserId(user);
+            const rolePermissions = await rolePermissionModel.getPermissionsByRole(userRoleId);
             const rolePermissionTitles = rolePermissions.map((permission) => permission.title);
-            const userPermissions = await userPermissionModel.getPermissionsByUser(user);
+            const userPermissions = await userPermissionModel.getPermissionsByUserId(user);
             const userPermissionTitles = userPermissions.map((permission) => permission.title);
             const allPermissions = new Set([
                 ...rolePermissionTitles,

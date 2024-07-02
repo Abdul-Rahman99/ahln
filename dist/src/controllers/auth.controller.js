@@ -67,7 +67,6 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
         if (!userFromDb) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
         }
-        console.log(currentUser);
         if (!currentUser || currentUser.token !== userFromDb.token) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
         }

@@ -92,7 +92,6 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     if (!userFromDb) {
       return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
     }
-    console.log(currentUser);
 
     // Verify the token from the request matches the one in the database
     if (!currentUser || currentUser.token !== userFromDb.token) {

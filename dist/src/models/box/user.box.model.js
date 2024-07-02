@@ -50,22 +50,27 @@ class UserBoxModel {
         try {
             const connection = await database_1.default.connect();
             const sql = `
-      SELECT ub.id as user_box_id,
-      b.id as box_id,
-      b.serial_number,
-      b.box_label,
-      b.box_model_id,
-      b.address_id,
-      b.current_tablet_id
-      FROM User_Box ub
-      INNER JOIN Box b ON ub.box_id = b.id
-      WHERE ub.user_id = $1
+      SELECT
+        ub.id AS user_box_id,
+        b.id AS box_id,
+        b.serial_number,
+        b.box_label,
+        b.box_model_id,
+        a.district,
+        a.city,
+        a.building_number,
+        b.current_tablet_id
+      FROM
+        User_Box ub
+        INNER JOIN Box b ON ub.box_id = b.id
+        INNER JOIN Address a ON b.address_id = a.id
+      WHERE
+        ub.user_id = $1
     `;
+            console.log(sql);
             const result = await connection.query(sql, [userId]);
+            console.log(result.rows);
             connection.release();
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find box for user with ID ${userId}`);
-            }
             return result.rows;
         }
         catch (error) {

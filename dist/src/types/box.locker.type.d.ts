@@ -1,9 +1,9 @@
 export interface BoxLocker {
     id: string;
-    locker_label: string;
-    serial_port: string;
     createdAt: Date;
     updatedAt: Date;
+    locker_label: string;
+    serial_port: string;
     is_empty: boolean;
     box_id: string;
 }

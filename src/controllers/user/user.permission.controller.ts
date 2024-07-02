@@ -59,7 +59,7 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
 export const getPermissionsByUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const permissions = await userPermissionModel.getPermissionsByUser(userId);
+    const permissions = await userPermissionModel.getPermissionsByUserId(userId);
 
     // Check if permissions array is empty
     if (permissions.length === 0) {

@@ -48,7 +48,7 @@ class OTPModel {
             if (!otp) {
                 throw new Error('Please provide an otp');
             }
-            const result = await connection.query('SELECT * FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
+            const result = await connection.query('SELECT id, box_locker_string FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
             if (result.rows.length === 0) {
                 throw new Error('OTP not found for in OTP model');
             }

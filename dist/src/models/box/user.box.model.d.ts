@@ -1,9 +1,10 @@
 import { Box } from '../../types/box.type';
 import { UserBox } from '../../types/user.box.type';
+import { Address } from '../../types/address.type';
 declare class UserBoxModel {
     createUserBox(userBox: Partial<UserBox>): Promise<UserBox>;
     getAllUserBoxes(): Promise<(UserBox & Box)[]>;
-    getUserBoxesByUserId(userId: string): Promise<(UserBox & Box)[]>;
+    getUserBoxesByUserId(userId: string): Promise<(UserBox & Box & Address)[]>;
     assignBoxToUser(userId: string, boxId: string): Promise<UserBox>;
     getOne(id: string): Promise<UserBox>;
     updateOne(userBox: Partial<UserBox>, id: string): Promise<UserBox>;

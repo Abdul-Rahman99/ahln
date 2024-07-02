@@ -51,7 +51,7 @@ exports.removePermissionFromUser = removePermissionFromUser;
 const getPermissionsByUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const permissions = await userPermissionModel.getPermissionsByUser(userId);
+        const permissions = await userPermissionModel.getPermissionsByUserId(userId);
         if (permissions.length === 0) {
             return res.status(404).json({
                 success: false,

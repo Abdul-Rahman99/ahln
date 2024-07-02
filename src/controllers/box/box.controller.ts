@@ -113,3 +113,26 @@ export const getBoxesByGenerationId = asyncHandler(
     }
   },
 );
+
+export const getBoxByTabletInfo = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { androidTabletId, tabletSerialNumber } = req.body;
+      const box = await boxModel.getBoxByTabletInfo(
+        androidTabletId,
+        tabletSerialNumber,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOXES_RETRIEVED_SUCCESSFULLY'),
+        box,
+      );
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_RETRIEVAL_FAILED'),
+        (error as Error).message,
+      );
+    }
+  },
+);

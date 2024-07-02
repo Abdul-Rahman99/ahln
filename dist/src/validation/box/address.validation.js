@@ -1,31 +1,41 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAddressValidator = exports.updateAddressValidator = exports.getAddressValidator = exports.createAddressValidator = void 0;
+exports.deleteAddressValidation = exports.updateAddressValidation = exports.getAddressByIdValidation = exports.getAllAddressesValidation = exports.createAddressValidation = void 0;
 const express_validator_1 = require("express-validator");
-exports.createAddressValidator = [
-    (0, express_validator_1.check)('country').notEmpty().withMessage('Country is required'),
-    (0, express_validator_1.check)('city').notEmpty().withMessage('City is required'),
-    (0, express_validator_1.check)('district').notEmpty().withMessage('District is required'),
-    (0, express_validator_1.check)('street').notEmpty().withMessage('Street is required'),
-    (0, express_validator_1.check)('building_type').notEmpty().withMessage('Building type is required'),
-    (0, express_validator_1.check)('building_number').isInt({ gt: 0 }).withMessage('Building number must be a positive integer'),
-    (0, express_validator_1.check)('floor').optional().isInt().withMessage('Floor must be an integer'),
-    (0, express_validator_1.check)('apartment_number').optional().isInt().withMessage('Apartment number must be an integer'),
+const i18n_1 = __importDefault(require("../../config/i18n"));
+exports.createAddressValidation = [
+    (0, express_validator_1.body)('email')
+        .notEmpty()
+        .withMessage(i18n_1.default.__('EMAIL_REQUIRED'))
+        .isEmail()
+        .withMessage(i18n_1.default.__('EMAIL_INVALID')),
+    (0, express_validator_1.body)('district').notEmpty().withMessage(i18n_1.default.__('DISTRICT_REQUIRED')),
+    (0, express_validator_1.body)('city').notEmpty().withMessage(i18n_1.default.__('CITY_REQUIRED')),
+    (0, express_validator_1.body)('building_number')
+        .notEmpty()
+        .withMessage(i18n_1.default.__('BUILDING_NUMBER_REQUIRED')),
 ];
-exports.getAddressValidator = [
-    (0, express_validator_1.check)('id').isInt({ gt: 0 }).withMessage('Address ID must be a positive integer'),
+exports.getAllAddressesValidation = [];
+exports.getAddressByIdValidation = [
+    (0, express_validator_1.param)('id').isInt().withMessage(i18n_1.default.__('INVALID_ADDRESS_ID')),
 ];
-exports.updateAddressValidator = [
-    (0, express_validator_1.check)('country').optional().notEmpty().withMessage('Country cannot be empty'),
-    (0, express_validator_1.check)('city').optional().notEmpty().withMessage('City cannot be empty'),
-    (0, express_validator_1.check)('district').optional().notEmpty().withMessage('District cannot be empty'),
-    (0, express_validator_1.check)('street').optional().notEmpty().withMessage('Street cannot be empty'),
-    (0, express_validator_1.check)('building_type').optional().notEmpty().withMessage('Building type cannot be empty'),
-    (0, express_validator_1.check)('building_number').optional().isInt({ gt: 0 }).withMessage('Building number must be a positive integer'),
-    (0, express_validator_1.check)('floor').optional().isInt().withMessage('Floor must be an integer'),
-    (0, express_validator_1.check)('apartment_number').optional().isInt().withMessage('Apartment number must be an integer'),
+exports.updateAddressValidation = [
+    (0, express_validator_1.param)('id').isInt().withMessage(i18n_1.default.__('INVALID_ADDRESS_ID')),
+    (0, express_validator_1.body)('email').optional().isEmail().withMessage(i18n_1.default.__('EMAIL_INVALID')),
+    (0, express_validator_1.body)('district')
+        .optional()
+        .notEmpty()
+        .withMessage(i18n_1.default.__('DISTRICT_REQUIRED')),
+    (0, express_validator_1.body)('city').optional().notEmpty().withMessage(i18n_1.default.__('CITY_REQUIRED')),
+    (0, express_validator_1.body)('building_number')
+        .optional()
+        .notEmpty()
+        .withMessage(i18n_1.default.__('BUILDING_NUMBER_REQUIRED')),
 ];
-exports.deleteAddressValidator = [
-    (0, express_validator_1.check)('id').isInt({ gt: 0 }).withMessage('Address ID must be a positive integer'),
+exports.deleteAddressValidation = [
+    (0, express_validator_1.param)('id').isInt().withMessage(i18n_1.default.__('INVALID_ADDRESS_ID')),
 ];
 //# sourceMappingURL=address.validation.js.map

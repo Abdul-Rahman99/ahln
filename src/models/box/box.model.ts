@@ -94,7 +94,7 @@ class BoxModel {
         "{door: 'door1', hex: 'fb01010032fefeffcdbf', statu: 'door1 is unlocked'}",
         "{door: 'door2', hex: 'fb01020032fefdffcdbf', statu: 'door2 is unlocked'}",
         "{door: 'door3', hex: 'fb01030032fefcffcdbf', statu: 'door3 is unlocked'}",
-      ]
+      ];
 
       // Create box lockers according to the number of doors
       for (let i = 1; i <= numberOfDoors; i++) {
@@ -103,7 +103,7 @@ class BoxModel {
         await this.boxLockerModel.createBoxLocker({
           id: lockerId,
           locker_label: lockerLabel,
-          serial_port: serial_ports[i-1],
+          serial_port: serial_ports[i - 1],
           createdAt,
           updatedAt,
           is_empty: true,
@@ -253,6 +253,40 @@ class BoxModel {
     } catch (error) {
       throw new Error(
         `Error fetching boxes by box generation ID: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async getBoxByTabletInfo(
+    androidTabletId: string,
+    tabletSerialNumber: string,
+  ): Promise<Box | null> {
+    try {
+      const connection = await db.connect();
+
+      const sql = `
+        SELECT id , b.current_tablet_id , b.id 
+        FROM tablet
+        INNER JOIN Box as b ON b.current_tablet_id= id
+        WHERE serial_number = $1
+      `;
+
+      const result = await connection.query(sql, [tabletSerialNumber]);
+
+      const updateSql = `
+      UPDATE tablet SET android_id = ${androidTabletId} WHERE id=${result.rows[0].id}`;
+
+      await connection.query(updateSql);
+      connection.release();
+
+      if (result.rows.length === 0) {
+        return null; // No box found for the given tablet info
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Error retrieving box by tablet info: ${(error as Error).message}`,
       );
     }
   }

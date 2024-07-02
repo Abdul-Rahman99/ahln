@@ -6,6 +6,7 @@ import {
   updateBox,
   deleteBox,
   getBoxesByGenerationId,
+  getBoxByTabletInfo
 } from '../../controllers/box/box.controller';
 
 // import {
@@ -60,5 +61,7 @@ router.get(
   authorize(['read_box']),
   getBoxesByGenerationId,
 );
+
+router.post('/set-tablet-id',getBoxByTabletInfo );
 
 export default router;

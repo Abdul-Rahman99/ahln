@@ -52,9 +52,9 @@ class UserBoxModel {
             const sql = `
       SELECT
         ub.id AS user_box_id,
-        b.id AS box_id,
+        b.id AS id,
         b.serial_number,
-        b.box_label,
+        b.box_label AS name,
         b.box_model_id,
         a.district,
         a.city,
@@ -63,11 +63,11 @@ class UserBoxModel {
       FROM
         User_Box ub
         INNER JOIN Box b ON ub.box_id = b.id
-        INNER JOIN Address a ON b.address_id = a.id
+        LEFT JOIN Address a ON b.address_id = a.id
       WHERE
         ub.user_id = $1
     `;
-            console.log(sql);
+            console.log(userId);
             const result = await connection.query(sql, [userId]);
             console.log(result.rows);
             connection.release();

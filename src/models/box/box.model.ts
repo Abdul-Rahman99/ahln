@@ -275,7 +275,7 @@ class BoxModel {
       console.log("555555555555555", result.rows[0].tablet_id)
       const updateSql = `
       UPDATE tablet
-      SET android_id = ${androidTabletId} 
+      SET android_id =${androidTabletId} 
       WHERE id=${result.rows[0].tablet_id}`;
 
       await connection.query(updateSql);

@@ -272,7 +272,6 @@ class BoxModel {
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);
-      console.log("555555555555555", result.rows[0].tablet_id)
       
       const updateSql = `
       UPDATE tablet
@@ -333,7 +332,6 @@ class BoxModel {
         boxId,
       ]);
       connection.release();
-      console.log(result);
 
       return result.rows[0];
     } catch (error) {

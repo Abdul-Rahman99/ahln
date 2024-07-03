@@ -82,9 +82,7 @@ class UserBoxModel {
       WHERE
         ub.user_id = $1
     `;
-      console.log(userId); // Check the SQL query being executed
       const result = await connection.query(sql, [userId]);
-      console.log(result.rows); // Check the result rows returned from the database
       connection.release();
 
       return result.rows as (UserBox & Box & Address)[];

@@ -9,7 +9,7 @@ const multerOptions = (): Multer => {
       file: Express.Multer.File,
       cb: (error: Error | null, filename: string) => void,
     ) {
-      cb(null, path.join(__dirname, '../uploads')); // Desired destination folder is uploads
+      cb(null, path.join(__dirname, '../../uploads')); // Desired destination folder is uploads
     },
     // eslint-disable-next-line @typescript-eslint/ban-types
     filename: function (req: Request, file: Express.Multer.File, cb: Function) {

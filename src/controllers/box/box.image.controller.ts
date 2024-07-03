@@ -1,43 +1,58 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
-import BoxImageModel from '../../models/box/box.image.model';
 import asyncHandler from '../../middlewares/asyncHandler';
-import { BoxImage } from '../../types/box.image.type';
-import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import i18n from '../../config/i18n';
+import BoxImageModel from '../../models/box/box.image.model';
+import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
+import UserModel from '../../models/users/user.model';
 
 const boxImageModel = new BoxImageModel();
-export const createBoxImage = asyncHandler(
+const userModel = new UserModel();
+
+export const uploadBoxImage = asyncHandler(
   async (req: Request, res: Response) => {
-    try {
-      const newBoxImage: BoxImage = req.body;
-      const createdBoxImage = await boxImageModel.createBoxImage(newBoxImage);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_IMAGE_CREATED_SUCCESSFULLY'),
-        createdBoxImage,
-      );
-    } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_IMAGE_CREATION_FAILED'),
-        error.message,
-      );
-    }
+    uploadSingleImage('image')(req, res, async (err: any) => {
+      if (err) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('IMAGE_UPLOAD_FAILED'),
+          err.message,
+        );
+      }
+      if (!req.file) {
+        return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
+      }
+
+      const { boxId, deliveryPackageId } = req.body;
+      const imageName = req.file.filename;
+
+      try {
+        const createdBoxImage = await boxImageModel.createBoxImage(
+          boxId,
+          deliveryPackageId,
+          imageName,
+        );
+        ResponseHandler.success(
+          res,
+          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          createdBoxImage,
+        );
+      } catch (error: any) {
+        ResponseHandler.internalError(
+          res,
+          i18n.__('IMAGE_UPLOAD_FAILED'),
+          error.message,
+        );
+      }
+    });
   },
 );
 
 export const getAllBoxImages = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { date, deliveryPackageId, boxId } = req.query;
-      const boxImages = await boxImageModel.getMany({
-        date: date as string,
-        deliveryPackageId: deliveryPackageId
-          ? Number(deliveryPackageId)
-          : undefined,
-        boxId: boxId as string,
-      });
+      const boxImages = await boxImageModel.getAllBoxImages();
       ResponseHandler.success(
         res,
         i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
@@ -56,16 +71,14 @@ export const getAllBoxImages = asyncHandler(
 export const getBoxImageById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const { date, deliveryPackageId, boxId } = req.query;
-      const boxImage = await boxImageModel.getOne({
-        id: Number(id),
-        date: date as string,
-        deliveryPackageId: deliveryPackageId
-          ? Number(deliveryPackageId)
-          : undefined,
-        boxId: boxId as string,
-      });
+      const boxImageId = parseInt(req.params.id, 10);
+      const boxImage = await boxImageModel.getBoxImageById(boxImageId);
+      if (!boxImage) {
+        return ResponseHandler.internalError(
+          res,
+          i18n.__('BOX_IMAGE_NOT_FOUND'),
+        );
+      }
       ResponseHandler.success(
         res,
         i18n.__('BOX_IMAGE_RETRIEVED_SUCCESSFULLY'),
@@ -84,11 +97,15 @@ export const getBoxImageById = asyncHandler(
 export const updateBoxImage = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const boxImageData: Partial<BoxImage> = req.body;
-      const updatedBoxImage = await boxImageModel.updateOne(
-        boxImageData,
-        Number(id),
+      const boxImageId = parseInt(req.params.id, 10);
+      const { boxId, deliveryPackageId } = req.body;
+      const imageName = req.file ? req.file.filename : req.body.image;
+
+      const updatedBoxImage = await boxImageModel.updateBoxImage(
+        boxImageId,
+        boxId,
+        deliveryPackageId,
+        imageName,
       );
       ResponseHandler.success(
         res,
@@ -108,17 +125,82 @@ export const updateBoxImage = asyncHandler(
 export const deleteBoxImage = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const boxImageId = req.params.id;
-      const deletedBoxImage = await boxImageModel.deleteOne(Number(boxImageId));
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'),
-        deletedBoxImage,
-      );
+      const boxImageId = parseInt(req.params.id, 10);
+      await boxImageModel.deleteBoxImage(boxImageId);
+      ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     } catch (error: any) {
       ResponseHandler.internalError(
         res,
         i18n.__('BOX_IMAGE_DELETION_FAILED'),
+        error.message,
+      );
+    }
+  },
+);
+
+export const getBoxImagesByUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+
+      const boxImages = await boxImageModel.getBoxImagesByUser(user);
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
+        boxImages,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
+        error.message,
+      );
+    }
+  },
+);
+
+export const getBoxImagesByBoxId = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const boxId = req.params.boxId;
+      const boxImages = await boxImageModel.getBoxImagesByBoxId(boxId);
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
+        boxImages,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
+        error.message,
+      );
+    }
+  },
+);
+
+export const getBoxImagesByPackageId = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const packageId = req.params.packageId;
+      const boxImages = await boxImageModel.getBoxImagesByPackageId(packageId);
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
+        boxImages,
+      );
+    } catch (error: any) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
         error.message,
       );
     }

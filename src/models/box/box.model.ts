@@ -268,7 +268,7 @@ class BoxModel {
         SELECT tablet.id as tablet_id , b.current_tablet_id , b.id as box_id
         FROM tablet
         INNER JOIN Box as b ON b.current_tablet_id= tablet.id
-        WHERE serial_number = $1
+        WHERE tablet.serial_number = $1
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);

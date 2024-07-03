@@ -124,13 +124,13 @@ export const getBoxByTabletInfo = asyncHandler(
       );
       ResponseHandler.success(
         res,
-        i18n.__('BOXES_RETRIEVED_SUCCESSFULLY'),
+        i18n.__('BOX_RETRIEVED_SUCCESSFULLY'),
         box,
       );
     } catch (error) {
       ResponseHandler.success(
         res,
-        i18n.__('ADDRESS_RETRIEVAL_FAILED'),
+        i18n.__('BOX_RETRIEVAL_FAILED'),
         (error as Error).message,
       );
     }

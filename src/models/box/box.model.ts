@@ -265,16 +265,16 @@ class BoxModel {
       const connection = await db.connect();
 
       const sql = `
-        SELECT id , b.current_tablet_id , b.id 
+        SELECT tablet.id as tablet_id , b.current_tablet_id , b.id as box_id
         FROM tablet
-        INNER JOIN Box as b ON b.current_tablet_id= id
+        INNER JOIN Box as b ON b.current_tablet_id= tablet.id
         WHERE serial_number = $1
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);
 
       const updateSql = `
-      UPDATE tablet SET android_id = ${androidTabletId} WHERE id=${result.rows[0].id}`;
+      UPDATE tablet SET android_id = ${androidTabletId} WHERE id=${result.rows[0].tablet_id}`;
 
       await connection.query(updateSql);
       connection.release();

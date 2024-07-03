@@ -118,7 +118,6 @@ export default class BoxImageModel {
       );
     }
   }
-
   async getBoxImagesByUser(userId: string): Promise<BoxImage[]> {
     try {
       const connection = await db.connect();
@@ -126,12 +125,16 @@ export default class BoxImageModel {
         SELECT bi.*
         FROM Box_IMAGE bi
         INNER JOIN Delivery_Package dp ON bi.delivery_package_id = dp.id
-        WHERE dp.user_id = $1
+        WHERE dp.customer_id = $1
       `;
       const result = await connection.query(sql, [userId]);
       connection.release();
 
-      return result.rows as BoxImage[];
+      const boxImages = result.rows as BoxImage[];
+      return boxImages.map((image) => ({
+        ...image,
+        image: `${process.env.BASE_URL}/uploads/${image.image}`,
+      }));
     } catch (error) {
       throw new Error(
         `Unable to fetch box images for user ID ${userId}: ${(error as Error).message}`,
@@ -146,7 +149,11 @@ export default class BoxImageModel {
       const result = await connection.query(sql, [boxId]);
       connection.release();
 
-      return result.rows as BoxImage[];
+      const boxImages = result.rows as BoxImage[];
+      return boxImages.map((image) => ({
+        ...image,
+        image: `${process.env.BASE_URL}/uploads/${image.image}`,
+      }));
     } catch (error) {
       throw new Error(
         `Unable to fetch box images for box ID ${boxId}: ${(error as Error).message}`,
@@ -161,7 +168,11 @@ export default class BoxImageModel {
       const result = await connection.query(sql, [packageId]);
       connection.release();
 
-      return result.rows as BoxImage[];
+      const boxImages = result.rows as BoxImage[];
+      return boxImages.map((image) => ({
+        ...image,
+        image: `${process.env.BASE_URL}/uploads/${image.image}`,
+      }));
     } catch (error) {
       throw new Error(
         `Unable to fetch box images for package ID ${packageId}: ${(error as Error).message}`,

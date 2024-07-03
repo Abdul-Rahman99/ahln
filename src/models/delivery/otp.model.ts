@@ -228,7 +228,8 @@ class OTPModel {
 
   // Check tracking number and update delivery status
   async checkTrackingNumberAndUpdateStatus(
-    trackingNumber: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    trackingNumber: any,
   ): Promise<string> {
     const connection = await db.connect();
     try {

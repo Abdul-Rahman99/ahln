@@ -177,20 +177,21 @@ class OTPModel {
                 throw new Error('Please provide a tracking number');
             }
             const deliveryPackageResult = await connection.query('SELECT * FROM Delivery_Package WHERE tracking_number = $1', [trackingNumber]);
-            if (deliveryPackageResult.rows.length === 0) {
+            if (deliveryPackageResult.rows.length == 0) {
                 throw new Error('Delivery package not found for the given tracking number');
             }
+            console.log('5554');
             const deliveryPackage = deliveryPackageResult.rows[0];
             if (deliveryPackage.shipment_status === 'delivered' &&
                 deliveryPackage.is_delivered === true) {
-                return 'The package has already been delivered';
+                throw new Error('The package has already been delivered');
             }
             const updatedAt = new Date();
             await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4', ['delivered', true, updatedAt, trackingNumber]);
             return deliveryPackage.box_locker_string;
         }
         catch (error) {
-            throw new Error(`Error checking tracking number and updating status: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
         finally {
             connection.release();

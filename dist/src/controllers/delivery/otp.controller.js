@@ -88,7 +88,7 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const { trackingNumber } = req.body;
+        const trackingNumber = req.body.trackingNumber;
         if (!trackingNumber) {
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));
             return;
@@ -99,7 +99,7 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
         });
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=otp.controller.js.map

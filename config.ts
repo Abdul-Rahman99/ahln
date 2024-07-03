@@ -11,6 +11,7 @@ export const config = {
 
   PORT: process.env.PORT,
   BASE_URL: process.env.BASE_URL,
+  UPLOADS: process.env.UPLOADS as string,
   NODE_ENV: process.env.NODE_ENV,
 
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,

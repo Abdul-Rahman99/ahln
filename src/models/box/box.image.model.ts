@@ -34,7 +34,11 @@ export default class BoxImageModel {
 
       const result = await connection.query(sql, sqlParams);
       connection.release();
-      return result.rows[0] as BoxImage;
+
+      const createdImage = result.rows[0] as BoxImage;
+      createdImage.image = `${process.env.BASE_URL}/uploads/${createdImage.image}`;
+
+      return createdImage;
     } catch (error) {
       throw new Error(
         `Unable to create box image: ${(error as Error).message}`,

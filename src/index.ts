@@ -63,8 +63,10 @@ const limiter = rateLimit({
 
 app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
+
+
 // Serve static files from the uploads folder
-app.use('/uploads', express.static(path.join('D:/ahln/uploads')));
+app.use('/uploads', express.static(path.join(config.UPLOADS)));
 
 // Mount routes
 mountRoutes(app);

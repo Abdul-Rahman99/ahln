@@ -228,9 +228,7 @@ class OTPModel {
   }
 
   // Check tracking number and update delivery status
-  async checkTrackingNumberAndUpdateStatus(
-    trackingNumber: any,
-  ): Promise<any> {
+  async checkTrackingNumberAndUpdateStatus(trackingNumber: any): Promise<any> {
     const connection = await db.connect();
     try {
       if (!trackingNumber) {
@@ -243,7 +241,6 @@ class OTPModel {
       );
 
       // console.log(deliveryPackageResult);
-      
 
       if (deliveryPackageResult.rows.length == 0) {
         throw new Error(
@@ -251,8 +248,7 @@ class OTPModel {
         );
       }
 
-      console.log("5554");
-      
+      console.log('5554');
 
       const deliveryPackage = deliveryPackageResult.rows[0];
 
@@ -260,7 +256,7 @@ class OTPModel {
         deliveryPackage.shipment_status === 'delivered' &&
         deliveryPackage.is_delivered === true
       ) {
-        return 'The package has already been delivered';
+        throw new Error('The package has already been delivered');
       }
 
       const updatedAt = new Date();
@@ -271,9 +267,7 @@ class OTPModel {
 
       return deliveryPackage.box_locker_string;
     } catch (error) {
-      throw new Error(
-        `Error checking tracking number and updating status: ${(error as Error).message}`,
-      );
+      throw new Error(`${(error as Error).message}`);
     } finally {
       connection.release();
     }

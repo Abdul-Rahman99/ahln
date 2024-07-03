@@ -134,7 +134,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
 export const checkTrackingNumberAndUpdateStatus = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { trackingNumber } = req.body;
+      const trackingNumber = req.body.trackingNumber;
       if (!trackingNumber) {
         ResponseHandler.badRequest(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
         return;
@@ -144,8 +144,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
         box_locker_string: result,
       });
-    } catch (error) {
-      ResponseHandler.internalError(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
+    } catch (error: any) {
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { OTP } from '../../types/otp.type';
 
@@ -228,9 +229,8 @@ class OTPModel {
 
   // Check tracking number and update delivery status
   async checkTrackingNumberAndUpdateStatus(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackingNumber: any,
-  ): Promise<string> {
+  ): Promise<any> {
     const connection = await db.connect();
     try {
       if (!trackingNumber) {
@@ -242,11 +242,17 @@ class OTPModel {
         [trackingNumber],
       );
 
-      if (deliveryPackageResult.rows.length === 0) {
+      // console.log(deliveryPackageResult);
+      
+
+      if (deliveryPackageResult.rows.length == 0) {
         throw new Error(
           'Delivery package not found for the given tracking number',
         );
       }
+
+      console.log("5554");
+      
 
       const deliveryPackage = deliveryPackageResult.rows[0];
 

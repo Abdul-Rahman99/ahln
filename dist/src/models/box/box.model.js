@@ -66,9 +66,9 @@ class BoxModel {
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
             const serial_ports = [
-                "{door: 'door1', hex: 'fb01010032fefeffcdbf', statu: 'door1 is unlocked'}",
-                "{door: 'door2', hex: 'fb01020032fefdffcdbf', statu: 'door2 is unlocked'}",
-                "{door: 'door3', hex: 'fb01030032fefcffcdbf', statu: 'door3 is unlocked'}",
+                `{"door": "door1", "hex": "fb01010032fefeffcdbf", "statu": "door1 is unlocked"}`,
+                `{"door": "door2", "hex": "fb01020032fefdffcdbf", "statu": "door2 is unlocked"}`,
+                `{"door": "door3", "hex": "fb01030032fefcffcdbf", "statu": "door3 is unlocked"}`,
             ];
             for (let i = 1; i <= numberOfDoors; i++) {
                 const lockerId = `${id}_${i}`;
@@ -194,12 +194,14 @@ class BoxModel {
         WHERE tablet.serial_number = $1
       `;
             const result = await connection.query(sql, [tabletSerialNumber]);
-            console.log("555555555555555", result.rows[0].tablet_id);
             const updateSql = `
       UPDATE tablet
       SET android_id = $1 
       WHERE id=$2`;
-            await connection.query(updateSql, [androidTabletId, result.rows[0].tablet_id]);
+            await connection.query(updateSql, [
+                androidTabletId,
+                result.rows[0].tablet_id,
+            ]);
             connection.release();
             if (result.rows.length === 0) {
                 return null;
@@ -238,7 +240,6 @@ class BoxModel {
                 boxId,
             ]);
             connection.release();
-            console.log(result);
             return result.rows[0];
         }
         catch (error) {

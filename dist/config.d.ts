@@ -7,6 +7,7 @@ export declare const config: {
     DB_URI: string | undefined;
     PORT: string | undefined;
     BASE_URL: string | undefined;
+    UPLOADS: string;
     NODE_ENV: string | undefined;
     JWT_SECRET_KEY: string | undefined;
     SALT_ROUNDS: string | undefined;

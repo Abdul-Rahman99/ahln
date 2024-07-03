@@ -31,7 +31,7 @@ exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res) => {
 exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
-        const boxLocker = await boxLockerModel.getOne(Number(boxLockerId));
+        const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'), boxLocker);
     }
     catch (error) {

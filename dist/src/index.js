@@ -39,7 +39,7 @@ const limiter = (0, express_rate_limit_1.default)({
     message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api', limiter);
-app.use('/uploads', express_1.default.static(path_1.default.join('D:/ahln/uploads')));
+app.use('/uploads', express_1.default.static(path_1.default.join(config_1.config.UPLOADS)));
 (0, routes_1.default)(app);
 app.use((_req, res) => {
     res.status(404).json({

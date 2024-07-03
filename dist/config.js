@@ -35,6 +35,7 @@ exports.config = {
     DB_URI: process.env.DB_URI,
     PORT: process.env.PORT,
     BASE_URL: process.env.BASE_URL,
+    UPLOADS: process.env.UPLOADS,
     NODE_ENV: process.env.NODE_ENV,
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
     SALT_ROUNDS: process.env.SALT_ROUNDS,

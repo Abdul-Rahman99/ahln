@@ -13,7 +13,11 @@ const multerOptions = () => {
         },
         filename: function (req, file, cb) {
             const uniqueSuffix = Date.now() + '-';
-            cb(null, 'image-' + uniqueSuffix + path_1.default.extname(file.originalname));
+            let filename = 'image-' + uniqueSuffix + path_1.default.extname(file.originalname);
+            if (!file.originalname.toLowerCase().endsWith('.png')) {
+                filename = filename.replace(/\.[^.]+$/, '.png');
+            }
+            cb(null, filename);
         },
     });
     const multerFilter = function (req, file, cb) {
@@ -21,7 +25,7 @@ const multerOptions = () => {
             cb(null, true);
         }
         else {
-            cb(new Error('Images onlly allowed'));
+            cb(new Error('Only images allowed'));
         }
     };
     const upload = (0, multer_1.default)({

@@ -14,7 +14,14 @@ const multerOptions = (): Multer => {
     // eslint-disable-next-line @typescript-eslint/ban-types
     filename: function (req: Request, file: Express.Multer.File, cb: Function) {
       const uniqueSuffix = Date.now() + '-';
-      cb(null, 'image-' + uniqueSuffix + path.extname(file.originalname));
+      let filename = 'image-' + uniqueSuffix + path.extname(file.originalname);
+
+      // Transform non-PNG images to PNG
+      if (!file.originalname.toLowerCase().endsWith('.png')) {
+        filename = filename.replace(/\.[^.]+$/, '.png');
+      }
+
+      cb(null, filename);
     },
   });
 
@@ -26,7 +33,7 @@ const multerOptions = (): Multer => {
     if (file.mimetype.startsWith('image')) {
       cb(null, true);
     } else {
-      cb(new Error('Images onlly allowed'));
+      cb(new Error('Only images allowed'));
     }
   };
 

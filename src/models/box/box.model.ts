@@ -260,7 +260,7 @@ class BoxModel {
   async getBoxByTabletInfo(
     androidTabletId: string,
     tabletSerialNumber: string,
-  ): Promise<Box | null> {
+  ): Promise<object | null> {
     try {
       const connection = await db.connect();
 
@@ -273,19 +273,20 @@ class BoxModel {
 
       const result = await connection.query(sql, [tabletSerialNumber]);
       console.log("555555555555555", result.rows[0].tablet_id)
+      
       const updateSql = `
       UPDATE tablet
-      SET ${androidTabletId} = android_id 
-      WHERE id=${result.rows[0].tablet_id}`;
+      SET android_id = $1 
+      WHERE id=$2`;
 
-      await connection.query(updateSql);
+      await connection.query(updateSql,[androidTabletId,result.rows[0].tablet_id]);
       connection.release();
 
       if (result.rows.length === 0) {
         return null; // No box found for the given tablet info
       }
 
-      return result.rows[0].box_id;
+      return {box_id:result.rows[0].box_id};
     } catch (error) {
       throw new Error(
         `Error retrieving box by tablet info: ${(error as Error).message}`,

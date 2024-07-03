@@ -91,9 +91,9 @@ class BoxModel {
 
       // need to be dynamic
       const serial_ports = [
-        "{door: 'door1', hex: 'fb01010032fefeffcdbf', statu: 'door1 is unlocked'}",
-        "{door: 'door2', hex: 'fb01020032fefdffcdbf', statu: 'door2 is unlocked'}",
-        "{door: 'door3', hex: 'fb01030032fefcffcdbf', statu: 'door3 is unlocked'}",
+        `{"door": "door1", "hex": "fb01010032fefeffcdbf", "statu": "door1 is unlocked"}`,
+        `{"door": "door2", "hex": "fb01020032fefdffcdbf", "statu": "door2 is unlocked"}`,
+        `{"door": "door3", "hex": "fb01030032fefcffcdbf", "statu": "door3 is unlocked"}`,
       ];
 
       // Create box lockers according to the number of doors
@@ -272,21 +272,24 @@ class BoxModel {
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);
-      console.log("555555555555555", result.rows[0].tablet_id)
-      
+      console.log('555555555555555', result.rows[0].tablet_id);
+
       const updateSql = `
       UPDATE tablet
       SET android_id = $1 
       WHERE id=$2`;
 
-      await connection.query(updateSql,[androidTabletId,result.rows[0].tablet_id]);
+      await connection.query(updateSql, [
+        androidTabletId,
+        result.rows[0].tablet_id,
+      ]);
       connection.release();
 
       if (result.rows.length === 0) {
         return null; // No box found for the given tablet info
       }
 
-      return {box_id:result.rows[0].box_id};
+      return { box_id: result.rows[0].box_id };
     } catch (error) {
       throw new Error(
         `Error retrieving box by tablet info: ${(error as Error).message}`,

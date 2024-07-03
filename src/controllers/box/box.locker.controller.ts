@@ -52,7 +52,7 @@ export const getBoxLockerById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
       const boxLockerId = req.params.id;
-      const boxLocker = await boxLockerModel.getOne(Number(boxLockerId));
+      const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
       ResponseHandler.success(
         res,
         i18n.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'),

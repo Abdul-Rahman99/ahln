@@ -63,6 +63,8 @@ class OTPModel {
       if (result.rows.length === 0) {
         throw new Error('OTP not found for in OTP model');
       }
+      console.log(result);
+      
 
       const deliveryPackageResult = (
         await connection.query(
@@ -240,15 +242,11 @@ class OTPModel {
         [trackingNumber],
       );
 
-      // console.log(deliveryPackageResult);
-
       if (deliveryPackageResult.rows.length == 0) {
         throw new Error(
           'Delivery package not found for the given tracking number',
         );
       }
-
-      console.log('5554');
 
       const deliveryPackage = deliveryPackageResult.rows[0];
 
@@ -259,13 +257,27 @@ class OTPModel {
         throw new Error('The package has already been delivered');
       }
 
+      const box_id = deliveryPackage.box_id;
+      
+      const boxLockerResult = await connection.query(
+        'SELECT serial_port FROM Box_Locker WHERE box_id = $1',
+        [box_id],
+      );
+
+      if (boxLockerResult.rows.length == 0) {
+        throw new Error(`Box locker not found for the given box id: ${box_id}`);
+      }
+
+      const serialPort = boxLockerResult.rows[0].serial_port;
+      const parsedSerialPort = JSON.parse(serialPort);
+
       const updatedAt = new Date();
       await connection.query(
         'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4',
         ['delivered', true, updatedAt, trackingNumber],
       );
 
-      return deliveryPackage.box_locker_string;
+      return parsedSerialPort;
     } catch (error) {
       throw new Error(`${(error as Error).message}`);
     } finally {

@@ -13,6 +13,7 @@ import { errorMiddleware, notFound } from './middlewares/error.middleware';
 import { client } from './config/mqtt';
 import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
+import path from 'path';
 
 // import patchDatabase from './config/patch';
 dotenv.config({ path: '../.env' });
@@ -62,8 +63,8 @@ const limiter = rateLimit({
 
 app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
-// Static file serving
-app.use('/uploads', express.static('uploads'));
+// Serve static files from the uploads folder
+app.use('/uploads', express.static(path.join('D:/ahln/uploads')));
 
 // Mount routes
 mountRoutes(app);

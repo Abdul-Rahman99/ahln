@@ -1,18 +1,11 @@
 import { BoxImage } from '../../types/box.image.type';
-declare class BoxImageModel {
-    createBoxImage(boxImage: Partial<BoxImage>): Promise<BoxImage>;
-    getMany({ date, deliveryPackageId, boxId, }: {
-        date?: string;
-        deliveryPackageId?: number;
-        boxId?: string;
-    }): Promise<BoxImage[]>;
-    getOne({ id, date, deliveryPackageId, boxId, }: {
-        id: number;
-        date?: string;
-        deliveryPackageId?: number;
-        boxId?: string;
-    }): Promise<BoxImage>;
-    updateOne(boxImage: Partial<BoxImage>, id: number): Promise<BoxImage>;
-    deleteOne(id: number): Promise<BoxImage>;
+export default class BoxImageModel {
+    createBoxImage(boxId: string, deliveryPackageId: string, imageName: string): Promise<BoxImage>;
+    getAllBoxImages(): Promise<BoxImage[]>;
+    getBoxImageById(id: number): Promise<BoxImage | null>;
+    updateBoxImage(id: number, boxId: string, deliveryPackageId: string, imageName: string): Promise<BoxImage>;
+    deleteBoxImage(id: number): Promise<void>;
+    getBoxImagesByUser(userId: string): Promise<BoxImage[]>;
+    getBoxImagesByBoxId(boxId: string): Promise<BoxImage[]>;
+    getBoxImagesByPackageId(packageId: string): Promise<BoxImage[]>;
 }
-export default BoxImageModel;

@@ -272,7 +272,7 @@ class BoxModel {
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);
-      console.log("555555555555555", result.rows[0].tablet_id)
+      console.log('555555555555555', result.rows[0].tablet_id);
       const updateSql = `
       UPDATE tablet
       SET android_id = ${androidTabletId} 
@@ -289,6 +289,101 @@ class BoxModel {
     } catch (error) {
       throw new Error(
         `Error retrieving box by tablet info: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async assignTabletToBox(tabletId: string, boxId: string): Promise<Box> {
+    try {
+      if (!tabletId || !boxId) {
+        throw new Error('Please provide a tabletId or boxId');
+      }
+
+      const connection = await db.connect();
+
+      // Check if the tablet exists
+      const tabletCheckSql = 'SELECT id FROM tablet WHERE id = $1';
+      const tabletCheckResult = await connection.query(tabletCheckSql, [
+        tabletId,
+      ]);
+
+      if (tabletCheckResult.rows.length === 0) {
+        connection.release();
+        throw new Error(`Tablet with ID ${tabletId} does not exist`);
+      }
+
+      // Check if the box exists
+      const boxCheckSql = 'SELECT id FROM box WHERE id = $1';
+      const boxCheckResult = await connection.query(boxCheckSql, [boxId]);
+
+      if (boxCheckResult.rows.length === 0) {
+        connection.release();
+        throw new Error(`Box with ID ${boxId} does not exist`);
+      }
+
+      // Update tablet ID in the box table
+      const updateBoxSql =
+        'UPDATE box SET current_tablet_id = $1, updatedAt = $2 WHERE id = $3 RETURNING *';
+      const updatedAt = new Date();
+
+      const result = await connection.query(updateBoxSql, [
+        tabletId,
+        updatedAt,
+        boxId,
+      ]);
+      connection.release();
+      console.log(result);
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Unable to assign tablet to Box: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  async resetTabletId(tabletId: string, boxId: string): Promise<Box> {
+    try {
+      if (!tabletId || !boxId) {
+        throw new Error('Please provide a tabletId or boxId');
+      }
+
+      const connection = await db.connect();
+      // Get current and previous tablet IDs from box
+      const getCurrentTabletSql =
+        'SELECT current_tablet_id FROM box WHERE id = $1';
+      const getCurrentTabletResult = await connection.query(
+        getCurrentTabletSql,
+        [boxId],
+      );
+
+      if (getCurrentTabletResult.rows.length === 0) {
+        throw new Error(`Box with ID ${boxId} does not exist`);
+      }
+
+      const current_tablet_id =
+        getCurrentTabletResult.rows[0].current_tablet_id;
+
+      // Update tablet ID in the box table and handle previous_tablet_id
+      const updateBoxSql =
+        'UPDATE box SET current_tablet_id = $1, previous_tablet_id = $2, updatedAt = $3 WHERE id = $4 RETURNING *';
+
+      const updatedAt = new Date();
+      const result = await connection.query(updateBoxSql, [
+        tabletId,
+        current_tablet_id,
+        updatedAt,
+        boxId,
+      ]);
+
+      if (result.rows.length === 0) {
+        throw new Error(`Failed to update Box with ID ${boxId}`);
+      }
+
+      return result.rows[0]; // Return the updated box data
+    } catch (error) {
+      throw new Error(
+        `Unable to reset tablet ID for Box: ${(error as Error).message}`,
       );
     }
   }

@@ -6,7 +6,9 @@ import {
   updateBox,
   deleteBox,
   getBoxesByGenerationId,
-  getBoxByTabletInfo
+  getBoxByTabletInfo,
+  assignTabletToBox,
+  resetTabletId,
 } from '../../controllers/box/box.controller';
 
 // import {
@@ -62,6 +64,19 @@ router.get(
   getBoxesByGenerationId,
 );
 
-router.post('/set-tablet-id',getBoxByTabletInfo );
+router.post('/set-tablet-id', getBoxByTabletInfo);
 
+router.post(
+  '/assign-tablet-to-box',
+  verifyToken,
+  authorize(['create_tablet']),
+  assignTabletToBox,
+);
+
+router.post(
+  '/reset-tablet-to-box',
+  verifyToken,
+  authorize(['create_tablet']),
+  resetTabletId,
+);
 export default router;

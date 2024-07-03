@@ -256,16 +256,17 @@ class OTPModel {
         throw new Error('The package has already been delivered');
       }
 
-      const box_locker_id = deliveryPackage.box_locker_id;
+      // console.log(deliveryPackage);  
 
       const boxLockerResult = await connection.query(
-        'SELECT serial_port FROM Box_Locker WHERE box_locker_id = $1',
-        [box_locker_id],
+        'SELECT serial_port FROM box_locker WHERE id = $1',
+        [deliveryPackage.box_locker_id],
       );
+      // console.log(boxLockerResult.rows);
 
       if (boxLockerResult.rows.length == 0) {
         throw new Error(
-          `Box locker not found for the given box id: ${box_locker_id}`,
+          `Box locker not found for the given box id: ${deliveryPackage.box_locker_id}`,
         );
       }
 

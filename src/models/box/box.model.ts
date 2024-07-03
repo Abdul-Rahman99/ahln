@@ -275,7 +275,7 @@ class BoxModel {
       console.log("555555555555555", result.rows[0].tablet_id)
       const updateSql = `
       UPDATE tablet
-      SET android_id =${androidTabletId} 
+      SET ${androidTabletId} = android_id 
       WHERE id=${result.rows[0].tablet_id}`;
 
       await connection.query(updateSql);
@@ -285,7 +285,7 @@ class BoxModel {
         return null; // No box found for the given tablet info
       }
 
-      return result.rows[0];
+      return result.rows[0].box_id;
     } catch (error) {
       throw new Error(
         `Error retrieving box by tablet info: ${(error as Error).message}`,

@@ -9,7 +9,7 @@ const path_1 = __importDefault(require("path"));
 const multerOptions = () => {
     const multerStorage = multer_1.default.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, path_1.default.join(__dirname, '../uploads'));
+            cb(null, path_1.default.join(__dirname, '../../uploads'));
         },
         filename: function (req, file, cb) {
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

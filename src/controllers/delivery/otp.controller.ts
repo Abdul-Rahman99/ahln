@@ -131,6 +131,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// function to check by tracking number 
 export const checkTrackingNumberAndUpdateStatus = asyncHandler(
   async (req: Request, res: Response) => {
     try {

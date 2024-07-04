@@ -23,7 +23,7 @@ const router = Router();
 
 router.post(
   '/new',
-  // verifyToken,
+  verifyToken,
   createDeliveryPackageValidation,
   createDeliveryPackage,
 );

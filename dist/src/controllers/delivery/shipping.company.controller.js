@@ -43,9 +43,9 @@ exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res) =>
 });
 exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
     const { id } = req.params;
-    const { tracking_system, title, logo } = req.body;
+    const { tracking_system } = req.body;
     try {
-        const updatedShippingCompany = await shippingCompanyModel.updateShippingCompany(parseInt(id, 10), tracking_system, title, logo);
+        const updatedShippingCompany = await shippingCompanyModel.updateShippingCompany(parseInt(id, 10), tracking_system);
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'), updatedShippingCompany);
     }
     catch (error) {

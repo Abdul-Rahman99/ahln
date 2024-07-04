@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const otp_controller_1 = require("../../controllers/delivery/otp.controller");
+const otp_validation_1 = require("../../validation/delivery/otp.validation");
 const router = (0, express_1.Router)();
-router.post('/new', otp_controller_1.createOTP);
+router.post('/new', otp_validation_1.createOTPValidation, otp_controller_1.createOTP);
 router.get('/get-all', otp_controller_1.getAllOTPs);
-router.get('/get-one/:id', otp_controller_1.getOTPById);
-router.put('/update/:id', otp_controller_1.updateOTP);
-router.delete('/delete/:id', otp_controller_1.deleteOTP);
-router.get('/user-otp/:userId', otp_controller_1.getOTPsByUser);
-router.post('/check-otp', otp_controller_1.checkOTP);
-router.post('/check-tracking-number', otp_controller_1.checkTrackingNumberAndUpdateStatus);
+router.get('/get-one/:id', otp_validation_1.getOneOTPValidation, otp_controller_1.getOTPById);
+router.put('/update/:id', otp_validation_1.updateOneOTPValidation, otp_controller_1.updateOTP);
+router.delete('/delete/:id', otp_validation_1.deleteOneOTPValidation, otp_controller_1.deleteOTP);
+router.post('/check-otp', otp_validation_1.checkOTPValidation, otp_controller_1.checkOTP);
+router.post('/check-tracking-number', otp_validation_1.checkTrackingNumberValidation, otp_controller_1.checkTrackingNumberAndUpdateStatus);
 exports.default = router;
 //# sourceMappingURL=otp.route.js.map

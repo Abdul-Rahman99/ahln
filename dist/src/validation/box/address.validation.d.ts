@@ -1,5 +1,7 @@
-export declare const createAddressValidation: import("express-validator").ValidationChain[];
+
+export declare const createAddressValidation: (import("express-validator").ValidationChain | ((req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: import("express").Response<unknown, Record<string, unknown>>, next: import("express").NextFunction) => void))[];
+export declare const getAddressByIdValidation: (import("express-validator").ValidationChain | ((req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: import("express").Response<unknown, Record<string, unknown>>, next: import("express").NextFunction) => void))[];
+export declare const updateAddressValidation: (import("express-validator").ValidationChain | ((req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: import("express").Response<unknown, Record<string, unknown>>, next: import("express").NextFunction) => void))[];
+export declare const deleteAddressValidation: (import("express-validator").ValidationChain | ((req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: import("express").Response<unknown, Record<string, unknown>>, next: import("express").NextFunction) => void))[];
 export declare const getAllAddressesValidation: never[];
-export declare const getAddressByIdValidation: import("express-validator").ValidationChain[];
-export declare const updateAddressValidation: import("express-validator").ValidationChain[];
-export declare const deleteAddressValidation: import("express-validator").ValidationChain[];
+

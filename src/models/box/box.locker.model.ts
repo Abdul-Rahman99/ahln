@@ -90,7 +90,7 @@ class BoxLockerModel {
   // Update box locker
   async updateOne(
     boxLocker: Partial<BoxLocker>,
-    id: number,
+    id: string,
   ): Promise<BoxLocker> {
     try {
       const connection = await db.connect();
@@ -141,7 +141,7 @@ class BoxLockerModel {
   }
 
   // Delete box locker
-  async deleteOne(id: number): Promise<BoxLocker> {
+  async deleteOne(id: string): Promise<BoxLocker> {
     try {
       const connection = await db.connect();
       if (!id) {

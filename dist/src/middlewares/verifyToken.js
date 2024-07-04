@@ -23,7 +23,7 @@ const verifyToken = (req, res, next) => {
     catch (err) {
         if (err instanceof jsonwebtoken_1.default.JsonWebTokenError ||
             err instanceof jsonwebtoken_1.default.TokenExpiredError) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+            return responsesHandler_1.default.unauthorized(res, i18n_1.default.__('INVALID_TOKEN'));
         }
         return responsesHandler_1.default.internalError(res, i18n_1.default.__('SERVER_ERROR'));
     }

@@ -41,6 +41,24 @@ class ResponseHandler {
 
     return res.status(400).json(responseBody);
   }
+  static unauthorized(
+    res: Response,
+    message: string,
+    data: any = null,
+    token: string | null = null,
+  ): Response {
+    const responseBody: any = {
+      success: false,
+      message,
+      data,
+    };
+
+    if (token) {
+      responseBody.token = token;
+    }
+
+    return res.status(401).json(responseBody);
+  }
 
   static internalError(
     res: Response,

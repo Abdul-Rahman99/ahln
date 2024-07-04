@@ -53,23 +53,37 @@ class ShippingCompanyModel {
             throw new Error(`Unable to fetch shipping company with ID ${id}: ${error.message}`);
         }
     }
-    async updateShippingCompany(id, trackingSystem, title, logo) {
+    async updateShippingCompany(id, updateFields) {
         try {
             const connection = await database_1.default.connect();
             const updatedAt = new Date();
+            const sqlFields = [];
+            const sqlParams = [updatedAt];
+            let paramIndex = 2;
+            if (updateFields.tracking_system) {
+                sqlFields.push(`tracking_system = $${paramIndex++}`);
+                sqlParams.push(updateFields.tracking_system);
+            }
+            if (updateFields.title) {
+                sqlFields.push(`title = $${paramIndex++}`);
+                sqlParams.push(updateFields.title);
+            }
+            if (updateFields.logo) {
+                sqlFields.push(`logo = $${paramIndex++}`);
+                sqlParams.push(updateFields.logo);
+            }
+            if (sqlFields.length === 0) {
+                throw new Error('No fields to update');
+            }
+            sqlFields.push(`updatedAt = $1`);
             const sql = `
-        UPDATE Shipping_Company 
-        SET tracking_system = $1, title = $2, logo = $3, updatedAt = $4
-        WHERE id = $5
-        RETURNING id, createdAt, updatedAt, tracking_system, title, logo
-      `;
-            const result = await connection.query(sql, [
-                trackingSystem,
-                title,
-                logo,
-                updatedAt,
-                id,
-            ]);
+      UPDATE Shipping_Company 
+      SET ${sqlFields.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING id, createdAt, updatedAt, tracking_system, title, logo
+    `;
+            sqlParams.push(id);
+            const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
         }

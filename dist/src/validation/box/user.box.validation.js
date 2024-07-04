@@ -23,7 +23,10 @@ exports.updateUserBoxValidation = [
     validatorMiddleware_1.default,
 ];
 exports.deleteUserBoxValidation = [
-    (0, express_validator_1.param)('id').isMongoId().withMessage(i18n_1.default.__('INVALID_USER_BOX_ID')),
+
+    (0, express_validator_1.param)('id').isString().withMessage(i18n_1.default.__('INVALID_USER_BOX_ID')),
+    validatorMiddleware_1.default,
+
 ];
 exports.getUserBoxesByUserIdValidation = [
     (0, express_validator_1.header)('authorization')
@@ -36,12 +39,17 @@ exports.getUserBoxesByUserIdValidation = [
         req.token = value.split(' ')[1];
         return true;
     }),
+
+    validatorMiddleware_1.default,
 ];
 exports.getUserBoxesByBoxIdValidation = [
     (0, express_validator_1.param)('boxId').isString().withMessage(i18n_1.default.__('INVALID_BOX_ID')),
+    validatorMiddleware_1.default,
 ];
 exports.assignBoxToUserValidation = [
     (0, express_validator_1.body)('userId').notEmpty().withMessage(i18n_1.default.__('USER_ID_REQUIRED')),
     (0, express_validator_1.body)('boxId').notEmpty().withMessage(i18n_1.default.__('BOX_ID_REQUIRED')),
+    validatorMiddleware_1.default,
+
 ];
 //# sourceMappingURL=user.box.validation.js.map

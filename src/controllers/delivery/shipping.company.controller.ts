@@ -90,15 +90,13 @@ export const getShippingCompanyById = asyncHandler(
 export const updateShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { tracking_system, title, logo } = req.body;
+    const { tracking_system } = req.body;
 
     try {
       const updatedShippingCompany =
         await shippingCompanyModel.updateShippingCompany(
           parseInt(id, 10),
           tracking_system,
-          title,
-          logo,
         );
 
       ResponseHandler.success(

@@ -19,11 +19,12 @@ export const updateUserBoxValidation = [
   param('id').isString().withMessage(i18n.__('INVALID_USER_BOX_ID')),
   body('userId').optional().notEmpty().withMessage(i18n.__('USER_ID_REQUIRED')),
   body('boxId').optional().notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
-  validatorMiddleware,
+  validatorMiddleware,  
 ];
 
 export const deleteUserBoxValidation = [
-  param('id').isMongoId().withMessage(i18n.__('INVALID_USER_BOX_ID')),
+  param('id').isString().withMessage(i18n.__('INVALID_USER_BOX_ID')),
+  validatorMiddleware,
 ];
 
 export const getUserBoxesByUserIdValidation = [
@@ -37,13 +38,16 @@ export const getUserBoxesByUserIdValidation = [
       req.token = value.split(' ')[1];
       return true;
     }),
+  validatorMiddleware,
 ];
 
 export const getUserBoxesByBoxIdValidation = [
   param('boxId').isString().withMessage(i18n.__('INVALID_BOX_ID')),
+  validatorMiddleware,
 ];
 
 export const assignBoxToUserValidation = [
   body('userId').notEmpty().withMessage(i18n.__('USER_ID_REQUIRED')),
   body('boxId').notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
+  validatorMiddleware,
 ];

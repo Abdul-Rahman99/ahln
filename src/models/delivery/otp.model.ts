@@ -73,7 +73,7 @@ class OTPModel {
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
         'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2',
-        [otp , boxId],
+        [otp, boxId],
       );
 
       if (otpResult.rows.length === 0) {
@@ -279,6 +279,7 @@ class OTPModel {
       ) {
         throw new Error('The package has already been delivered');
       }
+      const pin_result = deliveryPackage.delivery_pin;
 
       const boxLockerResult = await connection.query(
         'SELECT serial_port FROM box_locker WHERE id = $1',
@@ -300,7 +301,7 @@ class OTPModel {
         ['delivered', true, updatedAt, trackingNumber],
       );
 
-      return parsedSerialPort;
+      return [parsedSerialPort, pin_result];
     } catch (error) {
       throw new Error(`${(error as Error).message}`);
     } finally {

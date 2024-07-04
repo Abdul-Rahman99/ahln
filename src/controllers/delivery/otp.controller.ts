@@ -123,7 +123,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         boxId,
       );
       ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
-        box_locker_string: result,
+        box_locker_string: result[0],
+        pin: result[1],
       });
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);

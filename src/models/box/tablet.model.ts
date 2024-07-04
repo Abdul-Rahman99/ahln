@@ -191,6 +191,7 @@ class TabletModel {
       throw new Error('Failed to check Android ID existence');
     }
   }
+
 }
 
 export default TabletModel;

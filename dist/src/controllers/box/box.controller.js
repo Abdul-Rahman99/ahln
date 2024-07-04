@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBoxesByGenerationId = exports.deleteBox = exports.updateBox = exports.getBoxById = exports.getAllBoxes = exports.createBox = void 0;
+exports.resetTabletId = exports.assignTabletToBox = exports.getBoxByTabletInfo = exports.getBoxesByGenerationId = exports.deleteBox = exports.updateBox = exports.getBoxById = exports.getAllBoxes = exports.createBox = void 0;
 const box_model_1 = __importDefault(require("../../models/box/box.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -67,6 +67,36 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res) =>
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, i18n_1.default.__('BOXES_GENERATION_FETCH_FAILED'), error.message);
+    }
+});
+exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const { androidTabletId, tabletSerialNumber } = req.body;
+        const box = await boxModel.getBoxByTabletInfo(androidTabletId, tabletSerialNumber);
+        responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
+    }
+    catch (error) {
+        responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVAL_FAILED'), error.message);
+    }
+});
+exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const { tabletId, boxId } = req.body;
+        const assignTabletToBox = await boxModel.assignTabletToBox(tabletId, boxId);
+        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('TABLET_ASSIGNMENT_TO_BOX_FAILED'), error.message);
+    }
+});
+exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res) => {
+    try {
+        const { tabletId, boxId } = req.body;
+        const assignTabletToBox = await boxModel.resetTabletId(tabletId, boxId);
+        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
+    }
+    catch (error) {
+        responsesHandler_1.default.internalError(res, i18n_1.default.__('TABLET_RESET_TO_BOX_FAILED'), error.message);
     }
 });
 //# sourceMappingURL=box.controller.js.map

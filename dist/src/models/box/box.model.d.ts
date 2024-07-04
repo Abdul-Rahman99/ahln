@@ -7,5 +7,8 @@ declare class BoxModel {
     updateOne(box: Partial<Box>, id: string): Promise<Box>;
     deleteOne(id: string): Promise<Box>;
     getBoxesByGenerationId(boxGenerationId: string): Promise<Box[]>;
+    getBoxByTabletInfo(androidTabletId: string, tabletSerialNumber: string): Promise<object | null>;
+    assignTabletToBox(tabletId: string, boxId: string): Promise<Box>;
+    resetTabletId(tabletId: string, boxId: string): Promise<Box>;
 }
 export default BoxModel;

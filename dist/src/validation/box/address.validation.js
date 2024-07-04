@@ -31,15 +31,18 @@ exports.updateAddressValidation = [
         .notEmpty()
         .withMessage(i18n_1.default.__('COUNTRY_REQUIRED')),
     (0, express_validator_1.body)('city').optional().notEmpty().withMessage(i18n_1.default.__('CITY_REQUIRED')),
+
     (0, express_validator_1.body)('district')
         .optional()
         .notEmpty()
         .withMessage(i18n_1.default.__('DISTRICT_REQUIRED')),
+
     (0, express_validator_1.body)('street').optional().notEmpty().withMessage(i18n_1.default.__('STREET_REQUIRED')),
     (0, express_validator_1.body)('building_type')
         .optional()
         .notEmpty()
         .withMessage(i18n_1.default.__('BUILDING_TYPE_REQUIRED')),
+
     (0, express_validator_1.body)('building_number')
         .optional()
         .notEmpty()
@@ -49,5 +52,6 @@ exports.updateAddressValidation = [
 exports.deleteAddressValidation = [
     (0, express_validator_1.param)('id').isInt().withMessage(i18n_1.default.__('INVALID_ADDRESS_ID')),
     validatorMiddleware_1.default,
+
 ];
 //# sourceMappingURL=address.validation.js.map

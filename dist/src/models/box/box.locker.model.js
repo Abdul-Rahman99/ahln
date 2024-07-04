@@ -124,13 +124,32 @@ class BoxLockerModel {
             if (!boxId) {
                 throw new Error(`Box id cannot be null ${boxId}`);
             }
-            const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
+            const sql = `SELECT 
+        id,
+        locker_label as name,
+        serial_port as box_locker_string
+        FROM Box_Locker WHERE box_id=$1`;
             const result = await connection.query(sql, [boxId]);
             connection.release();
-            return result.rows;
+            const lockersWithParsedString = result.rows.map((row) => {
+                try {
+                    return {
+                        ...row,
+                        box_locker_string: JSON.parse(row.box_locker_string),
+                    };
+                }
+                catch (error) {
+                    console.error(`Error parsing JSON for locker ${row.id}: ${error.message}`);
+                    return {
+                        ...row,
+                        box_locker_string: {},
+                    };
+                }
+            });
+            return lockersWithParsedString;
         }
         catch (error) {
-            throw new Error(`Could not Find box locker ${boxId}: ${error.message}`);
+            throw new Error(`Could not find box locker ${boxId}: ${error.message}`);
         }
     }
 }

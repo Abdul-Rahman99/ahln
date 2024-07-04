@@ -113,3 +113,65 @@ export const getBoxesByGenerationId = asyncHandler(
     }
   },
 );
+
+export const getBoxByTabletInfo = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { androidTabletId, tabletSerialNumber } = req.body;
+      const box = await boxModel.getBoxByTabletInfo(
+        androidTabletId,
+        tabletSerialNumber,
+      );
+      ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
+    } catch (error) {
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_RETRIEVAL_FAILED'),
+        (error as Error).message,
+      );
+    }
+  },
+);
+
+export const assignTabletToBox = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { tabletId, boxId } = req.body;
+      const assignTabletToBox = await boxModel.assignTabletToBox(
+        tabletId,
+        boxId,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
+        assignTabletToBox,
+      );
+    } catch (error) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('TABLET_ASSIGNMENT_TO_BOX_FAILED'),
+        (error as Error).message,
+      );
+    }
+  },
+);
+
+export const resetTabletId = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { tabletId, boxId } = req.body;
+      const assignTabletToBox = await boxModel.resetTabletId(tabletId, boxId);
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
+        assignTabletToBox,
+      );
+    } catch (error) {
+      ResponseHandler.internalError(
+        res,
+        i18n.__('TABLET_RESET_TO_BOX_FAILED'),
+        (error as Error).message,
+      );
+    }
+  },
+);

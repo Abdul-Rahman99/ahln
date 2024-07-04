@@ -169,17 +169,42 @@ class BoxLockerModel {
   async getAllLockersById(boxId: string): Promise<BoxLocker[]> {
     try {
       const connection = await db.connect();
+
       if (!boxId) {
         throw new Error(`Box id cannot be null ${boxId}`);
       }
-      const sql = `SELECT * FROM Box_Locker WHERE box_id=$1`;
+
+      const sql = `SELECT 
+        id,
+        locker_label as name,
+        serial_port as box_locker_string
+        FROM Box_Locker WHERE box_id=$1`;
+
       const result = await connection.query(sql, [boxId]);
-      
       connection.release();
-      return result.rows;
+
+      // Parse box_locker_string to JSON object
+      const lockersWithParsedString = result.rows.map((row: any) => {
+        try {
+          return {
+            ...row,
+            box_locker_string: JSON.parse(row.box_locker_string),
+          } as BoxLocker;
+        } catch (error) {
+          console.error(
+            `Error parsing JSON for locker ${row.id}: ${(error as Error).message}`,
+          );
+          return {
+            ...row,
+            box_locker_string: {}, // Provide a default value or handle the error accordingly
+          } as BoxLocker;
+        }
+      });
+
+      return lockersWithParsedString;
     } catch (error) {
       throw new Error(
-        `Could not Find box locker ${boxId}: ${(error as Error).message}`,
+        `Could not find box locker ${boxId}: ${(error as Error).message}`,
       );
     }
   }

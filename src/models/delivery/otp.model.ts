@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { OTP } from '../../types/otp.type';
 
@@ -20,7 +21,6 @@ class OTPModel {
         'box_locker_id',
         'is_used',
         'otp',
-        'box_locker_string',
         'delivery_package_id',
       ];
       const sqlParams = [
@@ -30,7 +30,6 @@ class OTPModel {
         otpData.box_locker_id,
         false, // is_used is set to false by default
         otp,
-        otpData.box_locker_string,
         otpData.delivery_package_id,
       ];
 
@@ -46,44 +45,43 @@ class OTPModel {
       throw new Error(`Unable to create OTP: ${(error as Error).message}`);
     }
   }
-
-  async checkOTP(otp: string, deliveryPackageId: string): Promise<OTP | null> {
+  async checkOTP(otp: string): Promise<string | null> {
     const connection = await db.connect();
     try {
       if (!otp) {
-        throw new Error('Please provide an otp');
+        throw new Error('Please provide an OTP');
       }
 
-      const result = await connection.query(
-        'SELECT id, box_locker_string FROM OTP WHERE otp = $1 AND is_used = FALSE',
+      // Check if OTP exists and is not used
+      const otpResult = await connection.query(
+        'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE',
         [otp],
       );
 
-      if (result.rows.length === 0) {
-        throw new Error('OTP not found for in OTP model');
+      if (otpResult.rows.length === 0) {
+        throw new Error('OTP not found or already used');
       }
 
-      const deliveryPackageResult = (
-        await connection.query(
-          'SELECT delivery_package_id FROM OTP WHERE OTP = $1',
-          [otp],
-        )
-      ).rows[0].delivery_package_id;
+      const box_locker_id = otpResult.rows[0].box_locker_id;
 
-      if (deliveryPackageResult != null) {
-        const updatedAt = new Date();
-        await connection.query(
-          'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE id = $4',
-          ['delivered', true, updatedAt, deliveryPackageId],
+      // Get the serial port from the Box_Locker table
+      const boxLockerResult = await connection.query(
+        'SELECT serial_port FROM Box_Locker WHERE id = $1',
+        [box_locker_id],
+      );
+
+      if (boxLockerResult.rows.length == 0) {
+        throw new Error(
+          `Box locker not found for the given box id: ${box_locker_id}`,
         );
       }
 
-      const otpRecord = result.rows[0];
-
+      const serialPort = boxLockerResult.rows[0].serial_port;
+      const parsedSerialPort = JSON.parse(serialPort);
       // Mark the OTP as used and delete the record
-      await connection.query('DELETE FROM OTP WHERE id = $1', [otpRecord.id]);
+      await connection.query('DELETE FROM OTP WHERE otp = $1', [otp]);
 
-      return otpRecord.box_locker_string;
+      return parsedSerialPort;
     } catch (error) {
       throw new Error(`Unable to check OTP: ${(error as Error).message}`);
     } finally {
@@ -227,9 +225,7 @@ class OTPModel {
   }
 
   // Check tracking number and update delivery status
-  async checkTrackingNumberAndUpdateStatus(
-    trackingNumber: string,
-  ): Promise<string> {
+  async checkTrackingNumberAndUpdateStatus(trackingNumber: any): Promise<any> {
     const connection = await db.connect();
     try {
       if (!trackingNumber) {
@@ -241,7 +237,7 @@ class OTPModel {
         [trackingNumber],
       );
 
-      if (deliveryPackageResult.rows.length === 0) {
+      if (deliveryPackageResult.rows.length == 0) {
         throw new Error(
           'Delivery package not found for the given tracking number',
         );
@@ -253,8 +249,22 @@ class OTPModel {
         deliveryPackage.shipment_status === 'delivered' &&
         deliveryPackage.is_delivered === true
       ) {
-        return 'The package has already been delivered';
+        throw new Error('The package has already been delivered');
       }
+
+      const boxLockerResult = await connection.query(
+        'SELECT serial_port FROM box_locker WHERE id = $1',
+        [deliveryPackage.box_locker_id],
+      );
+
+      if (boxLockerResult.rows.length == 0) {
+        throw new Error(
+          `Box locker not found for the given box id: ${deliveryPackage.box_locker_id}`,
+        );
+      }
+
+      const serialPort = boxLockerResult.rows[0].serial_port;
+      const parsedSerialPort = JSON.parse(serialPort);
 
       const updatedAt = new Date();
       await connection.query(
@@ -262,11 +272,9 @@ class OTPModel {
         ['delivered', true, updatedAt, trackingNumber],
       );
 
-      return deliveryPackage.box_locker_string;
+      return parsedSerialPort;
     } catch (error) {
-      throw new Error(
-        `Error checking tracking number and updating status: ${(error as Error).message}`,
-      );
+      throw new Error(`${(error as Error).message}`);
     } finally {
       connection.release();
     }

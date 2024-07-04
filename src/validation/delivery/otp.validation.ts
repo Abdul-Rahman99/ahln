@@ -60,12 +60,11 @@ export const getOTPsByUserValidation = [
       (req as any).token = token;
       return true;
     }),
-//   param('userId').isString().withMessage(i18n.__('INVALID_USER_ID')),
   validatorMiddleware,
 ];
 
 export const checkTrackingNumberValidation = [
-  body('tracking_number')
+  body('trackingNumber')
     .notEmpty()
     .withMessage(i18n.__('TRACKING_NUMBER_REQUIRED')),
   validatorMiddleware,

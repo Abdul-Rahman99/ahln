@@ -20,10 +20,6 @@ export const createOTPValidation = [
   body('box_locker_id')
     .notEmpty()
     .withMessage(i18n.__('BOX_LOCKER_ID_REQUIRED')),
-  body('delivery_package_id')
-    .optional()
-    .notEmpty()
-    .withMessage(i18n.__('DELIVERY_PACKAGE_ID_REQUIRED')),
   validatorMiddleware,
 ];
 

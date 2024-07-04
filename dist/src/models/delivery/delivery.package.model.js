@@ -74,7 +74,7 @@ class DeliveryPackageModel {
             ];
             const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                 RETURNING *`;
+                 RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
@@ -163,7 +163,7 @@ class DeliveryPackageModel {
     async getPackagesByUser(userId, status) {
         try {
             const connection = await database_2.default.connect();
-            const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1  AND shipment_status = $2';
+            const sql = 'SELECT id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description FROM Delivery_Package WHERE customer_id = $1  AND shipment_status = $2';
             const params = [userId, status];
             const result = await connection.query(sql, params);
             connection.release();

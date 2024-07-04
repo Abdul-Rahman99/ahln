@@ -48,7 +48,7 @@ router.delete(
 );
 
 router.get(
-  '/user/delivery-packages/:shipment_status',
+  '/user/delivery-packages/',
   getUserDeliveryPackagesValidation,
   getUserDeliveryPackages,
 );

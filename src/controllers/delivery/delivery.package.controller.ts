@@ -117,7 +117,7 @@ export const deleteDeliveryPackage = asyncHandler(
 export const getUserDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const shipment_status = req.params.shipment_status;
+      const { status } = req.query;
       // Extract token from the request headers
       const token = req.headers.authorization?.replace('Bearer ', '');
 
@@ -133,7 +133,7 @@ export const getUserDeliveryPackages = asyncHandler(
 
       const deliveryPackages = await deliveryPackageModel.getPackagesByUser(
         user,
-        shipment_status,
+        status,
       );
 
       ResponseHandler.success(

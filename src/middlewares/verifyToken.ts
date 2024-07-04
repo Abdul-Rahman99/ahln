@@ -5,7 +5,7 @@ import config from '../../config';
 import ResponseHandler from '../utils/responsesHandler';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header('Authorization')?.split(' ')[1]; // Assuming Bearer token
+  const token = req.header('authorization')?.split(' ')[1]; // Assuming Bearer token
   if (!token) {
     return ResponseHandler.badRequest(res, i18n.__('TOKEN_REQUIRED'));
   }

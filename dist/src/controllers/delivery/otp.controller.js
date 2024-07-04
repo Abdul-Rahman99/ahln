@@ -97,7 +97,8 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
         }
         const result = await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
-            box_locker_string: result,
+            box_locker_string: result[0],
+            pin: result[1],
         });
     }
     catch (error) {

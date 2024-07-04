@@ -193,6 +193,7 @@ class OTPModel {
                 deliveryPackage.is_delivered === true) {
                 throw new Error('The package has already been delivered');
             }
+            const pin_result = deliveryPackage.delivery_pin;
             const boxLockerResult = await connection.query('SELECT serial_port FROM box_locker WHERE id = $1', [deliveryPackage.box_locker_id]);
             if (boxLockerResult.rows.length === 0) {
                 throw new Error(`Box locker not found for the given box id: ${deliveryPackage.box_locker_id}`);
@@ -201,7 +202,7 @@ class OTPModel {
             const parsedSerialPort = JSON.parse(serialPort);
             const updatedAt = new Date();
             await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4', ['delivered', true, updatedAt, trackingNumber]);
-            return parsedSerialPort;
+            return [parsedSerialPort, pin_result];
         }
         catch (error) {
             throw new Error(`${error.message}`);

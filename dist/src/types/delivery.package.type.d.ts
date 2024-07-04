@@ -13,4 +13,7 @@ export interface DeliveryPackage {
     shipment_status: string;
     is_delivered: boolean;
     box_locker_string: string;
+    title: string;
+    delivery_pin: string;
+    description: string;
 }

@@ -49,6 +49,9 @@ class DeliveryPackageModel {
                 'shipment_status',
                 'is_delivered',
                 'box_locker_string',
+                'title',
+                'delivery_pin',
+                'description',
             ];
             const sqlParams = [
                 customId,
@@ -65,6 +68,9 @@ class DeliveryPackageModel {
                 deliveryPackage.shipment_status || 'pending',
                 deliveryPackage.is_delivered || false,
                 deliveryPackage.box_locker_string || null,
+                deliveryPackage.title || null,
+                deliveryPackage.delivery_pin || null,
+                deliveryPackage.description || null,
             ];
             const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 

@@ -5,10 +5,10 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import BoxImageModel from '../../models/box/box.image.model';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
-import UserModel from '../../models/users/user.model';
+// import UserModel from '../../models/users/user.model';
 
 const boxImageModel = new BoxImageModel();
-const userModel = new UserModel();
+// const userModel = new UserModel();
 
 export const uploadBoxImage = asyncHandler(
   async (req: Request, res: Response) => {
@@ -138,34 +138,34 @@ export const deleteBoxImage = asyncHandler(
   },
 );
 
-export const getBoxImagesByUser = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
+// export const getBoxImagesByUser = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     try {
+//       const token = req.headers.authorization?.replace('Bearer ', '');
+//       if (!token) {
+//         return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+//       }
 
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
+//       const user = await userModel.findByToken(token);
+//       if (!user) {
+//         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+//       }
 
-      const boxImages = await boxImageModel.getBoxImagesByUser(user);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
-        boxImages,
-      );
-    } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
-        error.message,
-      );
-    }
-  },
-);
+//       const boxImages = await boxImageModel.getBoxImagesByUser(user);
+//       ResponseHandler.success(
+//         res,
+//         i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
+//         boxImages,
+//       );
+//     } catch (error: any) {
+//       ResponseHandler.internalError(
+//         res,
+//         i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
+//         error.message,
+//       );
+//     }
+//   },
+// );
 
 export const getBoxImagesByBoxId = asyncHandler(
   async (req: Request, res: Response) => {

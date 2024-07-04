@@ -4,12 +4,26 @@ import { OTP } from '../../types/otp.type';
 
 class OTPModel {
   // Create OTP
-  async createOTP(otpData: Partial<OTP>): Promise<OTP> {
+  async createOTP(
+    otpData: Partial<OTP>,
+    delivery_package_id: string,
+  ): Promise<OTP> {
     try {
       const connection = await db.connect();
 
       const createdAt = new Date();
       const updatedAt = new Date();
+
+      if (delivery_package_id) {
+        const checkDeliveryPackageResult = await connection.query(
+          'SELECT * FROM delivery_package WHERE id = $1',
+          [delivery_package_id],
+        );
+
+        if (checkDeliveryPackageResult.rows.length === 0) {
+          throw new Error('Delivery Package ID not found');
+        }
+      }
 
       // Generate the OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -45,7 +59,10 @@ class OTPModel {
       throw new Error(`Unable to create OTP: ${(error as Error).message}`);
     }
   }
-  async checkOTP(otp: string): Promise<string | null> {
+  async checkOTP(
+    otp: string,
+    delivery_package_id: string,
+  ): Promise<string | null> {
     const connection = await db.connect();
     try {
       if (!otp) {
@@ -62,6 +79,14 @@ class OTPModel {
         throw new Error('OTP not found or already used');
       }
 
+      const checkDeliveryPackageId = await connection.query(
+        'SELECT id FROM Delivery_Package WHERE id = $1',
+        [delivery_package_id],
+      );
+
+      if (!checkDeliveryPackageId) {
+        throw new Error('Delivery Package id not found');
+      }
       const box_locker_id = otpResult.rows[0].box_locker_id;
 
       // Get the serial port from the Box_Locker table

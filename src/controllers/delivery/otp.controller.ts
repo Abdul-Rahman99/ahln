@@ -11,14 +11,15 @@ const otpModel = new OTPModel();
 export const createOTP = asyncHandler(async (req: Request, res: Response) => {
   try {
     const newOTP: OTP = req.body;
-    const createdOTP = await otpModel.createOTP(newOTP);
+    const delivery_package_id = req.body.delivery_package_id;
+    const createdOTP = await otpModel.createOTP(newOTP, delivery_package_id);
     ResponseHandler.success(
       res,
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
       createdOTP,
     );
   } catch (error: any) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
       i18n.__('OTP_CREATION_FAILED'),
       error.message,
@@ -113,8 +114,8 @@ export const getOTPsByUser = asyncHandler(
 //function to check OTP
 export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { otp } = req.body;
-    const verifiedOTP = await otpModel.checkOTP(otp);
+    const { otp, delivery_package_id } = req.body;
+    const verifiedOTP = await otpModel.checkOTP(otp, delivery_package_id);
     if (verifiedOTP) {
       ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
         box_locker_string: verifiedOTP,
@@ -123,7 +124,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
     }
   } catch (error: any) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
       i18n.__('OTP_VERIFICATION_FAILED'),
       error.message,
@@ -131,7 +132,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-// function to check by tracking number 
+// function to check by tracking number
 export const checkTrackingNumberAndUpdateStatus = asyncHandler(
   async (req: Request, res: Response) => {
     try {

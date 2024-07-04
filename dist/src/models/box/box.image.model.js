@@ -120,7 +120,7 @@ class BoxImageModel {
     async getBoxImagesByBoxId(boxId) {
         try {
             const connection = await database_1.default.connect();
-            const sql = `SELECT * FROM Box_IMAGE WHERE box_id = $1`;
+            const sql = `SELECT * FROM Box_IMAGE WHERE id = $1`;
             const result = await connection.query(sql, [boxId]);
             connection.release();
             const boxImages = result.rows;

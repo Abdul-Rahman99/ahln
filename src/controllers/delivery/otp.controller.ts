@@ -113,8 +113,8 @@ export const getOTPsByUser = asyncHandler(
 //function to check OTP
 export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { otp, deliveryPackageId } = req.body;
-    const verifiedOTP = await otpModel.checkOTP(otp, deliveryPackageId);
+    const { otp } = req.body;
+    const verifiedOTP = await otpModel.checkOTP(otp);
     if (verifiedOTP) {
       ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
         box_locker_string: verifiedOTP,

@@ -18,7 +18,6 @@ class OTPModel {
                 'box_locker_id',
                 'is_used',
                 'otp',
-                'box_locker_string',
                 'delivery_package_id',
             ];
             const sqlParams = [
@@ -28,7 +27,6 @@ class OTPModel {
                 otpData.box_locker_id,
                 false,
                 otp,
-                otpData.box_locker_string,
                 otpData.delivery_package_id,
             ];
             const sql = `INSERT INTO OTP (${sqlFields.join(', ')}) 
@@ -42,31 +40,25 @@ class OTPModel {
             throw new Error(`Unable to create OTP: ${error.message}`);
         }
     }
-    async checkOTP(otp, deliveryPackageId) {
+    async checkOTP(otp) {
         const connection = await database_1.default.connect();
         try {
             if (!otp) {
-                throw new Error('Please provide an otp');
+                throw new Error('Please provide an OTP');
             }
-            const otpResult = await connection.query('SELECT id, box_locker_string FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
+            const otpResult = await connection.query('SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
             if (otpResult.rows.length === 0) {
                 throw new Error('OTP not found or already used');
             }
-            const otpRecord = otpResult.rows[0];
-            const boxLockerString = JSON.parse(otpRecord.box_locker_string);
-            const boxId = boxLockerString.box_id;
-            const boxLockerResult = await connection.query('SELECT serial_port FROM Box_Locker WHERE id = $1', [boxId]);
+            const box_locker_id = otpResult.rows[0].box_locker_id;
+            const boxLockerResult = await connection.query('SELECT serial_port FROM Box_Locker WHERE id = $1', [box_locker_id]);
             if (boxLockerResult.rows.length == 0) {
-                throw new Error(`Box locker not found for the given box id: ${boxId}`);
+                throw new Error(`Box locker not found for the given box id: ${box_locker_id}`);
             }
             const serialPort = boxLockerResult.rows[0].serial_port;
-            const deliveryPackageResult = await connection.query('SELECT delivery_package_id FROM OTP WHERE OTP = $1', [otp]);
-            if (deliveryPackageResult.rows.length > 0) {
-                const updatedAt = new Date();
-                await connection.query('UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE id = $4', ['delivered', true, updatedAt, deliveryPackageId]);
-            }
-            await connection.query('DELETE FROM OTP WHERE id = $1', [otpRecord.id]);
-            return serialPort;
+            const parsedSerialPort = JSON.parse(serialPort);
+            await connection.query('DELETE FROM OTP WHERE otp = $1', [otp]);
+            return parsedSerialPort;
         }
         catch (error) {
             throw new Error(`Unable to check OTP: ${error.message}`);

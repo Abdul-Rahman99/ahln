@@ -54,7 +54,7 @@ class OTPModel {
 
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
-        'SELECT box_id FROM OTP WHERE otp = $1 AND is_used = FALSE',
+        'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE',
         [otp],
       );
 
@@ -62,16 +62,18 @@ class OTPModel {
         throw new Error('OTP not found or already used');
       }
 
-      const boxId = otpResult.rows[0].box_id;
+      const box_locker_id = otpResult.rows[0].box_locker_id;
 
       // Get the serial port from the Box_Locker table
       const boxLockerResult = await connection.query(
-        'SELECT serial_port FROM Box_Locker WHERE box_id = $1',
-        [boxId],
+        'SELECT serial_port FROM Box_Locker WHERE id = $1',
+        [box_locker_id],
       );
 
       if (boxLockerResult.rows.length == 0) {
-        throw new Error(`Box locker not found for the given box id: ${boxId}`);
+        throw new Error(
+          `Box locker not found for the given box id: ${box_locker_id}`,
+        );
       }
 
       const serialPort = boxLockerResult.rows[0].serial_port;

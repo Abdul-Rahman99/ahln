@@ -154,11 +154,11 @@ class DeliveryPackageModel {
             throw new Error(`Could not delete delivery package ${id}: ${error.message}`);
         }
     }
-    async getPackagesByUser(userId) {
+    async getPackagesByUser(userId, shipment_status) {
         try {
             const connection = await database_2.default.connect();
-            const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1';
-            const result = await connection.query(sql, [userId]);
+            const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1 AND shipment_status = $2';
+            const result = await connection.query(sql, [userId, shipment_status]);
             connection.release();
             return result.rows;
         }

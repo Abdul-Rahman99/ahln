@@ -13,6 +13,6 @@ router.get('/get-all', verifyToken_1.default, delivery_package_controller_1.getA
 router.get('/get-one/:id', verifyToken_1.default, delivery_package_validation_1.getDeliveryPackageByIdValidation, delivery_package_controller_1.getDeliveryPackageById);
 router.put('/update/:id', verifyToken_1.default, delivery_package_validation_1.updateDeliveryPackageValidation, delivery_package_controller_1.updateDeliveryPackage);
 router.delete('/delete/:id', verifyToken_1.default, delivery_package_validation_1.deleteDeliveryPackageValidation, delivery_package_controller_1.deleteDeliveryPackage);
-router.get('/user/delivery-packages', delivery_package_validation_1.getUserDeliveryPackagesValidation, delivery_package_controller_1.getUserDeliveryPackages);
+router.get('/user/delivery-packages/:shipment_status', delivery_package_validation_1.getUserDeliveryPackagesValidation, delivery_package_controller_1.getUserDeliveryPackages);
 exports.default = router;
 //# sourceMappingURL=delivery.package.route.js.map

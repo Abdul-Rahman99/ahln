@@ -131,8 +131,6 @@ export const getUserDeliveryPackages = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
 
-      console.log(user);
-
       const deliveryPackages = await deliveryPackageModel.getPackagesByUser(
         user,
         shipment_status,

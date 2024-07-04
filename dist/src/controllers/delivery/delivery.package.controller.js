@@ -71,6 +71,7 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) => {
     try {
+        const shipment_status = req.params.shipment_status;
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (!token) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
@@ -80,7 +81,7 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) =
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
         }
         console.log(user);
-        const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user);
+        const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user, shipment_status);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {

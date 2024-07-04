@@ -6,6 +6,6 @@ declare class DeliveryPackageModel {
     getOne(id: string): Promise<DeliveryPackage>;
     updateOne(deliveryPackage: Partial<DeliveryPackage>, id: string): Promise<DeliveryPackage>;
     deleteOne(id: string): Promise<DeliveryPackage>;
-    getPackagesByUser(userId: string): Promise<DeliveryPackage[]>;
+    getPackagesByUser(userId: string, shipment_status: string): Promise<DeliveryPackage[]>;
 }
 export default DeliveryPackageModel;

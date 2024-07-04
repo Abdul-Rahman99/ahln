@@ -46,19 +46,15 @@ class OTPModel {
             throw new Error(`Unable to create OTP: ${error.message}`);
         }
     }
-    async checkOTP(otp, delivery_package_id) {
+    async checkOTP(otp, delivery_package_id, boxId) {
         const connection = await database_1.default.connect();
         try {
             if (!otp) {
                 throw new Error('Please provide an OTP');
             }
-            const otpResult = await connection.query('SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
+            const otpResult = await connection.query('SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2', [otp, boxId]);
             if (otpResult.rows.length === 0) {
                 throw new Error('OTP not found or already used');
-            }
-            const checkDeliveryPackageId = await connection.query('SELECT id FROM Delivery_Package WHERE id = $1', [delivery_package_id]);
-            if (!checkDeliveryPackageId) {
-                throw new Error('Delivery Package id not found');
             }
             const box_locker_id = otpResult.rows[0].box_locker_id;
             const boxLockerResult = await connection.query('SELECT serial_port FROM Box_Locker WHERE id = $1', [box_locker_id]);
@@ -179,23 +175,26 @@ class OTPModel {
             throw new Error(`Error retrieving OTPs for user ${userId}: ${error.message}`);
         }
     }
-    async checkTrackingNumberAndUpdateStatus(trackingNumber) {
+    async checkTrackingNumberAndUpdateStatus(trackingNumber, boxId) {
         const connection = await database_1.default.connect();
         try {
             if (!trackingNumber) {
                 throw new Error('Please provide a tracking number');
             }
-            const deliveryPackageResult = await connection.query('SELECT * FROM Delivery_Package WHERE tracking_number = $1', [trackingNumber]);
-            if (deliveryPackageResult.rows.length == 0) {
+            const deliveryPackageResult = await connection.query('SELECT * FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2', [trackingNumber, boxId]);
+            if (deliveryPackageResult.rows.length === 0) {
                 throw new Error('Delivery package not found for the given tracking number');
             }
             const deliveryPackage = deliveryPackageResult.rows[0];
+            if (deliveryPackage.box_id !== boxId) {
+                throw new Error('The provided box ID does not match the delivery package');
+            }
             if (deliveryPackage.shipment_status === 'delivered' &&
                 deliveryPackage.is_delivered === true) {
                 throw new Error('The package has already been delivered');
             }
             const boxLockerResult = await connection.query('SELECT serial_port FROM box_locker WHERE id = $1', [deliveryPackage.box_locker_id]);
-            if (boxLockerResult.rows.length == 0) {
+            if (boxLockerResult.rows.length === 0) {
                 throw new Error(`Box locker not found for the given box id: ${deliveryPackage.box_locker_id}`);
             }
             const serialPort = boxLockerResult.rows[0].serial_port;

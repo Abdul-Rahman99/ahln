@@ -25,7 +25,7 @@ export const authMiddleware = async (
     const user = await userModel.getOne(decoded.id);
 
     if (!user) {
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      return ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
     }
 
     req.user = user;

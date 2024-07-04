@@ -18,7 +18,7 @@ const authMiddleware = async (req, res, next) => {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         const user = await userModel.getOne(decoded.id);
         if (!user) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+            return responsesHandler_1.default.unauthorized(res, i18n_1.default.__('INVALID_TOKEN'));
         }
         req.user = user;
         next();

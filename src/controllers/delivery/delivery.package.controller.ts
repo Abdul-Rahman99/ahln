@@ -39,10 +39,7 @@ export const createDeliveryPackage = asyncHandler(
         createdDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -57,10 +54,7 @@ export const getAllDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -77,10 +71,7 @@ export const getDeliveryPackageById = asyncHandler(
         deliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -100,10 +91,7 @@ export const updateDeliveryPackage = asyncHandler(
         updatedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -120,10 +108,7 @@ export const deleteDeliveryPackage = asyncHandler(
         deletedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -132,13 +117,14 @@ export const deleteDeliveryPackage = asyncHandler(
 export const getUserDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     try {
+      const shipment_status = req.params.shipment_status;
       // Extract token from the request headers
       const token = req.headers.authorization?.replace('Bearer ', '');
 
       if (!token) {
         return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
       }
-      
+
       const user = await userModel.findByToken(token);
 
       if (!user) {
@@ -146,9 +132,11 @@ export const getUserDeliveryPackages = asyncHandler(
       }
 
       console.log(user);
-      
-      const deliveryPackages =
-        await deliveryPackageModel.getPackagesByUser(user);
+
+      const deliveryPackages = await deliveryPackageModel.getPackagesByUser(
+        user,
+        shipment_status,
+      );
 
       ResponseHandler.success(
         res,
@@ -156,10 +144,7 @@ export const getUserDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

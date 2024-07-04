@@ -62,6 +62,7 @@ class OTPModel {
   async checkOTP(
     otp: string,
     delivery_package_id: string,
+    boxId: string,
   ): Promise<string | null> {
     const connection = await db.connect();
     try {
@@ -71,22 +72,14 @@ class OTPModel {
 
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
-        'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE',
-        [otp],
+        'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2',
+        [otp , boxId],
       );
 
       if (otpResult.rows.length === 0) {
         throw new Error('OTP not found or already used');
       }
 
-      const checkDeliveryPackageId = await connection.query(
-        'SELECT id FROM Delivery_Package WHERE id = $1',
-        [delivery_package_id],
-      );
-
-      if (!checkDeliveryPackageId) {
-        throw new Error('Delivery Package id not found');
-      }
       const box_locker_id = otpResult.rows[0].box_locker_id;
 
       // Get the serial port from the Box_Locker table
@@ -250,7 +243,10 @@ class OTPModel {
   }
 
   // Check tracking number and update delivery status
-  async checkTrackingNumberAndUpdateStatus(trackingNumber: any): Promise<any> {
+  async checkTrackingNumberAndUpdateStatus(
+    trackingNumber: string,
+    boxId: string,
+  ): Promise<any> {
     const connection = await db.connect();
     try {
       if (!trackingNumber) {
@@ -258,17 +254,24 @@ class OTPModel {
       }
 
       const deliveryPackageResult = await connection.query(
-        'SELECT * FROM Delivery_Package WHERE tracking_number = $1',
-        [trackingNumber],
+        'SELECT * FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2',
+        [trackingNumber, boxId],
       );
 
-      if (deliveryPackageResult.rows.length == 0) {
+      if (deliveryPackageResult.rows.length === 0) {
         throw new Error(
           'Delivery package not found for the given tracking number',
         );
       }
 
       const deliveryPackage = deliveryPackageResult.rows[0];
+
+      // Validate the boxId
+      if (deliveryPackage.box_id !== boxId) {
+        throw new Error(
+          'The provided box ID does not match the delivery package',
+        );
+      }
 
       if (
         deliveryPackage.shipment_status === 'delivered' &&
@@ -282,7 +285,7 @@ class OTPModel {
         [deliveryPackage.box_locker_id],
       );
 
-      if (boxLockerResult.rows.length == 0) {
+      if (boxLockerResult.rows.length === 0) {
         throw new Error(
           `Box locker not found for the given box id: ${deliveryPackage.box_locker_id}`,
         );

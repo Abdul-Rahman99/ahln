@@ -8,7 +8,7 @@ const i18n_1 = __importDefault(require("../config/i18n"));
 const config_1 = __importDefault(require("../../config"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1];
+    const token = req.header('authorization')?.split(' ')[1];
     if (!token) {
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_REQUIRED'));
     }

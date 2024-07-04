@@ -19,10 +19,11 @@ import {
   // getOTPsByUserValidation,
   updateOTPValidation,
 } from '../../validation/delivery/otp.validation';
+import verifyToken from '../../middlewares/verifyToken';
 
 const router = Router();
 
-router.post('/new', createOTPValidation, createOTP);
+router.post('/new', verifyToken, createOTPValidation, createOTP);
 router.get('/get-all', getAllOTPs);
 router.get('/get-one/:id', getOTPByIdValidation, getOTPById);
 router.put('/update/:id', updateOTPValidation, updateOTP);

@@ -217,11 +217,15 @@ class DeliveryPackageModel {
   }
 
   // Get all delivery packages for a specific user
-  async getPackagesByUser(userId: string): Promise<DeliveryPackage[]> {
+  async getPackagesByUser(
+    userId: string,
+    shipment_status: string,
+  ): Promise<DeliveryPackage[]> {
     try {
       const connection = await db.connect();
-      const sql = 'SELECT * FROM Delivery_Package WHERE customer_id = $1';
-      const result = await connection.query(sql, [userId]);
+      const sql =
+        'SELECT * FROM Delivery_Package WHERE customer_id = $1 AND shipment_status = $2';
+      const result = await connection.query(sql, [userId, shipment_status]);
       connection.release();
 
       // if (result.rows.length === 0) {

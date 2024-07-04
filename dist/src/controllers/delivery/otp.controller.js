@@ -72,8 +72,8 @@ exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const { otp, delivery_package_id } = req.body;
-        const verifiedOTP = await otpModel.checkOTP(otp, delivery_package_id);
+        const { otp, delivery_package_id, boxId } = req.body;
+        const verifiedOTP = await otpModel.checkOTP(otp, delivery_package_id, boxId);
         if (verifiedOTP) {
             responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), {
                 box_locker_string: verifiedOTP,
@@ -90,11 +90,12 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const trackingNumber = req.body.trackingNumber;
+        const boxId = req.body.boxId;
         if (!trackingNumber) {
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));
             return;
         }
-        const result = await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber);
+        const result = await otpModel.checkTrackingNumberAndUpdateStatus(trackingNumber, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
             box_locker_string: result,
         });

@@ -23,10 +23,8 @@ exports.updateUserBoxValidation = [
     validatorMiddleware_1.default,
 ];
 exports.deleteUserBoxValidation = [
-
     (0, express_validator_1.param)('id').isString().withMessage(i18n_1.default.__('INVALID_USER_BOX_ID')),
     validatorMiddleware_1.default,
-
 ];
 exports.getUserBoxesByUserIdValidation = [
     (0, express_validator_1.header)('authorization')
@@ -36,10 +34,10 @@ exports.getUserBoxesByUserIdValidation = [
         if (!value.startsWith('Bearer ')) {
             throw new Error(i18n_1.default.__('AUTH_HEADER_INVALID'));
         }
-        req.token = value.split(' ')[1];
+        const token = value.split(' ')[1];
+        req.token = token;
         return true;
     }),
-
     validatorMiddleware_1.default,
 ];
 exports.getUserBoxesByBoxIdValidation = [
@@ -50,6 +48,5 @@ exports.assignBoxToUserValidation = [
     (0, express_validator_1.body)('userId').notEmpty().withMessage(i18n_1.default.__('USER_ID_REQUIRED')),
     (0, express_validator_1.body)('boxId').notEmpty().withMessage(i18n_1.default.__('BOX_ID_REQUIRED')),
     validatorMiddleware_1.default,
-
 ];
 //# sourceMappingURL=user.box.validation.js.map

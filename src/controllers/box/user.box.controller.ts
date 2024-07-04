@@ -20,9 +20,8 @@ export const createUserBox = asyncHandler(
         createdUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOX_CREATION_FAILED'),
         error.message,
       );
     }
@@ -39,9 +38,8 @@ export const getAllUserBoxes = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOXES_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -59,9 +57,8 @@ export const getUserBoxById = asyncHandler(
         userBox,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOX_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -83,9 +80,8 @@ export const updateUserBox = asyncHandler(
         updatedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOX_UPDATE_FAILED'),
         error.message,
       );
     }
@@ -103,9 +99,8 @@ export const deleteUserBox = asyncHandler(
         deletedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOX_DELETION_FAILED'),
         error.message,
       );
     }
@@ -125,7 +120,7 @@ export const getUserBoxesByUserId = asyncHandler(
       // Find the user by the token
       const user = await userModel.findByToken(token);
       if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+        return ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
       }
 
       // Fetch user boxes by user ID
@@ -138,9 +133,8 @@ export const getUserBoxesByUserId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOXES_BY_USER_ID_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -157,9 +151,8 @@ export const getUserBoxesByBoxId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('USER_BOXES_BY_BOX_ID_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -177,9 +170,8 @@ export const assignBoxToUser = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_ASSIGNMENT_TO_USER_FAILED'),
         error.message,
       );
     }

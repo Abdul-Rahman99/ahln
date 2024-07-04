@@ -16,7 +16,6 @@ export const uploadBoxImage = asyncHandler(
       if (err) {
         return ResponseHandler.badRequest(
           res,
-          i18n.__('IMAGE_UPLOAD_FAILED'),
           err.message,
         );
       }
@@ -39,9 +38,8 @@ export const uploadBoxImage = asyncHandler(
           createdBoxImage,
         );
       } catch (error: any) {
-        ResponseHandler.internalError(
+        ResponseHandler.badRequest(
           res,
-          i18n.__('IMAGE_UPLOAD_FAILED'),
           error.message,
         );
       }
@@ -59,9 +57,8 @@ export const getAllBoxImages = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -74,7 +71,7 @@ export const getBoxImageById = asyncHandler(
       const boxImageId = parseInt(req.params.id, 10);
       const boxImage = await boxImageModel.getBoxImageById(boxImageId);
       if (!boxImage) {
-        return ResponseHandler.internalError(
+        return ResponseHandler.badRequest(
           res,
           i18n.__('BOX_IMAGE_NOT_FOUND'),
         );
@@ -85,9 +82,8 @@ export const getBoxImageById = asyncHandler(
         boxImage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGE_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -113,9 +109,8 @@ export const updateBoxImage = asyncHandler(
         updatedBoxImage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGE_UPDATE_FAILED'),
         error.message,
       );
     }
@@ -129,9 +124,8 @@ export const deleteBoxImage = asyncHandler(
       await boxImageModel.deleteBoxImage(boxImageId);
       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGE_DELETION_FAILED'),
         error.message,
       );
     }
@@ -158,9 +152,8 @@ export const deleteBoxImage = asyncHandler(
 //         boxImages,
 //       );
 //     } catch (error: any) {
-//       ResponseHandler.internalError(
+//       ResponseHandler.badRequest(
 //         res,
-//         i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
 //         error.message,
 //       );
 //     }
@@ -178,9 +171,8 @@ export const getBoxImagesByBoxId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -198,9 +190,8 @@ export const getBoxImagesByPackageId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_IMAGES_RETRIEVAL_FAILED'),
         error.message,
       );
     }

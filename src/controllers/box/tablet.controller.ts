@@ -18,9 +18,8 @@ export const createTablet = asyncHandler(
         createdTablet,
       );
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_CREATION_FAILED'),
         (error as Error).message,
       );
     }
@@ -37,9 +36,8 @@ export const getAllTablets = asyncHandler(
         tablets,
       );
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLETS_RETRIEVAL_FAILED'),
         (error as Error).message,
       );
     }
@@ -57,9 +55,8 @@ export const getTabletById = asyncHandler(
         tablet,
       );
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_RETRIEVAL_FAILED'),
         (error as Error).message,
       );
     }
@@ -78,9 +75,8 @@ export const updateTablet = asyncHandler(
         updatedTablet,
       );
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_UPDATE_FAILED'),
         (error as Error).message,
       );
     }
@@ -98,9 +94,8 @@ export const deleteTablet = asyncHandler(
         deletedTablet,
       );
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_DELETION_FAILED'),
         (error as Error).message,
       );
     }

@@ -20,9 +20,8 @@ export const createBoxLocker = asyncHandler(
         createdBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKER_CREATION_FAILED'),
         error.message,
       );
     }
@@ -39,9 +38,8 @@ export const getAllBoxLockers = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKERS_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -59,9 +57,8 @@ export const getBoxLockerById = asyncHandler(
         boxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKER_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -83,9 +80,8 @@ export const updateBoxLocker = asyncHandler(
         updatedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKER_UPDATE_FAILED'),
         error.message,
       );
     }
@@ -105,9 +101,8 @@ export const deleteBoxLocker = asyncHandler(
         deletedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKER_DELETION_FAILED'),
         error.message,
       );
     }
@@ -126,9 +121,8 @@ export const getAllLockersById = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_LOCKERS_RETRIEVAL_FAILED'),
         error.message,
       );
     }

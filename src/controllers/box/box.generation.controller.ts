@@ -20,11 +20,7 @@ export const createBoxGeneration = asyncHandler(
         createdBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_GENERATION_CREATION_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -39,11 +35,7 @@ export const getAllBoxGenerations = asyncHandler(
         boxGenerations,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_GENERATIONS_RETRIEVAL_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -59,11 +51,7 @@ export const getBoxGenerationById = asyncHandler(
         boxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_GENERATION_RETRIEVAL_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -83,11 +71,7 @@ export const updateBoxGeneration = asyncHandler(
         updatedBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_GENERATION_UPDATE_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -104,11 +88,7 @@ export const deleteBoxGeneration = asyncHandler(
         deletedBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('BOX_GENERATION_DELETION_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

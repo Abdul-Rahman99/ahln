@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
     }
     try {
         if (!config_1.default.JWT_SECRET_KEY) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('JWT_UNDEFINED'));
+            return responsesHandler_1.default.unauthorized(res, i18n_1.default.__('JWT_UNDEFINED'));
         }
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.JWT_SECRET_KEY);
         req.user = decoded;

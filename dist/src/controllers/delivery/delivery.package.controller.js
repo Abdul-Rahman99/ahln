@@ -26,7 +26,7 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), createdDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) => {
@@ -35,7 +35,7 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -45,7 +45,7 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'), deliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
@@ -56,7 +56,7 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
@@ -66,7 +66,7 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) => {
@@ -84,7 +84,7 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) =
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCH_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

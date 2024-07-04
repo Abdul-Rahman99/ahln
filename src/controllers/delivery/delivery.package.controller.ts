@@ -39,9 +39,8 @@ export const createDeliveryPackage = asyncHandler(
         createdDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGE_CREATION_FAILED'),
         error.message,
       );
     }
@@ -58,9 +57,8 @@ export const getAllDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGES_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -79,9 +77,8 @@ export const getDeliveryPackageById = asyncHandler(
         deliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGE_RETRIEVAL_FAILED'),
         error.message,
       );
     }
@@ -103,9 +100,8 @@ export const updateDeliveryPackage = asyncHandler(
         updatedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGE_UPDATE_FAILED'),
         error.message,
       );
     }
@@ -124,9 +120,8 @@ export const deleteDeliveryPackage = asyncHandler(
         deletedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGE_DELETION_FAILED'),
         error.message,
       );
     }
@@ -161,9 +156,8 @@ export const getUserDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('DELIVERY_PACKAGES_FETCH_FAILED'),
         error.message,
       );
     }

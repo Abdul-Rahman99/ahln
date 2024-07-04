@@ -11,7 +11,6 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
       if (err) {
         return ResponseHandler.badRequest(
           res,
-          i18n.__('IMAGE_UPLOAD_FAILED'),
           err.message,
         );
       }
@@ -24,9 +23,8 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
       });
     });
   } catch (error: any) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('IMAGE_UPLOAD_FAILED'),
       error.message,
     );
   }

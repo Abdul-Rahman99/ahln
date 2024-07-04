@@ -12,7 +12,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     if (!config.JWT_SECRET_KEY) {
-      return ResponseHandler.badRequest(res, i18n.__('JWT_UNDEFINED'));
+      return ResponseHandler.unauthorized(res, i18n.__('JWT_UNDEFINED'));
     }
 
     const decoded = jwt.verify(token, config.JWT_SECRET_KEY) as JwtPayload;

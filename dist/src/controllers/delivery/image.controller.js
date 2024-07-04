@@ -12,7 +12,7 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, (err) => {
             if (err) {
-                return responsesHandler_1.default.badRequest(res, i18n_1.default.__('IMAGE_UPLOAD_FAILED'), err.message);
+                return responsesHandler_1.default.badRequest(res, err.message);
             }
             if (!req.file) {
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('NO_FILE_PROVIDED'));
@@ -23,7 +23,7 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res) => {
         });
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('IMAGE_UPLOAD_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=image.controller.js.map

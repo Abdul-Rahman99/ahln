@@ -16,7 +16,7 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_CREATED_SUCCESSFULLY'), createdBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res) => {
@@ -25,7 +25,7 @@ exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOXES_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -35,7 +35,7 @@ exports.getBoxById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateBox = (0, asyncHandler_1.default)(async (req, res) => {
@@ -46,7 +46,7 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_UPDATED_SUCCESSFULLY'), updatedBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteBox = (0, asyncHandler_1.default)(async (req, res) => {
@@ -56,7 +56,7 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_DELETED_SUCCESSFULLY'), deletedBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res) => {
@@ -66,7 +66,7 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOXES_GENERATION_FETCH_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res) => {
@@ -76,7 +76,7 @@ exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res) => {
@@ -86,7 +86,7 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('TABLET_ASSIGNMENT_TO_BOX_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res) => {
@@ -96,7 +96,7 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('TABLET_RESET_TO_BOX_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=box.controller.js.map

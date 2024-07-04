@@ -96,7 +96,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
         }, token);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res) => {
@@ -132,7 +132,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         }, token);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {
@@ -154,7 +154,7 @@ exports.logout = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('LOGOUT_SUCCESS'));
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.resendOtpAndUpdateDB = (0, asyncHandler_1.default)(async (req, res) => {

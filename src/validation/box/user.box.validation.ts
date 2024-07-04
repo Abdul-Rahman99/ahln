@@ -19,7 +19,7 @@ export const updateUserBoxValidation = [
   param('id').isString().withMessage(i18n.__('INVALID_USER_BOX_ID')),
   body('userId').optional().notEmpty().withMessage(i18n.__('USER_ID_REQUIRED')),
   body('boxId').optional().notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
-  validatorMiddleware,  
+  validatorMiddleware,
 ];
 
 export const deleteUserBoxValidation = [
@@ -35,7 +35,9 @@ export const getUserBoxesByUserIdValidation = [
       if (!value.startsWith('Bearer ')) {
         throw new Error(i18n.__('AUTH_HEADER_INVALID'));
       }
-      req.token = value.split(' ')[1];
+      const token = value.split(' ')[1];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any).token = token;
       return true;
     }),
   validatorMiddleware,

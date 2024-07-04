@@ -16,7 +16,7 @@ exports.createTablet = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_CREATED_SUCCESSFULLY'), createdTablet);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res) => {
@@ -25,7 +25,7 @@ exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLETS_RETRIEVED_SUCCESSFULLY'), tablets);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('TABLETS_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -35,7 +35,7 @@ exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RETRIEVED_SUCCESSFULLY'), tablet);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
@@ -46,7 +46,7 @@ exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_UPDATED_SUCCESSFULLY'), updatedTablet);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
@@ -56,7 +56,7 @@ exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_DELETED_SUCCESSFULLY'), deletedTablet);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=tablet.controller.js.map

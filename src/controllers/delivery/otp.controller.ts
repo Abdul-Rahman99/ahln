@@ -19,11 +19,7 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       createdOTP,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(
-      res,
-      i18n.__('OTP_CREATION_FAILED'),
-      error.message,
-    );
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -32,11 +28,7 @@ export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
     const otps = await otpModel.getMany();
     ResponseHandler.success(res, i18n.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
   } catch (error: any) {
-    ResponseHandler.internalError(
-      res,
-      i18n.__('OTPS_RETRIEVAL_FAILED'),
-      error.message,
-    );
+    ResponseHandler.internalError(res, error.message);
   }
 });
 
@@ -46,11 +38,7 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
     const otp = await otpModel.getOne(Number(otpId));
     ResponseHandler.success(res, i18n.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
   } catch (error: any) {
-    ResponseHandler.internalError(
-      res,
-      i18n.__('OTP_RETRIEVAL_FAILED'),
-      error.message,
-    );
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -65,11 +53,7 @@ export const updateOTP = asyncHandler(async (req: Request, res: Response) => {
       updatedOTP,
     );
   } catch (error: any) {
-    ResponseHandler.internalError(
-      res,
-      i18n.__('OTP_UPDATE_FAILED'),
-      error.message,
-    );
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -83,11 +67,7 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
       deletedOTP,
     );
   } catch (error: any) {
-    ResponseHandler.internalError(
-      res,
-      i18n.__('OTP_DELETION_FAILED'),
-      error.message,
-    );
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -102,11 +82,7 @@ export const getOTPsByUser = asyncHandler(
         otps,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
-        res,
-        i18n.__('OTPS_RETRIEVAL_FAILED'),
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -124,11 +100,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
     }
   } catch (error: any) {
-    ResponseHandler.badRequest(
-      res,
-      i18n.__('OTP_VERIFICATION_FAILED'),
-      error.message,
-    );
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 

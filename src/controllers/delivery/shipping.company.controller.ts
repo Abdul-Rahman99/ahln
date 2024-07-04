@@ -27,9 +27,8 @@ export const createShippingCompany = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('SHIPPING_COMPANY_CREATION_FAILED'),
         error.message,
       );
     }
@@ -47,9 +46,8 @@ export const getAllShippingCompanies = asyncHandler(
         shippingCompanies,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('SHIPPING_COMPANIES_FETCH_FAILED'),
         error.message,
       );
     }
@@ -78,9 +76,8 @@ export const getShippingCompanyById = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('SHIPPING_COMPANY_FETCH_FAILED'),
         error.message,
       );
     }
@@ -105,9 +102,8 @@ export const updateShippingCompany = asyncHandler(
         updatedShippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('SHIPPING_COMPANY_UPDATE_FAILED'),
         error.message,
       );
     }
@@ -125,9 +121,8 @@ export const deleteShippingCompany = asyncHandler(
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('SHIPPING_COMPANY_DELETE_FAILED'),
         error.message,
       );
     }

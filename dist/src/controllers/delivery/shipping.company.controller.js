@@ -16,7 +16,7 @@ exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'), shippingCompany);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('SHIPPING_COMPANY_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res) => {
@@ -25,7 +25,7 @@ exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res) =
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANIES_FETCHED_SUCCESSFULLY'), shippingCompanies);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('SHIPPING_COMPANIES_FETCH_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -38,7 +38,7 @@ exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_FETCHED_SUCCESSFULLY'), shippingCompany);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('SHIPPING_COMPANY_FETCH_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
@@ -49,7 +49,7 @@ exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'), updatedShippingCompany);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('SHIPPING_COMPANY_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
@@ -59,7 +59,7 @@ exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('SHIPPING_COMPANY_DELETE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=shipping.company.controller.js.map

@@ -12,11 +12,12 @@ const otpModel = new otp_model_1.default();
 exports.createOTP = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newOTP = req.body;
-        const createdOTP = await otpModel.createOTP(newOTP);
+        const delivery_package_id = req.body.delivery_package_id;
+        const createdOTP = await otpModel.createOTP(newOTP, delivery_package_id);
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_CREATED_SUCCESSFULLY'), createdOTP);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res) => {
@@ -25,7 +26,7 @@ exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTPS_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.internalError(res, error.message);
     }
 });
 exports.getOTPById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -35,7 +36,7 @@ exports.getOTPById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateOTP = (0, asyncHandler_1.default)(async (req, res) => {
@@ -46,7 +47,7 @@ exports.updateOTP = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_UPDATED_SUCCESSFULLY'), updatedOTP);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res) => {
@@ -56,7 +57,7 @@ exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_DELETED_SUCCESSFULLY'), deletedOTP);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
@@ -66,13 +67,13 @@ exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTPS_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const { otp } = req.body;
-        const verifiedOTP = await otpModel.checkOTP(otp);
+        const { otp, delivery_package_id } = req.body;
+        const verifiedOTP = await otpModel.checkOTP(otp, delivery_package_id);
         if (verifiedOTP) {
             responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), {
                 box_locker_string: verifiedOTP,
@@ -83,7 +84,7 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
         }
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('OTP_VERIFICATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {

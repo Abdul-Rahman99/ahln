@@ -18,11 +18,7 @@ export const createAddress = asyncHandler(
         createdAddress,
       );
     } catch (error) {
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_CREATION_FAILED'),
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -37,11 +33,7 @@ export const getAllAddresses = asyncHandler(
         addresses,
       );
     } catch (error) {
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESSES_RETRIEVAL_FAILED'),
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -57,11 +49,7 @@ export const getAddressById = asyncHandler(
         address,
       );
     } catch (error) {
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_RETRIEVAL_FAILED'),
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -81,11 +69,7 @@ export const updateAddress = asyncHandler(
         updatedAddress,
       );
     } catch (error) {
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_UPDATE_FAILED'),
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -101,11 +85,7 @@ export const deleteAddress = asyncHandler(
         deletedAddress,
       );
     } catch (error) {
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_DELETION_FAILED'),
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );

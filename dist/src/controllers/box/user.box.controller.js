@@ -18,7 +18,7 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'), createdUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOX_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res) => {
@@ -27,7 +27,7 @@ exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOXES_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -37,7 +37,7 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_RETRIEVED_SUCCESSFULLY'), userBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOX_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res) => {
@@ -48,7 +48,7 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'), updatedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOX_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res) => {
@@ -58,7 +58,7 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'), deletedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOX_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
@@ -69,13 +69,13 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
         }
         const user = await userModel.findByToken(token);
         if (!user) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+            return responsesHandler_1.default.unauthorized(res, i18n_1.default.__('INVALID_TOKEN'));
         }
         const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOXES_BY_USER_ID_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
@@ -85,7 +85,7 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('USER_BOXES_BY_BOX_ID_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res) => {
@@ -95,7 +95,7 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, i18n_1.default.__('BOX_ASSIGNMENT_TO_USER_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=user.box.controller.js.map

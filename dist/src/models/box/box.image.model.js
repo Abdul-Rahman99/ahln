@@ -96,31 +96,10 @@ class BoxImageModel {
             throw new Error(`Unable to delete box image with ID ${id}: ${error.message}`);
         }
     }
-    async getBoxImagesByUser(userId) {
-        try {
-            const connection = await database_1.default.connect();
-            const sql = `
-        SELECT bi.*
-        FROM Box_IMAGE bi
-        INNER JOIN Delivery_Package dp ON bi.delivery_package_id = dp.id
-        WHERE dp.customer_id = $1
-      `;
-            const result = await connection.query(sql, [userId]);
-            connection.release();
-            const boxImages = result.rows;
-            return boxImages.map((image) => ({
-                ...image,
-                image: `${process.env.BASE_URL}/uploads/${image.image}`,
-            }));
-        }
-        catch (error) {
-            throw new Error(`Unable to fetch box images for user ID ${userId}: ${error.message}`);
-        }
-    }
     async getBoxImagesByBoxId(boxId) {
         try {
             const connection = await database_1.default.connect();
-            const sql = `SELECT * FROM Box_IMAGE WHERE id = $1`;
+            const sql = `SELECT * FROM Box_IMAGE WHERE box_id = $1`;
             const result = await connection.query(sql, [boxId]);
             connection.release();
             const boxImages = result.rows;

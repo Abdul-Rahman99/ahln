@@ -16,7 +16,7 @@ exports.createAddress = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_CREATED_SUCCESSFULLY'), createdAddress);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_CREATION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res) => {
@@ -25,7 +25,7 @@ exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESSES_RETRIEVED_SUCCESSFULLY'), addresses);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESSES_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
@@ -35,7 +35,7 @@ exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_RETRIEVED_SUCCESSFULLY'), address);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_RETRIEVAL_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
@@ -46,7 +46,7 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_UPDATED_SUCCESSFULLY'), updatedAddress);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_UPDATE_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
@@ -56,7 +56,7 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_DELETED_SUCCESSFULLY'), deletedAddress);
     }
     catch (error) {
-        responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_DELETION_FAILED'), error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=address.controller.js.map

@@ -17,9 +17,8 @@ export const createBox = asyncHandler(async (req: Request, res: Response) => {
       createdBox,
     );
   } catch (error) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('BOX_CREATION_FAILED'),
       (error as Error).message,
     );
   }
@@ -34,9 +33,8 @@ export const getAllBoxes = asyncHandler(async (req: Request, res: Response) => {
       boxes,
     );
   } catch (error) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('BOXES_RETRIEVAL_FAILED'),
       (error as Error).message,
     );
   }
@@ -48,9 +46,8 @@ export const getBoxById = asyncHandler(async (req: Request, res: Response) => {
     const box = await boxModel.getOne(boxId);
     ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
   } catch (error) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('BOX_RETRIEVAL_FAILED'),
       (error as Error).message,
     );
   }
@@ -67,9 +64,8 @@ export const updateBox = asyncHandler(async (req: Request, res: Response) => {
       updatedBox,
     );
   } catch (error) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('BOX_UPDATE_FAILED'),
       (error as Error).message,
     );
   }
@@ -85,9 +81,8 @@ export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
       deletedBox,
     );
   } catch (error) {
-    ResponseHandler.internalError(
+    ResponseHandler.badRequest(
       res,
-      i18n.__('BOX_DELETION_FAILED'),
       (error as Error).message,
     );
   }
@@ -105,9 +100,8 @@ export const getBoxesByGenerationId = asyncHandler(
         boxes,
       );
     } catch (error) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOXES_GENERATION_FETCH_FAILED'),
         (error as Error).message,
       );
     }
@@ -124,9 +118,8 @@ export const getBoxByTabletInfo = asyncHandler(
       );
       ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     } catch (error) {
-      ResponseHandler.success(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('BOX_RETRIEVAL_FAILED'),
         (error as Error).message,
       );
     }
@@ -147,9 +140,8 @@ export const assignTabletToBox = asyncHandler(
         assignTabletToBox,
       );
     } catch (error) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_ASSIGNMENT_TO_BOX_FAILED'),
         (error as Error).message,
       );
     }
@@ -167,9 +159,8 @@ export const resetTabletId = asyncHandler(
         assignTabletToBox,
       );
     } catch (error) {
-      ResponseHandler.internalError(
+      ResponseHandler.badRequest(
         res,
-        i18n.__('TABLET_RESET_TO_BOX_FAILED'),
         (error as Error).message,
       );
     }

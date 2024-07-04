@@ -5,11 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class OTPModel {
-    async createOTP(otpData) {
+    async createOTP(otpData, delivery_package_id) {
         try {
             const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
+            if (delivery_package_id) {
+                const checkDeliveryPackageResult = await connection.query('SELECT * FROM delivery_package WHERE id = $1', [delivery_package_id]);
+                if (checkDeliveryPackageResult.rows.length === 0) {
+                    throw new Error('Delivery Package ID not found');
+                }
+            }
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             const sqlFields = [
                 'createdAt',
@@ -40,7 +46,7 @@ class OTPModel {
             throw new Error(`Unable to create OTP: ${error.message}`);
         }
     }
-    async checkOTP(otp) {
+    async checkOTP(otp, delivery_package_id) {
         const connection = await database_1.default.connect();
         try {
             if (!otp) {
@@ -49,6 +55,10 @@ class OTPModel {
             const otpResult = await connection.query('SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE', [otp]);
             if (otpResult.rows.length === 0) {
                 throw new Error('OTP not found or already used');
+            }
+            const checkDeliveryPackageId = await connection.query('SELECT id FROM Delivery_Package WHERE id = $1', [delivery_package_id]);
+            if (!checkDeliveryPackageId) {
+                throw new Error('Delivery Package id not found');
             }
             const box_locker_id = otpResult.rows[0].box_locker_id;
             const boxLockerResult = await connection.query('SELECT serial_port FROM Box_Locker WHERE id = $1', [box_locker_id]);

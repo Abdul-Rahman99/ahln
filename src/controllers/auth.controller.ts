@@ -143,7 +143,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     );
   } catch (error: any) {
     // Handle any errors that occur during verification
-    ResponseHandler.internalError(res, error.message);
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -200,7 +200,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       token,
     );
   } catch (error: any) {
-    ResponseHandler.internalError(res, error.message);
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 
@@ -230,7 +230,7 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
     ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
   } catch (error: any) {
     // Handle any errors that occur during logout
-    ResponseHandler.internalError(res, error.message);
+    ResponseHandler.badRequest(res, error.message);
   }
 });
 

@@ -1,0 +1,10 @@
+/* Replace with your SQL commands */
+CREATE TABLE IF NOT EXISTS payment (
+    id SERIAL PRIMARY KEY,
+    amount INTEGER NOT NULL,
+    card_id INTEGER REFERENCES card(id),
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    billing_date DATE NOT NULL,
+    is_paid BOOLEAN NOT NULL DEFAULT FALSE
+);

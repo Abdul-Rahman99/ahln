@@ -60,7 +60,7 @@ class DeliveryPackageModel {
                 userId,
                 deliveryPackage.vendor_id || null,
                 deliveryPackage.delivery_id || null,
-                deliveryPackage.tracking_number || null,
+                deliveryPackage.tracking_number?.toLowerCase() || null,
                 address_id,
                 deliveryPackage.shipping_company_id || null,
                 deliveryPackage.box_id || null,

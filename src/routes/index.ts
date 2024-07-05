@@ -17,6 +17,8 @@ import deliveryPackageRoute from './delivery/delivery.package.route';
 import otpRoute from './delivery/otp.route';
 import shippingCompanyRoute from './delivery/shipping.company.route';
 import uploadImage from './delivery/image.route';
+import salesInvoiceRoute from './payment/sales.invoice.route'
+
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
   app.use('/api/auth', authRoute);
@@ -40,6 +42,8 @@ const mountRoutes = (app: Express) => {
   app.use('/api/otp', otpRoute);
   app.use('/api/shipping-company', shippingCompanyRoute);
   app.use('/api/image', uploadImage);
+
+  app.use('/api/sales-invoice' , salesInvoiceRoute)
 };
 
 export default mountRoutes;

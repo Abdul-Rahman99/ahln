@@ -23,10 +23,6 @@ exports.createOTPValidation = [
     (0, express_validator_1.body)('box_locker_id')
         .notEmpty()
         .withMessage(i18n_1.default.__('BOX_LOCKER_ID_REQUIRED')),
-    (0, express_validator_1.body)('delivery_package_id')
-        .optional()
-        .notEmpty()
-        .withMessage(i18n_1.default.__('DELIVERY_PACKAGE_ID_REQUIRED')),
     validatorMiddleware_1.default,
 ];
 exports.checkOTPValidation = [

@@ -89,7 +89,7 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const trackingNumber = req.body.trackingNumber;
+        const trackingNumber = req.body.trackingNumber.toLowerCase();
         const boxId = req.body.boxId;
         if (!trackingNumber) {
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('TRACKING_NUMBER_REQUIRED'));

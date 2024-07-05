@@ -160,14 +160,12 @@ class DeliveryPackageModel {
 
       if (deliveryPackageResult.rows.length > 0) {
         throw new Error(
-          'Delivery package dunlicated for the given tracking number',
+          'Delivery package Dublicated for the given tracking number',
         );
       }
       connection.release();
     } catch (error: any) {
-      throw new Error(
-        error.message,
-      );
+      throw new Error(error.message);
     }
   }
 

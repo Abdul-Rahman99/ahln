@@ -20,6 +20,12 @@ export const createDeliveryPackage = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
       }
 
+      if (req.body.tracking_number) {
+        await deliveryPackageModel.checkTrackingNumber(
+          req.body.tracking_number.toLowerCase(),
+        );
+      }
+
       // Find the user by the token
       const user = await userModel.findByToken(token);
       if (!user) {

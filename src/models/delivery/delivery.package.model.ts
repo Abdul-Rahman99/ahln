@@ -145,6 +145,32 @@ class DeliveryPackageModel {
     }
   }
 
+  async checkTrackingNumber(tracking_number: string): Promise<any> {
+    try {
+      const connection = await db.connect();
+      if (!tracking_number) {
+        throw new Error('Please provide a tracking number');
+      }
+
+      const deliveryPackageResult = await connection.query(
+        'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1',
+        [tracking_number],
+      );
+      // console.log(deliveryPackageResult.rows.length > 0);
+
+      if (deliveryPackageResult.rows.length > 0) {
+        throw new Error(
+          'Delivery package dunlicated for the given tracking number',
+        );
+      }
+      connection.release();
+    } catch (error: any) {
+      throw new Error(
+        error.message,
+      );
+    }
+  }
+
   // Update delivery package
   async updateOne(
     deliveryPackage: Partial<DeliveryPackage>,

@@ -52,7 +52,6 @@ class UserPermissionModel {
             return result.rows.length > 0;
         }
         catch (error) {
-            console.error(`Error checking permission assignment: ${error.message}`);
             throw new Error(`Could not check permission assignment: ${error.message}`);
         }
     }

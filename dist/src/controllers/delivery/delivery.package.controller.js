@@ -17,6 +17,9 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         if (!token) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
         }
+        if (req.body.tracking_number) {
+            await deliveryPackageModel.checkTrackingNumber(req.body.tracking_number.toLowerCase());
+        }
         const user = await userModel.findByToken(token);
         if (!user) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));

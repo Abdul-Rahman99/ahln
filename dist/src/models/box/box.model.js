@@ -26,8 +26,7 @@ class BoxModel {
                     return id;
                 }
                 catch (error) {
-                    console.error('Error generating box_id:', error.message);
-                    throw error;
+                    throw new Error(`Error generting Box id: ${error.message}`);
                 }
             }
             const id = await generateBoxId();

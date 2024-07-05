@@ -303,7 +303,9 @@ class OTPModel {
 
       return [parsedSerialPort, pin_result];
     } catch (error) {
-      throw new Error(`${(error as Error).message}`);
+      throw new Error(
+        `Error Checking Tracking Number: ${(error as Error).message}`,
+      );
     } finally {
       connection.release();
     }

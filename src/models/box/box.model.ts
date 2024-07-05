@@ -7,7 +7,6 @@ import BoxLockerModel from '../../models/box/box.locker.model';
 class BoxModel {
   private boxLockerModel = new BoxLockerModel();
   // Create new box
-  // Create new box
   async createBox(box: Partial<Box>): Promise<Box> {
     const connection = await db.connect();
     try {
@@ -35,8 +34,9 @@ class BoxModel {
           const id = `Ahln_${currentYear}_B${nextIdFormatted}`;
           return id;
         } catch (error: any) {
-          console.error('Error generating box_id:', error.message);
-          throw error;
+          throw new Error(
+            `Error generting Box id: ${(error as Error).message}`,
+          );
         }
       }
 
@@ -272,7 +272,7 @@ class BoxModel {
       `;
 
       const result = await connection.query(sql, [tabletSerialNumber]);
-      
+
       const updateSql = `
       UPDATE tablet
       SET android_id = $1 

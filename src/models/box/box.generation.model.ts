@@ -24,8 +24,9 @@ class BoxGenerationModel {
       const id = `AHLN_${currentYear}_BG${nextIdFormatted}`;
       return id;
     } catch (error: any) {
-      console.error('Error generating box_generation_id:', error.message);
-      throw error;
+      throw new Error(
+        `Error Creating box generation id ${(error as Error).message}`,
+      );
     }
   }
 
@@ -226,8 +227,9 @@ class BoxGenerationModel {
 
       return parseInt(result.rows[0].count) > 0;
     } catch (error) {
-      console.error('Error checking model name existence:', error);
-      throw new Error('Failed to check model name existence');
+      throw new Error(
+        `Failed to check model name existence ${(error as Error).message}`,
+      );
     }
   }
 }

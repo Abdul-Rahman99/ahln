@@ -3,7 +3,6 @@ import { Permission } from '../../types/permission.type';
 import db from '../../config/database';
 
 class UserPermissionModel {
-
   //Assign permission to user
   async assignPermission(userId: string, permissionId: number): Promise<void> {
     try {
@@ -67,9 +66,8 @@ class UserPermissionModel {
       return result.rows.length > 0; // Returns true if permission is assigned, false otherwise
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error(`Error checking permission assignment: ${error.message}`);
       throw new Error(
-        `Could not check permission assignment: ${error.message}`,
+        `Could not check permission assignment: ${(error as Error).message}`,
       );
     }
   }

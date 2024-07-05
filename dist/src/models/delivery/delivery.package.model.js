@@ -108,6 +108,22 @@ class DeliveryPackageModel {
             throw new Error(`Could not find delivery package ${id}: ${error.message}`);
         }
     }
+    async checkTrackingNumber(tracking_number) {
+        try {
+            const connection = await database_2.default.connect();
+            if (!tracking_number) {
+                throw new Error('Please provide a tracking number');
+            }
+            const deliveryPackageResult = await connection.query('SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1', [tracking_number]);
+            if (deliveryPackageResult.rows.length > 0) {
+                throw new Error('Delivery package Dublicated for the given tracking number');
+            }
+            connection.release();
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
     async updateOne(deliveryPackage, id) {
         try {
             const connection = await database_2.default.connect();

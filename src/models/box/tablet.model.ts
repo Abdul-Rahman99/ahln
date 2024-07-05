@@ -172,8 +172,9 @@ class TabletModel {
 
       return parseInt(result.rows[0].count) > 0;
     } catch (error) {
-      console.error('Error checking serial number existence:', error);
-      throw new Error('Failed to check serial number existence');
+      throw new Error(
+        `Failed to check serial number existence: ${(error as Error).message}`,
+      );
     }
   }
 
@@ -187,11 +188,11 @@ class TabletModel {
 
       return parseInt(result.rows[0].count) > 0;
     } catch (error) {
-      console.error('Error checking Android ID existence:', error);
-      throw new Error('Failed to check Android ID existence');
+      throw new Error(
+        `Failed to check Android ID existence: ${(error as Error).message}`,
+      );
     }
   }
-
 }
 
 export default TabletModel;

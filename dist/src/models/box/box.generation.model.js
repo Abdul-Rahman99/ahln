@@ -18,8 +18,7 @@ class BoxGenerationModel {
             return id;
         }
         catch (error) {
-            console.error('Error generating box_generation_id:', error.message);
-            throw error;
+            throw new Error(`Error Creating box generation id ${error.message}`);
         }
     }
     async createBoxGeneration(b) {
@@ -160,8 +159,7 @@ class BoxGenerationModel {
             return parseInt(result.rows[0].count) > 0;
         }
         catch (error) {
-            console.error('Error checking model name existence:', error);
-            throw new Error('Failed to check model name existence');
+            throw new Error(`Failed to check model name existence ${error.message}`);
         }
     }
 }

@@ -8,16 +8,22 @@ const card_model_1 = __importDefault(require("../../models/payment/card.model"))
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
-const user_model_1 = __importDefault(require("../../models/users/user.model"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const cardModel = new card_model_1.default();
-const userModel = new user_model_1.default();
+const parseExpireDate = (dateString) => {
+    const [month, year] = dateString.split('-');
+    const date = new Date(`${year}-${month}-01`);
+    return isNaN(date.getTime()) ? null : date;
+};
 exports.createCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newCard = req.body;
-        const user = await userModel.getOne(newCard.user_id);
-        if (!user) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
+        const expireDate = parseExpireDate(newCard.expire_date);
+        if (!expireDate) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
         }
+        newCard.expire_date = expireDate;
+        newCard.card_number = await bcrypt_1.default.hash(newCard.card_number, 10);
         const createdCard = await cardModel.createCard(newCard);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
     }
@@ -36,7 +42,10 @@ exports.getAllCards = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.getCardById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const cardId = req.params.id;
+        const cardId = parseInt(req.params.id, 10);
+        if (isNaN(cardId)) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
+        }
         const card = await cardModel.getCardById(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_RETRIEVED_SUCCESSFULLY'), card);
     }
@@ -46,8 +55,21 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.updateCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const cardId = req.params.id;
+        const cardId = parseInt(req.params.id, 10);
+        if (isNaN(cardId)) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
+        }
         const cardData = req.body;
+        if (cardData.expire_date) {
+            const expireDate = parseExpireDate(cardData.expire_date);
+            if (!expireDate) {
+                return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
+            }
+            cardData.expire_date = expireDate;
+        }
+        if (cardData.card_number) {
+            cardData.card_number = await bcrypt_1.default.hash(cardData.card_number, 10);
+        }
         const updatedCard = await cardModel.updateCard(cardId, cardData);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'), updatedCard);
     }
@@ -57,7 +79,10 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.deleteCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const cardId = req.params.id;
+        const cardId = parseInt(req.params.id, 10);
+        if (isNaN(cardId)) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
+        }
         const deletedCard = await cardModel.deleteCard(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'), deletedCard);
     }

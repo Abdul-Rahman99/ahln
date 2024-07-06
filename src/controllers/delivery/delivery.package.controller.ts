@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { DeliveryPackage } from '../../types/delivery.package.type';
@@ -14,7 +14,7 @@ const shippingCompanyModel = new ShippingCompanyModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
       const token = req.headers.authorization?.replace('Bearer ', '');
@@ -59,6 +59,7 @@ export const createDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         createdDeliveryPackage,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }
@@ -66,7 +67,7 @@ export const createDeliveryPackage = asyncHandler(
 );
 
 export const getAllDeliveryPackages = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deliveryPackages = await deliveryPackageModel.getMany();
       ResponseHandler.success(
@@ -74,6 +75,7 @@ export const getAllDeliveryPackages = asyncHandler(
         i18n.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'),
         deliveryPackages,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }
@@ -81,7 +83,7 @@ export const getAllDeliveryPackages = asyncHandler(
 );
 
 export const getDeliveryPackageById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deliveryPackageId = req.params.id;
       const deliveryPackage =
@@ -91,6 +93,7 @@ export const getDeliveryPackageById = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'),
         deliveryPackage,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }
@@ -98,25 +101,25 @@ export const getDeliveryPackageById = asyncHandler(
 );
 
 export const updateDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deliveryPackageId = req.params.id;
       const deliveryPackageData: Partial<DeliveryPackage> = req.body;
 
-      try{
+      try {
         if (req.body.shipping_company_id) {
-        const shipping_company_id =
-          await shippingCompanyModel.getShippingCompanyById(
-            req.body.shipping_company_id,
-          );
-        if (!shipping_company_id) {
-          req.body.other_shipping_company = req.body.shipping_company_id;
-          req.body.shipping_company_id = null;
-        } else {
-          req.body.other_shipping_company = null;
+          const shipping_company_id =
+            await shippingCompanyModel.getShippingCompanyById(
+              req.body.shipping_company_id,
+            );
+          if (!shipping_company_id) {
+            req.body.other_shipping_company = req.body.shipping_company_id;
+            req.body.shipping_company_id = null;
+          } else {
+            req.body.other_shipping_company = null;
+          }
         }
-      }
-      } catch (error: any){
+      } catch (error: any) {
         req.body.other_shipping_company = req.body.shipping_company_id;
         req.body.shipping_company_id = null;
       }
@@ -130,6 +133,7 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         updatedDeliveryPackage,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }
@@ -137,7 +141,7 @@ export const updateDeliveryPackage = asyncHandler(
 );
 
 export const deleteDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deliveryPackageId = req.params.id;
       const deletedDeliveryPackage =
@@ -147,6 +151,7 @@ export const deleteDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         deletedDeliveryPackage,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }
@@ -155,7 +160,7 @@ export const deleteDeliveryPackage = asyncHandler(
 
 // Controller function to get all delivery packages for the current user
 export const getUserDeliveryPackages = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { status } = req.query;
       // Extract token from the request headers
@@ -181,6 +186,7 @@ export const getUserDeliveryPackages = asyncHandler(
         i18n.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'),
         deliveryPackages,
       );
+      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
     }

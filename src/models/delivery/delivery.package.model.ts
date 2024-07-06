@@ -40,7 +40,6 @@ class DeliveryPackageModel {
   async createDeliveryPackage(
     userId: string,
     deliveryPackage: Partial<DeliveryPackage>,
-    other_shipping_company: string,
   ): Promise<DeliveryPackage> {
     const connection = await db.connect();
     try {
@@ -93,7 +92,7 @@ class DeliveryPackageModel {
         deliveryPackage.title || null,
         deliveryPackage.delivery_pin || null,
         deliveryPackage.description || null,
-        other_shipping_company || null,
+        deliveryPackage.other_shipping_company || null,
       ];
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 

@@ -13,5 +13,6 @@ router.get('/get-all', verifyToken_1.default, payment_controller_1.getAllPayment
 router.get('/get-one/:id', verifyToken_1.default, payment_validation_1.getPaymentByIdValidation, payment_controller_1.getPaymentById);
 router.put('/update/:id', verifyToken_1.default, payment_validation_1.updatePaymentValidation, payment_controller_1.updatePayment);
 router.delete('/delete/:id', verifyToken_1.default, payment_validation_1.deletePaymentValidation, payment_controller_1.deletePayment);
+router.get('/get-user-payments', verifyToken_1.default, payment_controller_1.getPaymentsByUser);
 exports.default = router;
 //# sourceMappingURL=payment.route.js.map

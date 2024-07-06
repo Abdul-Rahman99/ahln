@@ -81,7 +81,6 @@ class UserModel {
         2,
       ];
 
-
       // Create Insert Query in users table
       const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
               VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
@@ -120,7 +119,7 @@ class UserModel {
       }
 
       //fetch user from db
-      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users 
+      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, password FROM users 
                     WHERE id=$1`;
       const connection = await db.connect();
       const result = await connection.query(sql, [id]);
@@ -215,7 +214,7 @@ class UserModel {
 
       const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
       const result = await connection.query(sql, [id]);
-      
+
       if (result.rows.length === 0) {
         throw new Error(`Could not find user with ID ${id}`);
       }

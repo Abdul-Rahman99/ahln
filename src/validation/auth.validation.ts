@@ -141,3 +141,12 @@ export const updatePasswordWithOTPValidator = [
   body('newPassword').notEmpty().withMessage(i18n.__('PASSWORD_REQUIRED')),
   validatorMiddleware,
 ];
+
+export const updatePasswordValidation = [
+  body('password').isString().withMessage(i18n.__('CURRENT_PASSWORD_REQUIRED')),
+  body('newPassword')
+    .isString()
+    .isLength({ min: 6 })
+    .withMessage(i18n.__('NEW_PASSWORD_REQUIRED')),
+  validatorMiddleware,
+];

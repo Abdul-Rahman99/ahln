@@ -279,3 +279,48 @@ export const updatePasswordWithOTP = asyncHandler(
     );
   },
 );
+
+
+export const updatePassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { password, newPassword } = req.body;
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+    }
+
+    try {
+      const user = await userModel.findByToken(token);
+
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+
+      const result = await userModel.getOne(user as string); 
+
+      if (!result || !result.password) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, result.password);
+
+      if (!isPasswordValid) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+      }
+
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      await userModel.updateUserPassword(result.email, hashedPassword);
+
+      return ResponseHandler.success(
+        res,
+        i18n.__('PASSWORD_RESET_SUCCESS'),
+        null,
+      );
+    } catch (error: any) {
+      return ResponseHandler.badRequest(res, error.message);
+    }
+  },
+);

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class CardModel {
-    async createCard(card) {
+    async createCard(card, userId) {
         try {
             const connection = await database_1.default.connect();
             const sql = `INSERT INTO card (card_number, expire_date, cvv, name_on_card, billing_address, user_id)
@@ -16,7 +16,7 @@ class CardModel {
                 card.cvv,
                 card.name_on_card,
                 card.billing_address,
-                card.user_id,
+                userId,
             ]);
             connection.release();
             return result.rows[0];

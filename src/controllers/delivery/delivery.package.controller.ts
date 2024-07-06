@@ -34,16 +34,19 @@ export const createDeliveryPackage = asyncHandler(
       if (!user) {
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
-      const shipping_company_id =
-        await shippingCompanyModel.getShippingCompanyById(
+      let shipping_company_id;
+      try {
+        shipping_company_id = await shippingCompanyModel.getShippingCompanyById(
           req.body.shipping_company_id,
         );
-
-      if (!shipping_company_id) {
+        if (!shipping_company_id) {
+          req.body.other_shipping_company = req.body.shipping_company_id;
+          req.body.shipping_company_id = null;
+        }
+      } catch (error: any) {
         req.body.other_shipping_company = req.body.shipping_company_id;
         req.body.shipping_company_id = null;
       }
-
       const newDeliveryPackage: Partial<DeliveryPackage> = req.body;
       const createdDeliveryPackage =
         await deliveryPackageModel.createDeliveryPackage(
@@ -100,18 +103,22 @@ export const updateDeliveryPackage = asyncHandler(
       const deliveryPackageId = req.params.id;
       const deliveryPackageData: Partial<DeliveryPackage> = req.body;
 
-      
-
-      if (req.body.shipping_company_id) {
+      try{
+        if (req.body.shipping_company_id) {
         const shipping_company_id =
           await shippingCompanyModel.getShippingCompanyById(
             req.body.shipping_company_id,
           );
-        if(!shipping_company_id){
+        if (!shipping_company_id) {
           req.body.other_shipping_company = req.body.shipping_company_id;
           req.body.shipping_company_id = null;
+        } else {
+          req.body.other_shipping_company = null;
         }
-        
+      }
+      } catch (error: any){
+        req.body.other_shipping_company = req.body.shipping_company_id;
+        req.body.shipping_company_id = null;
       }
 
       const updatedDeliveryPackage = await deliveryPackageModel.updateOne(

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { Payment } from '../../types/payment.type';
 
@@ -85,6 +86,27 @@ class PaymentModel {
     } catch (error) {
       throw new Error(
         `Could not delete payment with ID ${id}: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  // Get payments by user ID
+  async getPaymentsByUser(userId: string): Promise<Payment[]> {
+    try {
+      const connection = await db.connect();
+      const sql = `
+        SELECT payment.id, payment.amount, payment.card_id, payment.createdAt, 
+              payment.billing_date, payment.is_paid, card.card_number, card.name_on_card
+        FROM payment
+        INNER JOIN card ON payment.card_id = card.id
+        WHERE card.user_id = $1
+      `;
+      const result = await connection.query(sql, [userId]);
+      connection.release();
+      return result.rows as Payment[];
+    } catch (error) {
+      throw new Error(
+        `Error retrieving payments for user ${userId}: ${(error as Error).message}`,
       );
     }
   }

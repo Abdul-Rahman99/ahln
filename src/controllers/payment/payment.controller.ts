@@ -6,9 +6,11 @@ import { Payment } from '../../types/payment.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import CardModel from '../../models/payment/card.model';
+import UserModel from '../../models/users/user.model';
 
 const cardModel = new CardModel();
 const paymentModel = new PaymentModel();
+const userModel = new UserModel();
 
 const parseBillingDate = (dateString: string): Date | null => {
   const [month, day, year] = dateString.split('-');
@@ -31,9 +33,9 @@ export const createPayment = asyncHandler(
       }
       newPayment.billing_date = billingDate;
 
-      const card = await cardModel.getCardById(newPayment.card_id)
-      if (!card){ 
-        throw new Error(`No Card Found, please add a card`)
+      const card = await cardModel.getCardById(newPayment.card_id);
+      if (!card) {
+        throw new Error(`No Card Found, please add a card`);
       }
       const createdPayment = await paymentModel.createPayment(newPayment);
       ResponseHandler.success(
@@ -131,6 +133,33 @@ export const deletePayment = asyncHandler(
         res,
         i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
         deletedPayment,
+      );
+    } catch (error: any) {
+      ResponseHandler.badRequest(res, error.message);
+    }
+  },
+);
+
+export const getPaymentsByUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      const user = await userModel.findByToken(token);
+
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+      const payments = await paymentModel.getPaymentsByUser(user);
+      ResponseHandler.success(
+        res,
+        i18n.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'),
+        payments,
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);

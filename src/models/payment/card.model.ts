@@ -3,7 +3,7 @@ import { Card } from '../../types/card.type';
 
 class CardModel {
   // Create new Card
-  async createCard(card: Partial<Card>): Promise<Card> {
+  async createCard(card: Partial<Card>, userId: string): Promise<Card> {
     try {
       const connection = await db.connect();
       const sql = `INSERT INTO card (card_number, expire_date, cvv, name_on_card, billing_address, user_id)
@@ -15,7 +15,7 @@ class CardModel {
         card.cvv,
         card.name_on_card,
         card.billing_address,
-        card.user_id,
+        userId,
       ]);
       connection.release();
       return result.rows[0] as Card;
@@ -41,11 +41,11 @@ class CardModel {
   async getCardById(id: number): Promise<Card> {
     try {
       const connection = await db.connect();
-      
+
       const sql = `SELECT * FROM card WHERE id = $1`;
       const result = await connection.query(sql, [id]);
       console.log(result);
-      
+
       connection.release();
       return result.rows[0] as Card;
     } catch (error) {

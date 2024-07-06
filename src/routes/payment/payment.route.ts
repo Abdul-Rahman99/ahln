@@ -5,6 +5,7 @@ import {
   getPaymentById,
   updatePayment,
   deletePayment,
+  getPaymentsByUser,
 } from '../../controllers/payment/payment.controller';
 
 import {
@@ -33,5 +34,8 @@ router.delete(
   deletePaymentValidation,
   deletePayment,
 );
+
+// Custom operations
+router.get('/get-user-payments', verifyToken, getPaymentsByUser);
 
 export default router;

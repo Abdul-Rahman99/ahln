@@ -18,7 +18,7 @@ const boxModel = new BoxModel();
 // Function to parse date from MM-DD-YYYY format
 const parseDate = (dateString: string): Date | null => {
   const [month, day, year] = dateString.split('-');
-  const date = new Date(`${year}-${month}-${1 + day}`);
+  const date = new Date(`${year}-${month}-${day}`);
   return isNaN(date.getTime()) ? null : date;
 };
 

@@ -19,6 +19,7 @@ import shippingCompanyRoute from './delivery/shipping.company.route';
 import uploadImage from './delivery/image.route';
 import salesInvoiceRoute from './payment/sales.invoice.route';
 import cardRoute from './payment/card.route';
+import paymentRoute from './payment/payment.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -46,6 +47,7 @@ const mountRoutes = (app: Express) => {
 
   app.use('/api/sales-invoice', salesInvoiceRoute);
   app.use('/api/payment-card', cardRoute);
+  app.use('/api/payment', paymentRoute);
 };
 
 export default mountRoutes;

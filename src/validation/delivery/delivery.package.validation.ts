@@ -17,9 +17,9 @@ export const createDeliveryPackageValidation = [
       return true;
     }),
   body('box_id').notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
-  body('shipping_company_id')
-    .notEmpty()
-    .withMessage(i18n.__('SHIPPING_COMPANY_ID_REQUIRED')),
+  // body('shipping_company_id')
+  //   .notEmpty()
+  //   .withMessage(i18n.__('SHIPPING_COMPANY_ID_REQUIRED')),
   validatorMiddleware,
 ];
 

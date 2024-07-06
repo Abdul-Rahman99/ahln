@@ -31,12 +31,17 @@ export const createDeliveryPackage = asyncHandler(
       if (!user) {
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
+      let other_shipping_company_id;
+      if (!req.body.shipping_company_id) {
+        other_shipping_company_id = req.body.other_shipping_company;
+      }
 
       const newDeliveryPackage: Partial<DeliveryPackage> = req.body;
       const createdDeliveryPackage =
         await deliveryPackageModel.createDeliveryPackage(
           user,
           newDeliveryPackage,
+          other_shipping_company_id,
         );
 
       ResponseHandler.success(

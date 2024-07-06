@@ -1,23 +1,21 @@
-import { hashSync } from 'bcrypt';
 import db from '../../config/database';
 import { Card } from '../../types/card.type';
 
 class CardModel {
   // Create new Card
-  async createCard(card: Partial<Card>): Promise<Card> {
+  async createCard(card: Partial<Card>, userId: string): Promise<Card> {
     try {
       const connection = await db.connect();
-      const card_number_hashed = hashSync(card.card_number as string , 10);
       const sql = `INSERT INTO card (card_number, expire_date, cvv, name_on_card, billing_address, user_id)
                    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
 
       const result = await connection.query(sql, [
-        card_number_hashed,
+        card.card_number,
         card.expire_date,
         card.cvv,
         card.name_on_card,
         card.billing_address,
-        card.user_id,
+        userId,
       ]);
       connection.release();
       return result.rows[0] as Card;
@@ -40,11 +38,14 @@ class CardModel {
   }
 
   // Get specific Card by ID
-  async getCardById(id: string): Promise<Card> {
+  async getCardById(id: number): Promise<Card> {
     try {
       const connection = await db.connect();
+
       const sql = `SELECT * FROM card WHERE id = $1`;
       const result = await connection.query(sql, [id]);
+      console.log(result);
+
       connection.release();
       return result.rows[0] as Card;
     } catch (error) {
@@ -55,7 +56,7 @@ class CardModel {
   }
 
   // Update Card
-  async updateCard(id: string, cardData: Partial<Card>): Promise<Card> {
+  async updateCard(id: number, cardData: Partial<Card>): Promise<Card> {
     try {
       const connection = await db.connect();
       const updateFields = Object.keys(cardData)
@@ -76,7 +77,7 @@ class CardModel {
   }
 
   // Delete Card
-  async deleteCard(id: string): Promise<Card> {
+  async deleteCard(id: number): Promise<Card> {
     try {
       const connection = await db.connect();
       const sql = `DELETE FROM card WHERE id=$1 RETURNING *`;

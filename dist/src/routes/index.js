@@ -22,6 +22,8 @@ const otp_route_1 = __importDefault(require("./delivery/otp.route"));
 const shipping_company_route_1 = __importDefault(require("./delivery/shipping.company.route"));
 const image_route_1 = __importDefault(require("./delivery/image.route"));
 const sales_invoice_route_1 = __importDefault(require("./payment/sales.invoice.route"));
+const card_route_1 = __importDefault(require("./payment/card.route"));
+const payment_route_1 = __importDefault(require("./payment/payment.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -42,6 +44,8 @@ const mountRoutes = (app) => {
     app.use('/api/shipping-company', shipping_company_route_1.default);
     app.use('/api/image', image_route_1.default);
     app.use('/api/sales-invoice', sales_invoice_route_1.default);
+    app.use('/api/payment-card', card_route_1.default);
+    app.use('/api/payment', payment_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

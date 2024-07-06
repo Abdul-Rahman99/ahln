@@ -179,7 +179,7 @@ class DeliveryPackageModel {
     async getPackagesByUser(userId, status) {
         try {
             const connection = await database_2.default.connect();
-            const sql = 'SELECT id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, createdAt FROM Delivery_Package INNER JOIN Shipping_Company ON Shipping_Company.id = shipping_company_id WHERE customer_id = $1  AND shipment_status = $2';
+            const sql = 'SELECT Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id  WHERE customer_id = $1  AND shipment_status = $2';
             const params = [userId, status];
             const result = await connection.query(sql, params);
             connection.release();

@@ -15,7 +15,7 @@ const userModel = new user_model_1.default();
 const boxModel = new box_model_1.default();
 const parseDate = (dateString) => {
     const [month, day, year] = dateString.split('-');
-    const date = new Date(`${year}-${month}-${1 + day}`);
+    const date = new Date(`${year}-${month}-${day}`);
     return isNaN(date.getTime()) ? null : date;
 };
 exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {

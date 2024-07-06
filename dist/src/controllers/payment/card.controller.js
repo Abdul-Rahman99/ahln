@@ -9,7 +9,9 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const cardModel = new card_model_1.default();
+const userModel = new user_model_1.default();
 const parseExpireDate = (dateString) => {
     const [month, year] = dateString.split('-');
     const date = new Date(`${year}-${month}-01`);
@@ -24,7 +26,15 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res) => {
         }
         newCard.expire_date = expireDate;
         newCard.card_number = await bcrypt_1.default.hash(newCard.card_number, 10);
-        const createdCard = await cardModel.createCard(newCard);
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
+        }
+        const user = await userModel.findByToken(token);
+        if (!user) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+        }
+        const createdCard = await cardModel.createCard(newCard, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
     }
     catch (error) {

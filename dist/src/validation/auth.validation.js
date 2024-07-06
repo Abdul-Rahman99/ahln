@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePasswordWithOTPValidator = exports.resendOtpAndUpdateDBValidator = exports.verifyEmailValidator = exports.logoutValidator = exports.loginValidator = exports.registerValidator = void 0;
+exports.updatePasswordValidation = exports.updatePasswordWithOTPValidator = exports.resendOtpAndUpdateDBValidator = exports.verifyEmailValidator = exports.logoutValidator = exports.loginValidator = exports.registerValidator = void 0;
 const express_validator_1 = require("express-validator");
 const user_model_1 = __importDefault(require("../models/users/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -126,6 +126,14 @@ exports.updatePasswordWithOTPValidator = [
         .isLength({ min: 6, max: 6 })
         .withMessage(i18n_1.default.__('OTP_INVALID')),
     (0, express_validator_1.body)('newPassword').notEmpty().withMessage(i18n_1.default.__('PASSWORD_REQUIRED')),
+    validatorMiddleware_1.default,
+];
+exports.updatePasswordValidation = [
+    (0, express_validator_1.body)('password').isString().withMessage(i18n_1.default.__('CURRENT_PASSWORD_REQUIRED')),
+    (0, express_validator_1.body)('newPassword')
+        .isString()
+        .isLength({ min: 6 })
+        .withMessage(i18n_1.default.__('NEW_PASSWORD_REQUIRED')),
     validatorMiddleware_1.default,
 ];
 //# sourceMappingURL=auth.validation.js.map

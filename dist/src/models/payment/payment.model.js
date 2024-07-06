@@ -77,6 +77,24 @@ class PaymentModel {
             throw new Error(`Could not delete payment with ID ${id}: ${error.message}`);
         }
     }
+    async getPaymentsByUser(userId) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = `
+        SELECT payment.id, payment.amount, payment.card_id, payment.createdAt, 
+              payment.billing_date, payment.is_paid, card.card_number, card.name_on_card
+        FROM payment
+        INNER JOIN card ON payment.card_id = card.id
+        WHERE card.user_id = $1
+      `;
+            const result = await connection.query(sql, [userId]);
+            connection.release();
+            return result.rows;
+        }
+        catch (error) {
+            throw new Error(`Error retrieving payments for user ${userId}: ${error.message}`);
+        }
+    }
 }
 exports.default = PaymentModel;
 //# sourceMappingURL=payment.model.js.map

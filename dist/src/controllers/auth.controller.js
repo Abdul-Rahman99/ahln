@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
+exports.updatePassword = exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -174,5 +174,33 @@ exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res) => 
     await userModel.updateUserPassword(email, hashedPassword);
     await userModel.updateResetPasswordOTP(email, null);
     return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+});
+exports.updatePassword = (0, asyncHandler_1.default)(async (req, res) => {
+    const { password, newPassword } = req.body;
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
+    }
+    try {
+        const user = await userModel.findByToken(token);
+        if (!user) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+        }
+        const result = await userModel.getOne(user);
+        if (!result || !result.password) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
+        }
+        const isPasswordValid = await bcrypt_1.default.compare(password, result.password);
+        if (!isPasswordValid) {
+            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
+        }
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt_1.default.hash(newPassword, saltRounds);
+        await userModel.updateUserPassword(result.email, hashedPassword);
+        return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+    }
+    catch (error) {
+        return responsesHandler_1.default.badRequest(res, error.message);
+    }
 });
 //# sourceMappingURL=auth.controller.js.map

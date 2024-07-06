@@ -15,5 +15,6 @@ router.post('/logout', verifyToken_1.default, auth_validation_1.logoutValidator,
 router.post('/verify-email', auth_validation_1.verifyEmailValidator, auth_controller_1.verifyEmail);
 router.post('/resend-otp', auth_validation_1.resendOtpAndUpdateDBValidator, auth_controller_1.resendOtpAndUpdateDB);
 router.post('/update-password', auth_validation_1.updatePasswordWithOTPValidator, auth_controller_1.updatePasswordWithOTP);
+router.post('/update-user-password', auth_validation_1.updatePasswordValidation, auth_controller_1.updatePassword);
 exports.default = router;
 //# sourceMappingURL=auth.route.js.map

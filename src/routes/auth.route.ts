@@ -7,6 +7,7 @@ import {
   verifyEmail,
   resendOtpAndUpdateDB,
   updatePasswordWithOTP,
+  updatePassword,
 } from '../controllers/auth.controller';
 
 import {
@@ -16,6 +17,7 @@ import {
   logoutValidator,
   resendOtpAndUpdateDBValidator,
   updatePasswordWithOTPValidator,
+  updatePasswordValidation,
 } from '../validation/auth.validation';
 
 import verifyToken from '../middlewares/verifyToken';
@@ -39,5 +41,7 @@ router.post(
   updatePasswordWithOTPValidator,
   updatePasswordWithOTP,
 );
+
+router.post('/update-user-password', updatePasswordValidation, updatePassword);
 
 export default router;

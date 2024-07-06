@@ -5,5 +5,6 @@ declare class PaymentModel {
     getPaymentById(id: number): Promise<Payment>;
     updatePayment(id: number, paymentData: Partial<Payment>): Promise<Payment>;
     deletePayment(id: number): Promise<Payment>;
+    getPaymentsByUser(userId: string): Promise<Payment[]>;
 }
 export default PaymentModel;

@@ -20,9 +20,6 @@ exports.createDeliveryPackageValidation = [
         return true;
     }),
     (0, express_validator_1.body)('box_id').notEmpty().withMessage(i18n_1.default.__('BOX_ID_REQUIRED')),
-    (0, express_validator_1.body)('shipping_company_id')
-        .notEmpty()
-        .withMessage(i18n_1.default.__('SHIPPING_COMPANY_ID_REQUIRED')),
     validatorMiddleware_1.default,
 ];
 exports.updateDeliveryPackageValidation = [

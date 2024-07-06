@@ -9,7 +9,9 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
+const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
 const userModel = new user_model_1.default();
+const shippingCompanyModel = new shipping_company_model_1.default();
 const deliveryPackageModel = new delivery_package_model_1.default();
 exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
     try {
@@ -23,6 +25,11 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         const user = await userModel.findByToken(token);
         if (!user) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+        }
+        const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
+        if (!shipping_company_id) {
+            req.body.other_shipping_company = req.body.shipping_company_id;
+            req.body.shipping_company_id = null;
         }
         const newDeliveryPackage = req.body;
         const createdDeliveryPackage = await deliveryPackageModel.createDeliveryPackage(user, newDeliveryPackage);
@@ -55,6 +62,13 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackageData = req.body;
+        if (req.body.shipping_company_id) {
+            const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
+            if (!shipping_company_id) {
+                req.body.other_shipping_company = req.body.shipping_company_id;
+                req.body.shipping_company_id = null;
+            }
+        }
         const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
     }

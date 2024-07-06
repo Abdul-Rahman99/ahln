@@ -87,7 +87,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users 
+            const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, password FROM users 
                     WHERE id=$1`;
             const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);

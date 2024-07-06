@@ -52,6 +52,7 @@ class DeliveryPackageModel {
                 'title',
                 'delivery_pin',
                 'description',
+                'other_shipping_company',
             ];
             const sqlParams = [
                 customId,
@@ -71,10 +72,11 @@ class DeliveryPackageModel {
                 deliveryPackage.title || null,
                 deliveryPackage.delivery_pin || null,
                 deliveryPackage.description || null,
+                deliveryPackage.other_shipping_company || null,
             ];
             const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
-                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                 RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description`;
+                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company`;
             const result = await connection.query(sql, sqlParams);
             connection.release();
             return result.rows[0];
@@ -179,7 +181,7 @@ class DeliveryPackageModel {
     async getPackagesByUser(userId, status) {
         try {
             const connection = await database_2.default.connect();
-            const sql = 'SELECT Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id  WHERE customer_id = $1  AND shipment_status = $2';
+            const sql = 'SELECT Box.box_label ,Box_Locker.locker_label ,Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id INNER JOIN Box ON Delivery_Package.box_id = Box.id WHERE customer_id = $1  AND shipment_status = $2';
             const params = [userId, status];
             const result = await connection.query(sql, params);
             connection.release();

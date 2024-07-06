@@ -40,6 +40,7 @@ class DeliveryPackageModel {
   async createDeliveryPackage(
     userId: string,
     deliveryPackage: Partial<DeliveryPackage>,
+    other_shipping_company: string,
   ): Promise<DeliveryPackage> {
     const connection = await db.connect();
     try {
@@ -72,6 +73,7 @@ class DeliveryPackageModel {
         'title',
         'delivery_pin',
         'description',
+        'other_shipping_company',
       ];
       const sqlParams = [
         customId,
@@ -91,11 +93,12 @@ class DeliveryPackageModel {
         deliveryPackage.title || null,
         deliveryPackage.delivery_pin || null,
         deliveryPackage.description || null,
+        other_shipping_company || null,
       ];
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
-                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                 RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description`;
+                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company`;
 
       const result = await connection.query(sql, sqlParams);
       connection.release();

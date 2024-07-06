@@ -16,4 +16,5 @@ export interface DeliveryPackage {
   title: string;
   delivery_pin: string;
   description: string;
+  other_shipping_company: string;
 }

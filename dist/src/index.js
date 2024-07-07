@@ -18,6 +18,7 @@ const mqtt_1 = require("./config/mqtt");
 const models_1 = __importDefault(require("./models"));
 const localization_middleware_1 = __importDefault(require("./middlewares/localization.middleware"));
 const path_1 = __importDefault(require("path"));
+const responsesHandler_1 = __importDefault(require("./utils/responsesHandler"));
 dotenv_1.default.config({ path: '../.env' });
 const app = (0, express_1.default)();
 (0, models_1.default)();
@@ -42,11 +43,8 @@ app.use('/api', limiter);
 app.use('/uploads', express_1.default.static(path_1.default.join(config_1.config.UPLOADS)));
 (0, routes_1.default)(app);
 app.use((_req, res) => {
-    res.status(404).json({
-        message: i18n_1.default.__('YOU_ARE_LOST'),
-    });
+    responsesHandler_1.default.badRequest(res, i18n_1.default.__('YOU_ARE_LOST'));
 });
-app.use(error_middleware_1.notFound);
 app.use(error_middleware_1.errorMiddleware);
 const PORT = config_1.config.PORT;
 const server = app.listen(PORT, () => {

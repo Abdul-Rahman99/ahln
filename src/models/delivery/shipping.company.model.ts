@@ -7,9 +7,9 @@ export default class ShippingCompanyModel {
     title: string,
     logo: string,
   ): Promise<ShippingCompany> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -23,46 +23,45 @@ export default class ShippingCompanyModel {
       const sqlParams = [trackingSystem, createdAt, updatedAt, title, logo];
 
       const sql = `INSERT INTO Shipping_Company (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
       return result.rows[0] as ShippingCompany;
     } catch (error) {
-      throw new Error(
-        `Unable to create shipping company: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async getAllShippingCompanies(): Promise<ShippingCompany[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT id, createdAt, updatedAt, tracking_system, title, logo FROM Shipping_Company`;
       const result = await connection.query(sql);
-      connection.release();
 
       return result.rows as ShippingCompany[];
     } catch (error) {
-      throw new Error(
-        `Unable to fetch shipping companies: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async getShippingCompanyById(id: number): Promise<ShippingCompany | null> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT id, createdAt, updatedAt, tracking_system, title, logo FROM Shipping_Company WHERE id = $1`;
       const result = await connection.query(sql, [id]);
-      connection.release();
 
       return result.rows[0] || null;
     } catch (error) {
-      throw new Error(
-        `Unable to fetch shipping company with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -70,8 +69,9 @@ export default class ShippingCompanyModel {
     id: number,
     updateFields: Partial<ShippingCompany>,
   ): Promise<ShippingCompany> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const updatedAt = new Date();
 
       // Prepare the dynamic SQL query
@@ -109,26 +109,24 @@ export default class ShippingCompanyModel {
       sqlParams.push(id); // Add the ID as the last parameter
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0] as ShippingCompany;
     } catch (error) {
-      throw new Error(
-        `Unable to update shipping company with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async deleteShippingCompany(id: number): Promise<void> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       const sql = `DELETE FROM Shipping_Company WHERE id = $1`;
       await connection.query(sql, [id]);
-      connection.release();
     } catch (error) {
-      throw new Error(
-        `Unable to delete shipping company with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

@@ -5,9 +5,9 @@ import db from '../../config/database';
 class TabletModel {
   // Create new tablet
   async createTablet(t: Partial<Tablet>): Promise<Tablet> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Required fields
       const requiredFields: string[] = ['serial_number', 'android_id'];
       const providedFields: string[] = Object.keys(t).filter(
@@ -41,59 +41,55 @@ class TabletModel {
 
       const result = await connection.query(sql, sqlParams);
 
-      connection.release();
       return result.rows[0];
     } catch (error) {
-      throw new Error(`Unable to create tablet: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get all tablets
   async getMany(): Promise<Tablet[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql =
         'SELECT id, serial_number, android_id, createdAt, updatedAt FROM tablet';
       const result = await connection.query(sql);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error('No tablets in the database');
-      // }
-      connection.release();
       return result.rows as Tablet[];
     } catch (error) {
       throw new Error(`Error retrieving tablets: ${(error as Error).message}`);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific tablet
   async getOne(id: string): Promise<Tablet> {
+    const connection = await db.connect();
     try {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid tablet ID.');
       }
       const sql = `SELECT id, serial_number, android_id, createdAt, updatedAt FROM tablet 
                     WHERE id=$1`;
-      const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find tablet with ID ${id}`);
-      // }
-      connection.release();
       return result.rows[0] as Tablet;
     } catch (error) {
-      throw new Error(
-        `Could not find tablet ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Update tablet
   async updateOne(t: Partial<Tablet>, id: string): Promise<Tablet> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Check if the tablet exists
       const checkSql = 'SELECT * FROM tablet WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -129,68 +125,63 @@ class TabletModel {
       const sql = `UPDATE tablet SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, serial_number, android_id, createdAt, updatedAt`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as Tablet;
     } catch (error) {
-      throw new Error(
-        `Could not update tablet ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete tablet
   async deleteOne(id: string): Promise<Tablet> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid tablet ID.');
       }
       const sql = `DELETE FROM tablet WHERE id=$1 RETURNING id, serial_number, android_id, createdAt, updatedAt`;
 
       const result = await connection.query(sql, [id]);
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find tablet with ID ${id}`);
-      // }
-      connection.release();
 
       return result.rows[0] as Tablet;
     } catch (error) {
-      throw new Error(
-        `Could not delete tablet ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Check if a serial number already exists in the database
   async serialNumberExists(serial_number: string): Promise<boolean> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT COUNT(*) FROM tablet WHERE serial_number=$1';
       const result = await connection.query(sql, [serial_number]);
-      connection.release();
 
       return parseInt(result.rows[0].count) > 0;
     } catch (error) {
-      throw new Error(
-        `Failed to check serial number existence: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Check if an Android ID already exists in the database
   async androidIdExists(android_id: string): Promise<boolean> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT COUNT(*) FROM tablet WHERE android_id=$1';
       const result = await connection.query(sql, [android_id]);
-      connection.release();
 
       return parseInt(result.rows[0].count) > 0;
     } catch (error) {
-      throw new Error(
-        `Failed to check Android ID existence: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

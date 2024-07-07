@@ -8,9 +8,9 @@ class OTPModel {
     otpData: Partial<OTP>,
     delivery_package_id: string,
   ): Promise<OTP> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -52,11 +52,12 @@ class OTPModel {
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0];
     } catch (error) {
-      throw new Error(`Unable to create OTP: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
   async checkOTP(
@@ -101,7 +102,7 @@ class OTPModel {
 
       return parsedSerialPort;
     } catch (error) {
-      throw new Error(`Unable to check OTP: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
     } finally {
       connection.release();
     }
@@ -109,40 +110,43 @@ class OTPModel {
 
   // Get all OTPs
   async getMany(): Promise<OTP[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM OTP';
       const result = await connection.query(sql);
-      connection.release();
 
       return result.rows as OTP[];
     } catch (error) {
-      throw new Error(`Error retrieving OTPs: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific OTP by ID
   async getOne(id: number): Promise<OTP> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error('Please provide in id');
       }
       const sql = 'SELECT * FROM OTP WHERE id=$1';
       const result = await connection.query(sql, [id]);
-      connection.release();
 
       return result.rows[0] as OTP;
     } catch (error) {
-      throw new Error(`Could not find OTP ${id}: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Update OTP
   async updateOne(otp: Partial<OTP>, id: number): Promise<OTP> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
-
       // Check if the OTP exists
       const checkSql = 'SELECT * FROM OTP WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -178,26 +182,25 @@ class OTPModel {
       const sql = `UPDATE OTP SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as OTP;
     } catch (error) {
-      throw new Error(
-        `Could not update OTP ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
   // Delete OTP
   async deleteOne(id: number): Promise<OTP> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid OTP ID.');
       }
       const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
-      connection.release();
 
       if (result.rows.length === 0) {
         throw new Error(`Could not find OTP with ID ${id}`);
@@ -205,16 +208,17 @@ class OTPModel {
 
       return result.rows[0] as OTP;
     } catch (error) {
-      throw new Error(
-        `Could not delete OTP ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get OTPs by User
   async getOTPsByUser(userId: string): Promise<OTP[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!userId) {
         throw new Error('ID cannot be null. Please provide a valid User ID.');
       }
@@ -232,13 +236,12 @@ class OTPModel {
                    INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
                    WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`; // add another inner join for address table
       const result = await connection.query(sql, [userId]);
-      connection.release();
 
       return result.rows as OTP[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving OTPs for user ${userId}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -303,9 +306,7 @@ class OTPModel {
 
       return [parsedSerialPort, pin_result];
     } catch (error) {
-      throw new Error(
-        `Error Checking Tracking Number: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
     } finally {
       connection.release();
     }

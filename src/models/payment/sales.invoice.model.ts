@@ -24,8 +24,7 @@ class SalesInvoiceModel {
       const id = `AHLN_${currentYear}_SI${nextIdFormatted}`;
       return id;
     } catch (error: any) {
-      console.error('Error generating sales invoice id:', error.message);
-      throw error;
+      throw new Error((error as Error).message);
     }
   }
 
@@ -33,9 +32,9 @@ class SalesInvoiceModel {
   async createSalesInvoice(
     newSalesInvoice: Partial<SalesInvoice>,
   ): Promise<SalesInvoice> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Generate box generation ID
       const id = await this.generateSalesInvoiceId(); // Await here to get the actual ID string
 
@@ -66,45 +65,43 @@ class SalesInvoiceModel {
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0] as SalesInvoice;
     } catch (error) {
-      throw new Error(
-        `Unable to create sales invoice: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get all SalesInvoices
   async getAllSalesInvoices(): Promise<SalesInvoice[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM sales_invoice';
       const result = await connection.query(sql);
-      console.log(result.rows);
 
-      connection.release();
       return result.rows as SalesInvoice[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving sales invoices: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific SalesInvoice by ID
   async getOne(id: string): Promise<SalesInvoice> {
+    const connection = await db.connect();
+
     try {
       const sql = 'SELECT * FROM sales_invoice WHERE id=$1';
-      const connection = await db.connect();
       const result = await connection.query(sql, [id]);
-      connection.release();
       return result.rows[0] as SalesInvoice;
     } catch (error) {
-      throw new Error(
-        `Could not find SalesInvoice ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -113,9 +110,9 @@ class SalesInvoiceModel {
     salesInvoice: Partial<SalesInvoice>,
     id: string,
   ): Promise<SalesInvoice> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Check if the SalesInvoice exists
       const checkSql = 'SELECT * FROM sales_invoice WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -145,77 +142,73 @@ class SalesInvoiceModel {
       const sql = `UPDATE sales_invoice SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as SalesInvoice;
     } catch (error) {
-      throw new Error(
-        `Could not update SalesInvoice ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete SalesInvoice
   async deleteOne(id: string): Promise<SalesInvoice> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `DELETE FROM sales_invoice WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find SalesInvoice with ID ${id}`);
-      }
-      connection.release();
 
       return result.rows[0] as SalesInvoice;
     } catch (error) {
-      throw new Error(
-        `Could not delete SalesInvoice ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Fetch sales invoices by user ID
   async getSalesInvoicesByUserId(user: string): Promise<SalesInvoice[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM sales_invoice WHERE customer_id=$1';
       const result = await connection.query(sql, [user]);
-      connection.release();
       return result.rows as SalesInvoice[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving sales invoices by user ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
   // Fetch sales invoices by user ID
   async getSalesInvoicesBySalesId(user: string): Promise<SalesInvoice[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM sales_invoice WHERE sales_id=$1';
       const result = await connection.query(sql, [user]);
-      connection.release();
       return result.rows as SalesInvoice[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving sales invoices by user ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Fetch sales invoices by box ID
   async getSalesInvoicesByBoxId(boxId: string): Promise<SalesInvoice[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM sales_invoice WHERE box_id=$1';
       const result = await connection.query(sql, [boxId]);
-      connection.release();
       return result.rows as SalesInvoice[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving sales invoices by box ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

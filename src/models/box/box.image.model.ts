@@ -7,9 +7,9 @@ export default class BoxImageModel {
     deliveryPackageId: string,
     imageName: string,
   ): Promise<BoxImage> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -33,46 +33,45 @@ export default class BoxImageModel {
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       const createdImage = result.rows[0] as BoxImage;
       createdImage.image = `${process.env.BASE_URL}/uploads/${createdImage.image}`;
 
       return createdImage;
     } catch (error) {
-      throw new Error(
-        `Unable to create box image: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async getAllBoxImages(): Promise<BoxImage[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE`;
       const result = await connection.query(sql);
-      connection.release();
 
       return result.rows as BoxImage[];
     } catch (error) {
-      throw new Error(
-        `Unable to fetch box images: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async getBoxImageById(id: number): Promise<BoxImage | null> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE WHERE id = $1`;
       const result = await connection.query(sql, [id]);
-      connection.release();
 
       return result.rows[0] || null;
     } catch (error) {
-      throw new Error(
-        `Unable to fetch box image with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -82,8 +81,9 @@ export default class BoxImageModel {
     deliveryPackageId: string,
     imageName: string,
   ): Promise<BoxImage> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const updatedAt = new Date();
 
       const sql = `
@@ -100,31 +100,32 @@ export default class BoxImageModel {
         updatedAt,
         id,
       ]);
-      connection.release();
 
       return result.rows[0] as BoxImage;
     } catch (error) {
-      throw new Error(
-        `Unable to update box image with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async deleteBoxImage(id: number): Promise<void> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `DELETE FROM Box_IMAGE WHERE id = $1`;
       await connection.query(sql, [id]);
-      connection.release();
     } catch (error) {
-      throw new Error(
-        `Unable to delete box image with ID ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
+
   // async getBoxImagesByUser(userId: string): Promise<BoxImage[]> {
+  //   const connection = await db.connect();
+
   //   try {
-  //     const connection = await db.connect();
   //     const sql = `
   //       SELECT bi.*
   //       FROM Box_IMAGE bi
@@ -132,7 +133,6 @@ export default class BoxImageModel {
   //       WHERE dp.customer_id = $1
   //     `;
   //     const result = await connection.query(sql, [userId]);
-  //     connection.release();
 
   //     const boxImages = result.rows as BoxImage[];
   //     return boxImages.map((image) => ({
@@ -141,18 +141,19 @@ export default class BoxImageModel {
   //     }));
   //   } catch (error) {
   //     throw new Error(
-  //       `Unable to fetch box images for user ID ${userId}: ${(error as Error).message}`,
+  //       (error as Error).message,
   //     );
+  //   } finally {
+  //     connection.release();
   //   }
   // }
 
-  async getBoxImagesByBoxId(boxId: string): Promise<BoxImage[]> {    
+  async getBoxImagesByBoxId(boxId: string): Promise<BoxImage[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
-      
       const sql = `SELECT * FROM Box_IMAGE WHERE box_id = $1`;
       const result = await connection.query(sql, [boxId]);
-      connection.release();
 
       const boxImages = result.rows as BoxImage[];
       return boxImages.map((image) => ({
@@ -160,18 +161,18 @@ export default class BoxImageModel {
         image: `${process.env.BASE_URL}/uploads/${image.image}`,
       }));
     } catch (error) {
-      throw new Error(
-        `Unable to fetch box images for box ID ${boxId}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async getBoxImagesByPackageId(packageId: string): Promise<BoxImage[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT * FROM Box_IMAGE WHERE delivery_package_id = $1`;
       const result = await connection.query(sql, [packageId]);
-      connection.release();
 
       const boxImages = result.rows as BoxImage[];
       return boxImages.map((image) => ({
@@ -180,8 +181,10 @@ export default class BoxImageModel {
       }));
     } catch (error) {
       throw new Error(
-        `Unable to fetch box images for package ID ${packageId}: ${(error as Error).message}`,
+        (error as Error).message,
       );
+    } finally {
+      connection.release();
     }
   }
 }

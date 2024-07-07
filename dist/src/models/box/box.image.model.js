@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class BoxImageModel {
     async createBoxImage(boxId, deliveryPackageId, imageName) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
             const sqlFields = [
@@ -28,42 +28,48 @@ class BoxImageModel {
                    VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             const createdImage = result.rows[0];
             createdImage.image = `${process.env.BASE_URL}/uploads/${createdImage.image}`;
             return createdImage;
         }
         catch (error) {
-            throw new Error(`Unable to create box image: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getAllBoxImages() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE`;
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Unable to fetch box images: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getBoxImageById(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE WHERE id = $1`;
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0] || null;
         }
         catch (error) {
-            throw new Error(`Unable to fetch box image with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateBoxImage(id, boxId, deliveryPackageId, imageName) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const updatedAt = new Date();
             const sql = `
         UPDATE Box_IMAGE 
@@ -78,30 +84,33 @@ class BoxImageModel {
                 updatedAt,
                 id,
             ]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to update box image with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteBoxImage(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `DELETE FROM Box_IMAGE WHERE id = $1`;
             await connection.query(sql, [id]);
-            connection.release();
         }
         catch (error) {
-            throw new Error(`Unable to delete box image with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getBoxImagesByBoxId(boxId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT * FROM Box_IMAGE WHERE box_id = $1`;
             const result = await connection.query(sql, [boxId]);
-            connection.release();
             const boxImages = result.rows;
             return boxImages.map((image) => ({
                 ...image,
@@ -109,15 +118,17 @@ class BoxImageModel {
             }));
         }
         catch (error) {
-            throw new Error(`Unable to fetch box images for box ID ${boxId}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getBoxImagesByPackageId(packageId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT * FROM Box_IMAGE WHERE delivery_package_id = $1`;
             const result = await connection.query(sql, [packageId]);
-            connection.release();
             const boxImages = result.rows;
             return boxImages.map((image) => ({
                 ...image,
@@ -125,7 +136,10 @@ class BoxImageModel {
             }));
         }
         catch (error) {
-            throw new Error(`Unable to fetch box images for package ID ${packageId}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

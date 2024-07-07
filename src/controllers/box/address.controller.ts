@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Address } from '../../types/address.type';
 import i18n from '../../config/i18n';
@@ -8,7 +8,7 @@ import AddressModel from '../../models/box/address.model';
 const addressModel = new AddressModel();
 
 export const createAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress);
@@ -19,12 +19,13 @@ export const createAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const getAllAddresses = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addresses = await addressModel.getMany();
       ResponseHandler.success(
@@ -34,6 +35,7 @@ export const getAllAddresses = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

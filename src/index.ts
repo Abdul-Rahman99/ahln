@@ -9,11 +9,12 @@ import dotenv from 'dotenv';
 import i18n from './config/i18n';
 import mountRoutes from './routes';
 import { config } from '../config';
-import { errorMiddleware, notFound } from './middlewares/error.middleware';
+import { errorMiddleware } from './middlewares/error.middleware';
 import { client } from './config/mqtt';
 import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
 import path from 'path';
+import ResponseHandler from './utils/responsesHandler';
 
 // import patchDatabase from './config/patch';
 dotenv.config({ path: '../.env' });
@@ -63,8 +64,6 @@ const limiter = rateLimit({
 
 app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
-
-
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(config.UPLOADS)));
 
@@ -77,13 +76,10 @@ mountRoutes(app);
 
 // 404 Not Found middleware
 app.use((_req: Request, res: Response) => {
-  res.status(404).json({
-    message: i18n.__('YOU_ARE_LOST'),
-  });
+  ResponseHandler.badRequest(res, i18n.__('YOU_ARE_LOST'));
 });
 
 // Error handling middleware
-app.use(notFound);
 app.use(errorMiddleware);
 
 // Start server

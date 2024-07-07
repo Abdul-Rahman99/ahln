@@ -6,8 +6,8 @@ import { Address } from '../../types/address.type';
 class UserBoxModel {
   // Create new UserBox
   async createUserBox(userBox: Partial<UserBox>): Promise<UserBox> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -27,43 +27,43 @@ class UserBoxModel {
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0] as UserBox;
     } catch (error) {
-      throw new Error(
-        `Unable to create user box association: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get all user boxes with box details
   async getAllUserBoxes(): Promise<(UserBox & Box)[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `
         SELECT ub.*, b.*
         FROM User_Box ub
         INNER JOIN Box b ON ub.box_id = b.id
       `;
       const result = await connection.query(sql);
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find boxess`);
-      // }
-      connection.release();
+
       return result.rows as (UserBox & Box)[];
     } catch (error) {
       throw new Error(
         `Error retrieving user boxes with box details: ${(error as Error).message}`,
       );
+    } finally {
+      connection.release();
     }
   }
 
   async getUserBoxesByUserId(
     userId: string,
   ): Promise<(UserBox & Box & Address)[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `
       SELECT
         ub.id AS user_box_id,
@@ -83,29 +83,27 @@ class UserBoxModel {
         ub.user_id = $1
     `;
       const result = await connection.query(sql, [userId]);
-      connection.release();
 
       return result.rows as (UserBox & Box & Address)[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving user boxes by user ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Assign a box to a user
   async assignBoxToUser(userId: string, boxId: string): Promise<UserBox> {
+    const connection = await db.connect();
     try {
       if (!userId || !boxId) {
         throw new Error('Please provide a userId or boxId');
       }
-      const connection = await db.connect();
 
       // Check if the user exists
       const userCheckSql = 'SELECT id FROM users WHERE id=$1';
       const userCheckResult = await connection.query(userCheckSql, [userId]);
       if (userCheckResult.rows.length === 0) {
-        connection.release();
         throw new Error(`User with ID ${userId} does not exist`);
       }
 
@@ -113,7 +111,6 @@ class UserBoxModel {
       const boxCheckSql = 'SELECT id FROM box WHERE id=$1';
       const boxCheckResult = await connection.query(boxCheckSql, [boxId]);
       if (boxCheckResult.rows.length === 0) {
-        connection.release();
         throw new Error(`Box with ID ${boxId} does not exist`);
       }
 
@@ -125,44 +122,38 @@ class UserBoxModel {
       const sqlParams = [userBoxId, userId, boxId, createdAt, updatedAt];
 
       const sql = `INSERT INTO User_Box (${sqlFields.join(', ')}) 
-                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                  RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
-
       return result.rows[0] as UserBox;
     } catch (error) {
-      throw new Error(
-        `Unable to assign box to user: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific UserBox
   async getOne(id: string): Promise<UserBox> {
+    const connection = await db.connect();
     try {
       const sql = 'SELECT * FROM User_Box WHERE id=$1';
-      const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find UserBox with ID ${id}`);
-      // }
-      connection.release();
       return result.rows[0] as UserBox;
     } catch (error) {
-      throw new Error(
-        `Could not find UserBox ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Update UserBox
   async updateOne(userBox: Partial<UserBox>, id: string): Promise<UserBox> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Check if the UserBox exists
       const checkSql = 'SELECT * FROM User_Box WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -189,49 +180,48 @@ class UserBoxModel {
       const sql = `UPDATE User_Box SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as UserBox;
     } catch (error) {
-      throw new Error(
-        `Could not update UserBox ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete UserBox
   async deleteOne(id: string): Promise<UserBox> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `DELETE FROM User_Box WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
       if (result.rows.length === 0) {
         throw new Error(`Could not find UserBox with ID ${id}`);
       }
-      connection.release();
 
       return result.rows[0] as UserBox;
     } catch (error) {
-      throw new Error(
-        `Could not delete UserBox ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get UserBoxes by Box ID
   async getUserBoxesByBoxId(boxId: string): Promise<UserBox[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = `SELECT * FROM User_Box WHERE box_id=$1`;
       const result = await connection.query(sql, [boxId]);
-      connection.release();
 
       return result.rows as UserBox[];
     } catch (error) {
-      throw new Error(
-        `Error fetching UserBoxes by box ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

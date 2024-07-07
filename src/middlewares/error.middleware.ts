@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { config } from '../../config';
-import  Error  from '../types/error.type';
+import Error from '../types/error.type';
 
 const nodeEnv = config.NODE_ENV;
 
@@ -13,9 +13,15 @@ export const errorMiddleware = (
   },
   req: Request,
   res: Response,
+  next: NextFunction, // Ensure you have next as a parameter
 ) => {
+  // Check if headers have already been sent
+  if (res.headersSent) {
+    return next(err);
+  }
+
   const customError = {
-    statusCode: res.statusCode || 500,
+    statusCode: res.statusCode !== 200 ? res.statusCode : 500,
     message: err.message || 'Internal Server Error',
   };
 
@@ -41,15 +47,7 @@ export const errorMiddleware = (
     message: customError.message,
     stack: nodeEnv === 'development' ? err.stack : null,
   });
-};
 
-export const handleErrorResponse = (error: any, res: Response) => {
-  res.status(500);
-  throw new Error(nodeEnv === 'development' ? error : 'something went wrong');
-};
-
-export const notFound = (req: Request, res: Response, next: NextFunction) => {
-  const error = new Error(`Not found - ${req.originalUrl}`);
-  res.status(404);
-  next(error);
+  // Ensure next is called to avoid hanging, only if necessary
+  // next(); // This line might be unnecessary
 };

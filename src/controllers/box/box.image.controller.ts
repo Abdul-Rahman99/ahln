@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
@@ -11,13 +11,10 @@ const boxImageModel = new BoxImageModel();
 // const userModel = new UserModel();
 
 export const uploadBoxImage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     uploadSingleImage('image')(req, res, async (err: any) => {
       if (err) {
-        return ResponseHandler.badRequest(
-          res,
-          err.message,
-        );
+        return ResponseHandler.badRequest(res, err.message);
       }
       if (!req.file) {
         return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
@@ -38,17 +35,15 @@ export const uploadBoxImage = asyncHandler(
           createdBoxImage,
         );
       } catch (error: any) {
-        ResponseHandler.badRequest(
-          res,
-          error.message,
-        );
+        ResponseHandler.badRequest(res, error.message);
+        next(error);
       }
     });
   },
 );
 
 export const getAllBoxImages = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxImages = await boxImageModel.getAllBoxImages();
       ResponseHandler.success(
@@ -57,24 +52,19 @@ export const getAllBoxImages = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getBoxImageById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxImageId = parseInt(req.params.id, 10);
       const boxImage = await boxImageModel.getBoxImageById(boxImageId);
       if (!boxImage) {
-        return ResponseHandler.badRequest(
-          res,
-          i18n.__('BOX_IMAGE_NOT_FOUND'),
-        );
+        return ResponseHandler.badRequest(res, i18n.__('BOX_IMAGE_NOT_FOUND'));
       }
       ResponseHandler.success(
         res,
@@ -82,16 +72,14 @@ export const getBoxImageById = asyncHandler(
         boxImage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateBoxImage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxImageId = parseInt(req.params.id, 10);
       const { boxId, deliveryPackageId } = req.body;
@@ -109,31 +97,27 @@ export const updateBoxImage = asyncHandler(
         updatedBoxImage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteBoxImage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxImageId = parseInt(req.params.id, 10);
       await boxImageModel.deleteBoxImage(boxImageId);
       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 // export const getBoxImagesByUser = asyncHandler(
-//   async (req: Request, res: Response) => {
+//   async (req: Request, res: Response, next:NextFunction) => {
 //     try {
 //       const token = req.headers.authorization?.replace('Bearer ', '');
 //       if (!token) {
@@ -156,12 +140,13 @@ export const deleteBoxImage = asyncHandler(
 //         res,
 //         error.message,
 //       );
+//        next(error);
 //     }
 //   },
 // );
 
 export const getBoxImagesByBoxId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxId = req.params.boxId;
       const boxImages = await boxImageModel.getBoxImagesByBoxId(boxId);
@@ -171,16 +156,14 @@ export const getBoxImagesByBoxId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getBoxImagesByPackageId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const packageId = req.params.packageId;
       const boxImages = await boxImageModel.getBoxImagesByPackageId(packageId);
@@ -190,10 +173,8 @@ export const getBoxImagesByPackageId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

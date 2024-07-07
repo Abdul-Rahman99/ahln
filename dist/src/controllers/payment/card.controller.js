@@ -17,7 +17,7 @@ const parseExpireDate = (dateString) => {
     const date = new Date(`${year}-${month}-01`);
     return isNaN(date.getTime()) ? null : date;
 };
-exports.createCard = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newCard = req.body;
         const expireDate = parseExpireDate(newCard.expire_date);
@@ -39,18 +39,20 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllCards = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cards = await cardModel.getAllCards();
         responsesHandler_1.default.success(res, i18n_1.default.__('CARDS_RETRIEVED_SUCCESSFULLY'), cards);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getCardById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
@@ -61,9 +63,10 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateCard = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
@@ -85,9 +88,10 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteCard = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
@@ -98,6 +102,7 @@ exports.deleteCard = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=card.controller.js.map

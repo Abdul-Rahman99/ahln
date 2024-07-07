@@ -41,20 +41,20 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const newDeliveryPackage = req.body;
         const createdDeliveryPackage = await deliveryPackageModel.createDeliveryPackage(user, newDeliveryPackage);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), createdDeliveryPackage);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackages = await deliveryPackageModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -62,10 +62,10 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
         const deliveryPackageId = req.params.id;
         const deliveryPackage = await deliveryPackageModel.getOne(deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'), deliveryPackage);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -90,10 +90,10 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         }
         const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -101,10 +101,10 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const deliveryPackageId = req.params.id;
         const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -120,10 +120,10 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, n
         }
         const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user, status);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
-        next();
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

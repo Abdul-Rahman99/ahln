@@ -59,9 +59,9 @@ export const createDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         createdDeliveryPackage,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -75,9 +75,9 @@ export const getAllDeliveryPackages = asyncHandler(
         i18n.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'),
         deliveryPackages,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -93,9 +93,9 @@ export const getDeliveryPackageById = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'),
         deliveryPackage,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -133,9 +133,9 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         updatedDeliveryPackage,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -151,9 +151,9 @@ export const deleteDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         deletedDeliveryPackage,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -186,9 +186,9 @@ export const getUserDeliveryPackages = asyncHandler(
         i18n.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'),
         deliveryPackages,
       );
-      next();
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import BoxLockerModel from '../../models/box/box.locker.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { BoxLocker } from '../../types/box.locker.type';
@@ -9,7 +9,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 const boxLockerModel = new BoxLockerModel();
 
 export const createBoxLocker = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newBoxLocker: BoxLocker = req.body;
       const createdBoxLocker =
@@ -20,16 +20,14 @@ export const createBoxLocker = asyncHandler(
         createdBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllBoxLockers = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxLockers = await boxLockerModel.getMany();
       ResponseHandler.success(
@@ -38,16 +36,14 @@ export const getAllBoxLockers = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getBoxLockerById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxLockerId = req.params.id;
       const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
@@ -57,16 +53,14 @@ export const getBoxLockerById = asyncHandler(
         boxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateBoxLocker = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxLockerId = req.params.id;
       const boxLockerData: Partial<BoxLocker> = req.body;
@@ -80,16 +74,14 @@ export const updateBoxLocker = asyncHandler(
         updatedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteBoxLocker = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxLockerId = req.params.id;
       const deletedBoxLocker = await boxLockerModel.deleteOne(
@@ -101,16 +93,14 @@ export const deleteBoxLocker = asyncHandler(
         deletedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllLockersById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxId = req.body.boxId;
 
@@ -121,10 +111,8 @@ export const getAllLockersById = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

@@ -145,7 +145,7 @@ class BoxLockerModel {
                     };
                 }
                 catch (error) {
-                    console.error(`Error parsing JSON for locker ${row.id}: ${error.message}`);
+                    throw new Error(error.message);
                     return {
                         ...row,
                         box_locker_string: {},

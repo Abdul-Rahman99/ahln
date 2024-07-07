@@ -9,7 +9,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const tabletModel = new tablet_model_1.default();
-exports.createTablet = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newTablet = req.body;
         const createdTablet = await tabletModel.createTablet(newTablet);
@@ -17,18 +17,20 @@ exports.createTablet = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const tablets = await tabletModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLETS_RETRIEVED_SUCCESSFULLY'), tablets);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getTabletById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const tabletId = req.params.id;
         const tablet = await tabletModel.getOne(tabletId);
@@ -36,9 +38,10 @@ exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const tabletId = req.params.id;
         const tabletData = req.body;
@@ -47,9 +50,10 @@ exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const tabletId = req.params.id;
         const deletedTablet = await tabletModel.deleteOne(tabletId);
@@ -57,6 +61,7 @@ exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=tablet.controller.js.map

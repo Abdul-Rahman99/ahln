@@ -30,7 +30,7 @@ exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res, next) => 
         next(error);
     }
 });
-exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAddressById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const address = await addressModel.getOne(addressId);
@@ -38,9 +38,10 @@ exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const addressData = req.body;
@@ -49,9 +50,10 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const deletedAddress = await addressModel.deleteOne(addressId);
@@ -59,6 +61,7 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=address.controller.js.map

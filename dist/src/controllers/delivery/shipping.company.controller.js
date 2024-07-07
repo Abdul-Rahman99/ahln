@@ -9,7 +9,7 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
 const shippingCompanyModel = new shipping_company_model_1.default();
-exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { tracking_system, title, logo } = req.body;
     try {
         const shippingCompany = await shippingCompanyModel.createShippingCompany(tracking_system, title, logo);
@@ -17,18 +17,20 @@ exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const shippingCompanies = await shippingCompanyModel.getAllShippingCompanies();
         responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANIES_FETCHED_SUCCESSFULLY'), shippingCompanies);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { id } = req.params;
     try {
         const shippingCompany = await shippingCompanyModel.getShippingCompanyById(parseInt(id, 10));
@@ -39,9 +41,10 @@ exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res) =>
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { id } = req.params;
     const { tracking_system } = req.body;
     try {
@@ -50,9 +53,10 @@ exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { id } = req.params;
     try {
         await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));
@@ -60,6 +64,7 @@ exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res) => 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=shipping.company.controller.js.map

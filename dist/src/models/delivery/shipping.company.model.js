@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class ShippingCompanyModel {
     async createShippingCompany(trackingSystem, title, logo) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
             const sqlFields = [
@@ -19,43 +19,49 @@ class ShippingCompanyModel {
             ];
             const sqlParams = [trackingSystem, createdAt, updatedAt, title, logo];
             const sql = `INSERT INTO Shipping_Company (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create shipping company: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getAllShippingCompanies() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT id, createdAt, updatedAt, tracking_system, title, logo FROM Shipping_Company`;
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Unable to fetch shipping companies: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getShippingCompanyById(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT id, createdAt, updatedAt, tracking_system, title, logo FROM Shipping_Company WHERE id = $1`;
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0] || null;
         }
         catch (error) {
-            throw new Error(`Unable to fetch shipping company with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateShippingCompany(id, updateFields) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const updatedAt = new Date();
             const sqlFields = [];
             const sqlParams = [updatedAt];
@@ -84,22 +90,26 @@ class ShippingCompanyModel {
     `;
             sqlParams.push(id);
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to update shipping company with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteShippingCompany(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `DELETE FROM Shipping_Company WHERE id = $1`;
             await connection.query(sql, [id]);
-            connection.release();
         }
         catch (error) {
-            throw new Error(`Unable to delete shipping company with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

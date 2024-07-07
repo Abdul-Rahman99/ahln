@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// shippingCompany.controller.ts
-
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -11,7 +9,7 @@ import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 const shippingCompanyModel = new ShippingCompanyModel();
 
 export const createShippingCompany = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { tracking_system, title, logo } = req.body;
 
     try {
@@ -27,16 +25,14 @@ export const createShippingCompany = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllShippingCompanies = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const shippingCompanies =
         await shippingCompanyModel.getAllShippingCompanies();
@@ -46,16 +42,14 @@ export const getAllShippingCompanies = asyncHandler(
         shippingCompanies,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getShippingCompanyById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     try {
@@ -76,16 +70,14 @@ export const getShippingCompanyById = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateShippingCompany = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { tracking_system } = req.body;
 
@@ -102,16 +94,14 @@ export const updateShippingCompany = asyncHandler(
         updatedShippingCompany,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteShippingCompany = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     try {
@@ -121,10 +111,8 @@ export const deleteShippingCompany = asyncHandler(
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

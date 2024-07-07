@@ -11,7 +11,7 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const userModel = new user_model_1.default();
 const userBoxModel = new user_box_model_1.default();
-exports.createUserBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newUserBox = req.body;
         const createdUserBox = await userBoxModel.createUserBox(newUserBox);
@@ -19,18 +19,20 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const userBoxes = await userBoxModel.getAllUserBoxes();
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const userBoxId = req.params.id;
         const userBox = await userBoxModel.getOne(userBoxId);
@@ -38,9 +40,10 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const userBoxId = req.params.id;
         const userBoxData = req.body;
@@ -49,9 +52,10 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const userBoxId = req.params.id;
         const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
@@ -59,9 +63,10 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (!token) {
@@ -76,9 +81,10 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.boxId;
         const userBoxes = await userBoxModel.getUserBoxesByBoxId(boxId);
@@ -86,9 +92,10 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { userId, boxId } = req.body;
         const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
@@ -96,6 +103,7 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=user.box.controller.js.map

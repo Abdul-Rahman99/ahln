@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import PaymentModel from '../../models/payment/payment.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Payment } from '../../types/payment.type';
@@ -19,7 +19,7 @@ const parseBillingDate = (dateString: string): Date | null => {
 };
 
 export const createPayment = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newPayment: Payment = req.body;
       const billingDate = parseBillingDate(
@@ -45,12 +45,13 @@ export const createPayment = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllPayments = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payments = await paymentModel.getAllPayments();
       ResponseHandler.success(
@@ -60,12 +61,13 @@ export const getAllPayments = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getPaymentById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -79,12 +81,13 @@ export const getPaymentById = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updatePayment = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -117,12 +120,13 @@ export const updatePayment = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deletePayment = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -136,12 +140,13 @@ export const deletePayment = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getPaymentsByUser = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
       const token = req.headers.authorization?.replace('Bearer ', '');
@@ -163,6 +168,7 @@ export const getPaymentsByUser = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

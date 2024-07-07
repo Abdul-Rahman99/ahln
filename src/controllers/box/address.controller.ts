@@ -41,7 +41,7 @@ export const getAllAddresses = asyncHandler(
 );
 
 export const getAddressById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const address = await addressModel.getOne(addressId);
@@ -52,12 +52,13 @@ export const getAddressById = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const updateAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const addressData: Partial<Address> = req.body;
@@ -72,12 +73,13 @@ export const updateAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const deleteAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const deletedAddress = await addressModel.deleteOne(addressId);
@@ -88,6 +90,7 @@ export const deleteAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import RolePermissionModel from '../../models/users/role.permission.model';
 import ResponseHandler from '../../utils/responsesHandler';
+import i18n from '../../config/i18n';
 
 const rolePermissionModel = new RolePermissionModel();
 

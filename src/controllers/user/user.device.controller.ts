@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import ResponseHandler from '../../utils/responsesHandler';
+import i18n from '../../config/i18n';
 
 const userDevicesModel = new UserDevicesModel();
 

@@ -16,8 +16,8 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_CREATED_SUCCESSFULLY'), createdBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -26,8 +26,8 @@ exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -37,8 +37,8 @@ exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -49,8 +49,8 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_UPDATED_SUCCESSFULLY'), updatedBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -60,8 +60,8 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_DELETED_SUCCESSFULLY'), deletedBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -71,8 +71,8 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -82,8 +82,8 @@ exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -93,8 +93,8 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) =
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -104,8 +104,8 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=box.controller.js.map

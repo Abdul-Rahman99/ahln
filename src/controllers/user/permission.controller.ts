@@ -20,8 +20,8 @@ export const createPermission = async (
       permission,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -38,8 +38,8 @@ export const getAllPermissions = async (
       permissions,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -57,8 +57,8 @@ export const getPermissionById = async (
       permission,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -81,8 +81,8 @@ export const updatePermission = async (
       permission,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -101,7 +101,7 @@ export const deletePermission = async (
       permission,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };

@@ -16,8 +16,8 @@ exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_CREATED_SUCCESSFULLY'), createdBoxLocker);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -26,8 +26,8 @@ exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -37,8 +37,8 @@ exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) =>
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'), boxLocker);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -49,8 +49,8 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'), updatedBoxLocker);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -60,8 +60,8 @@ exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'), deletedBoxLocker);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -71,8 +71,8 @@ exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) =
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=box.locker.controller.js.map

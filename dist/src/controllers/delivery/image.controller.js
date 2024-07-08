@@ -23,8 +23,8 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         });
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=image.controller.js.map

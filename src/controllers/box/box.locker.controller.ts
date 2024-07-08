@@ -20,8 +20,8 @@ export const createBoxLocker = asyncHandler(
         createdBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -36,8 +36,8 @@ export const getAllBoxLockers = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -53,8 +53,8 @@ export const getBoxLockerById = asyncHandler(
         boxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -74,8 +74,8 @@ export const updateBoxLocker = asyncHandler(
         updatedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -93,8 +93,8 @@ export const deleteBoxLocker = asyncHandler(
         deletedBoxLocker,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -111,8 +111,8 @@ export const getAllLockersById = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

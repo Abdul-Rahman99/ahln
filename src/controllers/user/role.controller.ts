@@ -17,8 +17,8 @@ export const createRole = async (
     const role = await roleModel.create(title, description);
     ResponseHandler.success(res, i18n.__('ROLE_CREATED_SUCCESSFULLY'), role);
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -35,8 +35,8 @@ export const getAllRoles = async (
       roles,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -50,8 +50,8 @@ export const getRoleById = async (
     const role = await roleModel.getById(Number(id));
     ResponseHandler.success(res, i18n.__('ROLE_RETRIEVED_SUCCESSFULLY'), role);
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -66,8 +66,8 @@ export const updateRole = async (
     const role = await roleModel.update(Number(id), title, description);
     ResponseHandler.success(res, i18n.__('ROLE_UPDATED_SUCCESSFULLY'), role);
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -81,7 +81,7 @@ export const deleteRole = async (
     const role = await roleModel.delete(Number(id));
     ResponseHandler.success(res, i18n.__('ROLE_DELETED_SUCCESSFULLY'), role);
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };

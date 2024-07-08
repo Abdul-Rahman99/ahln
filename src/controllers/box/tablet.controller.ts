@@ -18,8 +18,8 @@ export const createTablet = asyncHandler(
         createdTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -34,8 +34,8 @@ export const getAllTablets = asyncHandler(
         tablets,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -51,8 +51,8 @@ export const getTabletById = asyncHandler(
         tablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -69,8 +69,8 @@ export const updateTablet = asyncHandler(
         updatedTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -86,8 +86,8 @@ export const deleteTablet = asyncHandler(
         deletedTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );

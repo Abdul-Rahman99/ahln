@@ -18,8 +18,8 @@ export const createBox = asyncHandler(
         createdBox,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -34,8 +34,8 @@ export const getAllBoxes = asyncHandler(
         boxes,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -47,8 +47,8 @@ export const getBoxById = asyncHandler(
       const box = await boxModel.getOne(boxId);
       ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -65,8 +65,8 @@ export const updateBox = asyncHandler(
         updatedBox,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -82,8 +82,8 @@ export const deleteBox = asyncHandler(
         deletedBox,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -100,8 +100,8 @@ export const getBoxesByGenerationId = asyncHandler(
         boxes,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -116,8 +116,8 @@ export const getBoxByTabletInfo = asyncHandler(
       );
       ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -136,8 +136,8 @@ export const assignTabletToBox = asyncHandler(
         assignTabletToBox,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -153,8 +153,8 @@ export const resetTabletId = asyncHandler(
         assignTabletToBox,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );

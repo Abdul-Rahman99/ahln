@@ -19,8 +19,8 @@ export const createUser = asyncHandler(
         createdUser,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -35,8 +35,8 @@ export const getAllUsers = asyncHandler(
         users,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -56,8 +56,8 @@ export const getUserById = asyncHandler(
         );
       }
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -74,8 +74,8 @@ export const updateUser = asyncHandler(
         updatedUser,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -91,8 +91,8 @@ export const deleteUser = asyncHandler(
         deletedUser,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

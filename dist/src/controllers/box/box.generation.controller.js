@@ -16,8 +16,8 @@ exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_CREATED_SUCCESSFULLY'), createdBoxGeneration);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -26,8 +26,8 @@ exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATIONS_RETRIEVED_SUCCESSFULLY'), boxGenerations);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -37,8 +37,8 @@ exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_RETRIEVED_SUCCESSFULLY'), boxGeneration);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -49,8 +49,8 @@ exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'), updatedBoxGeneration);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -60,8 +60,8 @@ exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_DELETED_SUCCESSFULLY'), deletedBoxGeneration);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=box.generation.controller.js.map

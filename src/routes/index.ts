@@ -21,6 +21,7 @@ import favlistRoute from './delivery/dp.favlist.route';
 import salesInvoiceRoute from './payment/sales.invoice.route';
 import cardRoute from './payment/card.route';
 import paymentRoute from './payment/payment.route';
+import mobilePagesRoute from './adminstration/mobile.pages.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -50,6 +51,8 @@ const mountRoutes = (app: Express) => {
   app.use('/api/sales-invoice', salesInvoiceRoute);
   app.use('/api/payment-card', cardRoute);
   app.use('/api/payment', paymentRoute);
+
+  app.use('/api/mobile-pages', mobilePagesRoute);
 };
 
 export default mountRoutes;

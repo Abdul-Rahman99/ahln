@@ -59,8 +59,8 @@ export const createSalesInvoice = asyncHandler(
         createdSalesInvoice,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -75,8 +75,8 @@ export const getAllSalesInvoices = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -92,8 +92,8 @@ export const getSalesInvoiceById = asyncHandler(
         salesInvoice,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -125,8 +125,8 @@ export const updateSalesInvoice = asyncHandler(
         updatedSalesInvoice,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -143,8 +143,8 @@ export const deleteSalesInvoice = asyncHandler(
         deletedSalesInvoice,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -165,8 +165,8 @@ export const getSalesInvoicesByUserId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -187,8 +187,8 @@ export const getSalesInvoicesBySalesId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -205,8 +205,8 @@ export const getSalesInvoicesByBoxId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

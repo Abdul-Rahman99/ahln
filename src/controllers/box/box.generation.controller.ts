@@ -20,8 +20,8 @@ export const createBoxGeneration = asyncHandler(
         createdBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -36,8 +36,8 @@ export const getAllBoxGenerations = asyncHandler(
         boxGenerations,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -53,8 +53,8 @@ export const getBoxGenerationById = asyncHandler(
         boxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -74,8 +74,8 @@ export const updateBoxGeneration = asyncHandler(
         updatedBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -92,8 +92,8 @@ export const deleteBoxGeneration = asyncHandler(
         deletedBoxGeneration,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

@@ -25,6 +25,7 @@ const dp_favlist_route_1 = __importDefault(require("./delivery/dp.favlist.route"
 const sales_invoice_route_1 = __importDefault(require("./payment/sales.invoice.route"));
 const card_route_1 = __importDefault(require("./payment/card.route"));
 const payment_route_1 = __importDefault(require("./payment/payment.route"));
+const mobile_pages_route_1 = __importDefault(require("./adminstration/mobile.pages.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -48,6 +49,7 @@ const mountRoutes = (app) => {
     app.use('/api/sales-invoice', sales_invoice_route_1.default);
     app.use('/api/payment-card', card_route_1.default);
     app.use('/api/payment', payment_route_1.default);
+    app.use('/api/mobile-pages', mobile_pages_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

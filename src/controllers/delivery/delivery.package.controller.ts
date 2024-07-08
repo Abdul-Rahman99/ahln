@@ -60,8 +60,8 @@ export const createDeliveryPackage = asyncHandler(
         createdDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -76,8 +76,8 @@ export const getAllDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -94,8 +94,8 @@ export const getDeliveryPackageById = asyncHandler(
         deliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -134,8 +134,8 @@ export const updateDeliveryPackage = asyncHandler(
         updatedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -152,8 +152,8 @@ export const deleteDeliveryPackage = asyncHandler(
         deletedDeliveryPackage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -187,8 +187,8 @@ export const getUserDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

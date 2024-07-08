@@ -20,8 +20,8 @@ export const createUserBox = asyncHandler(
         createdUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -36,8 +36,8 @@ export const getAllUserBoxes = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -53,8 +53,8 @@ export const getUserBoxById = asyncHandler(
         userBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -74,8 +74,8 @@ export const updateUserBox = asyncHandler(
         updatedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -91,8 +91,8 @@ export const deleteUserBox = asyncHandler(
         deletedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -123,8 +123,8 @@ export const getUserBoxesByUserId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -139,8 +139,8 @@ export const getUserBoxesByBoxId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -156,8 +156,8 @@ export const assignBoxToUser = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

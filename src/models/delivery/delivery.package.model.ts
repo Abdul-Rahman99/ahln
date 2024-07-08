@@ -229,9 +229,12 @@ class DeliveryPackageModel {
       const otp = `SELECT * FROM OTP WHERE delivery_package_id=$1`;
       const otpResult = await connection.query(otp, [id]);
       console.log(otpResult);
-      
-      if (otpResult){
-        `DELETE * FROM OTP WHERE delivery_package_id=$1`;
+
+      if (otpResult) {
+        await connection.query(
+          `DELETE * FROM OTP WHERE delivery_package_id=$1`,
+          [id],
+        );
       }
       const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
       const result = await connection.query(sql, [id]);

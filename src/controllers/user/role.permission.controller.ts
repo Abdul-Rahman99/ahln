@@ -28,7 +28,11 @@ export const assignPermissionToRole = async (
 
     // Proceed to assign permission if not already assigned
     await rolePermissionModel.assignPermission(role_id, permission_id);
-    ResponseHandler.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'));
+    ResponseHandler.success(
+      res,
+      i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
+      role_id,
+    );
   } catch (error: any) {
     ResponseHandler.badRequest(res, error.message);
     next(error);
@@ -59,6 +63,7 @@ export const removePermissionFromRole = async (
     ResponseHandler.success(
       res,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      role_id,
     );
   } catch (error: any) {
     ResponseHandler.badRequest(res, error.message);

@@ -92,7 +92,7 @@ export const getPermissionsByUser = async (
     ResponseHandler.success(
       res,
       i18n.__('PERMISSION_RETRIEVED_BY_USER_SUCCESSFULLY'),
-      userId,
+      permissions,
     );
   } catch (error: any) {
     ResponseHandler.badRequest(res, error.message);

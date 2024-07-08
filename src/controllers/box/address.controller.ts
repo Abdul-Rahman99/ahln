@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Address } from '../../types/address.type';
 import i18n from '../../config/i18n';
@@ -8,7 +8,7 @@ import AddressModel from '../../models/box/address.model';
 const addressModel = new AddressModel();
 
 export const createAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress);
@@ -19,12 +19,13 @@ export const createAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const getAllAddresses = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addresses = await addressModel.getMany();
       ResponseHandler.success(
@@ -34,12 +35,13 @@ export const getAllAddresses = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const getAddressById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const address = await addressModel.getOne(addressId);
@@ -50,12 +52,13 @@ export const getAddressById = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const updateAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const addressData: Partial<Address> = req.body;
@@ -70,12 +73,13 @@ export const updateAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const deleteAddress = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const deletedAddress = await addressModel.deleteOne(addressId);
@@ -86,6 +90,7 @@ export const deleteAddress = asyncHandler(
       );
     } catch (error) {
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

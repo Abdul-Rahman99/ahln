@@ -9,7 +9,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const boxModel = new box_model_1.default();
-exports.createBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newBox = req.body;
         const createdBox = await boxModel.createBox(newBox);
@@ -17,18 +17,20 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxes = await boxModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.id;
         const box = await boxModel.getOne(boxId);
@@ -36,9 +38,10 @@ exports.getBoxById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.id;
         const boxData = req.body;
@@ -47,9 +50,10 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.id;
         const deletedBox = await boxModel.deleteOne(boxId);
@@ -57,9 +61,10 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxGenerationId = req.params.generationId;
         const boxes = await boxModel.getBoxesByGenerationId(boxGenerationId);
@@ -67,9 +72,10 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res) =>
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { androidTabletId, tabletSerialNumber } = req.body;
         const box = await boxModel.getBoxByTabletInfo(androidTabletId, tabletSerialNumber);
@@ -77,9 +83,10 @@ exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res) => {
+exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { tabletId, boxId } = req.body;
         const assignTabletToBox = await boxModel.assignTabletToBox(tabletId, boxId);
@@ -87,9 +94,10 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { tabletId, boxId } = req.body;
         const assignTabletToBox = await boxModel.resetTabletId(tabletId, boxId);
@@ -97,6 +105,7 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=box.controller.js.map

@@ -9,7 +9,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const otpModel = new otp_model_1.default();
-exports.createOTP = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newOTP = req.body;
         const delivery_package_id = req.body.delivery_package_id;
@@ -18,18 +18,20 @@ exports.createOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const otps = await otpModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
     }
     catch (error) {
         responsesHandler_1.default.internalError(res, error.message);
+        next(error);
     }
 });
-exports.getOTPById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getOTPById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const otpId = req.params.id;
         const otp = await otpModel.getOne(Number(otpId));
@@ -37,9 +39,10 @@ exports.getOTPById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateOTP = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const otpId = req.params.id;
         const otpData = req.body;
@@ -48,9 +51,10 @@ exports.updateOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const otpId = req.params.id;
         const deletedOTP = await otpModel.deleteOne(Number(otpId));
@@ -58,9 +62,10 @@ exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const userId = req.params.userId;
         const otps = await otpModel.getOTPsByUser(userId);
@@ -68,9 +73,10 @@ exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
+exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { otp, delivery_package_id, boxId } = req.body;
         const verifiedOTP = await otpModel.checkOTP(otp, delivery_package_id, boxId);
@@ -85,9 +91,10 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res) => {
+exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const trackingNumber = req.body.trackingNumber.toLowerCase();
         const boxId = req.body.boxId;
@@ -103,6 +110,7 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=otp.controller.js.map

@@ -9,7 +9,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const boxGenerationModel = new box_generation_model_1.default();
-exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newBoxGeneration = req.body;
         const createdBoxGeneration = await boxGenerationModel.createBoxGeneration(newBoxGeneration);
@@ -17,18 +17,20 @@ exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxGenerations = await boxGenerationModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATIONS_RETRIEVED_SUCCESSFULLY'), boxGenerations);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxGenerationId = req.params.id;
         const boxGeneration = await boxGenerationModel.getOne(boxGenerationId);
@@ -36,9 +38,10 @@ exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxGenerationId = req.params.id;
         const boxGenerationData = req.body;
@@ -47,9 +50,10 @@ exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxGenerationId = req.params.id;
         const deletedBoxGeneration = await boxGenerationModel.deleteOne(boxGenerationId);
@@ -57,6 +61,7 @@ exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=box.generation.controller.js.map

@@ -10,7 +10,7 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const box_image_model_1 = __importDefault(require("../../models/box/box.image.model"));
 const uploadSingleImage_1 = require("../../middlewares/uploadSingleImage");
 const boxImageModel = new box_image_model_1.default();
-exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
     (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, async (err) => {
         if (err) {
             return responsesHandler_1.default.badRequest(res, err.message);
@@ -26,19 +26,21 @@ exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
         }
         catch (error) {
             responsesHandler_1.default.badRequest(res, error.message);
+            next(error);
         }
     });
 });
-exports.getAllBoxImages = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllBoxImages = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxImages = await boxImageModel.getAllBoxImages();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'), boxImages);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxImageId = parseInt(req.params.id, 10);
         const boxImage = await boxImageModel.getBoxImageById(boxImageId);
@@ -49,9 +51,10 @@ exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxImageId = parseInt(req.params.id, 10);
         const { boxId, deliveryPackageId } = req.body;
@@ -61,9 +64,10 @@ exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxImageId = parseInt(req.params.id, 10);
         await boxImageModel.deleteBoxImage(boxImageId);
@@ -71,9 +75,10 @@ exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.boxId;
         const boxImages = await boxImageModel.getBoxImagesByBoxId(boxId);
@@ -81,9 +86,10 @@ exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const packageId = req.params.packageId;
         const boxImages = await boxImageModel.getBoxImagesByPackageId(packageId);
@@ -91,6 +97,7 @@ exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res) =
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=box.image.controller.js.map

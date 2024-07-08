@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import UserBoxModel from '../../models/box/user.box.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { UserBox } from '../../types/user.box.type';
@@ -10,7 +10,7 @@ const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 
 export const createUserBox = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newUserBox: UserBox = req.body;
       const createdUserBox = await userBoxModel.createUserBox(newUserBox);
@@ -20,16 +20,14 @@ export const createUserBox = asyncHandler(
         createdUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllUserBoxes = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userBoxes = await userBoxModel.getAllUserBoxes();
       ResponseHandler.success(
@@ -38,16 +36,14 @@ export const getAllUserBoxes = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getUserBoxById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userBoxId = req.params.id;
       const userBox = await userBoxModel.getOne(userBoxId);
@@ -57,16 +53,14 @@ export const getUserBoxById = asyncHandler(
         userBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateUserBox = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userBoxId = req.params.id;
       const userBoxData: Partial<UserBox> = req.body;
@@ -80,16 +74,14 @@ export const updateUserBox = asyncHandler(
         updatedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteUserBox = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userBoxId = req.params.id;
       const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
@@ -99,16 +91,14 @@ export const deleteUserBox = asyncHandler(
         deletedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getUserBoxesByUserId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
       const token = req.headers.authorization?.replace('Bearer ', '');
@@ -133,15 +123,13 @@ export const getUserBoxesByUserId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 export const getUserBoxesByBoxId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxId = req.params.boxId;
       const userBoxes = await userBoxModel.getUserBoxesByBoxId(boxId);
@@ -151,16 +139,14 @@ export const getUserBoxesByBoxId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const assignBoxToUser = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, boxId } = req.body;
       const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
@@ -170,10 +156,8 @@ export const assignBoxToUser = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(
-        res,
-        error.message,
-      );
+      ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

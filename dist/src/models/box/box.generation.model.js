@@ -18,12 +18,12 @@ class BoxGenerationModel {
             return id;
         }
         catch (error) {
-            throw new Error(`Error Creating box generation id ${error.message}`);
+            throw new Error(error.message);
         }
     }
     async createBoxGeneration(b) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const requiredFields = ['model_name', 'number_of_doors'];
             const providedFields = Object.keys(b).filter((key) => b[key] !== undefined);
             if (!requiredFields.every((field) => providedFields.includes(field))) {
@@ -64,43 +64,49 @@ class BoxGenerationModel {
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                 RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create box generation: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getMany() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM Box_Generation';
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving box generations: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_1.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid box generation ID.');
             }
             const sql = `SELECT * FROM Box_Generation WHERE id=$1`;
-            const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find box generation ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateOne(b, id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const checkSql = 'SELECT * FROM Box_Generation WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -125,41 +131,44 @@ class BoxGenerationModel {
             queryParams.push(id);
             const sql = `UPDATE Box_Generation SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update box generation ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid box generation ID.');
             }
             const sql = `DELETE FROM Box_Generation WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find box generation with ID ${id}`);
-            }
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete box generation ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async modelNameExists(model_name) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT COUNT(*) FROM Box_Generation WHERE model_name=$1';
             const result = await connection.query(sql, [model_name]);
-            connection.release();
             return parseInt(result.rows[0].count) > 0;
         }
         catch (error) {
-            throw new Error(`Failed to check model name existence ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

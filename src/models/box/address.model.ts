@@ -5,8 +5,9 @@ import db from '../../config/database';
 class AddressModel {
   // Create new address
   async createAddress(address: Partial<Address>): Promise<Address> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const createdAt = new Date();
       const updatedAt = new Date();
 
@@ -40,35 +41,33 @@ class AddressModel {
                   RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0];
     } catch (error) {
-      throw new Error(`Unable to create address: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get all addresses
   async getMany(): Promise<Address[]> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM Address';
       const result = await connection.query(sql);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error('No addresses in the database');
-      // }
-      connection.release();
       return result.rows as Address[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving addresses: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific address
   async getOne(id: number): Promise<Address> {
+    const connection = await db.connect();
     try {
       if (!id) {
         throw new Error(
@@ -76,26 +75,23 @@ class AddressModel {
         );
       }
       const sql = 'SELECT * FROM Address WHERE id=$1';
-      const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
       // if (result.rows.length === 0) {
       //   throw new Error(`Could not find address with ID ${id}`);
       // }
-      connection.release();
       return result.rows[0] as Address;
     } catch (error) {
-      throw new Error(
-        `Could not find address ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Update address
   async updateOne(address: Partial<Address>, id: number): Promise<Address> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
-
       // Check if the address exists
       const checkSql = 'SELECT * FROM address WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -130,20 +126,20 @@ class AddressModel {
       const sql = `UPDATE Address SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as Address;
     } catch (error) {
-      throw new Error(
-        `Could not update address ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete address
   async deleteOne(id: number): Promise<Address> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error(
           'ID cannot be null. Please provide a valid address ID.',
@@ -152,16 +148,12 @@ class AddressModel {
       const sql = `DELETE FROM Address WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find address with ID ${id}`);
-      }
-      connection.release();
 
       return result.rows[0] as Address;
     } catch (error) {
-      throw new Error(
-        `Could not delete address ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

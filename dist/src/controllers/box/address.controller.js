@@ -9,7 +9,7 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const address_model_1 = __importDefault(require("../../models/box/address.model"));
 const addressModel = new address_model_1.default();
-exports.createAddress = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newAddress = req.body;
         const createdAddress = await addressModel.createAddress(newAddress);
@@ -17,18 +17,20 @@ exports.createAddress = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addresses = await addressModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESSES_RETRIEVED_SUCCESSFULLY'), addresses);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAddressById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const address = await addressModel.getOne(addressId);
@@ -36,9 +38,10 @@ exports.getAddressById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const addressData = req.body;
@@ -47,9 +50,10 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const addressId = parseInt(req.params.id, 10);
         const deletedAddress = await addressModel.deleteOne(addressId);
@@ -57,6 +61,7 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=address.controller.js.map

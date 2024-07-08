@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class CardModel {
     async createCard(card, userId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `INSERT INTO card (card_number, expire_date, cvv, name_on_card, billing_address, user_id)
                    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
             const result = await connection.query(sql, [
@@ -18,41 +18,46 @@ class CardModel {
                 card.billing_address,
                 userId,
             ]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create card: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getAllCards() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT * FROM card`;
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving cards: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getCardById(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `SELECT * FROM card WHERE id = $1`;
             const result = await connection.query(sql, [id]);
-            console.log(result);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find card with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateCard(id, cardData) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const updateFields = Object.keys(cardData)
                 .map((key, index) => `${key}=$${index + 2}`)
                 .join(', ');
@@ -61,23 +66,27 @@ class CardModel {
                 id,
                 ...Object.values(cardData),
             ]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update card with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteCard(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `DELETE FROM card WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete card with ID ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

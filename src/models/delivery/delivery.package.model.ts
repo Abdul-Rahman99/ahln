@@ -32,8 +32,7 @@ class DeliveryPackageModel {
       // Construct and return the custom ID
       return `Ahln_${numericPart}_U${nextIdFormatted}`;
     } catch (error: any) {
-      console.error('Error generating custom ID:', error.message);
-      throw error;
+      throw new Error((error as Error).message);
     }
   }
 
@@ -100,56 +99,51 @@ class DeliveryPackageModel {
                 RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company`;
 
       const result = await connection.query(sql, sqlParams);
-      connection.release();
 
       return result.rows[0];
     } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
       connection.release();
-      throw new Error(
-        `Unable to create delivery package: ${(error as Error).message}`,
-      );
     }
   }
 
   // Get all delivery packages
   async getMany(): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM Delivery_Package';
       const result = await connection.query(sql);
-      // if (result.rows.length === 0) {
-      //   throw new Error('No Delivery Packages in the database');
-      // }
-      connection.release();
+
       return result.rows as DeliveryPackage[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving delivery packages: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific delivery package by ID
   async getOne(id: string): Promise<DeliveryPackage> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM Delivery_Package WHERE id=$1';
       const result = await connection.query(sql, [id]);
-      connection.release();
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find delivery package with ID ${id}`);
-      // }
+
       return result.rows[0] as DeliveryPackage;
     } catch (error) {
-      throw new Error(
-        `Could not find delivery package ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async checkTrackingNumber(tracking_number: string): Promise<any> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!tracking_number) {
         throw new Error('Please provide a tracking number');
       }
@@ -158,16 +152,16 @@ class DeliveryPackageModel {
         'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1',
         [tracking_number],
       );
-      // console.log(deliveryPackageResult.rows.length > 0);
 
       if (deliveryPackageResult.rows.length > 0) {
         throw new Error(
           'Delivery package Dublicated for the given tracking number',
         );
       }
-      connection.release();
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -176,9 +170,9 @@ class DeliveryPackageModel {
     deliveryPackage: Partial<DeliveryPackage>,
     id: string,
   ): Promise<DeliveryPackage> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
 
@@ -213,20 +207,19 @@ class DeliveryPackageModel {
       const sql = `UPDATE Delivery_Package SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as DeliveryPackage;
     } catch (error) {
-      throw new Error(
-        `Could not update delivery package ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete delivery package
   async deleteOne(id: string): Promise<DeliveryPackage> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error(
           'ID cannot be null. Please provide a valid Delivery Package ID.',
@@ -234,17 +227,12 @@ class DeliveryPackageModel {
       }
       const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
       const result = await connection.query(sql, [id]);
-      connection.release();
-
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find delivery package with ID ${id}`);
-      }
 
       return result.rows[0] as DeliveryPackage;
     } catch (error) {
-      throw new Error(
-        `Could not delete delivery package ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -253,20 +241,20 @@ class DeliveryPackageModel {
     userId: string,
     status: any,
   ): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       const sql =
         'SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label ,Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id INNER JOIN Box ON Delivery_Package.box_id = Box.id WHERE customer_id = $1  AND shipment_status = $2';
       const params: any[] = [userId, status];
 
       const result = await connection.query(sql, params);
-      connection.release();
 
       return result.rows as DeliveryPackage[];
     } catch (error) {
-      throw new Error(
-        `Error retrieving delivery packages for user ${userId}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

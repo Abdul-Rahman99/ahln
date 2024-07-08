@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import BoxGenerationModel from '../../models/box/box.generation.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { BoxGeneration } from '../../types/box.generation.type';
@@ -9,7 +9,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 const boxGenerationModel = new BoxGenerationModel();
 
 export const createBoxGeneration = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newBoxGeneration: BoxGeneration = req.body;
       const createdBoxGeneration =
@@ -21,12 +21,13 @@ export const createBoxGeneration = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllBoxGenerations = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxGenerations = await boxGenerationModel.getMany();
       ResponseHandler.success(
@@ -36,12 +37,13 @@ export const getAllBoxGenerations = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getBoxGenerationById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxGenerationId = req.params.id;
       const boxGeneration = await boxGenerationModel.getOne(boxGenerationId);
@@ -52,12 +54,13 @@ export const getBoxGenerationById = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateBoxGeneration = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxGenerationId = req.params.id;
       const boxGenerationData: Partial<BoxGeneration> = req.body;
@@ -72,12 +75,13 @@ export const updateBoxGeneration = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteBoxGeneration = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxGenerationId = req.params.id;
       const deletedBoxGeneration =
@@ -89,6 +93,7 @@ export const deleteBoxGeneration = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

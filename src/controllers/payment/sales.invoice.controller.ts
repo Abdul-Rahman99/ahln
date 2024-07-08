@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import SalesInvoiceModel from '../../models/payment/sales.invoice.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import {
@@ -23,7 +23,7 @@ const parseDate = (dateString: string): Date | null => {
 };
 
 export const createSalesInvoice = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newSalesInvoicePayload: SalesInvoicePayload = req.body;
 
@@ -60,12 +60,13 @@ export const createSalesInvoice = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getAllSalesInvoices = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const salesInvoices = await salesInvoiceModel.getAllSalesInvoices();
       ResponseHandler.success(
@@ -75,12 +76,13 @@ export const getAllSalesInvoices = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getSalesInvoiceById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const salesInvoiceId = req.params.id;
       const salesInvoice = await salesInvoiceModel.getOne(salesInvoiceId);
@@ -91,12 +93,13 @@ export const getSalesInvoiceById = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const updateSalesInvoice = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const salesInvoiceId = req.params.id;
       const newSalesInvoicePayload: SalesInvoicePayload = req.body;
@@ -123,12 +126,13 @@ export const updateSalesInvoice = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const deleteSalesInvoice = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const salesInvoiceId = req.params.id;
       const deletedSalesInvoice =
@@ -140,12 +144,13 @@ export const deleteSalesInvoice = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getSalesInvoicesByUserId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.body.salesId;
 
@@ -161,12 +166,13 @@ export const getSalesInvoicesByUserId = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getSalesInvoicesBySalesId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.body.userId;
 
@@ -182,12 +188,13 @@ export const getSalesInvoicesBySalesId = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
 
 export const getSalesInvoicesByBoxId = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const boxId = req.params.boxId;
       const salesInvoices =
@@ -199,6 +206,7 @@ export const getSalesInvoicesByBoxId = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

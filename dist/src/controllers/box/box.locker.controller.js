@@ -9,7 +9,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const boxLockerModel = new box_locker_model_1.default();
-exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newBoxLocker = req.body;
         const createdBoxLocker = await boxLockerModel.createBoxLocker(newBoxLocker);
@@ -17,18 +17,20 @@ exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxLockers = await boxLockerModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxLockerId = req.params.id;
         const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
@@ -36,9 +38,10 @@ exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxLockerId = req.params.id;
         const boxLockerData = req.body;
@@ -47,9 +50,10 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxLockerId = req.params.id;
         const deletedBoxLocker = await boxLockerModel.deleteOne(String(boxLockerId));
@@ -57,9 +61,10 @@ exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.body.boxId;
         const boxLockers = await boxLockerModel.getAllLockersById(boxId);
@@ -67,6 +72,7 @@ exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=box.locker.controller.js.map

@@ -8,7 +8,7 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const uploadSingleImage_1 = require("../../middlewares/uploadSingleImage");
-exports.uploadImage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.uploadImage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, (err) => {
             if (err) {
@@ -24,6 +24,7 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=image.controller.js.map

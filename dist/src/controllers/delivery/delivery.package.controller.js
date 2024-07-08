@@ -13,7 +13,7 @@ const shipping_company_model_1 = __importDefault(require("../../models/delivery/
 const userModel = new user_model_1.default();
 const shippingCompanyModel = new shipping_company_model_1.default();
 const deliveryPackageModel = new delivery_package_model_1.default();
-exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (!token) {
@@ -26,8 +26,15 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
         if (!user) {
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
         }
-        const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
-        if (!shipping_company_id) {
+        let shipping_company_id;
+        try {
+            shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
+            if (!shipping_company_id) {
+                req.body.other_shipping_company = req.body.shipping_company_id;
+                req.body.shipping_company_id = null;
+            }
+        }
+        catch (error) {
             req.body.other_shipping_company = req.body.shipping_company_id;
             req.body.shipping_company_id = null;
         }
@@ -37,18 +44,20 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackages = await deliveryPackageModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackage = await deliveryPackageModel.getOne(deliveryPackageId);
@@ -56,27 +65,38 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res) =>
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackageData = req.body;
-        if (req.body.shipping_company_id) {
-            const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
-            if (!shipping_company_id) {
-                req.body.other_shipping_company = req.body.shipping_company_id;
-                req.body.shipping_company_id = null;
+        try {
+            if (req.body.shipping_company_id) {
+                const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
+                if (!shipping_company_id) {
+                    req.body.other_shipping_company = req.body.shipping_company_id;
+                    req.body.shipping_company_id = null;
+                }
+                else {
+                    req.body.other_shipping_company = null;
+                }
             }
+        }
+        catch (error) {
+            req.body.other_shipping_company = req.body.shipping_company_id;
+            req.body.shipping_company_id = null;
         }
         const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackageId = req.params.id;
         const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(deliveryPackageId);
@@ -84,9 +104,10 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res) => 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { status } = req.query;
         const token = req.headers.authorization?.replace('Bearer ', '');
@@ -102,6 +123,7 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res) =
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

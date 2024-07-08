@@ -22,8 +22,7 @@ class DeliveryPackageModel {
             return `Ahln_${numericPart}_U${nextIdFormatted}`;
         }
         catch (error) {
-            console.error('Error generating custom ID:', error.message);
-            throw error;
+            throw new Error(error.message);
         }
     }
     async createDeliveryPackage(userId, deliveryPackage) {
@@ -78,41 +77,46 @@ class DeliveryPackageModel {
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                 RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
             connection.release();
-            throw new Error(`Unable to create delivery package: ${error.message}`);
         }
     }
     async getMany() {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
             const sql = 'SELECT * FROM Delivery_Package';
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving delivery packages: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
             const sql = 'SELECT * FROM Delivery_Package WHERE id=$1';
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find delivery package ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async checkTrackingNumber(tracking_number) {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
             if (!tracking_number) {
                 throw new Error('Please provide a tracking number');
             }
@@ -120,15 +124,17 @@ class DeliveryPackageModel {
             if (deliveryPackageResult.rows.length > 0) {
                 throw new Error('Delivery package Dublicated for the given tracking number');
             }
-            connection.release();
         }
         catch (error) {
             throw new Error(error.message);
         }
+        finally {
+            connection.release();
+        }
     }
     async updateOne(deliveryPackage, id) {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
             const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -153,42 +159,45 @@ class DeliveryPackageModel {
             queryParams.push(id);
             const sql = `UPDATE Delivery_Package SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update delivery package ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid Delivery Package ID.');
             }
             const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            connection.release();
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find delivery package with ID ${id}`);
-            }
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete delivery package ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getPackagesByUser(userId, status) {
+        const connection = await database_2.default.connect();
         try {
-            const connection = await database_2.default.connect();
-            const sql = 'SELECT Box.box_label ,Box_Locker.locker_label ,Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id INNER JOIN Box ON Delivery_Package.box_id = Box.id WHERE customer_id = $1  AND shipment_status = $2';
+            const sql = 'SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label ,Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id INNER JOIN Box ON Delivery_Package.box_id = Box.id WHERE customer_id = $1  AND shipment_status = $2';
             const params = [userId, status];
             const result = await connection.query(sql, params);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving delivery packages for user ${userId}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

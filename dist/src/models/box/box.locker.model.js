@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class BoxLockerModel {
     async createBoxLocker(boxLocker) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
             const sqlFields = [
@@ -32,43 +32,49 @@ class BoxLockerModel {
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create box locker: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getMany() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM Box_Locker';
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving box lockers: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_1.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid box locker ID.');
             }
             const sql = 'SELECT * FROM Box_Locker WHERE id=$1';
-            const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find box locker ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateOne(boxLocker, id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const checkSql = 'SELECT * FROM Box_Locker WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -93,34 +99,35 @@ class BoxLockerModel {
             queryParams.push(id);
             const sql = `UPDATE Box_Locker SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update box locker ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid box locker ID.');
             }
             const sql = `DELETE FROM Box_Locker WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find box locker with ID ${id}`);
-            }
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete box locker ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getAllLockersById(boxId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!boxId) {
                 throw new Error(`Box id cannot be null ${boxId}`);
             }
@@ -130,7 +137,6 @@ class BoxLockerModel {
         serial_port as box_locker_string
         FROM Box_Locker WHERE box_id=$1`;
             const result = await connection.query(sql, [boxId]);
-            connection.release();
             const lockersWithParsedString = result.rows.map((row) => {
                 try {
                     return {
@@ -139,7 +145,7 @@ class BoxLockerModel {
                     };
                 }
                 catch (error) {
-                    console.error(`Error parsing JSON for locker ${row.id}: ${error.message}`);
+                    throw new Error(error.message);
                     return {
                         ...row,
                         box_locker_string: {},
@@ -149,7 +155,10 @@ class BoxLockerModel {
             return lockersWithParsedString;
         }
         catch (error) {
-            throw new Error(`Could not find box locker ${boxId}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

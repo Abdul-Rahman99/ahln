@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import TabletModel from '../../models/box/tablet.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Tablet } from '../../types/tablet.type';
@@ -8,7 +8,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 const tabletModel = new TabletModel();
 
 export const createTablet = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newTablet: Tablet = req.body;
       const createdTablet = await tabletModel.createTablet(newTablet);
@@ -18,16 +18,14 @@ export const createTablet = asyncHandler(
         createdTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(
-        res,
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const getAllTablets = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const tablets = await tabletModel.getMany();
       ResponseHandler.success(
@@ -36,16 +34,14 @@ export const getAllTablets = asyncHandler(
         tablets,
       );
     } catch (error) {
-      ResponseHandler.badRequest(
-        res,
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const getTabletById = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const tabletId = req.params.id;
       const tablet = await tabletModel.getOne(tabletId);
@@ -55,16 +51,14 @@ export const getTabletById = asyncHandler(
         tablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(
-        res,
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const updateTablet = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const tabletId = req.params.id;
       const tabletData: Partial<Tablet> = req.body;
@@ -75,16 +69,14 @@ export const updateTablet = asyncHandler(
         updatedTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(
-        res,
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
 
 export const deleteTablet = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const tabletId = req.params.id;
       const deletedTablet = await tabletModel.deleteOne(tabletId);
@@ -94,10 +86,8 @@ export const deleteTablet = asyncHandler(
         deletedTablet,
       );
     } catch (error) {
-      ResponseHandler.badRequest(
-        res,
-        (error as Error).message,
-      );
+      ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

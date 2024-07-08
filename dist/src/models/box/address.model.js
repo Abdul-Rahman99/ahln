@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class AddressModel {
     async createAddress(address) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
             const sqlFields = [
@@ -38,43 +38,49 @@ class AddressModel {
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                   RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create address: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getMany() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM Address';
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving addresses: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_1.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid address ID.');
             }
             const sql = 'SELECT * FROM Address WHERE id=$1';
-            const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find address ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateOne(address, id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const checkSql = 'SELECT * FROM address WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -99,29 +105,30 @@ class AddressModel {
             queryParams.push(id);
             const sql = `UPDATE Address SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update address ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid address ID.');
             }
             const sql = `DELETE FROM Address WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find address with ID ${id}`);
-            }
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete address ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

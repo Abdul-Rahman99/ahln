@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class OTPModel {
     async createOTP(otpData, delivery_package_id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const createdAt = new Date();
             const updatedAt = new Date();
             if (delivery_package_id) {
@@ -39,11 +39,13 @@ class OTPModel {
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create OTP: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async checkOTP(otp, delivery_package_id, boxId) {
@@ -67,42 +69,46 @@ class OTPModel {
             return parsedSerialPort;
         }
         catch (error) {
-            throw new Error(`Unable to check OTP: ${error.message}`);
+            throw new Error(error.message);
         }
         finally {
             connection.release();
         }
     }
     async getMany() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM OTP';
             const result = await connection.query(sql);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving OTPs: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!id) {
                 throw new Error('Please provide in id');
             }
             const sql = 'SELECT * FROM OTP WHERE id=$1';
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find OTP ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateOne(otp, id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const checkSql = 'SELECT * FROM OTP WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -127,34 +133,38 @@ class OTPModel {
             queryParams.push(id);
             const sql = `UPDATE OTP SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update OTP ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid OTP ID.');
             }
             const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            connection.release();
             if (result.rows.length === 0) {
                 throw new Error(`Could not find OTP with ID ${id}`);
             }
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete OTP ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOTPsByUser(userId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             if (!userId) {
                 throw new Error('ID cannot be null. Please provide a valid User ID.');
             }
@@ -168,11 +178,13 @@ class OTPModel {
                    INNER JOIN Delivery_Package ON Box.id = Delivery_Package.box_id
                    WHERE Delivery_Package.customer_id = $1 OR Delivery_Package.vendor_id = $1 OR Delivery_Package.delivery_id = $1`;
             const result = await connection.query(sql, [userId]);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving OTPs for user ${userId}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async checkTrackingNumberAndUpdateStatus(trackingNumber, boxId) {
@@ -205,7 +217,7 @@ class OTPModel {
             return [parsedSerialPort, pin_result];
         }
         catch (error) {
-            throw new Error(`Error Checking Tracking Number: ${error.message}`);
+            throw new Error(error.message);
         }
         finally {
             connection.release();

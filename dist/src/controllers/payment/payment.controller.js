@@ -18,7 +18,7 @@ const parseBillingDate = (dateString) => {
     const date = new Date(`${year}-${month}-${day}`);
     return isNaN(date.getTime()) ? null : date;
 };
-exports.createPayment = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newPayment = req.body;
         const billingDate = parseBillingDate(newPayment.billing_date);
@@ -35,18 +35,20 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const payments = await paymentModel.getAllPayments();
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
@@ -57,9 +59,10 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updatePayment = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
@@ -78,9 +81,10 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deletePayment = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
@@ -91,9 +95,10 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (!token) {
@@ -108,6 +113,7 @@ exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=payment.controller.js.map

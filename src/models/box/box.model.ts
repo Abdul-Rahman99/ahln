@@ -34,9 +34,7 @@ class BoxModel {
           const id = `Ahln_${currentYear}_B${nextIdFormatted}`;
           return id;
         } catch (error: any) {
-          throw new Error(
-            `Error generting Box id: ${(error as Error).message}`,
-          );
+          throw new Error((error as Error).message);
         }
       }
 
@@ -111,64 +109,55 @@ class BoxModel {
         });
       }
 
-      connection.release();
       return result.rows[0];
     } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
       connection.release();
-      throw new Error(`Unable to create box: ${(error as Error).message}`);
     }
   }
 
   // Get all boxes
   async getMany(): Promise<Box[]> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       const sql = 'SELECT * FROM Box';
       const result = await connection.query(sql);
-
-      // if (result.rows.length === 0) {
-      //   throw new Error('No boxes in the database');
-      // }
-      connection.release();
       return result.rows as Box[];
     } catch (error) {
-      throw new Error(`Error retrieving boxes: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Get specific box
   async getOne(id: string): Promise<Box> {
+    const connection = await db.connect();
+
     try {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid box ID.');
       }
       const sql = 'SELECT * FROM Box WHERE id=$1';
-      const connection = await db.connect();
       const result = await connection.query(sql, [id]);
 
-      // if (result.rows.length === 0) {
-      //   throw new Error(`Could not find box with ID ${id}`);
-      // }
-      connection.release();
       return result.rows[0] as Box;
     } catch (error) {
-      throw new Error(`Could not find box ${id}: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Update box
   async updateOne(box: Partial<Box>, id: string): Promise<Box> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       // Check if the box exists
       const checkSql = 'SELECT * FROM Box WHERE id=$1';
-      // const checkResult =
       await connection.query(checkSql, [id]);
-
-      // if (checkResult.rows.length === 0) {
-      //   throw new Error(`Box with ID ${id} does not exist`);
-      // }
 
       const queryParams: unknown[] = [];
       let paramIndex = 1;
@@ -197,63 +186,55 @@ class BoxModel {
       const sql = `UPDATE Box SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
-      connection.release();
 
       return result.rows[0] as Box;
     } catch (error) {
-      throw new Error(
-        `Could not update box ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Delete box
   async deleteOne(id: string): Promise<Box> {
+    const connection = await db.connect();
+
     try {
-      const connection = await db.connect();
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid box ID.');
       }
       const sql = `DELETE FROM Box WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
-      if (result.rows.length === 0) {
-        throw new Error(`Could not find box with ID ${id}`);
-      }
-      connection.release();
 
       return result.rows[0] as Box;
     } catch (error) {
-      throw new Error(
-        `Could not delete box ${id}: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   // Fetch all the boxes with it't generation
   async getBoxesByGenerationId(boxGenerationId: string): Promise<Box[]> {
+    const connection = await db.connect();
     try {
-      const connection = await db.connect();
       // Check if the box generation id exists
       const checkSql = 'SELECT * FROM Box_Generation WHERE id=$1';
       // const checkResult =
       await connection.query(checkSql, [boxGenerationId]);
 
-      // if (checkResult.rows.length === 0) {
-      //   throw new Error(`Box with ID ${boxGenerationId} does not exist`);
-      // }
       const sql = `
         SELECT * FROM Box
         WHERE box_model_id = $1
       `;
       const result = await connection.query(sql, [boxGenerationId]);
-      connection.release();
 
       return result.rows as Box[];
     } catch (error) {
-      throw new Error(
-        `Error fetching boxes by box generation ID: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
@@ -261,9 +242,9 @@ class BoxModel {
     androidTabletId: string,
     tabletSerialNumber: string,
   ): Promise<object | null> {
-    try {
-      const connection = await db.connect();
+    const connection = await db.connect();
 
+    try {
       const sql = `
         SELECT tablet.id as tablet_id , b.current_tablet_id , b.id as box_id
         FROM tablet
@@ -282,38 +263,26 @@ class BoxModel {
         androidTabletId,
         result.rows[0].tablet_id,
       ]);
-      connection.release();
-
-      if (result.rows.length === 0) {
-        return null; // No box found for the given tablet info
-      }
 
       return { box_id: result.rows[0].box_id };
     } catch (error) {
-      throw new Error(
-        `Error retrieving box by tablet info: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async assignTabletToBox(tabletId: string, boxId: string): Promise<Box> {
+    const connection = await db.connect();
+
     try {
       if (!tabletId || !boxId) {
         throw new Error('Please provide a tabletId or boxId');
       }
 
-      const connection = await db.connect();
-
       // Check if the tablet exists
       const tabletCheckSql = 'SELECT id FROM tablet WHERE id = $1';
-      const tabletCheckResult = await connection.query(tabletCheckSql, [
-        tabletId,
-      ]);
-
-      if (tabletCheckResult.rows.length === 0) {
-        connection.release();
-        throw new Error(`Tablet with ID ${tabletId} does not exist`);
-      }
+      await connection.query(tabletCheckSql, [tabletId]);
 
       // Check if the box exists
       const boxCheckSql = 'SELECT id FROM box WHERE id = $1';
@@ -334,23 +303,22 @@ class BoxModel {
         updatedAt,
         boxId,
       ]);
-      connection.release();
 
       return result.rows[0];
     } catch (error) {
-      throw new Error(
-        `Unable to assign tablet to Box: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 
   async resetTabletId(tabletId: string, boxId: string): Promise<Box> {
+    const connection = await db.connect();
     try {
       if (!tabletId || !boxId) {
         throw new Error('Please provide a tabletId or boxId');
       }
 
-      const connection = await db.connect();
       // Get current and previous tablet IDs from box
       const getCurrentTabletSql =
         'SELECT current_tablet_id FROM box WHERE id = $1';
@@ -378,15 +346,11 @@ class BoxModel {
         boxId,
       ]);
 
-      if (result.rows.length === 0) {
-        throw new Error(`Failed to update Box with ID ${boxId}`);
-      }
-
       return result.rows[0]; // Return the updated box data
     } catch (error) {
-      throw new Error(
-        `Unable to reset tablet ID for Box: ${(error as Error).message}`,
-      );
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

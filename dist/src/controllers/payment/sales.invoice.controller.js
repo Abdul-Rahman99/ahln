@@ -18,7 +18,7 @@ const parseDate = (dateString) => {
     const date = new Date(`${year}-${month}-${day}`);
     return isNaN(date.getTime()) ? null : date;
 };
-exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newSalesInvoicePayload = req.body;
         const user = await userModel.getOne(newSalesInvoicePayload.customer_id);
@@ -42,18 +42,20 @@ exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const salesInvoices = await salesInvoiceModel.getAllSalesInvoices();
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const salesInvoiceId = req.params.id;
         const salesInvoice = await salesInvoiceModel.getOne(salesInvoiceId);
@@ -61,9 +63,10 @@ exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const salesInvoiceId = req.params.id;
         const newSalesInvoicePayload = req.body;
@@ -80,9 +83,10 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const salesInvoiceId = req.params.id;
         const deletedSalesInvoice = await salesInvoiceModel.deleteOne(salesInvoiceId);
@@ -90,9 +94,10 @@ exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const user = req.body.salesId;
         const salesInvoices = await salesInvoiceModel.getSalesInvoicesByUserId(user);
@@ -100,9 +105,10 @@ exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res) 
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const user = req.body.userId;
         const salesInvoices = await salesInvoiceModel.getSalesInvoicesByUserId(user);
@@ -110,9 +116,10 @@ exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res)
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const boxId = req.params.boxId;
         const salesInvoices = await salesInvoiceModel.getSalesInvoicesByBoxId(boxId);
@@ -120,6 +127,7 @@ exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res) =
     }
     catch (error) {
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=sales.invoice.controller.js.map

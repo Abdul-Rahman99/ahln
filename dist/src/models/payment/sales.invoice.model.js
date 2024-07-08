@@ -18,13 +18,12 @@ class SalesInvoiceModel {
             return id;
         }
         catch (error) {
-            console.error('Error generating sales invoice id:', error.message);
-            throw error;
+            throw new Error(error.message);
         }
     }
     async createSalesInvoice(newSalesInvoice) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const id = await this.generateSalesInvoiceId();
             const createdAt = new Date();
             const updatedAt = new Date();
@@ -50,41 +49,46 @@ class SalesInvoiceModel {
                    VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
             const result = await connection.query(sql, sqlParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Unable to create sales invoice: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getAllSalesInvoices() {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM sales_invoice';
             const result = await connection.query(sql);
-            console.log(result.rows);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving sales invoices: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getOne(id) {
+        const connection = await database_1.default.connect();
         try {
             const sql = 'SELECT * FROM sales_invoice WHERE id=$1';
-            const connection = await database_1.default.connect();
             const result = await connection.query(sql, [id]);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not find SalesInvoice ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async updateOne(salesInvoice, id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const checkSql = 'SELECT * FROM sales_invoice WHERE id=$1';
             const checkResult = await connection.query(checkSql, [id]);
             if (checkResult.rows.length === 0) {
@@ -105,62 +109,69 @@ class SalesInvoiceModel {
             queryParams.push(id);
             const sql = `UPDATE sales_invoice SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
             const result = await connection.query(sql, queryParams);
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not update SalesInvoice ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async deleteOne(id) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = `DELETE FROM sales_invoice WHERE id=$1 RETURNING *`;
             const result = await connection.query(sql, [id]);
-            if (result.rows.length === 0) {
-                throw new Error(`Could not find SalesInvoice with ID ${id}`);
-            }
-            connection.release();
             return result.rows[0];
         }
         catch (error) {
-            throw new Error(`Could not delete SalesInvoice ${id}: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getSalesInvoicesByUserId(user) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM sales_invoice WHERE customer_id=$1';
             const result = await connection.query(sql, [user]);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving sales invoices by user ID: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getSalesInvoicesBySalesId(user) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM sales_invoice WHERE sales_id=$1';
             const result = await connection.query(sql, [user]);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving sales invoices by user ID: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
     async getSalesInvoicesByBoxId(boxId) {
+        const connection = await database_1.default.connect();
         try {
-            const connection = await database_1.default.connect();
             const sql = 'SELECT * FROM sales_invoice WHERE box_id=$1';
             const result = await connection.query(sql, [boxId]);
-            connection.release();
             return result.rows;
         }
         catch (error) {
-            throw new Error(`Error retrieving sales invoices by box ID: ${error.message}`);
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
         }
     }
 }

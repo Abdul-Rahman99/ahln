@@ -198,7 +198,7 @@ class OTPModel {
       if (!id) {
         throw new Error('ID cannot be null. Please provide a valid OTP ID.');
       }
-      const sql = `DELETE FROM OTP WHERE id=$1 RETURNING *`;
+      const sql = `SET FOREIGN_KEY_CHECKS = 0 ; DELETE FROM OTP WHERE id=$1 RETURNING * ; SET FOREIGN_KEY_CHECKS = 1`;
 
       const result = await connection.query(sql, [id]);
 

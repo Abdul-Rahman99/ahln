@@ -5,69 +5,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPermissionsByRole = exports.removePermissionFromRole = exports.assignPermissionToRole = void 0;
 const role_permission_model_1 = __importDefault(require("../../models/users/role.permission.model"));
+const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const rolePermissionModel = new role_permission_model_1.default();
-const assignPermissionToRole = async (req, res) => {
+const assignPermissionToRole = async (req, res, next) => {
     try {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (isAssigned) {
-            return res.status(400).json({
-                success: false,
-                message: 'Permission is already assigned to the role.',
-            });
+            return responsesHandler_1.default.badRequest(res, i18n.__('ROLE_ALREADY_ASSIGNED_TO_USER'));
         }
         await rolePermissionModel.assignPermission(role_id, permission_id);
-        res
-            .status(201)
-            .json({ success: true, message: 'Permission assigned to role' });
+        responsesHandler_1.default.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'));
     }
     catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.assignPermissionToRole = assignPermissionToRole;
-const removePermissionFromRole = async (req, res) => {
+const removePermissionFromRole = async (req, res, next) => {
     try {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (!isAssigned) {
-            return res.status(400).json({
-                success: false,
-                message: 'Permission is not assigned to the role.',
-            });
+            return responsesHandler_1.default.badRequest(res, i18n.__('PERMISSION_NOT_ASSIGNED_TO_USER'));
         }
         await rolePermissionModel.revokePermission(role_id, permission_id);
-        res
-            .status(200)
-            .json({ success: true, message: 'Permission removed from role' });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'));
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.removePermissionFromRole = removePermissionFromRole;
-const getPermissionsByRole = async (req, res) => {
+const getPermissionsByRole = async (req, res, next) => {
     try {
         const { roleId } = req.params;
         if (!roleId) {
-            return res
-                .status(400)
-                .json({ success: false, message: 'Role ID parameter is required.' });
+            return responsesHandler_1.default.badRequest(res, i18n.__('ROLE_ID_REQUIRED'));
         }
         const roleIdNumber = Number(roleId);
         if (isNaN(roleIdNumber)) {
-            return res
-                .status(400)
-                .json({ success: false, message: 'Role ID must be a valid number.' });
+            return responsesHandler_1.default.badRequest(res, i18n.__('ROLE_ID_MUST_BE_VALID_NUMBER'));
         }
         const permissions = await rolePermissionModel.getPermissionsByRole(roleIdNumber);
-        res.status(200).json({ success: true, data: permissions });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permissions);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
+        next(error);
     }
 };
 exports.getPermissionsByRole = getPermissionsByRole;

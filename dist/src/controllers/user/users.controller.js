@@ -9,26 +9,28 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const userModel = new user_model_1.default();
-exports.createUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     const newUser = req.body;
     try {
         const createdUser = await userModel.createUser(newUser);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'), createdUser);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const users = await userModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('USERS_RETRIEVED_SUCCESSFULLY'), users);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
+exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
     const userId = req.params.id;
     try {
         const user = await userModel.getOne(userId);
@@ -40,10 +42,11 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
         }
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     const userId = req.params.id;
     const userData = req.body;
     try {
@@ -51,17 +54,19 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
-exports.deleteUser = (0, asyncHandler_1.default)(async (req, res) => {
+exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     const userId = req.params.id;
     try {
         const deletedUser = await userModel.deleteOne(userId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=users.controller.js.map

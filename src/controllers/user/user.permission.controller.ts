@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import UserPermissionModel from '../../models/users/user.permission.model';
+import ResponseHandler from '../../utils/responsesHandler';
 
 const userPermissionModel = new UserPermissionModel();
 
-export const assignPermissionToUser = async (req: Request, res: Response) => {
+export const assignPermissionToUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user_id, permission_id } = req.body;
 
@@ -14,23 +19,29 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       permission_id,
     );
     if (isAssigned) {
-      return res.status(400).json({
-        success: false,
-        message: 'Permission is already assigned to the user ' + user_id,
-      });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('PERMISSION_ALREADY_ASSIGNED_TO_USER'),
+      );
     }
 
     await userPermissionModel.assignPermission(user_id, permission_id);
-    res.status(201).json({
-      success: true,
-      message: 'Permission assigned to user ' + user_id,
-    });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
+      user_id,
+    );
   } catch (error: any) {
-    res.status(500).json({ message: error.message, success: false });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const removePermissionFromUser = async (req: Request, res: Response) => {
+export const removePermissionFromUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user_id, permission_id } = req.body;
 
@@ -40,37 +51,50 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       permission_id,
     );
     if (!isAssigned) {
-      return res.status(400).json({
-        success: false,
-        message: 'Permission is not assigned to the user.',
-      });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('PERMISSION_IS_NOT_ASSIGNED_TO_USER'),
+      );
     }
 
     await userPermissionModel.revokePermission(user_id, permission_id);
-    res.status(200).json({
-      success: true,
-      message: 'Permission removed from user ' + user_id,
-    });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      user_id,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getPermissionsByUser = async (req: Request, res: Response) => {
+export const getPermissionsByUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { userId } = req.params;
-    const permissions = await userPermissionModel.getPermissionsByUserId(userId);
+    const permissions =
+      await userPermissionModel.getPermissionsByUserId(userId);
 
     // Check if permissions array is empty
     if (permissions.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'No permissions found for user ' + userId,
-      });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('NO_PERMISSION_FOUND_FOR_USER'),
+        userId,
+      );
     }
 
-    res.status(200).json({ success: true, data: permissions });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_BY_USER_SUCCESSFULLY'),
+      userId,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

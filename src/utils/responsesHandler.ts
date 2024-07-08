@@ -3,7 +3,7 @@
 import { Response } from 'express';
 
 class ResponseHandler {
-  static success(
+  static logInSuccess(
     res: Response,
     message: string,
     data: any = null,
@@ -19,6 +19,15 @@ class ResponseHandler {
       if (token) {
         responseBody.token = token;
       }
+
+    return res.status(200).json(responseBody);
+  }
+  static success(res: Response, message: string, data: any = null): Response {
+    const responseBody: any = {
+      success: true,
+      message,
+      data,
+    };
 
     return res.status(200).json(responseBody);
   }

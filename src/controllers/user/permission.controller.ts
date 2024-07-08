@@ -1,40 +1,71 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/controllers/permission.controller.ts
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import PermissionModel from '../../models/users/permission.model';
+import ResponseHandler from '../../utils/responsesHandler';
 
 const permissionModel = new PermissionModel();
 
-export const createPermission = async (req: Request, res: Response) => {
+export const createPermission = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { title, description } = req.body;
     const permission = await permissionModel.create(title, description);
-    res.status(201).json({ success: true, data: permission });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
+      permission,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getAllPermissions = async (req: Request, res: Response) => {
+export const getAllPermissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const permissions = await permissionModel.getAll();
-    res.status(200).json({ success: true, data: permissions });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'),
+      permissions,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getPermissionById = async (req: Request, res: Response) => {
+export const getPermissionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const permission = await permissionModel.getById(Number(id));
-    res.status(200).json({ success: true, data: permission });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'),
+      permission,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const updatePermission = async (req: Request, res: Response) => {
+export const updatePermission = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -43,18 +74,33 @@ export const updatePermission = async (req: Request, res: Response) => {
       title,
       description,
     );
-    res.status(200).json({ success: true, data: permission });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
+      permission,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const deletePermission = async (req: Request, res: Response) => {
+export const deletePermission = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const permission = await permissionModel.delete(Number(id));
-    res.status(200).json({ success: true, data: permission });
+
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
+      permission,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

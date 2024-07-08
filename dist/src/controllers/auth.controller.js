@@ -56,7 +56,7 @@ exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     sendVerificationEmail(email, otp);
     const token = jsonwebtoken_1.default.sign({ email, password }, config_1.default.JWT_SECRET_KEY);
     await userModel.updateUserToken(user.id, token);
-    return responsesHandler_1.default.success(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
+    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
 });
 exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, otp, fcmToken } = req.body;
@@ -83,7 +83,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
     if (fcmToken) {
         await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
     }
-    return responsesHandler_1.default.success(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), {
+    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), {
         id: currentUser.id,
         user_name: currentUser.user_name,
         role_id: currentUser.role_id,
@@ -114,7 +114,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
     if (fcmToken) {
         await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
-    return responsesHandler_1.default.success(res, i18n_1.default.__('LOGIN_SUCCESS'), {
+    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('LOGIN_SUCCESS'), {
         id: user.id,
         user_name: user.user_name,
         role_id: user.role_id,

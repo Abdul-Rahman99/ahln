@@ -75,7 +75,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Update user token in the database
   await userModel.updateUserToken(user.id, token);
 
-  return ResponseHandler.success(res, i18n.__('REGISTER_SUCCESS'), null, token);
+  return ResponseHandler.logInSuccess(
+    res,
+    i18n.__('REGISTER_SUCCESS'),
+    null,
+    token,
+  );
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -120,7 +125,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
   }
 
-  return ResponseHandler.success(
+  return ResponseHandler.logInSuccess(
     res,
     i18n.__('EMAIL_VERIFIED_SUCCESS'),
     {
@@ -168,7 +173,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     await userDevicesModel.saveUserDevice(user.id, fcmToken);
   }
 
-  return ResponseHandler.success(
+  return ResponseHandler.logInSuccess(
     res,
     i18n.__('LOGIN_SUCCESS'),
     {

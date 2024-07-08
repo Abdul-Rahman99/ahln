@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ResponseHandler {
-    static success(res, message, data = null, token = null) {
+    static logInSuccess(res, message, data = null, token = null) {
         const responseBody = {
             success: true,
             message,
@@ -12,6 +12,14 @@ class ResponseHandler {
             if (token) {
                 responseBody.token = token;
             }
+        return res.status(200).json(responseBody);
+    }
+    static success(res, message, data = null) {
+        const responseBody = {
+            success: true,
+            message,
+            data,
+        };
         return res.status(200).json(responseBody);
     }
     static badRequest(res, message, data = null, token = null) {

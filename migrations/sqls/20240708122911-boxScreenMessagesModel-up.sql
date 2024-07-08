@@ -1,0 +1,12 @@
+/* Replace with your SQL commands */
+
+CREATE TABLE IF NOT EXISTS Box_Screen_Messages(
+    id SERIAL PRIMARY KEY,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    box_id VARCHAR(20) REFERENCES Box(id) NOT NULL,
+    user_id VARCHAR(20) REFERENCES users(id) NOT NULL,
+    tablet_id INTEGER REFERENCES Tablet(id) NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL
+);

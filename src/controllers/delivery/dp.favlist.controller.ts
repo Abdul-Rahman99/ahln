@@ -17,6 +17,7 @@ export const createDPFavList = async (
   next: NextFunction,
 ) => {
   try {
+    const dpFavListData = req.body;
     // Extract token from the request headers
     const token = req.headers.authorization?.replace('Bearer ', '');
 
@@ -30,13 +31,23 @@ export const createDPFavList = async (
         i18n.__('DELIVERY_PACKAGE_DOES_NOT_EXIST'),
       );
     }
+
+    const fav = await dpFavListModel.getDPFavListById(
+      dpFavListData.delivery_package_id,
+    );
+    if (fav) {
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('DELIVERY_PACKAGE_ALREADY_EXISTS'),
+      );
+    }
+
     // Find the user by the token
     const user = await userModel.findByToken(token);
     if (!user) {
       return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
     }
 
-    const dpFavListData = req.body;
     const newDPFavList = await dpFavListModel.createDPFavList(
       dpFavListData,
       user,

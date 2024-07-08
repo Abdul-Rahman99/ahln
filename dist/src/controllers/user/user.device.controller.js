@@ -16,8 +16,8 @@ const registerDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_REGISTERED_SUCCESSFULLY'), savedDevice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.registerDevice = registerDevice;
@@ -28,8 +28,8 @@ const deleteDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_DELETED_SUCCESSFULLY'), deletedDevice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.deleteDevice = deleteDevice;
@@ -41,8 +41,8 @@ const updateDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_UPDATED_SUCCESSFULLY'), updatedDevice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.updateDevice = updateDevice;
@@ -53,8 +53,8 @@ const getDevicesByUser = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_RETRIVED_BY_USER_SUCCESSFULLY'), devices);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getDevicesByUser = getDevicesByUser;
@@ -68,8 +68,8 @@ const getUserDeviceById = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), device);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getUserDeviceById = getUserDeviceById;

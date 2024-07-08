@@ -34,8 +34,8 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'), createdPayment);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -44,8 +44,8 @@ exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -58,8 +58,8 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_RETRIEVED_SUCCESSFULLY'), payment);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -80,8 +80,8 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_UPDATED_SUCCESSFULLY'), updatedPayment);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -94,8 +94,8 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'), deletedPayment);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -112,8 +112,8 @@ exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) =
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=payment.controller.js.map

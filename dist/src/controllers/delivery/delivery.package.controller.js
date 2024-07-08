@@ -43,8 +43,8 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), createdDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -53,8 +53,8 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -64,8 +64,8 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'), deliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -92,8 +92,8 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -103,8 +103,8 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -122,8 +122,8 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, n
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

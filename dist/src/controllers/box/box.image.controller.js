@@ -25,8 +25,8 @@ exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
             responsesHandler_1.default.success(res, i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'), createdBoxImage);
         }
         catch (error) {
-            responsesHandler_1.default.badRequest(res, error.message);
             next(error);
+            responsesHandler_1.default.badRequest(res, error.message);
         }
     });
 });
@@ -36,8 +36,8 @@ exports.getAllBoxImages = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'), boxImages);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -50,8 +50,8 @@ exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGE_RETRIEVED_SUCCESSFULLY'), boxImage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -63,8 +63,8 @@ exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'), updatedBoxImage);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -74,8 +74,8 @@ exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -85,8 +85,8 @@ exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'), boxImages);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -96,8 +96,8 @@ exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res, n
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'), boxImages);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=box.image.controller.js.map

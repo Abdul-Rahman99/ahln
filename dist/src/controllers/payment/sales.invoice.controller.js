@@ -41,8 +41,8 @@ exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_CREATED_SUCCESSFULLY'), createdSalesInvoice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -51,8 +51,8 @@ exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -62,8 +62,8 @@ exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_RETRIEVED_SUCCESSFULLY'), salesInvoice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -82,8 +82,8 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'), updatedSalesInvoice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -93,8 +93,8 @@ exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'), deletedSalesInvoice);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -104,8 +104,8 @@ exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -115,8 +115,8 @@ exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res,
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -126,8 +126,8 @@ exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, n
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=sales.invoice.controller.js.map

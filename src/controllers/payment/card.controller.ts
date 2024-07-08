@@ -53,8 +53,8 @@ export const createCard = asyncHandler(
         createdCard,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -69,8 +69,8 @@ export const getAllCards = asyncHandler(
         cards,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -89,8 +89,8 @@ export const getCardById = asyncHandler(
         card,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -130,8 +130,8 @@ export const updateCard = asyncHandler(
         updatedCard,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -150,8 +150,8 @@ export const deleteCard = asyncHandler(
         deletedCard,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

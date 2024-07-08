@@ -33,8 +33,8 @@ export const assignPermissionToUser = async (
       user_id,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -65,8 +65,8 @@ export const removePermissionFromUser = async (
       user_id,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -95,7 +95,7 @@ export const getPermissionsByUser = async (
       permissions,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };

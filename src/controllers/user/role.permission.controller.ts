@@ -34,8 +34,8 @@ export const assignPermissionToRole = async (
       role_id,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -66,8 +66,8 @@ export const removePermissionFromRole = async (
       role_id,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -99,7 +99,7 @@ export const getPermissionsByRole = async (
       permissions,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
     next(error);
+    ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
   }
 };

@@ -44,8 +44,8 @@ export const createPayment = asyncHandler(
         createdPayment,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -60,8 +60,8 @@ export const getAllPayments = asyncHandler(
         payments,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -80,8 +80,8 @@ export const getPaymentById = asyncHandler(
         payment,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -119,8 +119,8 @@ export const updatePayment = asyncHandler(
         updatedPayment,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -139,8 +139,8 @@ export const deletePayment = asyncHandler(
         deletedPayment,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -167,8 +167,8 @@ export const getPaymentsByUser = asyncHandler(
         payments,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

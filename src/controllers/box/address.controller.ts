@@ -18,8 +18,8 @@ export const createAddress = asyncHandler(
         createdAddress,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -34,8 +34,8 @@ export const getAllAddresses = asyncHandler(
         addresses,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -51,8 +51,8 @@ export const getAddressById = asyncHandler(
         address,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -72,8 +72,8 @@ export const updateAddress = asyncHandler(
         updatedAddress,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );
@@ -89,8 +89,8 @@ export const deleteAddress = asyncHandler(
         deletedAddress,
       );
     } catch (error) {
-      ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
     }
   },
 );

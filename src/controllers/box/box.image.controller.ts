@@ -35,8 +35,8 @@ export const uploadBoxImage = asyncHandler(
           createdBoxImage,
         );
       } catch (error: any) {
-        ResponseHandler.badRequest(res, error.message);
         next(error);
+        ResponseHandler.badRequest(res, error.message);
       }
     });
   },
@@ -52,8 +52,8 @@ export const getAllBoxImages = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -72,8 +72,8 @@ export const getBoxImageById = asyncHandler(
         boxImage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -97,8 +97,8 @@ export const updateBoxImage = asyncHandler(
         updatedBoxImage,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -110,8 +110,8 @@ export const deleteBoxImage = asyncHandler(
       await boxImageModel.deleteBoxImage(boxImageId);
       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -136,11 +136,12 @@ export const deleteBoxImage = asyncHandler(
 //         boxImages,
 //       );
 //     } catch (error: any) {
+//        next(error);
 //       ResponseHandler.badRequest(
 //         res,
 //         error.message,
 //       );
-//        next(error);
+//
 //     }
 //   },
 // );
@@ -156,8 +157,8 @@ export const getBoxImagesByBoxId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -173,8 +174,8 @@ export const getBoxImagesByPackageId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

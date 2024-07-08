@@ -15,8 +15,8 @@ const createRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_CREATED_SUCCESSFULLY'), role);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.createRole = createRole;
@@ -26,8 +26,8 @@ const getAllRoles = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLES_RETRIEVED_SUCCESSFULLY'), roles);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getAllRoles = getAllRoles;
@@ -38,8 +38,8 @@ const getRoleById = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_RETRIEVED_SUCCESSFULLY'), role);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getRoleById = getRoleById;
@@ -51,8 +51,8 @@ const updateRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_UPDATED_SUCCESSFULLY'), role);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.updateRole = updateRole;
@@ -63,8 +63,8 @@ const deleteRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_DELETED_SUCCESSFULLY'), role);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.deleteRole = deleteRole;

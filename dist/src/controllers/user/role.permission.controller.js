@@ -19,8 +19,8 @@ const assignPermissionToRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_ASSIGNED_SUCCESSFULLY'), role_id);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.assignPermissionToRole = assignPermissionToRole;
@@ -35,8 +35,8 @@ const removePermissionFromRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'), role_id);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.removePermissionFromRole = removePermissionFromRole;
@@ -54,8 +54,8 @@ const getPermissionsByRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permissions);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, i18n_1.default.__('PERMISSION_ROLE_RETRIVED_FAILED'));
         next(error);
+        responsesHandler_1.default.badRequest(res, i18n_1.default.__('PERMISSION_ROLE_RETRIVED_FAILED'));
     }
 };
 exports.getPermissionsByRole = getPermissionsByRole;

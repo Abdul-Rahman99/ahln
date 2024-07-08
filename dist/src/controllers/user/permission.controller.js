@@ -15,8 +15,8 @@ const createPermission = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_CREATED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.createPermission = createPermission;
@@ -26,8 +26,8 @@ const getAllPermissions = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permissions);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getAllPermissions = getAllPermissions;
@@ -38,8 +38,8 @@ const getPermissionById = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.getPermissionById = getPermissionById;
@@ -51,8 +51,8 @@ const updatePermission = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_UPDATED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.updatePermission = updatePermission;
@@ -63,8 +63,8 @@ const deletePermission = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_DELETED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 };
 exports.deletePermission = deletePermission;

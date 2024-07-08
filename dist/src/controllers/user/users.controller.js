@@ -16,8 +16,8 @@ exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'), createdUser);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -26,8 +26,8 @@ exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USERS_RETRIEVED_SUCCESSFULLY'), users);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -42,8 +42,8 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -54,8 +54,8 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -65,8 +65,8 @@ exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=users.controller.js.map

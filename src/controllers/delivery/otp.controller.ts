@@ -20,8 +20,8 @@ export const createOTP = asyncHandler(
         createdOTP,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -36,8 +36,8 @@ export const getAllOTPs = asyncHandler(
         otps,
       );
     } catch (error: any) {
-      ResponseHandler.internalError(res, error.message);
       next(error);
+      ResponseHandler.internalError(res, error.message);
     }
   },
 );
@@ -49,8 +49,8 @@ export const getOTPById = asyncHandler(
       const otp = await otpModel.getOne(Number(otpId));
       ResponseHandler.success(res, i18n.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -67,8 +67,8 @@ export const updateOTP = asyncHandler(
         updatedOTP,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -84,8 +84,8 @@ export const deleteOTP = asyncHandler(
         deletedOTP,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -101,8 +101,8 @@ export const getOTPsByUser = asyncHandler(
         otps,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -125,8 +125,8 @@ export const checkOTP = asyncHandler(
         ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       }
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -149,9 +149,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         box_locker_string: result[0],
         pin: result[1],
       });
-    } catch (error: any) {
+    } catch (error: any) {next(error);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
     }
   },
 );

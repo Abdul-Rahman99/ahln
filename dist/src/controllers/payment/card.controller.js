@@ -38,8 +38,8 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -48,8 +48,8 @@ exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARDS_RETRIEVED_SUCCESSFULLY'), cards);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -62,8 +62,8 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_RETRIEVED_SUCCESSFULLY'), card);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -87,8 +87,8 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'), updatedCard);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -101,8 +101,8 @@ exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'), deletedCard);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=card.controller.js.map

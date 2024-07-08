@@ -17,8 +17,8 @@ exports.createOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_CREATED_SUCCESSFULLY'), createdOTP);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -27,8 +27,8 @@ exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
     }
     catch (error) {
-        responsesHandler_1.default.internalError(res, error.message);
         next(error);
+        responsesHandler_1.default.internalError(res, error.message);
     }
 });
 exports.getOTPById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -38,8 +38,8 @@ exports.getOTPById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -50,8 +50,8 @@ exports.updateOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_UPDATED_SUCCESSFULLY'), updatedOTP);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -61,8 +61,8 @@ exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTP_DELETED_SUCCESSFULLY'), deletedOTP);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -72,8 +72,8 @@ exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -90,8 +90,8 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -109,8 +109,8 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
         });
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=otp.controller.js.map

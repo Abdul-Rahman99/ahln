@@ -21,8 +21,8 @@ export const uploadImage = asyncHandler(
         });
       });
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

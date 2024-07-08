@@ -18,8 +18,8 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'), createdUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -28,8 +28,8 @@ exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -39,8 +39,8 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_RETRIEVED_SUCCESSFULLY'), userBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -51,8 +51,8 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'), updatedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -62,8 +62,8 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'), deletedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -80,8 +80,8 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -91,8 +91,8 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -102,8 +102,8 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
     }
     catch (error) {
-        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
+        responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=user.box.controller.js.map

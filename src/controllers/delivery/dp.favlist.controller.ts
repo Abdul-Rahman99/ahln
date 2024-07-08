@@ -47,8 +47,8 @@ export const createDPFavList = async (
       newDPFavList,
     );
   } catch (error: any) {
-    ResponseHandler.badRequest(res, error.message);
     next(error);
+    ResponseHandler.badRequest(res, error.message);
   }
 };
 
@@ -61,9 +61,9 @@ export const createDPFavList = async (
 //         i18n.__('FAV_LIST_RETRIEVED_SUCCESSFULLY'),
 //         dpFavLists,
 //       );
-//     } catch (error: any) {
+//     } catch (error: any) {  next(error);
 //       ResponseHandler.badRequest(res, error.message);
-//       next(error);
+//
 //     }
 //   },
 // );
@@ -82,9 +82,9 @@ export const createDPFavList = async (
 //         i18n.__('FAV_LIST_UPDATED_SUCCESSFULLY'),
 //         updatedDPFavList,
 //       );
-//     } catch (error: any) {
+//     } catch (error: any) {next(error);
 //       ResponseHandler.badRequest(res, error.message);
-//       next(error);
+//
 //     }
 //   },
 // );
@@ -100,8 +100,8 @@ export const deleteDPFavList = asyncHandler(
         deletedDPFavList,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -128,8 +128,8 @@ export const getDPFavListsByUser = asyncHandler(
         dpFavLists,
       );
     } catch (error: any) {
-      ResponseHandler.badRequest(res, error.message);
       next(error);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

@@ -5,59 +5,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePermission = exports.updatePermission = exports.getPermissionById = exports.getAllPermissions = exports.createPermission = void 0;
 const permission_model_1 = __importDefault(require("../../models/users/permission.model"));
+const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const permissionModel = new permission_model_1.default();
-const createPermission = async (req, res) => {
+const createPermission = async (req, res, next) => {
     try {
         const { title, description } = req.body;
         const permission = await permissionModel.create(title, description);
-        res.status(201).json({ success: true, data: permission });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_CREATED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.createPermission = createPermission;
-const getAllPermissions = async (req, res) => {
+const getAllPermissions = async (req, res, next) => {
     try {
         const permissions = await permissionModel.getAll();
-        res.status(200).json({ success: true, data: permissions });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permissions);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getAllPermissions = getAllPermissions;
-const getPermissionById = async (req, res) => {
+const getPermissionById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const permission = await permissionModel.getById(Number(id));
-        res.status(200).json({ success: true, data: permission });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getPermissionById = getPermissionById;
-const updatePermission = async (req, res) => {
+const updatePermission = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { title, description } = req.body;
         const permission = await permissionModel.update(Number(id), title, description);
-        res.status(200).json({ success: true, data: permission });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.updatePermission = updatePermission;
-const deletePermission = async (req, res) => {
+const deletePermission = async (req, res, next) => {
     try {
         const { id } = req.params;
         const permission = await permissionModel.delete(Number(id));
-        res.status(200).json({ success: true, data: permission });
+        responsesHandler_1.default.success(res, i18n.__('PERMISSION_DELETED_SUCCESSFULLY'), permission);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.deletePermission = deletePermission;

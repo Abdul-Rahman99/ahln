@@ -5,78 +5,70 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserDeviceById = exports.getDevicesByUser = exports.updateDevice = exports.deleteDevice = exports.registerDevice = void 0;
 const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
+const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const userDevicesModel = new user_devices_model_1.default();
-const registerDevice = async (req, res) => {
+const registerDevice = async (req, res, next) => {
     const { fcm_token } = req.body;
     const { id: user_id } = req.currentUser;
     try {
         const savedDevice = await userDevicesModel.saveUserDevice(user_id, fcm_token);
-        res.status(201).json({
-            success: true,
-            message: 'Device registered successfully',
-            data: savedDevice,
-        });
+        responsesHandler_1.default.success(res, i18n.__('DEVICE_REGISTERED_SUCCESSFULLY'), savedDevice);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.registerDevice = registerDevice;
-const deleteDevice = async (req, res) => {
+const deleteDevice = async (req, res, next) => {
     const { deviceId } = req.params;
     try {
         const deletedDevice = await userDevicesModel.deleteUserDevice(parseInt(deviceId, 10));
-        res.status(200).json({
-            success: true,
-            message: 'Device deleted successfully',
-            data: deletedDevice,
-        });
+        responsesHandler_1.default.success(res, i18n.__('DEVICE_DELETED_SUCCESSFULLY'), deletedDevice);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.deleteDevice = deleteDevice;
-const updateDevice = async (req, res) => {
+const updateDevice = async (req, res, next) => {
     const { deviceId } = req.params;
     const { fcm_token } = req.body;
     try {
         const updatedDevice = await userDevicesModel.updateUserDevice(parseInt(deviceId, 10), fcm_token);
-        res.status(200).json({
-            success: true,
-            message: 'Device updated successfully',
-            data: updatedDevice,
-        });
+        responsesHandler_1.default.success(res, i18n.__('DEVICE_UPDATED_SUCCESSFULLY'), updatedDevice);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.updateDevice = updateDevice;
-const getDevicesByUser = async (req, res) => {
+const getDevicesByUser = async (req, res, next) => {
     const { userId } = req.params;
     try {
         const devices = await userDevicesModel.getAllUserDevices(userId);
-        res.status(200).json({ success: true, data: devices });
+        responsesHandler_1.default.success(res, i18n.__('DEVICE_RETRIVED_BY_USER_SUCCESSFULLY'), devices);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getDevicesByUser = getDevicesByUser;
-const getUserDeviceById = async (req, res) => {
+const getUserDeviceById = async (req, res, next) => {
     try {
         const { deviceId } = req.params;
         const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
         if (!device) {
-            return res.status(404).json({
-                message: i18n.__('USER_DEVICE_NOT_FOUND', { deviceId }),
-            });
+            return responsesHandler_1.default.badRequest(res, i18n.__('USER_DEVICE_NOT_FOUND'));
         }
-        res.status(200).json({ success: true, data: device });
+        responsesHandler_1.default.success(res, i18n.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), device);
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getUserDeviceById = getUserDeviceById;

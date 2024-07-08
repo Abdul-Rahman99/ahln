@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import UserDevicesModel from '../../models/users/user.devices.model';
+import ResponseHandler from '../../utils/responsesHandler';
 
 const userDevicesModel = new UserDevicesModel();
 
-export const registerDevice = async (req: Request, res: Response) => {
+export const registerDevice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { fcm_token }: { fcm_token: string } = req.body;
   const { id: user_id } = req.currentUser as { id: string }; // Assuming user_id is retrieved from authenticated user
 
@@ -13,17 +18,22 @@ export const registerDevice = async (req: Request, res: Response) => {
       user_id,
       fcm_token,
     );
-    res.status(201).json({
-      success: true,
-      message: 'Device registered successfully',
-      data: savedDevice,
-    });
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_REGISTERED_SUCCESSFULLY'),
+      savedDevice,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const deleteDevice = async (req: Request, res: Response) => {
+export const deleteDevice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { deviceId } = req.params;
 
   try {
@@ -31,17 +41,22 @@ export const deleteDevice = async (req: Request, res: Response) => {
       parseInt(deviceId, 10),
     );
 
-    res.status(200).json({
-      success: true,
-      message: 'Device deleted successfully',
-      data: deletedDevice,
-    });
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
+      deletedDevice,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const updateDevice = async (req: Request, res: Response) => {
+export const updateDevice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { deviceId } = req.params;
   const { fcm_token }: { fcm_token: string } = req.body;
 
@@ -51,41 +66,58 @@ export const updateDevice = async (req: Request, res: Response) => {
       fcm_token,
     );
 
-    res.status(200).json({
-      success: true,
-      message: 'Device updated successfully',
-      data: updatedDevice,
-    });
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
+      updatedDevice,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getDevicesByUser = async (req: Request, res: Response) => {
+export const getDevicesByUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { userId } = req.params;
 
   try {
     const devices = await userDevicesModel.getAllUserDevices(userId);
 
-    res.status(200).json({ success: true, data: devices });
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_RETRIVED_BY_USER_SUCCESSFULLY'),
+      devices,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getUserDeviceById = async (req: Request, res: Response) => {
+export const getUserDeviceById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { deviceId } = req.params;
     const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
 
     if (!device) {
-      return res.status(404).json({
-        message: i18n.__('USER_DEVICE_NOT_FOUND', { deviceId }),
-      });
+      return ResponseHandler.badRequest(res, i18n.__('USER_DEVICE_NOT_FOUND'));
     }
 
-    res.status(200).json({ success: true, data: device });
+    ResponseHandler.success(
+      res,
+      i18n.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'),
+      device,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

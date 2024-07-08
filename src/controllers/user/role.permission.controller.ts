@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import RolePermissionModel from '../../models/users/role.permission.model';
+import ResponseHandler from '../../utils/responsesHandler';
 
 const rolePermissionModel = new RolePermissionModel();
 
-export const assignPermissionToRole = async (req: Request, res: Response) => {
+export const assignPermissionToRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { role_id, permission_id } = req.body;
 
@@ -14,26 +19,26 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
       permission_id,
     );
     if (isAssigned) {
-      return res.status(400).json({
-        success: false,
-        message: 'Permission is already assigned to the role.',
-      });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('ROLE_ALREADY_ASSIGNED_TO_USER'),
+      );
     }
 
     // Proceed to assign permission if not already assigned
     await rolePermissionModel.assignPermission(role_id, permission_id);
-    res
-      .status(201)
-      .json({ success: true, message: 'Permission assigned to role' });
+    ResponseHandler.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'));
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const removePermissionFromRole = async (req: Request, res: Response) => {
+export const removePermissionFromRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { role_id, permission_id } = req.body;
 
@@ -43,42 +48,52 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
       permission_id,
     );
     if (!isAssigned) {
-      return res.status(400).json({
-        success: false,
-        message: 'Permission is not assigned to the role.',
-      });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('PERMISSION_NOT_ASSIGNED_TO_USER'),
+      );
     }
 
     await rolePermissionModel.revokePermission(role_id, permission_id);
-    res
-      .status(200)
-      .json({ success: true, message: 'Permission removed from role' });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
-export const getPermissionsByRole = async (req: Request, res: Response) => {
+export const getPermissionsByRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { roleId } = req.params;
 
     if (!roleId) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Role ID parameter is required.' });
+      return ResponseHandler.badRequest(res, i18n.__('ROLE_ID_REQUIRED'));
     }
 
     const roleIdNumber = Number(roleId);
     if (isNaN(roleIdNumber)) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Role ID must be a valid number.' });
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('ROLE_ID_MUST_BE_VALID_NUMBER'),
+      );
     }
 
     const permissions =
       await rolePermissionModel.getPermissionsByRole(roleIdNumber);
-    res.status(200).json({ success: true, data: permissions });
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'),
+      permissions,
+    );
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
+    next(error);
   }
 };

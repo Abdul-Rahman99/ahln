@@ -225,7 +225,7 @@ class DeliveryPackageModel {
           'ID cannot be null. Please provide a valid Delivery Package ID.',
         );
       }
-      const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
+      const sql = `SET FOREIGN_KEY_CHECKS = 0 ; DELETE FROM Delivery_Package WHERE id=$1 RETURNING * ; SET FOREIGN_KEY_CHECKS = 0`;
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] as DeliveryPackage;

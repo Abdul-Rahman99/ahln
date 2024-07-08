@@ -41,7 +41,7 @@ export const createDPFavList = async (
       dpFavListData,
       user,
     );
-    return ResponseHandler.success(
+    ResponseHandler.success(
       res,
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
       newDPFavList,
@@ -93,7 +93,7 @@ export const deleteDPFavList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const deletedDPFavList = await dpFavListModel.deleteDPFavList(Number(id));
+      const deletedDPFavList = await dpFavListModel.deleteDPFavList(id);
       return ResponseHandler.success(
         res,
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
@@ -122,7 +122,7 @@ export const getDPFavListsByUser = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
       const dpFavLists = await dpFavListModel.getDPFavListsByUser(user);
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('DP_FAV_LIST_RETRIEVED_SUCCESS'),
         dpFavLists,

@@ -23,7 +23,7 @@ export const createDPFavListValidation = [
 ];
 
 export const deleteDPFavListValidation = [
-  param('id').isInt().withMessage(i18n.__('INVALID_FAVLIST_ID')),
+  param('id').isString().withMessage(i18n.__('INVALID_FAVLIST_ID')),
   validatorMiddleware,
 ];
 

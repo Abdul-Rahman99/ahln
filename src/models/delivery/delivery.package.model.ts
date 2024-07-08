@@ -231,10 +231,9 @@ class DeliveryPackageModel {
       console.log(otpResult);
 
       if (otpResult) {
-        await connection.query(
-          `DELETE FROM OTP WHERE delivery_package_id=$1`,
-          [id],
-        );
+        await connection.query(`DELETE FROM OTP WHERE delivery_package_id=$1`, [
+          id,
+        ]);
       }
       const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
       const result = await connection.query(sql, [id]);
@@ -255,8 +254,13 @@ class DeliveryPackageModel {
     const connection = await db.connect();
 
     try {
-      const sql =
-        'SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label ,Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id INNER JOIN Box ON Delivery_Package.box_id = Box.id WHERE customer_id = $1  AND shipment_status = $2';
+      const sql = `SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label , Delivery_Package.is_fav,
+        Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, 
+        shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt 
+        FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
+        INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
+        INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        WHERE customer_id = $1  AND shipment_status = $2`;
       const params: any[] = [userId, status];
 
       const result = await connection.query(sql, params);

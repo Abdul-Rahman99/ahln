@@ -22,6 +22,7 @@ import salesInvoiceRoute from './payment/sales.invoice.route';
 import cardRoute from './payment/card.route';
 import paymentRoute from './payment/payment.route';
 import mobilePagesRoute from './adminstration/mobile.pages.route';
+import boxScreenMessagesRoute from './adminstration/box.screen.messages.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -53,6 +54,7 @@ const mountRoutes = (app: Express) => {
   app.use('/api/payment', paymentRoute);
 
   app.use('/api/mobile-pages', mobilePagesRoute);
+  app.use('/api/box-screen-messages', boxScreenMessagesRoute);
 };
 
 export default mountRoutes;

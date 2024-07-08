@@ -232,7 +232,7 @@ class DeliveryPackageModel {
 
       if (otpResult) {
         await connection.query(
-          `DELETE * FROM OTP WHERE delivery_package_id=$1`,
+          `DELETE FROM OTP WHERE delivery_package_id=$1`,
           [id],
         );
       }

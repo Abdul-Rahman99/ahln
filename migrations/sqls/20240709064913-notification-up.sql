@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS Notification(
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(20) REFERENCES users(id) NOT NULL,
     title TEXT NOT NULL,
-    message TEXT NOT NULL
+    message TEXT NOT NULL,
+    image TEXT
 );
 
 CREATE TABLE IF NOT EXISTS Mqtt_Topic(

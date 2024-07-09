@@ -56,15 +56,15 @@ class MobilePagesModel {
   }
 
   // Get specific Mobile Page by ID
-  async getMobilePageById(id: number): Promise<MobilePage> {
+  async getMobilePageByTitle(title: string): Promise<MobilePage> {
     const connection = await db.connect();
 
     try {
-      if (!id) {
+      if (!title) {
         throw new Error('Please provide an ID');
       }
-      const sql = 'SELECT * FROM Mobile_Pages WHERE id=$1';
-      const result = await connection.query(sql, [id]);
+      const sql = 'SELECT * FROM Mobile_Pages WHERE title=$1';
+      const result = await connection.query(sql, [title]);
 
       return result.rows[0] as MobilePage;
     } catch (error) {

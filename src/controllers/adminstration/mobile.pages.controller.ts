@@ -44,13 +44,13 @@ export const getAllMobilePages = asyncHandler(
   },
 );
 
-export const getMobilePageById = asyncHandler(
+export const getMobilePageByTitle = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { title } = req.body;
 
     try {
-      const mobilePage = await mobilePagesModel.getMobilePageById(
-        parseInt(id, 10),
+      const mobilePage = await mobilePagesModel.getMobilePageByTitle(
+        title
       );
 
       if (!mobilePage) {

@@ -27,6 +27,7 @@ const card_route_1 = __importDefault(require("./payment/card.route"));
 const payment_route_1 = __importDefault(require("./payment/payment.route"));
 const mobile_pages_route_1 = __importDefault(require("./adminstration/mobile.pages.route"));
 const box_screen_messages_route_1 = __importDefault(require("./adminstration/box.screen.messages.route"));
+const contact_us_route_1 = __importDefault(require("./adminstration/contact.us.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -52,6 +53,7 @@ const mountRoutes = (app) => {
     app.use('/api/payment', payment_route_1.default);
     app.use('/api/mobile-pages', mobile_pages_route_1.default);
     app.use('/api/box-screen-messages', box_screen_messages_route_1.default);
+    app.use('/api/contact-us', contact_us_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

@@ -37,6 +37,23 @@ class DPFavListModel {
             connection.release();
         }
     }
+    async getDPFavListById(id) {
+        const connection = await database_1.default.connect();
+        try {
+            if (!id) {
+                throw new Error('Please provide an ID');
+            }
+            const sql = 'SELECT * FROM DP_Fav_List WHERE delivery_package_id=$1';
+            const result = await connection.query(sql, [id]);
+            return result.rows[0];
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
     async deleteDPFavList(id) {
         const connection = await database_1.default.connect();
         try {

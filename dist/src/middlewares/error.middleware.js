@@ -4,6 +4,9 @@ exports.errorMiddleware = void 0;
 const config_1 = require("../../config");
 const nodeEnv = config_1.config.NODE_ENV;
 const errorMiddleware = (err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
     const customError = {
         statusCode: res.statusCode !== 200 ? res.statusCode : 500,
         message: err.message || 'Internal Server Error',

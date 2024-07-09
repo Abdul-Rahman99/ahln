@@ -59,23 +59,23 @@ class DPFavListModel {
   // }
 
   // Get specific DP_Fav_List by ID
-  // async getDPFavListById(id: number): Promise<DPFavList> {
-  //   const connection = await db.connect();
+  async getDPFavListById(id: string): Promise<DPFavList> {
+    const connection = await db.connect();
 
-  //   try {
-  //     if (!id) {
-  //       throw new Error('Please provide an ID');
-  //     }
-  //     const sql = 'SELECT * FROM DP_Fav_List WHERE id=$1';
-  //     const result = await connection.query(sql, [id]);
+    try {
+      if (!id) {
+        throw new Error('Please provide an ID');
+      }
+      const sql = 'SELECT * FROM DP_Fav_List WHERE delivery_package_id=$1';
+      const result = await connection.query(sql, [id]);
 
-  //     return result.rows[0] as DPFavList;
-  //   } catch (error) {
-  //     throw new Error((error as Error).message);
-  //   } finally {
-  //     connection.release();
-  //   }
-  // }
+      return result.rows[0] as DPFavList;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 
   // Update DP_Fav_List
   // async updateDPFavList(

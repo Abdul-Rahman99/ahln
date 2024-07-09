@@ -2,14 +2,14 @@ import express from 'express';
 import {
   createMobilePage,
   getAllMobilePages,
-  getMobilePageById,
+  getMobilePageByTitle,
   updateMobilePage,
   deleteMobilePage,
 } from '../../controllers/adminstration/mobile.pages.controller';
 import {
   createMobilePageValidation,
   deleteMobilePageValidation,
-  getMobilePageByIdValidation,
+  getMobilePageByTitleValidation,
   updateMobilePageValidation,
 } from '../../validation/adminstration/mobile.pages.validation';
 import verifyToken from '../../middlewares/verifyToken';
@@ -18,11 +18,11 @@ const router = express.Router();
 
 router.post('/new', verifyToken, createMobilePageValidation, createMobilePage);
 router.get('/get-all', verifyToken, getAllMobilePages);
-router.get(
-  '/get-one/:id',
+router.post(
+  '/get-one',
   verifyToken,
-  getMobilePageByIdValidation,
-  getMobilePageById,
+  getMobilePageByTitleValidation,
+  getMobilePageByTitle,
 );
 router.put(
   '/update/:id',

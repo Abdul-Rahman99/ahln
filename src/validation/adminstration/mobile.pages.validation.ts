@@ -9,8 +9,8 @@ export const createMobilePageValidation = [
   validatorMiddleware,
 ];
 
-export const getMobilePageByIdValidation = [
-  param('id').isInt().withMessage(i18n.__('INVALID_PAGE_ID')),
+export const getMobilePageByTitleValidation = [
+  body('title').notEmpty().withMessage(i18n.__('TITLE_REQUIRED')),
   validatorMiddleware,
 ];
 

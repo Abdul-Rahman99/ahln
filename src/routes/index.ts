@@ -25,6 +25,8 @@ import mobilePagesRoute from './adminstration/mobile.pages.route';
 import boxScreenMessagesRoute from './adminstration/box.screen.messages.route';
 import relativeCustomerRoute from './user/relative.customer.route';
 import contactUsRoute from './adminstration/contact.us.route';
+import auditTrailRoute from './logs/audit.trail.route';
+import notificationRoute from './logs/notification.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -59,6 +61,9 @@ const mountRoutes = (app: Express) => {
   app.use('/api/mobile-pages', mobilePagesRoute);
   app.use('/api/box-screen-messages', boxScreenMessagesRoute);
   app.use('/api/contact-us', contactUsRoute);
+
+  app.use('/api/audit-trail', auditTrailRoute);
+  app.use('/api/notification', notificationRoute);
 };
 
 export default mountRoutes;

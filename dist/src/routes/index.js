@@ -27,7 +27,10 @@ const card_route_1 = __importDefault(require("./payment/card.route"));
 const payment_route_1 = __importDefault(require("./payment/payment.route"));
 const mobile_pages_route_1 = __importDefault(require("./adminstration/mobile.pages.route"));
 const box_screen_messages_route_1 = __importDefault(require("./adminstration/box.screen.messages.route"));
+const relative_customer_route_1 = __importDefault(require("./user/relative.customer.route"));
 const contact_us_route_1 = __importDefault(require("./adminstration/contact.us.route"));
+const audit_trail_route_1 = __importDefault(require("./logs/audit.trail.route"));
+const notification_route_1 = __importDefault(require("./logs/notification.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -35,6 +38,7 @@ const mountRoutes = (app) => {
     app.use('/api/permission', permission_route_1.default);
     app.use('/api/role-permissions', role_permission_route_1.default);
     app.use('/api/user-permissions', user_permission_route_1.default);
+    app.use('/api/relative-customer', relative_customer_route_1.default);
     app.use('/api/user-devices', user_device_route_1.default);
     app.use('/api/tablet', tablet_route_1.default);
     app.use('/api/box-generation', box_generation_route_1.default);
@@ -54,6 +58,8 @@ const mountRoutes = (app) => {
     app.use('/api/mobile-pages', mobile_pages_route_1.default);
     app.use('/api/box-screen-messages', box_screen_messages_route_1.default);
     app.use('/api/contact-us', contact_us_route_1.default);
+    app.use('/api/audit-trail', audit_trail_route_1.default);
+    app.use('/api/notification', notification_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

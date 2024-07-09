@@ -1,5 +1,5 @@
 // User.ts
-export interface Audit_Trail {
+export interface AuditTrail {
   id: number;
   createdAt: Date;
   updatedAt: Date;

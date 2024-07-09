@@ -3,9 +3,7 @@ import { Notification } from '../../types/notification.type';
 
 export default class NotificationModel {
   async createNotification(
-    title: string,
-    message: string,
-    image: string,
+    notificationData: Partial<Notification>,
   ): Promise<Notification> {
     const connection = await db.connect();
 
@@ -13,14 +11,14 @@ export default class NotificationModel {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = [
-        'title',
-        'createdAt',
-        'updatedAt',
-        'message',
-        'image',
+      const sqlFields = ['title', 'createdAt', 'updatedAt', 'message', 'image'];
+      const sqlParams = [
+        notificationData.title,
+        createdAt,
+        updatedAt,
+        notificationData.message,
+        notificationData.image,
       ];
-      const sqlParams = [title, createdAt, updatedAt, message, image];
       const sql = `INSERT INTO Notification (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
@@ -63,7 +61,6 @@ export default class NotificationModel {
       connection.release();
     }
   }
-
 
   async deleteNotification(id: number): Promise<void> {
     const connection = await db.connect();

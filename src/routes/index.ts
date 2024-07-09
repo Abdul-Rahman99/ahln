@@ -23,6 +23,7 @@ import cardRoute from './payment/card.route';
 import paymentRoute from './payment/payment.route';
 import mobilePagesRoute from './adminstration/mobile.pages.route';
 import boxScreenMessagesRoute from './adminstration/box.screen.messages.route';
+import relativeCustomerRoute from './user/relative.customer.route';
 import contactUsRoute from './adminstration/contact.us.route';
 
 const mountRoutes = (app: Express) => {
@@ -33,6 +34,7 @@ const mountRoutes = (app: Express) => {
   app.use('/api/permission', permissionRoute);
   app.use('/api/role-permissions', rolePermissionRoutes);
   app.use('/api/user-permissions', userPermissionRoutes);
+  app.use('/api/relative-customer', relativeCustomerRoute);
 
   app.use('/api/user-devices', userDevicesRoute);
 

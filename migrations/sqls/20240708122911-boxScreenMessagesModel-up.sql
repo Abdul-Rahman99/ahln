@@ -1,4 +1,3 @@
-/* Replace with your SQL commands */
 
 CREATE TABLE IF NOT EXISTS Box_Screen_Messages(
     id SERIAL PRIMARY KEY,

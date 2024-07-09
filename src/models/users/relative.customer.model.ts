@@ -5,7 +5,7 @@ import db from '../../config/database';
 class RelativeCustomerModel {
   // create new relative customer
   async createRelativeCustomer(
-    rc: Partial<RelativeCustomer>,
+    newRelaticeCustomerData: Partial<RelativeCustomer>,
     user: string,
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
@@ -28,12 +28,12 @@ class RelativeCustomerModel {
       const sqlParams: unknown[] = [
         createdAt,
         updatedAt,
-        rc.email,
+        newRelaticeCustomerData.email,
         user,
-        rc.relation,
-        rc.email,
-        rc.mobile_number,
-        rc.box_id,
+        newRelaticeCustomerData.relation,
+        newRelaticeCustomerData.email,
+        newRelaticeCustomerData.mobile_number,
+        newRelaticeCustomerData.box_id,
       ];
 
       const sql = `INSERT INTO Relative_Customer (${sqlFields.join(', ')}) 
@@ -113,31 +113,33 @@ class RelativeCustomerModel {
 
   // update Relative Customer in db
   async updateOne(
-    address: Partial<RelativeCustomer>,
+    relativeCustomerData: Partial<RelativeCustomer>,
     id: number,
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
     try {
-      // Check if the address exists
-      const checkSql = 'SELECT * FROM address WHERE id=$1';
+      // Check if the relative cutomer already exists
+      const checkSql = 'SELECT * FROM Relative_Customer WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
-        throw new Error(`Address with ID ${id} does not exist`);
+        throw new Error(`Relative Customer with ID ${id} does not exist`);
       }
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       const updatedAt = new Date();
 
-      const updateFields = Object.keys(address)
+      const updateFields = Object.keys(relativeCustomerData)
         .map((key) => {
           if (
-            address[key as keyof RelativeCustomer] !== undefined &&
+            relativeCustomerData[key as keyof RelativeCustomer] !== undefined &&
             key !== 'id' &&
             key !== 'createdAt'
           ) {
-            queryParams.push(address[key as keyof RelativeCustomer]);
+            queryParams.push(
+              relativeCustomerData[key as keyof RelativeCustomer],
+            );
             return `${key}=$${paramIndex++}`;
           }
           return null;
@@ -162,7 +164,7 @@ class RelativeCustomerModel {
   }
 
   // delete user
-  async deleteOne(id: string): Promise<RelativeCustomer> {
+  async deleteOne(id: number): Promise<RelativeCustomer> {
     const connection = await db.connect();
 
     try {

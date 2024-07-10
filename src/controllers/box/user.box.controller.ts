@@ -8,6 +8,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import BoxModel from '../../models/box/box.model';
+import authHandler from '../../utils/authHandler';
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
@@ -104,18 +105,7 @@ export const deleteUserBox = asyncHandler(
 export const getUserBoxesByUserId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
-
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
-      }
+      const user = await authHandler(req, res, next);
 
       // Fetch user boxes by user ID
       const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
@@ -169,18 +159,8 @@ export const assignBoxToUser = asyncHandler(
 export const userAssignBoxToHimself = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const { serialNumber } = req.body;
       const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
         user,
@@ -201,18 +181,8 @@ export const userAssignBoxToHimself = asyncHandler(
 export const userAssignBoxToRelativeUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const { boxId, email, relation } = req.body;
       const boxExist = await boxModel.getOne(boxId);
       if (!boxExist) {

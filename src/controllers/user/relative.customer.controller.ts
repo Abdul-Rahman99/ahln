@@ -6,6 +6,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import UserModel from '../../models/users/user.model';
 import { RelativeCustomer } from '../../types/relative.customer.type';
+import authHandler from '../../utils/authHandler';
 
 const userModel = new UserModel();
 const relativeCustomerModel = new RelativeCustomerModel();
@@ -46,17 +47,8 @@ export const getAllRelativeCustomers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const relativeCustomers = await relativeCustomerModel.getMany(user);
       ResponseHandler.success(
         res,

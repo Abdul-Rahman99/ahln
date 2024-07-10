@@ -6,11 +6,10 @@ import { Payment } from '../../types/payment.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import CardModel from '../../models/payment/card.model';
-import UserModel from '../../models/users/user.model';
+import authHandler from '../../utils/authHandler';
 
 const cardModel = new CardModel();
 const paymentModel = new PaymentModel();
-const userModel = new UserModel();
 
 const parseBillingDate = (dateString: string): Date | null => {
   const [month, day, year] = dateString.split('-');
@@ -149,17 +148,8 @@ export const getPaymentsByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      const user = await userModel.findByToken(token);
-
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const payments = await paymentModel.getPaymentsByUser(user);
       ResponseHandler.success(
         res,

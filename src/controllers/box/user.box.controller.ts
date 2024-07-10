@@ -6,8 +6,10 @@ import { UserBox } from '../../types/user.box.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
+import RelativeCustomerModel from '../../models/users/relative.customer.model';
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
+const relativeCustomerModel = new RelativeCustomerModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -153,6 +155,82 @@ export const assignBoxToUser = asyncHandler(
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        assignedUserBox,
+      );
+    } catch (error: any) {
+      next(error);
+      ResponseHandler.badRequest(res, error.message);
+    }
+  },
+);
+
+export const userAssignBoxToHimself = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      // Find the user by the token
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+      const { serialNumber } = req.body;
+      const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
+        user,
+        serialNumber,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        assignedUserBox,
+      );
+    } catch (error: any) {
+      next(error);
+      ResponseHandler.badRequest(res, error.message);
+    }
+  },
+);
+
+export const userAssignBoxToRelativeUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      // Find the user by the token
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+      const { boxId, email, relation } = req.body;
+      const assignedUserBox = await userBoxModel.assignRelativeUser(
+        user,
+        boxId,
+        email,
+      );
+      const relative_customer = await userModel.findByEmail(email);
+      if (!relative_customer) {
+        ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
+      } else {
+        const relativeCustomerData = {
+          customer_id: user,
+          relative_customer_id: relative_customer.id,
+          relation: relation,
+        };
+        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
+      }
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
         assignedUserBox,
       );
     } catch (error: any) {

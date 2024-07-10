@@ -6,7 +6,6 @@ class RelativeCustomerModel {
   // create new relative customer
   async createRelativeCustomer(
     newRelaticeCustomerData: Partial<RelativeCustomer>,
-    user: string,
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
 
@@ -25,7 +24,7 @@ class RelativeCustomerModel {
       const sqlParams: unknown[] = [
         createdAt,
         updatedAt,
-        user,
+        newRelaticeCustomerData.customer_id,
         newRelaticeCustomerData.relative_customer_id,
         newRelaticeCustomerData.relation,
       ];

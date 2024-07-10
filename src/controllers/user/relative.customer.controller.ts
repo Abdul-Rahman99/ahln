@@ -29,7 +29,6 @@ export const createRelativeCustomer = asyncHandler(
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
-          user,
         );
       ResponseHandler.success(
         res,

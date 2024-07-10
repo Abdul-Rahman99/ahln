@@ -319,7 +319,7 @@ class UserBoxModel {
       const result = await connection.query(sql, [user, boxId]);
       console.log(result.rows);
 
-      if (result.rows[0].id != undefined) {
+      if (result.rows.length > 0) {
         return true;
       } else {
         return false;

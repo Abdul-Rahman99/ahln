@@ -337,19 +337,16 @@ class UserBoxModel {
     boxId: string,
     email: string,
   ): Promise<UserBox> {
-    console.log('User Data655 ');
 
     const connection = await db.connect();
     try {
       if (await this.checkUserBox(userId, boxId)) {
         if (await user.emailExists(email)) {
           const userData = await user.findByEmail(email);
-          console.log('User Data ' + userData);
 
           const userRelative = userData != null ? userData.id : undefined;
           const userBoxData = { user_id: userRelative, box_id: boxId };
           const result = await this.createUserBox(userBoxData);
-          console.log('Result ' + result);
 
           return result;
         } else {

@@ -18,22 +18,16 @@ class RelativeCustomerModel {
       const sqlFields: string[] = [
         'createdAt',
         'updatedAt',
-        'email',
         'customer_id',
+        'relative_customer_id',
         'relation',
-        'email',
-        'mobile_number',
-        'box_id',
       ];
       const sqlParams: unknown[] = [
         createdAt,
         updatedAt,
-        newRelaticeCustomerData.email,
         user,
+        newRelaticeCustomerData.relative_customer_id,
         newRelaticeCustomerData.relation,
-        newRelaticeCustomerData.email,
-        newRelaticeCustomerData.mobile_number,
-        newRelaticeCustomerData.box_id,
       ];
 
       const sql = `INSERT INTO Relative_Customer (${sqlFields.join(', ')}) 

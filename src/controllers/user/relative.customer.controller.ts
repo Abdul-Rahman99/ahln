@@ -29,7 +29,6 @@ export const createRelativeCustomer = asyncHandler(
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
-          user,
         );
       ResponseHandler.success(
         res,
@@ -46,7 +45,19 @@ export const createRelativeCustomer = asyncHandler(
 export const getAllRelativeCustomers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const relativeCustomers = await relativeCustomerModel.getMany();
+      // Extract token from the request headers
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      }
+
+      // Find the user by the token
+      const user = await userModel.findByToken(token);
+      if (!user) {
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+      }
+      const relativeCustomers = await relativeCustomerModel.getMany(user);
       ResponseHandler.success(
         res,
         i18n.__('RELATIVE_CUSTOMERS_RETRIEVED_SUCCESSFULLY'),

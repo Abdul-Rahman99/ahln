@@ -8,6 +8,8 @@ import {
   getUserBoxesByUserId,
   getUserBoxesByBoxId,
   assignBoxToUser,
+  userAssignBoxToHimself,
+  userAssignBoxToRelativeUser,
 } from '../../controllers/box/user.box.controller';
 
 import {
@@ -18,6 +20,8 @@ import {
   getUserBoxesByBoxIdValidation,
   getUserBoxesByUserIdValidation,
   updateUserBoxValidation,
+  userAssignBoxToHimselfValidation,
+  userAssignBoxToRelativeUserValidation,
 } from '../../validation/box/user.box.validation';
 import verifyToken from '../../middlewares/verifyToken';
 
@@ -58,6 +62,20 @@ router.post(
   verifyToken,
   assignBoxToUserValidation,
   assignBoxToUser,
+);
+
+router.post(
+  '/user-assign-box-to-himself',
+  verifyToken,
+  userAssignBoxToHimselfValidation,
+  userAssignBoxToHimself,
+);
+
+router.post(
+  '/user-assign-box-to-relative-user',
+  verifyToken,
+  userAssignBoxToRelativeUserValidation,
+  userAssignBoxToRelativeUser,
 );
 
 export default router;

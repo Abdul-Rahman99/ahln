@@ -10,5 +10,8 @@ declare class UserBoxModel {
     updateOne(userBox: Partial<UserBox>, id: string): Promise<UserBox>;
     deleteOne(id: string): Promise<UserBox>;
     getUserBoxesByBoxId(boxId: string): Promise<UserBox[]>;
+    userAssignBoxToHimslef(userId: string, serialNumber: string): Promise<UserBox>;
+    checkUserBox(user: string, boxId: string): Promise<boolean>;
+    assignRelativeUser(userId: string, boxId: string, email: string): Promise<UserBox>;
 }
 export default UserBoxModel;

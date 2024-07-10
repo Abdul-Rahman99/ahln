@@ -53,3 +53,39 @@ export const assignBoxToUserValidation = [
   body('boxId').notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
   validatorMiddleware,
 ];
+
+export const userAssignBoxToHimselfValidation = [
+  header('authorization')
+    .notEmpty()
+    .withMessage(i18n.__('AUTH_HEADER_REQUIRED'))
+    .custom((value, { req }) => {
+      if (!value.startsWith('Bearer ')) {
+        throw new Error(i18n.__('AUTH_HEADER_INVALID'));
+      }
+      const token = value.split(' ')[1];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any).token = token;
+      return true;
+    }),
+  body('serialNumber')
+    .notEmpty()
+    .withMessage(i18n.__('BOX_SERIAL_NUMBER_REQUIRED')),
+  validatorMiddleware,
+];
+export const userAssignBoxToRelativeUserValidation = [
+  header('authorization')
+    .notEmpty()
+    .withMessage(i18n.__('AUTH_HEADER_REQUIRED'))
+    .custom((value, { req }) => {
+      if (!value.startsWith('Bearer ')) {
+        throw new Error(i18n.__('AUTH_HEADER_INVALID'));
+      }
+      const token = value.split(' ')[1];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any).token = token;
+      return true;
+    }),
+  body('boxId').notEmpty().withMessage(i18n.__('BOX_SERIAL_NUMBER_REQUIRED')),
+  body('email').notEmpty().withMessage(i18n.__('EMAIL_REQUIRED')),
+  validatorMiddleware,
+];

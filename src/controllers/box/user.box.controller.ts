@@ -7,9 +7,11 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
+import BoxModel from '../../models/box/box.model';
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
+const boxModel = new BoxModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -212,6 +214,10 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
       const { boxId, email, relation } = req.body;
+      const boxExist = await boxModel.getOne(boxId);
+      if (!boxExist) {
+        return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
+      }
       const assignedUserBox = await userBoxModel.assignRelativeUser(
         user,
         boxId,

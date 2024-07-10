@@ -15,6 +15,9 @@ class UserBoxModel {
 
       const userBoxId = `${userBox.user_id}_${userBox.box_id}`; // Custom user_box id
 
+      if (await this.checkUserBoxExists(userBoxId)) {
+        throw new Error('User Box Already Assigned');
+      }
       const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
       const sqlParams = [
         userBoxId,
@@ -60,6 +63,19 @@ class UserBoxModel {
     }
   }
 
+  // check user box id exists
+  async checkUserBoxExists(userBoxId: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = 'SELECT id FROM User_Box WHERE id=$1';
+      const result = await connection.query(sql, [userBoxId]);
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
   async getUserBoxesByUserId(
     userId: string,
   ): Promise<(UserBox & Box & Address)[]> {

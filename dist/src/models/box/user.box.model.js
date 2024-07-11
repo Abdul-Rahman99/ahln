@@ -13,6 +13,9 @@ class UserBoxModel {
             const createdAt = new Date();
             const updatedAt = new Date();
             const userBoxId = `${userBox.user_id}_${userBox.box_id}`;
+            if (await this.checkUserBoxExists(userBoxId)) {
+                throw new Error('User Box Already Assigned');
+            }
             const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
             const sqlParams = [
                 userBoxId,
@@ -47,6 +50,20 @@ class UserBoxModel {
         }
         catch (error) {
             throw new Error(`Error retrieving user boxes with box details: ${error.message}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async checkUserBoxExists(userBoxId) {
+        const connection = await database_1.default.connect();
+        try {
+            const sql = 'SELECT id FROM User_Box WHERE id=$1';
+            const result = await connection.query(sql, [userBoxId]);
+            return result.rows.length > 0;
+        }
+        catch (error) {
+            throw new Error(error.message);
         }
         finally {
             connection.release();
@@ -193,7 +210,7 @@ class UserBoxModel {
             connection.release();
         }
     }
-    async userAssignBoxToHimslef(userId, serialNumber) {
+    async userAssignBoxToHimslef(userId, serialNumber, addressId) {
         const connection = await database_1.default.connect();
         try {
             if (!userId || !serialNumber) {
@@ -233,6 +250,11 @@ class UserBoxModel {
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                  RETURNING *`;
             const result = await connection.query(sql, sqlParams);
+            const addressSql = `UPDATE Box SET address_id=$1 WHERE id=$2`;
+            await connection.query(addressSql, [
+                addressId,
+                boxCheckResult.rows[0].id,
+            ]);
             return result.rows[0];
         }
         catch (error) {
@@ -252,7 +274,7 @@ class UserBoxModel {
             const sql = 'SELECT id FROM User_Box WHERE user_id=$1 AND box_id=$2';
             const result = await connection.query(sql, [user, boxId]);
             console.log(result.rows);
-            if (result.rows[0].id != undefined) {
+            if (result.rows.length > 0) {
                 return true;
             }
             else {
@@ -267,17 +289,14 @@ class UserBoxModel {
         }
     }
     async assignRelativeUser(userId, boxId, email) {
-        console.log('User Data655 ');
         const connection = await database_1.default.connect();
         try {
             if (await this.checkUserBox(userId, boxId)) {
                 if (await user.emailExists(email)) {
                     const userData = await user.findByEmail(email);
-                    console.log('User Data ' + userData);
                     const userRelative = userData != null ? userData.id : undefined;
                     const userBoxData = { user_id: userRelative, box_id: boxId };
                     const result = await this.createUserBox(userBoxData);
-                    console.log('Result ' + result);
                     return result;
                 }
                 else {

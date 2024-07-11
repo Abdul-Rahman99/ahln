@@ -13,6 +13,7 @@ const config_1 = __importDefault(require("../../config"));
 const i18n_1 = __importDefault(require("../config/i18n"));
 const user_devices_model_1 = __importDefault(require("../models/users/user.devices.model"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
+const authHandler_1 = __importDefault(require("../utils/authHandler"));
 const userModel = new user_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const sendVerificationEmail = (email, otp) => {
@@ -128,15 +129,8 @@ exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {
     const user = req.currentUser;
     return responsesHandler_1.default.success(res, user);
 });
-exports.logout = (0, asyncHandler_1.default)(async (req, res) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
-    }
-    const user = await userModel.findByToken(token);
-    if (!user) {
-        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
-    }
+exports.logout = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res, next);
     await userModel.updateUserToken(user, null);
     return responsesHandler_1.default.success(res, i18n_1.default.__('LOGOUT_SUCCESS'));
 });
@@ -158,16 +152,9 @@ exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res) => 
     await userModel.updateResetPasswordOTP(email, null);
     return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
 });
-exports.updatePassword = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updatePassword = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { password, newPassword } = req.body;
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
-    }
-    const user = await userModel.findByToken(token);
-    if (!user) {
-        return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
-    }
+    const user = await (0, authHandler_1.default)(req, res, next);
     const result = await userModel.getOne(user);
     if (!result || !result.password) {
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));

@@ -14,12 +14,12 @@ const router = express.Router();
 
 router.get('/get-all', verifyToken, getAllAuditTrail);
 router.get(
-  '/get-one',
+  '/get-one/:id',
   verifyToken,
   getAuditTrailByIdValidation,
   getAuditTrailById,
 );
-router.get(
+router.delete(
   '/delete/:id',
   verifyToken,
   deleteTrailByIdValidation,

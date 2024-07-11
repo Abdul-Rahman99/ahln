@@ -1,5 +1,5 @@
-// User.ts
-export interface Mqtt_Log {
+// MqttLog.ts
+export interface MqttLog {
   id: number;
   createdAt: Date;
   updatedAt: Date;

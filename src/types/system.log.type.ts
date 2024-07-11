@@ -1,5 +1,5 @@
-// User.ts
-export interface System_Log {
+// systemLog
+export interface SystemLog {
   id: number;
   createdAt: Date;
   updatedAt: Date;

@@ -60,7 +60,7 @@ class TabletModel {
 
       return result.rows as Tablet[];
     } catch (error) {
-      throw new Error(`Error retrieving tablets: ${(error as Error).message}`);
+      throw new Error((error as Error).message);
     } finally {
       connection.release();
     }

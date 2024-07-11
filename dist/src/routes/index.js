@@ -31,6 +31,9 @@ const relative_customer_route_1 = __importDefault(require("./user/relative.custo
 const contact_us_route_1 = __importDefault(require("./adminstration/contact.us.route"));
 const audit_trail_route_1 = __importDefault(require("./logs/audit.trail.route"));
 const notification_route_1 = __importDefault(require("./logs/notification.route"));
+const system_log_route_1 = __importDefault(require("./logs/system.log.route"));
+const mqtt_topic_route_1 = __importDefault(require("./logs/mqtt.topic.route"));
+const mqtt_log_route_1 = __importDefault(require("./logs/mqtt.log.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -60,6 +63,9 @@ const mountRoutes = (app) => {
     app.use('/api/contact-us', contact_us_route_1.default);
     app.use('/api/audit-trail', audit_trail_route_1.default);
     app.use('/api/notification', notification_route_1.default);
+    app.use('/api/system-log', system_log_route_1.default);
+    app.use('/api/mqtt-topic', mqtt_topic_route_1.default);
+    app.use('/api/mqtt-log', mqtt_log_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

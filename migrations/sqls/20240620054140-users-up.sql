@@ -143,10 +143,10 @@ INSERT INTO permission (title, description) VALUES
 ('update_box_image', 'Permission to update box image information'),
 ('delete_box_image', 'Permission to delete a box image'),
 -- Box Model
-('create_box_model', 'Permission to create a new box model'),
-('read_box_model', 'Permission to read box model information'),
-('update_box_model', 'Permission to update box model information'),
-('delete_box_model', 'Permission to delete a box model');
+('create_box_generation', 'Permission to create a new box generation'),
+('read_box_generation', 'Permission to read box generation information'),
+('update_box_generation', 'Permission to update box generation information'),
+('delete_box_generation', 'Permission to delete a box generation');
 
 -- Create the Role_Permission table
 CREATE TABLE IF NOT EXISTS role_permission (

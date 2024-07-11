@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box } from '../../types/box.type';
 import db from '../../config/database';
 import { UserBox } from '../../types/user.box.type';
 import { Address } from '../../types/address.type';
 import UserModel from '../users/user.model';
 const user = new UserModel();
+
 
 class UserBoxModel {
   // Create new UserBox
@@ -247,6 +249,7 @@ class UserBoxModel {
   async userAssignBoxToHimslef(
     userId: string,
     serialNumber: string,
+    addressId: number,
   ): Promise<UserBox> {
     const connection = await db.connect();
     try {
@@ -299,6 +302,14 @@ class UserBoxModel {
                  RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
+
+      // Add address to the box
+      const addressSql = `UPDATE Box SET address_id=$1 WHERE id=$2`;
+      await connection.query(addressSql, [
+        addressId,
+        boxCheckResult.rows[0].id,
+      ]);
+
       return result.rows[0] as UserBox;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -337,7 +348,6 @@ class UserBoxModel {
     boxId: string,
     email: string,
   ): Promise<UserBox> {
-
     const connection = await db.connect();
     try {
       if (await this.checkUserBox(userId, boxId)) {

@@ -9,10 +9,13 @@ import UserModel from '../../models/users/user.model';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import BoxModel from '../../models/box/box.model';
 import authHandler from '../../utils/authHandler';
+import AddressModel from '../../models/box/address.model';
+import { Address } from '../../types/address.type';
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
+const addressModel = new AddressModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -143,6 +146,7 @@ export const assignBoxToUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, boxId } = req.body;
+
       const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
       ResponseHandler.success(
         res,
@@ -162,9 +166,19 @@ export const userAssignBoxToHimself = asyncHandler(
       const user = await authHandler(req, res, next);
 
       const { serialNumber } = req.body;
+      // create address
+      const newAddress: Address = req.body;
+
+      console.log(req.body);
+      
+      const result = await addressModel.createAddress(newAddress);
+      console.log(result);
+      
+
       const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
         user,
         serialNumber,
+        result.id
       );
       ResponseHandler.success(
         res,

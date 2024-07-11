@@ -6,10 +6,9 @@ import { Card } from '../../types/card.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import bcrypt from 'bcrypt';
-import UserModel from '../../models/users/user.model';
+import authHandler from '../../utils/authHandler';
 
 const cardModel = new CardModel();
-const userModel = new UserModel();
 
 const parseExpireDate = (dateString: string): Date | null => {
   const [month, year] = dateString.split('-');
@@ -35,17 +34,8 @@ export const createCard = asyncHandler(
       // Hash the card number before saving
       newCard.card_number = await bcrypt.hash(newCard.card_number, 10);
       // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      const user = await userModel.findByToken(token);
-
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const createdCard = await cardModel.createCard(newCard, user);
       ResponseHandler.success(
         res,

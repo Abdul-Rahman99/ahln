@@ -4,10 +4,9 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import DPFavListModel from '../../models/delivery/dp.favlist.model';
 import i18n from '../../config/i18n';
-import UserModel from '../../models/users/user.model';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
+import authHandler from '../../utils/authHandler';
 
-const userModel = new UserModel();
 const dpFavListModel = new DPFavListModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
@@ -18,12 +17,6 @@ export const createDPFavList = async (
 ) => {
   try {
     const dpFavListData = req.body;
-    // Extract token from the request headers
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token) {
-      return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-    }
     const del = await deliveryPackageModel.getOne(req.body.delivery_package_id);
     if (!del) {
       return ResponseHandler.badRequest(
@@ -42,11 +35,7 @@ export const createDPFavList = async (
       );
     }
 
-    // Find the user by the token
-    const user = await userModel.findByToken(token);
-    if (!user) {
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-    }
+    const user = await authHandler(req, res, next);
 
     const newDPFavList = await dpFavListModel.createDPFavList(
       dpFavListData,
@@ -121,17 +110,8 @@ export const getDPFavListsByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const user = await authHandler(req, res, next);
 
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
       const dpFavLists = await dpFavListModel.getDPFavListsByUser(user);
       ResponseHandler.success(
         res,

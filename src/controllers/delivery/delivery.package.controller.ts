@@ -7,6 +7,7 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
+import authHandler from '../../utils/authHandler';
 
 const userModel = new UserModel();
 const shippingCompanyModel = new ShippingCompanyModel();
@@ -16,24 +17,14 @@ const deliveryPackageModel = new DeliveryPackageModel();
 export const createDeliveryPackage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
-
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
       if (req.body.tracking_number) {
         await deliveryPackageModel.checkTrackingNumber(
           req.body.tracking_number.toLowerCase(),
         );
       }
 
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
+      const user = await authHandler(req, res, next);
+
       let shipping_company_id;
       try {
         shipping_company_id = await shippingCompanyModel.getShippingCompanyById(

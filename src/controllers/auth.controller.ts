@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
@@ -10,6 +10,7 @@ import { User } from '../types/user.type';
 import i18n from '../config/i18n';
 import UserDevicesModel from '../models/users/user.devices.model';
 import ResponseHandler from '../utils/responsesHandler';
+import authHandler from '../utils/authHandler';
 
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
@@ -194,21 +195,14 @@ export const currentUser = asyncHandler(async (req: Request, res: Response) => {
   return ResponseHandler.success(res, user);
 });
 
-export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+export const logout = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await authHandler(req, res, next);
 
-  if (!token) {
-    return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-  }
-
-  const user = await userModel.findByToken(token);
-  if (!user) {
-    return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-  }
-
-  await userModel.updateUserToken(user, null);
-  return ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
-});
+    await userModel.updateUserToken(user, null);
+    return ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
+  },
+);
 
 export const resendOtpAndUpdateDB = asyncHandler(
   async (req: Request, res: Response) => {
@@ -246,19 +240,9 @@ export const updatePasswordWithOTP = asyncHandler(
 );
 
 export const updatePassword = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { password, newPassword } = req.body;
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token) {
-      return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-    }
-
-    const user = await userModel.findByToken(token);
-
-    if (!user) {
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-    }
+    const user = await authHandler(req, res, next);
 
     const result = await userModel.getOne(user);
 

@@ -20,6 +20,7 @@ class RelativeCustomerModel {
         'customer_id',
         'relative_customer_id',
         'relation',
+        'box_id',
       ];
       const sqlParams: unknown[] = [
         createdAt,
@@ -27,6 +28,7 @@ class RelativeCustomerModel {
         newRelaticeCustomerData.customer_id,
         newRelaticeCustomerData.relative_customer_id,
         newRelaticeCustomerData.relation,
+        newRelaticeCustomerData.box_id,
       ];
 
       const sql = `INSERT INTO Relative_Customer (${sqlFields.join(', ')}) 
@@ -43,13 +45,13 @@ class RelativeCustomerModel {
     }
   }
 
-  // get all relative customers
+  // get all relative customers by user auth
   async getMany(user: string): Promise<RelativeCustomer[]> {
     const connection = await db.connect();
 
     try {
       const sql =
-        'SELECT users.user_name, users.phone_number, Relative_Customer.is_active, Relative_Customer.relation FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id WHERE Relative_Customer.customer_id=$1';
+        'SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.is_active,Relative_Customer.id, Relative_Customer.relation FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id WHERE Relative_Customer.customer_id=$1';
       const result = await connection.query(sql, [user]);
       return result.rows as RelativeCustomer[];
     } catch (error) {
@@ -162,8 +164,23 @@ class RelativeCustomerModel {
     const connection = await db.connect();
 
     try {
-      //check required id
+      const sqlRelativeCustomer = `SELECT * FROM Relative_Customer WHERE id=$1`;
+      const resultRelativeCustomer = await connection.query(
+        sqlRelativeCustomer,
+        [id],
+      );
+
+      const sqlUserBoxDelete = `DELETE FROM User_Box WHERE user_id=$1 AND box_id=$2`;
+      const resultUserBox = await connection.query(sqlUserBoxDelete, [
+        resultRelativeCustomer.rows[0].relative_customer_id,
+        resultRelativeCustomer.rows[0].box_id,
+      ]);
+      if (!resultUserBox) {
+        throw new Error('error in deleting user box');
+      }
+
       if (!id) {
+        //check required id
         throw new Error('ID cannot be null. Please provide a valid ID.');
       }
 

@@ -215,6 +215,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           customer_id: user,
           relative_customer_id: relative_customer.id,
           relation: relation,
+          box_id: boxId,
         };
         relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
       }

@@ -140,6 +140,7 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
                 customer_id: user,
                 relative_customer_id: relative_customer.id,
                 relation: relation,
+                box_id: boxId,
             };
             relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
         }

@@ -321,14 +321,12 @@ class UserBoxModel {
   async checkUserBox(user: string, boxId: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-      console.log('SSS');
 
       if (!user) {
         throw new Error('Please provide a userId');
       }
       const sql = 'SELECT id FROM User_Box WHERE user_id=$1 AND box_id=$2';
       const result = await connection.query(sql, [user, boxId]);
-      console.log(result.rows);
 
       if (result.rows.length > 0) {
         return true;

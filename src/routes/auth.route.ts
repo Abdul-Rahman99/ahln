@@ -8,6 +8,7 @@ import {
   resendOtpAndUpdateDB,
   updatePasswordWithOTP,
   updatePassword,
+  uploadUserImage,
 } from '../controllers/auth.controller';
 
 import {
@@ -24,7 +25,7 @@ import verifyToken from '../middlewares/verifyToken';
 
 const router = express.Router();
 
-router.post('/register', registerValidator, register);
+router.post('/register', uploadUserImage, registerValidator, register);
 
 router.post('/login', loginValidator, login);
 

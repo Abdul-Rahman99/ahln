@@ -45,6 +45,9 @@ class UserModel {
                 'password',
                 'preferred_language',
                 'role_id',
+                'country',
+                'city',
+                'avatar',
             ];
             const sqlParams = [
                 id,
@@ -57,10 +60,13 @@ class UserModel {
                 u.password,
                 u.preferred_language || null,
                 2,
+                u.country || null,
+                u.city || null,
+                u.avatar || null,
             ];
             const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
               VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, country, city, avatar`;
             const result = await connection.query(sql, sqlParams);
             return result.rows[0];
         }
@@ -91,7 +97,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, password FROM users 
+            const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, country, city, avatar FROM users 
                     WHERE id=$1`;
             const result = await connection.query(sql, [id]);
             return result.rows[0];
@@ -136,7 +142,7 @@ class UserModel {
             queryParams.push(updatedAt);
             updateFields.push(`updatedAt=$${paramIndex++}`);
             queryParams.push(id);
-            const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
+            const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
             const result = await connection.query(sql, queryParams);
             return result.rows[0];
         }
@@ -153,7 +159,7 @@ class UserModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid user ID.');
             }
-            const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+            const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, country, city, avatar`;
             const result = await connection.query(sql, [id]);
             return result.rows[0];
         }

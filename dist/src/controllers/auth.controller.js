@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePassword = exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
+exports.updatePassword = exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = exports.uploadUserImage = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -14,6 +14,7 @@ const i18n_1 = __importDefault(require("../config/i18n"));
 const user_devices_model_1 = __importDefault(require("../models/users/user.devices.model"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const authHandler_1 = __importDefault(require("../utils/authHandler"));
+const uploadSingleImage_1 = require("../middlewares/uploadSingleImage");
 const userModel = new user_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const sendVerificationEmail = (email, otp) => {
@@ -34,6 +35,7 @@ const sendVerificationEmail = (email, otp) => {
     };
     transporter.sendMail(mailOptions);
 };
+exports.uploadUserImage = (0, uploadSingleImage_1.uploadSingleImage)('image');
 exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, user_name, phone_number, password } = req.body;
     const emailExists = await userModel.emailExists(email);
@@ -51,6 +53,7 @@ exports.register = (0, asyncHandler_1.default)(async (req, res) => {
         phone_number,
         password: hashedPassword,
         email_verified: false,
+        avatar: req.file?.filename,
     });
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await userModel.saveOtp(email, otp);
@@ -115,6 +118,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
     if (fcmToken) {
         await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
+    const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
     return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('LOGIN_SUCCESS'), {
         id: user.id,
         user_name: user.user_name,
@@ -123,6 +127,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         phone_number: user.phone_number,
         email: user.email,
         preferred_language: user.preferred_language,
+        avatar: userAvatar,
     }, token);
 });
 exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {

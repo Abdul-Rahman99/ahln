@@ -9,10 +9,9 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const card_model_1 = __importDefault(require("../../models/payment/card.model"));
-const user_model_1 = __importDefault(require("../../models/users/user.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const cardModel = new card_model_1.default();
 const paymentModel = new payment_model_1.default();
-const userModel = new user_model_1.default();
 const parseBillingDate = (dateString) => {
     const [month, day, year] = dateString.split('-');
     const date = new Date(`${year}-${month}-${day}`);
@@ -100,14 +99,7 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
 });
 exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        if (!token) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
-        }
-        const user = await userModel.findByToken(token);
-        if (!user) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
-        }
+        const user = await (0, authHandler_1.default)(req, res, next);
         const payments = await paymentModel.getPaymentsByUser(user);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }

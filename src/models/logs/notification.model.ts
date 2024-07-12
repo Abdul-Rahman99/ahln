@@ -46,6 +46,21 @@ export default class NotificationModel {
       connection.release();
     }
   }
+  
+  async getAllNotificationsByUser(user: string): Promise<Notification[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image FROM Notification WHERE user_id=$1`;
+      const result = await connection.query(sql, [user]);
+
+      return result.rows as Notification[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 
   async getNotificationById(id: number): Promise<Notification | null> {
     const connection = await db.connect();

@@ -4,6 +4,7 @@ import { Notification } from '../../types/notification.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import NotificationModel from '../../models/logs/notification.model';
+import authHandler from '../../utils/authHandler';
 
 const notificationModel = new NotificationModel();
 
@@ -29,6 +30,25 @@ export const getAllNotifications = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const notifications = await notificationModel.getAllNotifications();
+      ResponseHandler.success(
+        res,
+        i18n.__('NOTIFICATIONS_RETRIEVED_SUCCESSFULLY'),
+        notifications,
+      );
+    } catch (error) {
+      next(error);
+      ResponseHandler.badRequest(res, (error as Error).message);
+    }
+  },
+);
+
+export const getAllNotificationsByUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await authHandler(req, res, next);
+
+      const notifications =
+        await notificationModel.getAllNotificationsByUser(user);
       ResponseHandler.success(
         res,
         i18n.__('NOTIFICATIONS_RETRIEVED_SUCCESSFULLY'),

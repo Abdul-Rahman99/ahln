@@ -16,6 +16,7 @@ import {
 
 import verifyToken from '../../middlewares/verifyToken';
 import { authorize } from '../../middlewares/authorize';
+import { uploadUserImage } from '../../controllers/auth.controller';
 
 const router = express.Router();
 
@@ -41,6 +42,7 @@ router.put(
   '/update/:id',
   verifyToken,
   authorize(['update_user']),
+  uploadUserImage,
   updateUserValidator,
   updateUser,
 );

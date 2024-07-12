@@ -13,4 +13,7 @@ export interface User {
   register_otp?: string | null;
   email_verified?: boolean;
   token?: string | null;
+  country?: string | null;
+  city?: string | null;
+  avatar?: string | null;
 }

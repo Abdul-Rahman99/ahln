@@ -66,6 +66,9 @@ class UserModel {
         'password',
         'preferred_language',
         'role_id',
+        'country',
+        'city',
+        'avatar',
       ];
       const sqlParams: unknown[] = [
         id,
@@ -78,12 +81,15 @@ class UserModel {
         u.password,
         u.preferred_language || null,
         2,
+        u.country || null,
+        u.city || null,
+        u.avatar || null,
       ];
 
       // Create Insert Query in users table
       const sql = `INSERT INTO users (${sqlFields.join(', ')}) 
               VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+              RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, country, city, avatar`;
       const result = await connection.query(sql, sqlParams);
 
       return result.rows[0];
@@ -120,7 +126,7 @@ class UserModel {
       }
 
       //fetch user from db
-      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, password FROM users 
+      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, country, city, avatar FROM users 
                     WHERE id=$1`;
       const result = await connection.query(sql, [id]);
 
@@ -174,7 +180,7 @@ class UserModel {
 
       queryParams.push(id); // Add the user ID to the query parameters
 
-      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified`;
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
 
@@ -196,7 +202,7 @@ class UserModel {
         throw new Error('ID cannot be null. Please provide a valid user ID.');
       }
 
-      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language`;
+      const sql = `DELETE FROM users WHERE id=$1 RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, country, city, avatar`;
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] as User;

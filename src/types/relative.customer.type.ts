@@ -6,4 +6,5 @@ export interface RelativeCustomer {
   relative_customer_id: string;
   relation: string | null;
   is_active: boolean;
+  box_id: string;
 }

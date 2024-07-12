@@ -4,28 +4,17 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
-import UserModel from '../../models/users/user.model';
+// import UserModel from '../../models/users/user.model';
 import { RelativeCustomer } from '../../types/relative.customer.type';
 import authHandler from '../../utils/authHandler';
 
-const userModel = new UserModel();
+// const userModel = new UserModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 
 export const createRelativeCustomer = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
-
-      if (!token) {
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      // Find the user by the token
-      const user = await userModel.findByToken(token);
-      if (!user) {
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
+      await authHandler(req, res, next);
       const newRelaticeCustomerData: RelativeCustomer = req.body;
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
@@ -100,7 +89,7 @@ export const updateRelativeCustomer = asyncHandler(
       );
       ResponseHandler.success(
         res,
-        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
+        i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice,
       );
     } catch (error: any) {
@@ -119,7 +108,7 @@ export const deleteRelativeCustomer = asyncHandler(
       );
       ResponseHandler.success(
         res,
-        i18n.__('OTP_DELETED_SUCCESSFULLY'),
+        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer,
       );
     } catch (error: any) {

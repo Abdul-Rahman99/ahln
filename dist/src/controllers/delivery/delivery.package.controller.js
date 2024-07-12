@@ -10,22 +10,16 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const userModel = new user_model_1.default();
 const shippingCompanyModel = new shipping_company_model_1.default();
 const deliveryPackageModel = new delivery_package_model_1.default();
 exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        if (!token) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
-        }
         if (req.body.tracking_number) {
             await deliveryPackageModel.checkTrackingNumber(req.body.tracking_number.toLowerCase());
         }
-        const user = await userModel.findByToken(token);
-        if (!user) {
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
-        }
+        const user = await (0, authHandler_1.default)(req, res, next);
         let shipping_company_id;
         try {
             shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);

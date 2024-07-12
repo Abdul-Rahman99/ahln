@@ -1,5 +1,5 @@
 // User.ts
-export interface Mqtt_Topic {
+export interface MqttTopic {
   id: number;
   createdAt: Date;
   updatedAt: Date;

@@ -27,6 +27,9 @@ import relativeCustomerRoute from './user/relative.customer.route';
 import contactUsRoute from './adminstration/contact.us.route';
 import auditTrailRoute from './logs/audit.trail.route';
 import notificationRoute from './logs/notification.route';
+import systemLogRoute from './logs/system.log.route';
+import mqttTopicRoute from './logs/mqtt.topic.route';
+import mqttLogRoute from './logs/mqtt.log.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -64,6 +67,9 @@ const mountRoutes = (app: Express) => {
 
   app.use('/api/audit-trail', auditTrailRoute);
   app.use('/api/notification', notificationRoute);
+  app.use('/api/system-log', systemLogRoute);
+  app.use('/api/mqtt-topic', mqttTopicRoute);
+  app.use('/api/mqtt-log', mqttLogRoute);
 };
 
 export default mountRoutes;

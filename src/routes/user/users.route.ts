@@ -41,7 +41,7 @@ router.get(
 router.put(
   '/update',
   verifyToken,
-  authorize(['update_user']),
+  // authorize(['update_user']),
   uploadUserImage,
   updateUserValidator,
   updateUser,

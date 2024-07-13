@@ -34,6 +34,7 @@ const notification_route_1 = __importDefault(require("./logs/notification.route"
 const system_log_route_1 = __importDefault(require("./logs/system.log.route"));
 const mqtt_topic_route_1 = __importDefault(require("./logs/mqtt.topic.route"));
 const mqtt_log_route_1 = __importDefault(require("./logs/mqtt.log.route"));
+const pin_route_1 = __importDefault(require("./user/pin.route"));
 const mountRoutes = (app) => {
     app.use('/api/users', users_route_1.default);
     app.use('/api/auth', auth_route_1.default);
@@ -66,6 +67,7 @@ const mountRoutes = (app) => {
     app.use('/api/system-log', system_log_route_1.default);
     app.use('/api/mqtt-topic', mqtt_topic_route_1.default);
     app.use('/api/mqtt-log', mqtt_log_route_1.default);
+    app.use('/api/pin', pin_route_1.default);
 };
 exports.default = mountRoutes;
 //# sourceMappingURL=index.js.map

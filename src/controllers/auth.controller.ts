@@ -11,7 +11,6 @@ import i18n from '../config/i18n';
 import UserDevicesModel from '../models/users/user.devices.model';
 import ResponseHandler from '../utils/responsesHandler';
 import authHandler from '../utils/authHandler';
-import { uploadSingleImage } from '../middlewares/uploadSingleImage';
 
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
@@ -36,8 +35,6 @@ const sendVerificationEmail = (email: string, otp: string) => {
 
   transporter.sendMail(mailOptions);
 };
-
-export const uploadUserImage = uploadSingleImage('image');
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, user_name, phone_number, password }: User = req.body;
@@ -176,6 +173,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     await userDevicesModel.saveUserDevice(user.id, fcmToken);
   }
   const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+
   return ResponseHandler.logInSuccess(
     res,
     i18n.__('LOGIN_SUCCESS'),
@@ -188,6 +186,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       email: user.email,
       preferred_language: user.preferred_language,
       avatar: userAvatar,
+      country: user.country,
+      city: user.city,
     },
     token,
   );

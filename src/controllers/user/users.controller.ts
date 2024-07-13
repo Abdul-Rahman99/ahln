@@ -5,6 +5,7 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { User } from '../../types/user.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import authHandler from '../../utils/authHandler';
 
 const userModel = new UserModel();
 
@@ -64,10 +65,10 @@ export const getUserById = asyncHandler(
 
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.id;
     const userData: Partial<User> = req.body;
     try {
-      const updatedUser = await userModel.updateOne(userData, userId);
+      const user = await authHandler(req, res, next);
+      const updatedUser = await userModel.updateOne(userData, user);
       ResponseHandler.success(
         res,
         i18n.__('USER_UPDATED_SUCCESSFULLY'),

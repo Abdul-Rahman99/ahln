@@ -39,7 +39,7 @@ router.get(
 );
 
 router.put(
-  '/update/:id',
+  '/update',
   verifyToken,
   authorize(['update_user']),
   uploadUserImage,

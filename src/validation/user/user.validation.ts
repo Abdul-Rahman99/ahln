@@ -43,7 +43,6 @@ export const createUserValidator = [
 ];
 
 export const updateUserValidator = [
-  check('id').isString().withMessage(i18n.__('INVALID_ID')),
   body('email').optional().isEmail().withMessage(i18n.__('EMAIL_REQUIRED')),
   body('user_name').optional().notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
   body('password')

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePassword = exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = exports.uploadUserImage = void 0;
+exports.updatePassword = exports.updatePasswordWithOTP = exports.resendOtpAndUpdateDB = exports.logout = exports.currentUser = exports.login = exports.verifyEmail = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -14,7 +14,6 @@ const i18n_1 = __importDefault(require("../config/i18n"));
 const user_devices_model_1 = __importDefault(require("../models/users/user.devices.model"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const authHandler_1 = __importDefault(require("../utils/authHandler"));
-const uploadSingleImage_1 = require("../middlewares/uploadSingleImage");
 const userModel = new user_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const sendVerificationEmail = (email, otp) => {
@@ -35,7 +34,6 @@ const sendVerificationEmail = (email, otp) => {
     };
     transporter.sendMail(mailOptions);
 };
-exports.uploadUserImage = (0, uploadSingleImage_1.uploadSingleImage)('image');
 exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, user_name, phone_number, password } = req.body;
     const emailExists = await userModel.emailExists(email);
@@ -128,6 +126,8 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         email: user.email,
         preferred_language: user.preferred_language,
         avatar: userAvatar,
+        country: user.country,
+        city: user.city,
     }, token);
 });
 exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {

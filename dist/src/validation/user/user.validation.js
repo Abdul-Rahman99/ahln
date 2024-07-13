@@ -40,7 +40,6 @@ exports.createUserValidator = [
     validatorMiddleware_1.default,
 ];
 exports.updateUserValidator = [
-    (0, express_validator_1.check)('id').isString().withMessage(i18n_1.default.__('INVALID_ID')),
     (0, express_validator_1.body)('email').optional().isEmail().withMessage(i18n_1.default.__('EMAIL_REQUIRED')),
     (0, express_validator_1.body)('user_name').optional().notEmpty().withMessage(i18n_1.default.__('NAME_REQUIRED')),
     (0, express_validator_1.body)('password')

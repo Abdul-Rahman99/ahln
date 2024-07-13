@@ -6,6 +6,7 @@ import { User } from '../../types/user.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import authHandler from '../../utils/authHandler';
+import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 
 const userModel = new UserModel();
 
@@ -66,18 +67,28 @@ export const getUserById = asyncHandler(
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userData: Partial<User> = req.body;
-    try {
-      const user = await authHandler(req, res, next);
-      const updatedUser = await userModel.updateOne(userData, user);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_UPDATED_SUCCESSFULLY'),
-        updatedUser,
-      );
-    } catch (error: any) {
-      next(error);
-      ResponseHandler.badRequest(res, error.message);
-    }
+    uploadSingleImage('image')(req, res, async (err: any) => {
+      if (err) {
+        return ResponseHandler.badRequest(res, err.message);
+      }
+
+      if (req.file) {
+        userData.avatar = req.file.filename;
+      }
+
+      try {
+        const user = await authHandler(req, res, next);
+        const updatedUser = await userModel.updateOne(userData, user);
+        ResponseHandler.success(
+          res,
+          i18n.__('USER_UPDATED_SUCCESSFULLY'),
+          updatedUser,
+        );
+      } catch (error: any) {
+        next(error);
+        ResponseHandler.badRequest(res, error.message);
+      }
+    });
   },
 );
 

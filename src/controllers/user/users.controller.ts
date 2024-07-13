@@ -66,11 +66,11 @@ export const getUserById = asyncHandler(
 
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userData: Partial<User> = req.body;
     uploadSingleImage('image')(req, res, async (err: any) => {
       if (err) {
         return ResponseHandler.badRequest(res, err.message);
       }
+      const userData: Partial<User> = req.body;
 
       if (req.file) {
         userData.avatar = req.file.filename;
@@ -79,6 +79,7 @@ export const updateUser = asyncHandler(
       try {
         const user = await authHandler(req, res, next);
         const updatedUser = await userModel.updateOne(userData, user);
+
         ResponseHandler.success(
           res,
           i18n.__('USER_UPDATED_SUCCESSFULLY'),

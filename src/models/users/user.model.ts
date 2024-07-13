@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '../../types/user.type';
 import db from '../../config/database';
-import bcrypt from 'bcrypt';
 import pool from '../../config/database';
 
 class UserModel {
@@ -162,14 +161,12 @@ class UserModel {
             key !== 'id' &&
             key !== 'createdAt'
           ) {
-            if (key === 'password' && u.password) {
-              queryParams.push(bcrypt.hashSync(u.password, 10)); // Hash the password if provided
-            } else if (key === 'email' && u.email) {
+            if (key === 'email' && u.email) {
               queryParams.push(u.email.toLowerCase()); // Convert email to lowercase
             } else {
               queryParams.push(u[key as keyof User]);
+              return `${key}=$${paramIndex++}`;
             }
-            return `${key}=$${paramIndex++}`;
           }
           return null;
         })
@@ -183,6 +180,7 @@ class UserModel {
       const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
+      result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${u.avatar}`;
 
       return result.rows[0] as User;
     } catch (error) {

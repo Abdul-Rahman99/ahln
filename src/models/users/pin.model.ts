@@ -1,6 +1,6 @@
 import { PIN } from '../../types/pin.type';
 import db from '../../config/database';
-
+import moment from 'moment-timezone';
 class PINModel {
   // create PIN
   async createPIN(pinData: Partial<PIN>, user: string): Promise<PIN> {
@@ -164,6 +164,7 @@ class PINModel {
       connection.release();
     }
   }
+
   async checkPIN(passcode: string, box_id: string): Promise<boolean> {
     const connection = await db.connect();
     try {
@@ -189,19 +190,14 @@ class PINModel {
         .split(',')
         .map((item: string) => item.trim());
 
-      // gte current UTC time and adjust for +4 hours (UAE time)
-      const currentTime = new Date();
-      const currentUAETime = new Date(
-        currentTime.getTime() + 4 * 60 * 60 * 1000,
-      );
-      const currentDay = currentUAETime.getDay().toString(); // Sunday = 0, Saturday = 6
+      const currentTime = moment().tz('Asia/Dubai');
+      const currentDay = currentTime.day().toString();
 
       if (!parsedDayRange.includes(currentDay)) {
         return false;
       }
 
-      const currentTotalMin =
-        currentUAETime.getHours() * 60 + currentUAETime.getMinutes();
+      const currentTotalMin = currentTime.hours() * 60 + currentTime.minutes();
 
       for (let i = 0; i < parsedTimeRange.length; i += 2) {
         const startTimeStr = parsedTimeRange[i];

@@ -30,7 +30,7 @@ import notificationRoute from './logs/notification.route';
 import systemLogRoute from './logs/system.log.route';
 import mqttTopicRoute from './logs/mqtt.topic.route';
 import mqttLogRoute from './logs/mqtt.log.route';
-// import pinRoute from './user/pin.route';
+import pinRoute from './user/pin.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -72,7 +72,7 @@ const mountRoutes = (app: Express) => {
   app.use('/api/mqtt-topic', mqttTopicRoute);
   app.use('/api/mqtt-log', mqttLogRoute);
 
-  // app.use('/api/pin', pinRoute);
+  app.use('/api/pin', pinRoute);
 };
 
 export default mountRoutes;

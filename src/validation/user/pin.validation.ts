@@ -15,9 +15,6 @@ export const createPinValidation = [
       (req as any).token = token;
       return true;
     }),
-  body('reciepent_email')
-    .notEmpty()
-    .withMessage(i18n.__('RECIEPENT_EMAIL_REQUIRED')),
   body('title').notEmpty().withMessage(i18n.__('TITLE_REQUIRED')),
   body('time_range').notEmpty().withMessage(i18n.__('TIME_RANGE_REQUIRED')),
   body('day_range').notEmpty().withMessage(i18n.__('DAY_RANGE_REQUIRED')),

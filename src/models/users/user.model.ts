@@ -180,7 +180,7 @@ class UserModel {
       const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
-      result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${u.avatar}`;
+      result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${result.rows[0].avatar}`;
 
       return result.rows[0] as User;
     } catch (error) {

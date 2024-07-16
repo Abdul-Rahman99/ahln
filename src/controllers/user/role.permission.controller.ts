@@ -3,6 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 import RolePermissionModel from '../../models/users/role.permission.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const rolePermissionModel = new RolePermissionModel();
 
@@ -20,6 +23,9 @@ export const assignPermissionToRole = async (
       permission_id,
     );
     if (isAssigned) {
+      const user = await authHandler(req, res, next);
+      const source = 'assignPermissionToRole';
+      systemLog.createSystemLog(user, 'Role Already Assigned To User', source);
       return ResponseHandler.badRequest(
         res,
         i18n.__('ROLE_ALREADY_ASSIGNED_TO_USER'),
@@ -34,6 +40,9 @@ export const assignPermissionToRole = async (
       role_id,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'assignPermissionToRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -53,6 +62,13 @@ export const removePermissionFromRole = async (
       permission_id,
     );
     if (!isAssigned) {
+      const user = await authHandler(req, res, next);
+      const source = 'removePermissionFromRole';
+      systemLog.createSystemLog(
+        user,
+        'Permission Not Assigned To User',
+        source,
+      );
       return ResponseHandler.badRequest(
         res,
         i18n.__('PERMISSION_NOT_ASSIGNED_TO_USER'),
@@ -66,6 +82,9 @@ export const removePermissionFromRole = async (
       role_id,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'removePermissionFromRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -85,6 +104,9 @@ export const getPermissionsByRole = async (
 
     const roleIdNumber = Number(roleId);
     if (isNaN(roleIdNumber)) {
+      const user = await authHandler(req, res, next);
+      const source = 'getPermissionsByRole';
+      systemLog.createSystemLog(user, 'Role Id Must Be Valid Number', source);
       return ResponseHandler.badRequest(
         res,
         i18n.__('ROLE_ID_MUST_BE_VALID_NUMBER'),
@@ -99,6 +121,9 @@ export const getPermissionsByRole = async (
       permissions,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getPermissionsByRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
   }

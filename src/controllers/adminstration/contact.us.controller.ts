@@ -6,7 +6,8 @@ import i18n from '../../config/i18n';
 import ContactUsModel from '../../models/adminstration/contact.us.model';
 import { ContactUs } from '../../types/contact.us.type';
 import authHandler from '../../utils/authHandler';
-
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
 const contactUsModel = new ContactUsModel();
 
 export const createContactUs = asyncHandler(
@@ -26,6 +27,9 @@ export const createContactUs = asyncHandler(
         createdContactUs,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createContactUs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -42,6 +46,9 @@ export const getAllContactUs = asyncHandler(
         contactUs,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllContactUs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -61,6 +68,9 @@ export const getOneContactUs = asyncHandler(
         contactUs,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getOneContactUs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -82,6 +92,9 @@ export const updateContactUs = asyncHandler(
         updatedContactUs,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateContactUs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -100,6 +113,9 @@ export const deleteContactUs = asyncHandler(
         deletedContactUs,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteContactUs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

@@ -16,6 +16,8 @@ const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
 const addressModel = new AddressModel();
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +30,9 @@ export const createUserBox = asyncHandler(
         createdUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createUserBox';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -44,6 +49,9 @@ export const getAllUserBoxes = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllUserBoxes';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -61,6 +69,9 @@ export const getUserBoxById = asyncHandler(
         userBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserBoxById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -82,6 +93,9 @@ export const updateUserBox = asyncHandler(
         updatedUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateUserBox';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -99,6 +113,9 @@ export const deleteUserBox = asyncHandler(
         deletedUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteUserBox';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -120,6 +137,9 @@ export const getUserBoxesByUserId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserBoxesByUserId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -136,6 +156,9 @@ export const getUserBoxesByBoxId = asyncHandler(
         userBoxes,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserBoxesByBoxId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -154,6 +177,9 @@ export const assignBoxToUser = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'assignBoxToUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -170,15 +196,14 @@ export const userAssignBoxToHimself = asyncHandler(
       const newAddress: Address = req.body;
 
       console.log(req.body);
-      
+
       const result = await addressModel.createAddress(newAddress);
       console.log(result);
-      
 
       const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
         user,
         serialNumber,
-        result.id
+        result.id,
       );
       ResponseHandler.success(
         res,
@@ -186,6 +211,9 @@ export const userAssignBoxToHimself = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'userAssignBoxToHimself';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -200,6 +228,9 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       const { boxId, email, relation } = req.body;
       const boxExist = await boxModel.getOne(boxId);
       if (!boxExist) {
+        const user = await authHandler(req, res, next);
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
       }
       const assignedUserBox = await userBoxModel.assignRelativeUser(
@@ -209,6 +240,9 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       );
       const relative_customer = await userModel.findByEmail(email);
       if (!relative_customer) {
+        const user = await authHandler(req, res, next);
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
         ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
       } else {
         const relativeCustomerData = {
@@ -225,6 +259,9 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         assignedUserBox,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'userAssignBoxToRelativeUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

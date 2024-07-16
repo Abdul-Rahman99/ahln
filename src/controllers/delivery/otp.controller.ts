@@ -5,6 +5,9 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const otpModel = new OTPModel();
 
@@ -20,6 +23,9 @@ export const createOTP = asyncHandler(
         createdOTP,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createOTP';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -36,6 +42,9 @@ export const getAllOTPs = asyncHandler(
         otps,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllOPTs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.internalError(res, error.message);
     }
@@ -49,6 +58,9 @@ export const getOTPById = asyncHandler(
       const otp = await otpModel.getOne(Number(otpId));
       ResponseHandler.success(res, i18n.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getOTPById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -67,6 +79,9 @@ export const updateOTP = asyncHandler(
         updatedOTP,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateOPT';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -84,6 +99,9 @@ export const deleteOTP = asyncHandler(
         deletedOTP,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteOTP';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -101,6 +119,9 @@ export const getOTPsByUser = asyncHandler(
         otps,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getOPTsByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -122,9 +143,15 @@ export const checkOTP = asyncHandler(
           box_locker_string: verifiedOTP,
         });
       } else {
+        const user = await authHandler(req, res, next);
+        const source = 'checkOTP';
+        systemLog.createSystemLog(user, 'Invalid Otp', source);
         ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       }
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'checkOTP';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -138,6 +165,9 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       const trackingNumber = req.body.trackingNumber.toLowerCase();
       const boxId = req.body.boxId;
       if (!trackingNumber) {
+        const user = await authHandler(req, res, next);
+        const source = 'checkTrackingNumberAndUpdateStatus';
+        systemLog.createSystemLog(user, 'Tracking number Required', source);
         ResponseHandler.badRequest(res, i18n.__('TRACKING_NUMBER_REQUIRED'));
         return;
       }
@@ -149,7 +179,11 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         box_locker_string: result[0],
         pin: result[1],
       });
-    } catch (error: any) {next(error);
+    } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'checkTrackingNumberAndUpdateStatus';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },

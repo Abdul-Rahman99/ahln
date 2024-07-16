@@ -6,6 +6,9 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 const shippingCompanyModel = new ShippingCompanyModel();
 
 export const createShippingCompany = asyncHandler(
@@ -25,6 +28,9 @@ export const createShippingCompany = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createShippingCompany';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -43,6 +49,9 @@ export const getAllShippingCompanies = asyncHandler(
         shippingCompanies,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllShippingCompanies';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -59,6 +68,9 @@ export const getShippingCompanyById = asyncHandler(
       );
 
       if (!shippingCompany) {
+        const user = await authHandler(req, res, next);
+        const source = 'uploadImage';
+        systemLog.createSystemLog(user, 'Shipping Company Not Found', source);
         return ResponseHandler.badRequest(
           res,
           i18n.__('SHIPPING_COMPANY_NOT_FOUND'),
@@ -71,6 +83,9 @@ export const getShippingCompanyById = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getShippingCompanyById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -95,6 +110,9 @@ export const updateShippingCompany = asyncHandler(
         updatedShippingCompany,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateShippingCompany';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -113,6 +131,9 @@ export const deleteShippingCompany = asyncHandler(
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteShippingCompany';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }

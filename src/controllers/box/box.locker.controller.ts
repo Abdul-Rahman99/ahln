@@ -6,6 +6,10 @@ import { BoxLocker } from '../../types/box.locker.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const boxLockerModel = new BoxLockerModel();
 
 export const createBoxLocker = asyncHandler(
@@ -20,6 +24,9 @@ export const createBoxLocker = asyncHandler(
         createdBoxLocker,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createBoxLocker';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -36,6 +43,9 @@ export const getAllBoxLockers = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllBoxLocker';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -53,6 +63,9 @@ export const getBoxLockerById = asyncHandler(
         boxLocker,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getBoxLockerById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -74,6 +87,9 @@ export const updateBoxLocker = asyncHandler(
         updatedBoxLocker,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateBoxLocker';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -93,6 +109,9 @@ export const deleteBoxLocker = asyncHandler(
         deletedBoxLocker,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteBoxLocker';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -111,6 +130,9 @@ export const getAllLockersById = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllBoxLockersById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

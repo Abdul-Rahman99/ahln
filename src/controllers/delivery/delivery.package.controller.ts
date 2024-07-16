@@ -9,6 +9,9 @@ import UserModel from '../../models/users/user.model';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 import authHandler from '../../utils/authHandler';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
+
 const userModel = new UserModel();
 const shippingCompanyModel = new ShippingCompanyModel();
 
@@ -51,6 +54,9 @@ export const createDeliveryPackage = asyncHandler(
         createdDeliveryPackage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createDeliveryPackage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -67,6 +73,9 @@ export const getAllDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllDeliveryPackages';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -85,6 +94,9 @@ export const getDeliveryPackageById = asyncHandler(
         deliveryPackage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getDeliveryPackageById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -125,6 +137,9 @@ export const updateDeliveryPackage = asyncHandler(
         updatedDeliveryPackage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateDeliveryPackage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -143,6 +158,9 @@ export const deleteDeliveryPackage = asyncHandler(
         deletedDeliveryPackage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteDeliveryPackage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -158,12 +176,18 @@ export const getUserDeliveryPackages = asyncHandler(
       const token = req.headers.authorization?.replace('Bearer ', '');
 
       if (!token) {
+        const user = await authHandler(req, res, next);
+        const source = 'getUserDeliveryPackages';
+        systemLog.createSystemLog(user, 'Token Not Provided', source);
         return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
       }
 
       const user = await userModel.findByToken(token);
 
       if (!user) {
+        const user = await authHandler(req, res, next);
+        const source = 'getUserDeliveryPackages';
+        systemLog.createSystemLog(user, 'Token Invalid', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       }
 
@@ -178,6 +202,9 @@ export const getUserDeliveryPackages = asyncHandler(
         deliveryPackages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserDeliveryPackages';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

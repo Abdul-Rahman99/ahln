@@ -4,7 +4,9 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { MqttTopic } from '../../types/mqtt.topic.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
-
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 const mqttTopicModel = new MqttTopicModel();
 
 export const createMqttTopic = asyncHandler(
@@ -19,6 +21,9 @@ export const createMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'createMqttTopic';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -35,6 +40,9 @@ export const getAllMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllMqttTopic';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -54,6 +62,9 @@ export const getOneMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getOneMqttTopic';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -73,6 +84,9 @@ export const deleteOneMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteOneMqttTopic';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

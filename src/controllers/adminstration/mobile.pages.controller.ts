@@ -6,6 +6,10 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import MobilePagesModel from '../../models/adminstration/mobile.pages.model';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const mobilePagesModel = new MobilePagesModel();
 
 export const createMobilePage = asyncHandler(
@@ -21,6 +25,9 @@ export const createMobilePage = asyncHandler(
         mobilePage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createMobilePage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -38,6 +45,9 @@ export const getAllMobilePages = asyncHandler(
         mobilePages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllMobilePages';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -49,11 +59,12 @@ export const getMobilePageByTitle = asyncHandler(
     const { title } = req.body;
 
     try {
-      const mobilePage = await mobilePagesModel.getMobilePageByTitle(
-        title
-      );
+      const mobilePage = await mobilePagesModel.getMobilePageByTitle(title);
 
       if (!mobilePage) {
+        const user = await authHandler(req, res, next);
+        const source = 'getMobilePageByTitle';
+        systemLog.createSystemLog(user, 'Mobile Page Not Found', source);
         return ResponseHandler.badRequest(
           res,
           i18n.__('MOBILE_PAGE_NOT_FOUND'),
@@ -66,6 +77,9 @@ export const getMobilePageByTitle = asyncHandler(
         mobilePage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getMobilePageByTitle';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -89,6 +103,9 @@ export const updateMobilePage = asyncHandler(
         updatedMobilePage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateMobilePage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }
@@ -110,6 +127,9 @@ export const deleteMobilePage = asyncHandler(
         deletedMobilePage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteMobilePage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       return ResponseHandler.badRequest(res, error.message);
     }

@@ -5,6 +5,10 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import AddressModel from '../../models/box/address.model';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const addressModel = new AddressModel();
 
 export const createAddress = asyncHandler(
@@ -18,6 +22,9 @@ export const createAddress = asyncHandler(
         createdAddress,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'createAddress';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -34,6 +41,9 @@ export const getAllAddresses = asyncHandler(
         addresses,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllAddresses';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -51,6 +61,9 @@ export const getAddressById = asyncHandler(
         address,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAddressById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -72,6 +85,9 @@ export const updateAddress = asyncHandler(
         updatedAddress,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateAddress';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -89,6 +105,9 @@ export const deleteAddress = asyncHandler(
         deletedAddress,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteAddress';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

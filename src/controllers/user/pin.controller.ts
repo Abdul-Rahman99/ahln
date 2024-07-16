@@ -6,9 +6,11 @@ import ResponseHandler from '../../utils/responsesHandler';
 import PINModel from '../../models/users/pin.model';
 import authHandler from '../../utils/authHandler';
 import BoxModel from '../../models/box/box.model';
+import SystemLogModel from '../../models/logs/system.log.model';
 
 const boxModel = new BoxModel();
 const pinModel = new PINModel();
+const systemLog = new SystemLogModel();
 
 export const createPin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,6 +19,9 @@ export const createPin = asyncHandler(
       const user = await authHandler(req, res, next);
       const boxExist = await boxModel.getOne(newPin.box_id);
       if (!boxExist) {
+        const user = await authHandler(req, res, next);
+        const source = 'createPin';
+        systemLog.createSystemLog(user, 'Box Id Invalid', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_ID_INVALID'));
       }
       const createdPin = await pinModel.createPIN(newPin, user);
@@ -26,6 +31,9 @@ export const createPin = asyncHandler(
         createdPin,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'createPin';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -43,6 +51,9 @@ export const getAllPinByUser = asyncHandler(
         pins,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllPinByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -57,6 +68,9 @@ export const getOnePinByUser = asyncHandler(
       const pin = await pinModel.getOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_RETRIEVED_SUCCESSFULLY'), pin);
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getOnePinByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -71,6 +85,9 @@ export const deleteOnePinByUser = asyncHandler(
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteOnePinByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -86,6 +103,9 @@ export const updateOnePinByUser = asyncHandler(
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateOnePinByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -106,12 +126,22 @@ export const checkPIN = asyncHandler(
           checkPinResult,
         );
       } else {
+        const user = await authHandler(req, res, next);
+        const source = 'checkPIN';
+        systemLog.createSystemLog(
+          user,
+          'Pin Invalid Or Out Of Time Range',
+          source,
+        );
         ResponseHandler.badRequest(
           res,
           i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
         );
       }
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'checkPIN';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
       next(error);
     }

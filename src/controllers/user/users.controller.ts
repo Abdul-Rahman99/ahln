@@ -7,6 +7,8 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import authHandler from '../../utils/authHandler';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
 
 const userModel = new UserModel();
 
@@ -21,6 +23,9 @@ export const createUser = asyncHandler(
         createdUser,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -37,6 +42,9 @@ export const getAllUsers = asyncHandler(
         users,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllUsers';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -49,6 +57,9 @@ export const getUserById = asyncHandler(
     try {
       const user = await userModel.getOne(userId);
       if (!user) {
+        const user = await authHandler(req, res, next);
+        const source = 'getUserById';
+        systemLog.createSystemLog(user, 'User Not Found', source);
         ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
       } else {
         ResponseHandler.success(
@@ -58,6 +69,9 @@ export const getUserById = asyncHandler(
         );
       }
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -68,6 +82,9 @@ export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     uploadSingleImage('image')(req, res, async (err: any) => {
       if (err) {
+        const user = await authHandler(req, res, next);
+        const source = 'updateUser';
+        systemLog.createSystemLog(user, 'Image Not Uploaded to user', source);
         return ResponseHandler.badRequest(res, err.message);
       }
       const userData: Partial<User> = req.body;
@@ -86,6 +103,9 @@ export const updateUser = asyncHandler(
           updatedUser,
         );
       } catch (error: any) {
+        const user = await authHandler(req, res, next);
+        const source = 'updateUser';
+        systemLog.createSystemLog(user, (error as Error).message, source);
         next(error);
         ResponseHandler.badRequest(res, error.message);
       }
@@ -104,6 +124,9 @@ export const deleteUser = asyncHandler(
         deletedUser,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

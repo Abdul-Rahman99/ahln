@@ -7,6 +7,10 @@ import BoxImageModel from '../../models/box/box.image.model';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 // import UserModel from '../../models/users/user.model';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const boxImageModel = new BoxImageModel();
 // const userModel = new UserModel();
 
@@ -14,9 +18,15 @@ export const uploadBoxImage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     uploadSingleImage('image')(req, res, async (err: any) => {
       if (err) {
+        const user = await authHandler(req, res, next);
+        const source = 'uploadBoxImage';
+        systemLog.createSystemLog(user, (err as Error).message, source);
         return ResponseHandler.badRequest(res, err.message);
       }
       if (!req.file) {
+        const user = await authHandler(req, res, next);
+        const source = 'uploadBoxImage';
+        systemLog.createSystemLog(user, 'No File Provided', source);
         return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
       }
 
@@ -35,6 +45,9 @@ export const uploadBoxImage = asyncHandler(
           createdBoxImage,
         );
       } catch (error: any) {
+        const user = await authHandler(req, res, next);
+        const source = 'uploadBoxImage';
+        systemLog.createSystemLog(user, (error as Error).message, source);
         next(error);
         ResponseHandler.badRequest(res, error.message);
       }
@@ -52,6 +65,9 @@ export const getAllBoxImages = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllBoxImages';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -64,6 +80,9 @@ export const getBoxImageById = asyncHandler(
       const boxImageId = parseInt(req.params.id, 10);
       const boxImage = await boxImageModel.getBoxImageById(boxImageId);
       if (!boxImage) {
+        const user = await authHandler(req, res, next);
+        const source = 'getBoxImageById';
+        systemLog.createSystemLog(user, 'Box Image Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_IMAGE_NOT_FOUND'));
       }
       ResponseHandler.success(
@@ -72,6 +91,9 @@ export const getBoxImageById = asyncHandler(
         boxImage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getBoxImageById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -97,6 +119,9 @@ export const updateBoxImage = asyncHandler(
         updatedBoxImage,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateBoxImage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -110,6 +135,9 @@ export const deleteBoxImage = asyncHandler(
       await boxImageModel.deleteBoxImage(boxImageId);
       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteBoxImage';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -136,6 +164,9 @@ export const deleteBoxImage = asyncHandler(
 //         boxImages,
 //       );
 //     } catch (error: any) {
+//  const user = await authHandler(req, res, next);
+//  const source = 'getBoxImagesByUser';
+//  systemLog.createSystemLog(user, (error as Error).message, source);
 //        next(error);
 //       ResponseHandler.badRequest(
 //         res,
@@ -157,6 +188,9 @@ export const getBoxImagesByBoxId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getBoxImagesByBoxId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -174,6 +208,9 @@ export const getBoxImagesByPackageId = asyncHandler(
         boxImages,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getBoxImagesByPackageId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

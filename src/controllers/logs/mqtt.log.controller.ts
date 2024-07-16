@@ -5,7 +5,9 @@ import { MqttLog } from '../../types/mqtt.log.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import MqttTopicModel from '../../models/logs/mqtt.topic.model';
-
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 const mqttLogModel = new MqttLogModel();
 const mqttTopic = new MqttTopicModel();
 
@@ -31,6 +33,9 @@ export const createMqttLog = asyncHandler(
         createdMqttLog,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'createMqttLog';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -47,6 +52,9 @@ export const getAllMqttLogs = asyncHandler(
         mqttLogs,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllMqttLogs';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -64,6 +72,9 @@ export const getMqttLog = asyncHandler(
         mqttLog,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getMqttLog';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -81,6 +92,9 @@ export const deleteMqttLog = asyncHandler(
         mqttLog,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteMqttLog';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

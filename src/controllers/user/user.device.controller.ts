@@ -4,6 +4,10 @@ import UserDevicesModel from '../../models/users/user.devices.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const userDevicesModel = new UserDevicesModel();
 
 export const registerDevice = async (
@@ -25,6 +29,9 @@ export const registerDevice = async (
       savedDevice,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'registerDevice';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -48,6 +55,9 @@ export const deleteDevice = async (
       deletedDevice,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'deleteDevice';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -73,6 +83,9 @@ export const updateDevice = async (
       updatedDevice,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'updateDevice';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -94,6 +107,9 @@ export const getDevicesByUser = async (
       devices,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getDevicesByUser';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -109,6 +125,9 @@ export const getUserDeviceById = async (
     const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
 
     if (!device) {
+      const user = await authHandler(req, res, next);
+      const source = 'getUserDeviceById';
+      systemLog.createSystemLog(user, 'User Device Not Found', source);
       return ResponseHandler.badRequest(res, i18n.__('USER_DEVICE_NOT_FOUND'));
     }
 
@@ -118,6 +137,9 @@ export const getUserDeviceById = async (
       device,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getUserDeviceById';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }

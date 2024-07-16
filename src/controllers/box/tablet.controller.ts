@@ -4,6 +4,9 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { Tablet } from '../../types/tablet.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const tabletModel = new TabletModel();
 
@@ -18,6 +21,9 @@ export const createTablet = asyncHandler(
         createdTablet,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'createTablet';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -34,6 +40,9 @@ export const getAllTablets = asyncHandler(
         tablets,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllTablets';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -51,6 +60,9 @@ export const getTabletById = asyncHandler(
         tablet,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getTabletById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -69,6 +81,9 @@ export const updateTablet = asyncHandler(
         updatedTablet,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateTablet';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -86,6 +101,9 @@ export const deleteTablet = asyncHandler(
         deletedTablet,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteTablet';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

@@ -4,16 +4,23 @@ import db from '../../config/database';
 class SystemLogModel {
   // create new System Log
   async createSystemLog(
-    systemLog: Partial<SystemLog>,
     user: string,
+    error: string,
+    source: string,
   ): Promise<SystemLog> {
     const connection = await db.connect();
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = ['createdAt', 'updatedAt', 'user_id', 'error'];
-      const sqlParams = [createdAt, updatedAt, user, systemLog.error];
+      const sqlFields = [
+        'createdAt',
+        'updatedAt',
+        'user_id',
+        'error',
+        'source',
+      ];
+      const sqlParams = [createdAt, updatedAt, user, error, source];
       const sql = `INSERT INTO System_Log (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;

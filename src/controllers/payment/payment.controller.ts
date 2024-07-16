@@ -8,6 +8,9 @@ import ResponseHandler from '../../utils/responsesHandler';
 import CardModel from '../../models/payment/card.model';
 import authHandler from '../../utils/authHandler';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
+
 const cardModel = new CardModel();
 const paymentModel = new PaymentModel();
 
@@ -25,6 +28,9 @@ export const createPayment = asyncHandler(
         newPayment.billing_date as unknown as string,
       );
       if (!billingDate) {
+        const user = await authHandler(req, res, next);
+        const source = 'createPayment';
+        systemLog.createSystemLog(user, 'Invalid Billing Date Format', source);
         return ResponseHandler.badRequest(
           res,
           i18n.__('INVALID_BILLING_DATE_FORMAT'),
@@ -43,6 +49,9 @@ export const createPayment = asyncHandler(
         createdPayment,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createPayment';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -59,6 +68,9 @@ export const getAllPayments = asyncHandler(
         payments,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllPayments';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -70,6 +82,9 @@ export const getPaymentById = asyncHandler(
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
+        const user = await authHandler(req, res, next);
+        const source = 'getPaymentById';
+        systemLog.createSystemLog(user, 'Invalid Payment Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_PAYMENT_ID'));
       }
       const payment = await paymentModel.getPaymentById(paymentId);
@@ -79,6 +94,9 @@ export const getPaymentById = asyncHandler(
         payment,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getPaymentById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -90,6 +108,9 @@ export const updatePayment = asyncHandler(
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
+        const user = await authHandler(req, res, next);
+        const source = 'updatePayment';
+        systemLog.createSystemLog(user, 'Invalid Payment Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_PAYMENT_ID'));
       }
 
@@ -100,6 +121,13 @@ export const updatePayment = asyncHandler(
           paymentData.billing_date as unknown as string,
         );
         if (!billingDate) {
+          const user = await authHandler(req, res, next);
+          const source = 'updatePayment';
+          systemLog.createSystemLog(
+            user,
+            'Invalid Billing Date Format',
+            source,
+          );
           return ResponseHandler.badRequest(
             res,
             i18n.__('INVALID_BILLING_DATE_FORMAT'),
@@ -118,6 +146,9 @@ export const updatePayment = asyncHandler(
         updatedPayment,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updatePayment';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -129,6 +160,9 @@ export const deletePayment = asyncHandler(
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
+        const user = await authHandler(req, res, next);
+        const source = 'deletePayment';
+        systemLog.createSystemLog(user, 'Invalid Payment Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_PAYMENT_ID'));
       }
       const deletedPayment = await paymentModel.deletePayment(paymentId);
@@ -138,6 +172,9 @@ export const deletePayment = asyncHandler(
         deletedPayment,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deletePayment';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -157,6 +194,9 @@ export const getPaymentsByUser = asyncHandler(
         payments,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getPaymentsByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

@@ -62,7 +62,8 @@ class PINModel {
   async getAllPinByUser(user: string): Promise<PIN[]> {
     const connection = await db.connect();
     try {
-      const sql = 'SELECT * FROM PIN WHERE user_id=$1';
+      const sql =
+        'SELECT b.box_label, PIN.reciepent_email, PIN.title, PIN.is_active, PIN.time_range, PIN.day_range, PIN.box_id, PIN.user_id, PIN.type FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1';
       const result = await connection.query(sql, [user]);
 
       return result.rows as PIN[];

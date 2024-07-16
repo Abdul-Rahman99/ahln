@@ -31,6 +31,7 @@ class SalesInvoiceModel {
   // Create new SalesInvoice
   async createSalesInvoice(
     newSalesInvoice: Partial<SalesInvoice>,
+    user: string,
   ): Promise<SalesInvoice> {
     const connection = await db.connect();
 
@@ -57,7 +58,7 @@ class SalesInvoiceModel {
         newSalesInvoice.purchase_date,
         createdAt,
         updatedAt,
-        newSalesInvoice.sales_id,
+        user,
       ];
 
       const sql = `INSERT INTO sales_invoice (${sqlFields.join(', ')}) 

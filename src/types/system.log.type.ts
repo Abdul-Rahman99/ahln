@@ -5,4 +5,5 @@ export interface SystemLog {
   updatedAt: Date;
   user_id: string;
   error: string;
+  source: string;
 }

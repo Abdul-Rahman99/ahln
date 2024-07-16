@@ -5,6 +5,10 @@ import RoleModel from '../../models/users/role.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
+
 const roleModel = new RoleModel();
 
 export const createRole = async (
@@ -17,6 +21,9 @@ export const createRole = async (
     const role = await roleModel.create(title, description);
     ResponseHandler.success(res, i18n.__('ROLE_CREATED_SUCCESSFULLY'), role);
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'createRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -35,6 +42,9 @@ export const getAllRoles = async (
       roles,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getAllRoles';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -50,6 +60,9 @@ export const getRoleById = async (
     const role = await roleModel.getById(Number(id));
     ResponseHandler.success(res, i18n.__('ROLE_RETRIEVED_SUCCESSFULLY'), role);
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getRoleById';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -66,6 +79,9 @@ export const updateRole = async (
     const role = await roleModel.update(Number(id), title, description);
     ResponseHandler.success(res, i18n.__('ROLE_UPDATED_SUCCESSFULLY'), role);
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'updateRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -81,6 +97,9 @@ export const deleteRole = async (
     const role = await roleModel.delete(Number(id));
     ResponseHandler.success(res, i18n.__('ROLE_DELETED_SUCCESSFULLY'), role);
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'deleteRole';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }

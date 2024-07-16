@@ -7,6 +7,8 @@ import i18n from '../../config/i18n';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 import authHandler from '../../utils/authHandler';
 
+import SystemLogModel from '../../models/logs/system.log.model';
+const systemLog = new SystemLogModel();
 const dpFavListModel = new DPFavListModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
@@ -19,6 +21,13 @@ export const createDPFavList = async (
     const dpFavListData = req.body;
     const del = await deliveryPackageModel.getOne(req.body.delivery_package_id);
     if (!del) {
+      const user = await authHandler(req, res, next);
+      const source = 'createDPFavList';
+      systemLog.createSystemLog(
+        user,
+        'Delivery Package Does Not Exist',
+        source,
+      );
       return ResponseHandler.badRequest(
         res,
         i18n.__('DELIVERY_PACKAGE_DOES_NOT_EXIST'),
@@ -29,6 +38,9 @@ export const createDPFavList = async (
       dpFavListData.delivery_package_id,
     );
     if (fav) {
+      const user = await authHandler(req, res, next);
+      const source = 'createDPFavList';
+      systemLog.createSystemLog(user, 'Delivery Package Already Exist', source);
       return ResponseHandler.badRequest(
         res,
         i18n.__('DELIVERY_PACKAGE_ALREADY_EXISTS'),
@@ -47,6 +59,9 @@ export const createDPFavList = async (
       newDPFavList,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'createDPFavList';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -62,6 +77,9 @@ export const createDPFavList = async (
 //         dpFavLists,
 //       );
 //     } catch (error: any) {  next(error);
+// const user = await authHandler(req, res, next);
+// const source = 'getAllDPFavLists';
+// systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
 //
 //     }
@@ -83,6 +101,9 @@ export const createDPFavList = async (
 //         updatedDPFavList,
 //       );
 //     } catch (error: any) {next(error);
+// const user = await authHandler(req, res, next);
+// const source = 'updateDPFavList';
+// systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
 //
 //     }
@@ -100,6 +121,9 @@ export const deleteDPFavList = asyncHandler(
         deletedDPFavList,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteDPFavList';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -119,6 +143,9 @@ export const getDPFavListsByUser = asyncHandler(
         dpFavLists,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getDPFavListByUser';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

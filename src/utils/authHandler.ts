@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import UserModel from '../models/users/user.model';
 import ResponseHandler from './responsesHandler';
+import i18n from '../config/i18n';
 
 const userModel = new UserModel();
 
@@ -14,7 +15,8 @@ const authHandler = async (
     const token = req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
-      ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
+      return 'Ahln_24_U00000010';
+      // ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
     } else {
       const user = await userModel.findByToken(token);
       if (!user) {

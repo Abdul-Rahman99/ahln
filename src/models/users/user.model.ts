@@ -339,6 +339,7 @@ class UserModel {
     try {
       const sql = `SELECT * FROM users WHERE email = $1 AND register_otp = $2`;
       const result = await connection.query(sql, [email, otp]);
+
       return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);

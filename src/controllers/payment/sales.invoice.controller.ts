@@ -10,6 +10,9 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
 import BoxModel from '../../models/box/box.model';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const salesInvoiceModel = new SalesInvoiceModel();
 const userModel = new UserModel();
@@ -27,20 +30,31 @@ export const createSalesInvoice = asyncHandler(
     try {
       const newSalesInvoicePayload: SalesInvoicePayload = req.body;
 
+      const user = await authHandler(req, res, next);
+
       // Check if the user exists
-      const user = await userModel.getOne(newSalesInvoicePayload.customer_id);
-      if (!user) {
+      const userExist = await userModel.getOne(user);
+      if (!userExist) {
+        const user = await authHandler(req, res, next);
+        const source = 'createSalesInvoice';
+        systemLog.createSystemLog(user, 'User Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
       }
 
       const box = await boxModel.getOne(newSalesInvoicePayload.box_id);
       if (!box) {
+        const user = await authHandler(req, res, next);
+        const source = 'createSalesInvoice';
+        systemLog.createSystemLog(user, 'Box Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_NOT_FOUND'));
       }
 
       // Parse the purchase_date from MM-DD-YYYY format
       const parsedDate = parseDate(newSalesInvoicePayload.purchase_date);
       if (!parsedDate) {
+        const user = await authHandler(req, res, next);
+        const source = 'createSalesInvoice';
+        systemLog.createSystemLog(user, 'Invalid Date Format', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_DATE_FORMAT'));
       }
 
@@ -50,8 +64,10 @@ export const createSalesInvoice = asyncHandler(
         purchase_date: parsedDate,
       };
 
-      const createdSalesInvoice =
-        await salesInvoiceModel.createSalesInvoice(newSalesInvoice);
+      const createdSalesInvoice = await salesInvoiceModel.createSalesInvoice(
+        newSalesInvoice,
+        user,
+      );
 
       ResponseHandler.success(
         res,
@@ -59,6 +75,9 @@ export const createSalesInvoice = asyncHandler(
         createdSalesInvoice,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createSalesInvoice';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -75,6 +94,9 @@ export const getAllSalesInvoices = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllSalesInvoices';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -92,6 +114,9 @@ export const getSalesInvoiceById = asyncHandler(
         salesInvoice,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getSalesInvoiceById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -106,6 +131,9 @@ export const updateSalesInvoice = asyncHandler(
       // Parse the purchase_date from MM-DD-YYYY format
       const parsedDate = parseDate(newSalesInvoicePayload.purchase_date);
       if (!parsedDate) {
+        const user = await authHandler(req, res, next);
+        const source = 'updateSalesInvoice';
+        systemLog.createSystemLog(user, 'Invalid Date Format', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_DATE_FORMAT'));
       }
 
@@ -125,6 +153,9 @@ export const updateSalesInvoice = asyncHandler(
         updatedSalesInvoice,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateSalesInvoice';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -143,6 +174,9 @@ export const deleteSalesInvoice = asyncHandler(
         deletedSalesInvoice,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteSalesInvoice';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -165,6 +199,9 @@ export const getSalesInvoicesByUserId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getSalesInvoiceByUserId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -187,6 +224,9 @@ export const getSalesInvoicesBySalesId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getSalesInvoicesBySalesId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -205,6 +245,9 @@ export const getSalesInvoicesByBoxId = asyncHandler(
         salesInvoices,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getSalesInvoicesByBoxId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

@@ -10,11 +10,12 @@ const systemLogModel = new SystemLogModel();
 export const createSystemLog = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newSystemLog: SystemLog = req.body;
+      const { error, source } = req.body;
       const user = await authHandler(req, res, next);
       const createdSystemLog = await systemLogModel.createSystemLog(
-        newSystemLog,
         user,
+        error,
+        source,
       );
       ResponseHandler.success(
         res,
@@ -38,6 +39,9 @@ export const getAllSystemLogs = asyncHandler(
         systemLogs,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllSystemLog';
+      systemLogModel.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -57,6 +61,9 @@ export const getSystemLogById = asyncHandler(
         systemLog,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getSystemLogById';
+      systemLogModel.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -78,6 +85,9 @@ export const updateSystemLog = asyncHandler(
         updatedTablet,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateSystemLog';
+      systemLogModel.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -97,6 +107,9 @@ export const deleteSystemLogById = asyncHandler(
         systemLog,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteSystemLogById';
+      systemLogModel.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

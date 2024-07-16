@@ -3,6 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 import PermissionModel from '../../models/users/permission.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const permissionModel = new PermissionModel();
 
@@ -20,6 +23,9 @@ export const createPermission = async (
       permission,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'createPermission';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -38,6 +44,9 @@ export const getAllPermissions = async (
       permissions,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getAllPermissions';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -57,6 +66,9 @@ export const getPermissionById = async (
       permission,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'getPermissionById';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -81,6 +93,9 @@ export const updatePermission = async (
       permission,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'updatePermission';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }
@@ -101,6 +116,9 @@ export const deletePermission = async (
       permission,
     );
   } catch (error: any) {
+    const user = await authHandler(req, res, next);
+    const source = 'deletePermission';
+    systemLog.createSystemLog(user, (error as Error).message, source);
     next(error);
     ResponseHandler.badRequest(res, error.message);
   }

@@ -6,7 +6,9 @@ import ResponseHandler from '../../utils/responsesHandler';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 // import UserModel from '../../models/users/user.model';
 import { RelativeCustomer } from '../../types/relative.customer.type';
+import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 // const userModel = new UserModel();
 const relativeCustomerModel = new RelativeCustomerModel();
@@ -26,6 +28,9 @@ export const createRelativeCustomer = asyncHandler(
         createdRelativeCustomer,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'createRelativeCustomer';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -45,6 +50,9 @@ export const getAllRelativeCustomers = asyncHandler(
         relativeCustomers,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllRelativeCustomers';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -56,6 +64,9 @@ export const getRelativeCustomerById = asyncHandler(
     try {
       const relativeCustomerId = parseInt(req.params.id, 10);
       if (isNaN(relativeCustomerId)) {
+         const user = await authHandler(req, res, next);
+         const source = 'getRelativeCustomerById';
+         systemLog.createSystemLog(user, 'Invalid Card Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_CARD_ID'));
       }
       const relativeCustomer =
@@ -66,6 +77,9 @@ export const getRelativeCustomerById = asyncHandler(
         relativeCustomer,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'getRelativeCustomerById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -93,6 +107,9 @@ export const updateRelativeCustomer = asyncHandler(
         updatedSalesInvoice,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'updateRelativeCustomer';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }
@@ -112,6 +129,9 @@ export const deleteRelativeCustomer = asyncHandler(
         deletedRelativeCustomer,
       );
     } catch (error: any) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteRelativeCustomer';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, error.message);
     }

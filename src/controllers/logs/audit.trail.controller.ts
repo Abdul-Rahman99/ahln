@@ -4,6 +4,9 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import SystemLogModel from '../../models/logs/system.log.model';
+import authHandler from '../../utils/authHandler';
+const systemLog = new SystemLogModel();
 
 const auditTrailModel = new AuditTrailModel();
 
@@ -17,6 +20,9 @@ export const getAllAuditTrail = asyncHandler(
         auditTrails,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAllAuditTrail';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -34,6 +40,9 @@ export const getAuditTrailById = asyncHandler(
         auditTrail,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'getAuditTrailById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }
@@ -51,6 +60,9 @@ export const deleteAuditTrailById = asyncHandler(
         auditTrail,
       );
     } catch (error) {
+      const user = await authHandler(req, res, next);
+      const source = 'deleteAuditTrailById';
+      systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
     }

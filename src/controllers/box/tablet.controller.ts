@@ -7,6 +7,8 @@ import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const tabletModel = new TabletModel();
 
@@ -19,6 +21,13 @@ export const createTablet = asyncHandler(
         res,
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
         createdTablet,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createTablet';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);
@@ -80,6 +89,13 @@ export const updateTablet = asyncHandler(
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
         updatedTablet,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateTablet';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error) {
       const user = await authHandler(req, res, next);
       const source = 'updateTablet';
@@ -99,6 +115,13 @@ export const deleteTablet = asyncHandler(
         res,
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
         deletedTablet,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteTablet';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);

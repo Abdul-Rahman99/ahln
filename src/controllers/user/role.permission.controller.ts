@@ -6,6 +6,8 @@ import i18n from '../../config/i18n';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const rolePermissionModel = new RolePermissionModel();
 
@@ -38,6 +40,13 @@ export const assignPermissionToRole = async (
       res,
       i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
       role_id,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'assignPermissionToRole';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -80,6 +89,13 @@ export const removePermissionFromRole = async (
       res,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       role_id,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'removePermissionFromRole';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);

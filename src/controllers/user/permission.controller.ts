@@ -6,6 +6,8 @@ import i18n from '../../config/i18n';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const permissionModel = new PermissionModel();
 
@@ -21,6 +23,13 @@ export const createPermission = async (
       res,
       i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
       permission,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'createPermission';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -92,6 +101,13 @@ export const updatePermission = async (
       i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
       permission,
     );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'updatePermission';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
+    );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
     const source = 'updatePermission';
@@ -114,6 +130,13 @@ export const deletePermission = async (
       res,
       i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
       permission,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'deletePermission';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);

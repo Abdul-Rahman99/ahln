@@ -6,6 +6,8 @@ import i18n from '../../config/i18n';
 import BoxImageModel from '../../models/box/box.image.model';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 // import UserModel from '../../models/users/user.model';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
@@ -43,6 +45,13 @@ export const uploadBoxImage = asyncHandler(
           res,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           createdBoxImage,
+        );
+        const auditUser = await authHandler(req, res, next);
+        const action = 'uploadSingleImage';
+        auditTrail.createAuditTrail(
+          auditUser,
+          action,
+          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
         );
       } catch (error: any) {
         const user = await authHandler(req, res, next);
@@ -118,6 +127,13 @@ export const updateBoxImage = asyncHandler(
         i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
         updatedBoxImage,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateBoxImage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateBoxImage';
@@ -134,6 +150,13 @@ export const deleteBoxImage = asyncHandler(
       const boxImageId = parseInt(req.params.id, 10);
       await boxImageModel.deleteBoxImage(boxImageId);
       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteBoxImage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'deleteBoxImage';

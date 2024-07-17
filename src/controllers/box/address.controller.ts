@@ -8,6 +8,8 @@ import AddressModel from '../../models/box/address.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const addressModel = new AddressModel();
 
@@ -16,10 +18,18 @@ export const createAddress = asyncHandler(
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress);
+
       ResponseHandler.success(
         res,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
         createdAddress,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createAddress';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);
@@ -79,10 +89,18 @@ export const updateAddress = asyncHandler(
         addressData,
         addressId,
       );
+
       ResponseHandler.success(
         res,
         i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
         updatedAddress,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateAddress';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);
@@ -99,10 +117,18 @@ export const deleteAddress = asyncHandler(
     try {
       const addressId = parseInt(req.params.id, 10);
       const deletedAddress = await addressModel.deleteOne(addressId);
+
       ResponseHandler.success(
         res,
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
         deletedAddress,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteAddress';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);

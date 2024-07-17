@@ -7,6 +7,9 @@ import BoxScreenMessagesModel from '../../models/adminstration/box.screen.messag
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 const boxScreenMessagesModel = new BoxScreenMessagesModel();
 const systemLog = new SystemLogModel();
 export const createBoxScreenMessage = asyncHandler(
@@ -27,6 +30,13 @@ export const createBoxScreenMessage = asyncHandler(
         res,
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
         boxScreenMessage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createBoxScreenMessage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -111,6 +121,13 @@ export const updateBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
         updatedBoxScreenMessage,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateBoxScreenMessage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateBoxScreenMessage';
@@ -128,10 +145,18 @@ export const deleteBoxScreenMessage = asyncHandler(
     try {
       const deletedBoxScreenMessage =
         await boxScreenMessagesModel.deleteBoxScreenMessage(parseInt(id, 10));
+
       ResponseHandler.success(
         res,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
         deletedBoxScreenMessage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteBoxScreenMessage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

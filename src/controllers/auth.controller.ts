@@ -12,6 +12,9 @@ import UserDevicesModel from '../models/users/user.devices.model';
 import ResponseHandler from '../utils/responsesHandler';
 import authHandler from '../utils/authHandler';
 import SystemLogModel from '../models/logs/system.log.model';
+import AuditTrailModel from '../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 const systemLog = new SystemLogModel();
 
 const userModel = new UserModel();
@@ -90,12 +93,9 @@ export const register = asyncHandler(
     // Update user token in the database
     await userModel.updateUserToken(user.id, token);
 
-    return ResponseHandler.logInSuccess(
-      res,
-      i18n.__('REGISTER_SUCCESS'),
-      null,
-      token,
-    );
+    ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
+    const action = 'register';
+    auditTrail.createAuditTrail(user.id, action, i18n.__('REGISTER_SUCCESS'));
   },
 );
 
@@ -222,7 +222,7 @@ export const login = asyncHandler(
     }
     const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
 
-    return ResponseHandler.logInSuccess(
+    ResponseHandler.logInSuccess(
       res,
       i18n.__('LOGIN_SUCCESS'),
       {
@@ -239,6 +239,8 @@ export const login = asyncHandler(
       },
       token,
     );
+    const action = 'login';
+    auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
   },
 );
 

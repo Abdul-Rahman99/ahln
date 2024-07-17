@@ -11,6 +11,9 @@ import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
 const cardModel = new CardModel();
 
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 const parseExpireDate = (dateString: string): Date | null => {
   const [month, year] = dateString.split('-');
   const date = new Date(`${year}-${month}-01`); // Use the first day of the month as default
@@ -45,6 +48,13 @@ export const createCard = asyncHandler(
         res,
         i18n.__('CARD_CREATED_SUCCESSFULLY'),
         createdCard,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createCard';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CARD_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -141,6 +151,13 @@ export const updateCard = asyncHandler(
         i18n.__('CARD_UPDATED_SUCCESSFULLY'),
         updatedCard,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateCard';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CARD_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateCard';
@@ -166,6 +183,13 @@ export const deleteCard = asyncHandler(
         res,
         i18n.__('CARD_DELETED_SUCCESSFULLY'),
         deletedCard,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteCard';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CARD_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

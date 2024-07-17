@@ -13,6 +13,8 @@ import BoxModel from '../../models/box/box.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const salesInvoiceModel = new SalesInvoiceModel();
 const userModel = new UserModel();
@@ -73,6 +75,13 @@ export const createSalesInvoice = asyncHandler(
         res,
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
         createdSalesInvoice,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createSalesInvoice';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -152,6 +161,13 @@ export const updateSalesInvoice = asyncHandler(
         i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateSalesInvoice';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateSalesInvoice';
@@ -172,6 +188,13 @@ export const deleteSalesInvoice = asyncHandler(
         res,
         i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
         deletedSalesInvoice,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteSalesInvoice';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

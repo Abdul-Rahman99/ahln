@@ -7,6 +7,8 @@ import PINModel from '../../models/users/pin.model';
 import authHandler from '../../utils/authHandler';
 import BoxModel from '../../models/box/box.model';
 import SystemLogModel from '../../models/logs/system.log.model';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const boxModel = new BoxModel();
 const pinModel = new PINModel();
@@ -29,6 +31,13 @@ export const createPin = asyncHandler(
         res,
         i18n.__('PIN_CREATED_SUCCESSFULLY'),
         createdPin,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createPin';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PIN_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);
@@ -84,6 +93,13 @@ export const deleteOnePinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteOnePinByUser';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PIN_DELETED_SUCCESSFULLY'),
+      );
     } catch (error) {
       const user = await authHandler(req, res, next);
       const source = 'deleteOnePinByUser';
@@ -102,6 +118,13 @@ export const updateOnePinByUser = asyncHandler(
       const pinData: Partial<PIN> = req.body;
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateOnePinByUser';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error) {
       const user = await authHandler(req, res, next);
       const source = 'updateOnePinByUser';

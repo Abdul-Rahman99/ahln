@@ -6,10 +6,15 @@ import bcrypt from 'bcrypt';
 import i18n from '../config/i18n';
 import ResponseHandler from '../utils/responsesHandler';
 import validatorMiddleware from '../middlewares/validatorMiddleware';
+import multer from 'multer';
+
+const storage = multer.memoryStorage(); // Using memory storage for form data
+const upload = multer({ storage });
 
 const userModel = new UserModel();
 
 export const registerValidator = [
+  upload.none(),
   body('email')
     .notEmpty()
     .withMessage(i18n.__('EMAIL_REQUIRED'))

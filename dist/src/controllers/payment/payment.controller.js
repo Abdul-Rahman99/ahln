@@ -10,6 +10,8 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const card_model_1 = __importDefault(require("../../models/payment/card.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const systemLog = new system_log_model_1.default();
 const cardModel = new card_model_1.default();
 const paymentModel = new payment_model_1.default();
 const parseBillingDate = (dateString) => {
@@ -22,6 +24,9 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         const newPayment = req.body;
         const billingDate = parseBillingDate(newPayment.billing_date);
         if (!billingDate) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'createPayment';
+            systemLog.createSystemLog(user, 'Invalid Billing Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_BILLING_DATE_FORMAT'));
         }
         newPayment.billing_date = billingDate;
@@ -33,6 +38,9 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'), createdPayment);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createPayment';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -43,6 +51,9 @@ exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllPayments';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -51,12 +62,18 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getPaymentById';
+            systemLog.createSystemLog(user, 'Invalid Payment Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_PAYMENT_ID'));
         }
         const payment = await paymentModel.getPaymentById(paymentId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_RETRIEVED_SUCCESSFULLY'), payment);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getPaymentById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -65,12 +82,18 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'updatePayment';
+            systemLog.createSystemLog(user, 'Invalid Payment Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_PAYMENT_ID'));
         }
         const paymentData = req.body;
         if (paymentData.billing_date) {
             const billingDate = parseBillingDate(paymentData.billing_date);
             if (!billingDate) {
+                const user = await (0, authHandler_1.default)(req, res, next);
+                const source = 'updatePayment';
+                systemLog.createSystemLog(user, 'Invalid Billing Date Format', source);
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_BILLING_DATE_FORMAT'));
             }
             paymentData.billing_date = billingDate;
@@ -79,6 +102,9 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_UPDATED_SUCCESSFULLY'), updatedPayment);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updatePayment';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -87,12 +113,18 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'deletePayment';
+            systemLog.createSystemLog(user, 'Invalid Payment Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_PAYMENT_ID'));
         }
         const deletedPayment = await paymentModel.deletePayment(paymentId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'), deletedPayment);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deletePayment';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -104,6 +136,9 @@ exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) =
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getPaymentsByUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

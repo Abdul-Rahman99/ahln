@@ -10,6 +10,8 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const uploadSingleImage_1 = require("../../middlewares/uploadSingleImage");
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     const newUser = req.body;
@@ -18,6 +20,9 @@ exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'), createdUser);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -28,6 +33,9 @@ exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USERS_RETRIEVED_SUCCESSFULLY'), users);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllUsers';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -37,6 +45,9 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const user = await userModel.getOne(userId);
         if (!user) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getUserById';
+            systemLog.createSystemLog(user, 'User Not Found', source);
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
         }
         else {
@@ -44,16 +55,22 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
-    const userData = req.body;
     (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, async (err) => {
         if (err) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'updateUser';
+            systemLog.createSystemLog(user, 'Image Not Uploaded to user', source);
             return responsesHandler_1.default.badRequest(res, err.message);
         }
+        const userData = req.body;
         if (req.file) {
             userData.avatar = req.file.filename;
         }
@@ -63,6 +80,9 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
             responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
         }
         catch (error) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'updateUser';
+            systemLog.createSystemLog(user, error.message, source);
             next(error);
             responsesHandler_1.default.badRequest(res, error.message);
         }
@@ -75,6 +95,9 @@ exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

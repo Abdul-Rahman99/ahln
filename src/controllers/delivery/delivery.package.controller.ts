@@ -8,6 +8,8 @@ import ResponseHandler from '../../utils/responsesHandler';
 import UserModel from '../../models/users/user.model';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 import authHandler from '../../utils/authHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
@@ -52,6 +54,13 @@ export const createDeliveryPackage = asyncHandler(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         createdDeliveryPackage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createDeliveryPackage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -136,6 +145,13 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         updatedDeliveryPackage,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateDeliveryPackage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateDeliveryPackage';
@@ -156,6 +172,13 @@ export const deleteDeliveryPackage = asyncHandler(
         res,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         deletedDeliveryPackage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteDeliveryPackage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

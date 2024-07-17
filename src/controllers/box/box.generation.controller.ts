@@ -5,6 +5,8 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { BoxGeneration } from '../../types/box.generation.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
@@ -22,6 +24,13 @@ export const createBoxGeneration = asyncHandler(
         res,
         i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
         createdBoxGeneration,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createBoxGeneration';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -86,6 +95,13 @@ export const updateBoxGeneration = asyncHandler(
         i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
         updatedBoxGeneration,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateBoxGeneration';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateBoxGeneration';
@@ -106,6 +122,13 @@ export const deleteBoxGeneration = asyncHandler(
         res,
         i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
         deletedBoxGeneration,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteBoxGeneration';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

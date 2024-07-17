@@ -7,6 +7,9 @@ import i18n from '../../config/i18n';
 
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 const systemLog = new SystemLogModel();
 
 const roleModel = new RoleModel();
@@ -20,6 +23,13 @@ export const createRole = async (
     const { title, description } = req.body;
     const role = await roleModel.create(title, description);
     ResponseHandler.success(res, i18n.__('ROLE_CREATED_SUCCESSFULLY'), role);
+    const auditUser = await authHandler(req, res, next);
+    const action = 'createRole';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('ROLE_CREATED_SUCCESSFULLY'),
+    );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
     const source = 'createRole';
@@ -78,6 +88,13 @@ export const updateRole = async (
     const { title, description } = req.body;
     const role = await roleModel.update(Number(id), title, description);
     ResponseHandler.success(res, i18n.__('ROLE_UPDATED_SUCCESSFULLY'), role);
+    const auditUser = await authHandler(req, res, next);
+    const action = 'updateRole';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('ROLE_UPDATED_SUCCESSFULLY'),
+    );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
     const source = 'updateRole';
@@ -96,6 +113,13 @@ export const deleteRole = async (
     const { id } = req.params;
     const role = await roleModel.delete(Number(id));
     ResponseHandler.success(res, i18n.__('ROLE_DELETED_SUCCESSFULLY'), role);
+    const auditUser = await authHandler(req, res, next);
+    const action = 'deleteRole';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('ROLE_DELETED_SUCCESSFULLY'),
+    );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
     const source = 'deleteRole';

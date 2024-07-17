@@ -14,6 +14,8 @@ const i18n_1 = __importDefault(require("../config/i18n"));
 const user_devices_model_1 = __importDefault(require("../models/users/user.devices.model"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const authHandler_1 = __importDefault(require("../utils/authHandler"));
+const system_log_model_1 = __importDefault(require("../models/logs/system.log.model"));
+const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const sendVerificationEmail = (email, otp) => {
@@ -34,14 +36,20 @@ const sendVerificationEmail = (email, otp) => {
     };
     transporter.sendMail(mailOptions);
 };
-exports.register = (0, asyncHandler_1.default)(async (req, res) => {
+exports.register = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, user_name, phone_number, password } = req.body;
     const emailExists = await userModel.emailExists(email);
     if (emailExists) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'register';
+        systemLog.createSystemLog(user, 'Email already Registerd', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('EMAIL_ALREADY_REGISTERED'));
     }
     const phoneExists = await userModel.phoneExists(phone_number);
     if (phoneExists) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'phoneExists';
+        systemLog.createSystemLog(user, 'Phone Already Exists', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('PHONE_ALREADY_REGISTERED'));
     }
     const hashedPassword = bcrypt_1.default.hashSync(password, 10);
@@ -60,21 +68,33 @@ exports.register = (0, asyncHandler_1.default)(async (req, res) => {
     await userModel.updateUserToken(user.id, token);
     return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
 });
-exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
+exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, otp, fcmToken } = req.body;
     const emailLower = email.toLowerCase();
     const currentUser = await userModel.findByEmail(emailLower);
     if (!currentUser) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'verifyEmail';
+        systemLog.createSystemLog(user, 'User Not Found', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
     }
     if (currentUser.token !== currentUser.token) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'verifyEmail';
+        systemLog.createSystemLog(user, 'Invalid Token', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
     }
     if (currentUser.email.toLowerCase() !== emailLower) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'verifyEmail';
+        systemLog.createSystemLog(user, 'Unauthorized email verification', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
     }
     const isOtpValid = await userModel.verifyOtp(emailLower, otp);
     if (!isOtpValid) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'verifyEmail';
+        systemLog.createSystemLog(user, 'Invalid Otp', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'));
     }
     await userModel.updateUser(emailLower, {
@@ -95,19 +115,28 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
         preferred_language: currentUser.preferred_language,
     }, token);
 });
-exports.login = (0, asyncHandler_1.default)(async (req, res) => {
+exports.login = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, password, fcmToken } = req.body;
     const user = await userModel.findByEmail(email);
     if (!user) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'login';
+        systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const isPasswordValid = bcrypt_1.default.compareSync(password, user.password);
     if (!isPasswordValid) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'login';
+        systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const token = jsonwebtoken_1.default.sign({ email, password }, config_1.default.JWT_SECRET_KEY);
     await userModel.updateUserToken(user.id, token);
     if (!user.is_active || !user.email_verified) {
+        const userAuth = await (0, authHandler_1.default)(req, res, next);
+        const source = 'login';
+        systemLog.createSystemLog(userAuth, 'User Inactive or Unverified', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_INACTIVE_OR_UNVERIFIED'), {
             is_active: user.is_active,
             email_verified: user.email_verified,
@@ -146,10 +175,13 @@ exports.resendOtpAndUpdateDB = (0, asyncHandler_1.default)(async (req, res) => {
     sendVerificationEmail(email, otp);
     return responsesHandler_1.default.success(res, i18n_1.default.__('OTP_SENT_SUCCESSFULLY'));
 });
-exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res) => {
+exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, otp, newPassword } = req.body;
     const isValidOTP = await userModel.checkResetPasswordOTP(email, otp);
     if (!isValidOTP) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updatePasswordWithOTP';
+        systemLog.createSystemLog(user, 'Invalid Otp', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'));
     }
     const hashedPassword = bcrypt_1.default.hashSync(newPassword, 10);
@@ -162,10 +194,16 @@ exports.updatePassword = (0, asyncHandler_1.default)(async (req, res, next) => {
     const user = await (0, authHandler_1.default)(req, res, next);
     const result = await userModel.getOne(user);
     if (!result || !result.password) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updatePassword';
+        systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const isPasswordValid = bcrypt_1.default.compareSync(password, result.password);
     if (!isPasswordValid) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updatePassword';
+        systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const hashedPassword = bcrypt_1.default.hashSync(newPassword, 10);

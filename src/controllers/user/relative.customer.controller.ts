@@ -4,13 +4,13 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
-// import UserModel from '../../models/users/user.model';
 import { RelativeCustomer } from '../../types/relative.customer.type';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
-// const userModel = new UserModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 
 export const createRelativeCustomer = asyncHandler(
@@ -26,6 +26,13 @@ export const createRelativeCustomer = asyncHandler(
         res,
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
         createdRelativeCustomer,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createRelativeCustomer';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -64,9 +71,9 @@ export const getRelativeCustomerById = asyncHandler(
     try {
       const relativeCustomerId = parseInt(req.params.id, 10);
       if (isNaN(relativeCustomerId)) {
-         const user = await authHandler(req, res, next);
-         const source = 'getRelativeCustomerById';
-         systemLog.createSystemLog(user, 'Invalid Card Id', source);
+        const user = await authHandler(req, res, next);
+        const source = 'getRelativeCustomerById';
+        systemLog.createSystemLog(user, 'Invalid Card Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_CARD_ID'));
       }
       const relativeCustomer =
@@ -106,6 +113,13 @@ export const updateRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateRelativeCustomer';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateRelativeCustomer';
@@ -127,6 +141,13 @@ export const deleteRelativeCustomer = asyncHandler(
         res,
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteRelativeCustomer';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

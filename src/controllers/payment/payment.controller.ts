@@ -7,6 +7,8 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import CardModel from '../../models/payment/card.model';
 import authHandler from '../../utils/authHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
@@ -47,6 +49,13 @@ export const createPayment = asyncHandler(
         res,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         createdPayment,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createPayment';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -145,6 +154,13 @@ export const updatePayment = asyncHandler(
         i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
         updatedPayment,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updatePayment';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updatePayment';
@@ -170,6 +186,13 @@ export const deletePayment = asyncHandler(
         res,
         i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
         deletedPayment,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deletePayment';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

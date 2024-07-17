@@ -5,6 +5,8 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { BoxLocker } from '../../types/box.locker.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
@@ -22,6 +24,13 @@ export const createBoxLocker = asyncHandler(
         res,
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
         createdBoxLocker,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createBoxLocker';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -86,6 +95,13 @@ export const updateBoxLocker = asyncHandler(
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
         updatedBoxLocker,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateBoxLocker';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateBoxLocker';
@@ -107,6 +123,13 @@ export const deleteBoxLocker = asyncHandler(
         res,
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
         deletedBoxLocker,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteBoxLocker';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

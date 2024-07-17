@@ -11,6 +11,8 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 const shippingCompanyModel = new shipping_company_model_1.default();
 const deliveryPackageModel = new delivery_package_model_1.default();
@@ -37,6 +39,9 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), createdDeliveryPackage);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createDeliveryPackage';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -47,6 +52,9 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllDeliveryPackages';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -58,6 +66,9 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'), deliveryPackage);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getDeliveryPackageById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -86,6 +97,9 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateDeliveryPackage';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -97,6 +111,9 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteDeliveryPackage';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -106,16 +123,25 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, n
         const { status } = req.query;
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (!token) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getUserDeliveryPackages';
+            systemLog.createSystemLog(user, 'Token Not Provided', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
         }
         const user = await userModel.findByToken(token);
         if (!user) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getUserDeliveryPackages';
+            systemLog.createSystemLog(user, 'Token Invalid', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
         }
         const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user, status);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserDeliveryPackages';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

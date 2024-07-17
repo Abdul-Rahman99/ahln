@@ -13,18 +13,25 @@ const relative_customer_model_1 = __importDefault(require("../../models/users/re
 const box_model_1 = __importDefault(require("../../models/box/box.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const address_model_1 = __importDefault(require("../../models/box/address.model"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
+const notificationModel = new notification_model_1.default();
 const userModel = new user_model_1.default();
 const userBoxModel = new user_box_model_1.default();
 const relativeCustomerModel = new relative_customer_model_1.default();
 const boxModel = new box_model_1.default();
 const addressModel = new address_model_1.default();
-const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const systemLog = new system_log_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newUserBox = req.body;
         const createdUserBox = await userBoxModel.createUserBox(newUserBox);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'), createdUserBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createUserBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -67,6 +74,9 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const userBoxData = req.body;
         const updatedUserBox = await userBoxModel.updateOne(userBoxData, userBoxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'), updatedUserBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateUserBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -81,6 +91,9 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const userBoxId = req.params.id;
         const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'), deletedUserBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteUserBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -123,6 +136,10 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => 
         const { userId, boxId } = req.body;
         const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
+        notificationModel.createNotification('assignBoxToUser', i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), null, userId);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'assignBoxToUser';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -137,11 +154,12 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         const user = await (0, authHandler_1.default)(req, res, next);
         const { serialNumber } = req.body;
         const newAddress = req.body;
-        console.log(req.body);
         const result = await addressModel.createAddress(newAddress);
-        console.log(result);
         const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(user, serialNumber, result.id);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
+        notificationModel.createNotification('userAssignBoxToHimself', i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), null, user);
+        const action = 'userAssignBoxToHimself';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -180,6 +198,9 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
             relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
         }
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'), assignedUserBox);
+        notificationModel.createNotification('userAssignBoxToRelativeUser', i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'), null, user);
+        const action = 'userAssignBoxToRelativeUser';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

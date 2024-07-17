@@ -8,11 +8,12 @@ import ResponseHandler from '../../utils/responsesHandler';
 import CardModel from '../../models/payment/card.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
-
+import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
-const systemLog = new SystemLogModel();
 
+const notificationModel = new NotificationModel();
+const auditTrail = new AuditTrailModel();
+const systemLog = new SystemLogModel();
 const cardModel = new CardModel();
 const paymentModel = new PaymentModel();
 
@@ -44,16 +45,22 @@ export const createPayment = asyncHandler(
       if (!card) {
         throw new Error(`No Card Found, please add a card`);
       }
-      const createdPayment = await paymentModel.createPayment(newPayment);
+      const user = await authHandler(req, res, next);
+      const createdPayment = await paymentModel.createPayment(newPayment, user);
       ResponseHandler.success(
         res,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         createdPayment,
       );
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'checkOTP',
+        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'createPayment';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
       );
@@ -115,6 +122,8 @@ export const getPaymentById = asyncHandler(
 export const updatePayment = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const user = await authHandler(req, res, next);
+
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
         const user = await authHandler(req, res, next);
@@ -130,7 +139,6 @@ export const updatePayment = asyncHandler(
           paymentData.billing_date as unknown as string,
         );
         if (!billingDate) {
-          const user = await authHandler(req, res, next);
           const source = 'updatePayment';
           systemLog.createSystemLog(
             user,
@@ -153,6 +161,12 @@ export const updatePayment = asyncHandler(
         res,
         i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
         updatedPayment,
+      );
+      notificationModel.createNotification(
+        'updatePayment',
+        i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
+        null,
+        user,
       );
       const auditUser = await authHandler(req, res, next);
       const action = 'updatePayment';

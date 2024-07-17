@@ -13,14 +13,22 @@ import ResponseHandler from '../utils/responsesHandler';
 import authHandler from '../utils/authHandler';
 import SystemLogModel from '../models/logs/system.log.model';
 import AuditTrailModel from '../models/logs/audit.trail.model';
+import NotificationModel from '../models/logs/notification.model';
+
+const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
-
 const systemLog = new SystemLogModel();
-
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 
-const sendVerificationEmail = (email: string, otp: string) => {
+const sendVerificationEmail = async (
+  email: string,
+  otp: string,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -39,6 +47,13 @@ const sendVerificationEmail = (email: string, otp: string) => {
   };
 
   transporter.sendMail(mailOptions);
+  const user = await authHandler(req, res, next);
+  notificationModel.createNotification(
+    'updateOnePinByUser',
+    i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+    null,
+    user,
+  );
 };
 
 export const register = asyncHandler(
@@ -85,7 +100,7 @@ export const register = asyncHandler(
     await userModel.saveOtp(email, otp);
 
     // Send verification email
-    sendVerificationEmail(email, otp);
+    sendVerificationEmail(email, otp, req, res, next);
 
     // Generate JWT token
     const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
@@ -134,11 +149,11 @@ export const verifyEmail = asyncHandler(
         i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
       );
     }
+    const user = await authHandler(req, res, next);
 
     // Check if the provided OTP matches the user's OTP
     const isOtpValid = await userModel.verifyOtp(emailLower, otp);
     if (!isOtpValid) {
-      const user = await authHandler(req, res, next);
       const source = 'verifyEmail';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
@@ -158,7 +173,7 @@ export const verifyEmail = asyncHandler(
       await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
     }
 
-    return ResponseHandler.logInSuccess(
+    ResponseHandler.logInSuccess(
       res,
       i18n.__('EMAIL_VERIFIED_SUCCESS'),
       {
@@ -171,6 +186,12 @@ export const verifyEmail = asyncHandler(
         preferred_language: currentUser.preferred_language,
       },
       token,
+    );
+    notificationModel.createNotification(
+      'verifyEmail',
+      i18n.__('EMAIL_VERIFIED_SUCCESS'),
+      null,
+      user,
     );
   },
 );
@@ -259,16 +280,24 @@ export const logout = asyncHandler(
 );
 
 export const resendOtpAndUpdateDB = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await userModel.updateResetPasswordOTP(email, otp);
 
-    sendVerificationEmail(email, otp);
+    sendVerificationEmail(email, otp, req, res, next);
 
-    return ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
+    ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
+    const user = await authHandler(req, res, next);
+
+    notificationModel.createNotification(
+      'resendOtpAndUpdateDB',
+      i18n.__('OTP_SENT_SUCCESSFULLY'),
+      null,
+      user,
+    );
   },
 );
 
@@ -289,10 +318,14 @@ export const updatePasswordWithOTP = asyncHandler(
     await userModel.updateUserPassword(email, hashedPassword);
     await userModel.updateResetPasswordOTP(email, null);
 
-    return ResponseHandler.success(
-      res,
+    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
+    const user = await authHandler(req, res, next);
+
+    notificationModel.createNotification(
+      'updatePasswordWithOTP',
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
+      user,
     );
   },
 );
@@ -304,16 +337,15 @@ export const updatePassword = asyncHandler(
 
     const result = await userModel.getOne(user);
 
-    if (!result || !result.password) {
-      const user = await authHandler(req, res, next);
+    if (!password || !result.password) {
       const source = 'updatePassword';
       systemLog.createSystemLog(user, 'Invalid credentials', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+      
     }
 
     const isPasswordValid = bcrypt.compareSync(password, result.password);
     if (!isPasswordValid) {
-      const user = await authHandler(req, res, next);
       const source = 'updatePassword';
       systemLog.createSystemLog(user, 'Invalid credentials', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
@@ -322,10 +354,13 @@ export const updatePassword = asyncHandler(
     const hashedPassword = bcrypt.hashSync(newPassword, 10);
     await userModel.updateUserPassword(result.email, hashedPassword);
 
-    return ResponseHandler.success(
-      res,
+    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
+
+    notificationModel.createNotification(
+      'updatePassword',
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
+      user,
     );
   },
 );

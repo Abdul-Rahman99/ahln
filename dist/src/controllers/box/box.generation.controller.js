@@ -8,6 +8,8 @@ const box_generation_model_1 = __importDefault(require("../../models/box/box.gen
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
@@ -17,6 +19,9 @@ exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const newBoxGeneration = req.body;
         const createdBoxGeneration = await boxGenerationModel.createBoxGeneration(newBoxGeneration);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_CREATED_SUCCESSFULLY'), createdBoxGeneration);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createBoxGeneration';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -59,6 +64,9 @@ exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const boxGenerationData = req.body;
         const updatedBoxGeneration = await boxGenerationModel.updateOne(boxGenerationData, boxGenerationId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'), updatedBoxGeneration);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateBoxGeneration';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -73,6 +81,9 @@ exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const boxGenerationId = req.params.id;
         const deletedBoxGeneration = await boxGenerationModel.deleteOne(boxGenerationId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_DELETED_SUCCESSFULLY'), deletedBoxGeneration);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteBoxGeneration';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

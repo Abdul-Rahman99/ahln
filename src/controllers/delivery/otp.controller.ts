@@ -7,10 +7,12 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
+import NotificationModel from '../../models/logs/notification.model';
 
+const systemLog = new SystemLogModel();
+const notificationModel = new NotificationModel();
+const auditTrail = new AuditTrailModel();
 const otpModel = new OTPModel();
 
 export const createOTP = asyncHandler(
@@ -23,6 +25,14 @@ export const createOTP = asyncHandler(
         res,
         i18n.__('OTP_CREATED_SUCCESSFULLY'),
         createdOTP,
+      );
+      const user = await authHandler(req, res, next);
+
+      notificationModel.createNotification(
+        'createOTP',
+        i18n.__('OTP_CREATED_SUCCESSFULLY'),
+        null,
+        user,
       );
       const auditUser = await authHandler(req, res, next);
       const action = 'createOTP';
@@ -88,6 +98,12 @@ export const updateOTP = asyncHandler(
         updatedOTP,
       );
       const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'updateOTP',
+        i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+        null,
+        auditUser,
+      );
       const action = 'updateOTP';
       auditTrail.createAuditTrail(
         auditUser,
@@ -115,6 +131,12 @@ export const deleteOTP = asyncHandler(
         deletedOTP,
       );
       const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'deleteOTP',
+        i18n.__('OTP_DELTED_SUCCESSFULLY'),
+        null,
+        auditUser,
+      );
       const action = 'deleteOTP';
       auditTrail.createAuditTrail(
         auditUser,
@@ -161,12 +183,18 @@ export const checkOTP = asyncHandler(
         delivery_package_id,
         boxId,
       );
+      const user = await authHandler(req, res, next);
       if (verifiedOTP) {
         ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
           box_locker_string: verifiedOTP,
         });
+        notificationModel.createNotification(
+          'checkOTP',
+          i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+          null,
+          user,
+        );
       } else {
-        const user = await authHandler(req, res, next);
         const source = 'checkOTP';
         systemLog.createSystemLog(user, 'Invalid Otp', source);
         ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
@@ -202,6 +230,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         box_locker_string: result[0],
         pin: result[1],
       });
+      const user = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'checkTrackingNumberAndUpdateStatus',
+        i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
+        null,
+        user,
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'checkTrackingNumberAndUpdateStatus';

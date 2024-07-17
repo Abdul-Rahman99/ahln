@@ -12,10 +12,12 @@ import UserModel from '../../models/users/user.model';
 import BoxModel from '../../models/box/box.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
+import NotificationModel from '../../models/logs/notification.model';
 
+const notificationModel = new NotificationModel();
+const auditTrail = new AuditTrailModel();
+const systemLog = new SystemLogModel();
 const salesInvoiceModel = new SalesInvoiceModel();
 const userModel = new UserModel();
 const boxModel = new BoxModel();
@@ -76,10 +78,15 @@ export const createSalesInvoice = asyncHandler(
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
         createdSalesInvoice,
       );
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'createSalesInvoice',
+        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'createSalesInvoice';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
       );

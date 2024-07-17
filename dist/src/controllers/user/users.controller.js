@@ -11,6 +11,8 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const uploadSingleImage_1 = require("../../middlewares/uploadSingleImage");
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -18,6 +20,9 @@ exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const createdUser = await userModel.createUser(newUser);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'), createdUser);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createUser';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -78,6 +83,9 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
             const user = await (0, authHandler_1.default)(req, res, next);
             const updatedUser = await userModel.updateOne(userData, user);
             responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
+            const auditUser = await (0, authHandler_1.default)(req, res, next);
+            const action = 'updateUser';
+            auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'));
         }
         catch (error) {
             const user = await (0, authHandler_1.default)(req, res, next);
@@ -93,6 +101,9 @@ exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deletedUser = await userModel.deleteOne(userId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteUser';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

@@ -5,18 +5,16 @@ import asyncHandler from '../../middlewares/asyncHandler';
 import { DeliveryPackage } from '../../types/delivery.package.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
-import UserModel from '../../models/users/user.model';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
-
+import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
+
+const notificationModel = new NotificationModel();
+const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
-
-const userModel = new UserModel();
 const shippingCompanyModel = new ShippingCompanyModel();
-
 const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDeliveryPackage = asyncHandler(
@@ -54,6 +52,12 @@ export const createDeliveryPackage = asyncHandler(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         createdDeliveryPackage,
+      );
+      notificationModel.createNotification(
+        'createDeliveryPackage',
+        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        null,
+        user,
       );
       const auditUser = await authHandler(req, res, next);
       const action = 'createDeliveryPackage';
@@ -117,6 +121,7 @@ export const updateDeliveryPackage = asyncHandler(
     try {
       const deliveryPackageId = req.params.id;
       const deliveryPackageData: Partial<DeliveryPackage> = req.body;
+      const user = await authHandler(req, res, next);
 
       try {
         if (req.body.shipping_company_id) {
@@ -139,11 +144,18 @@ export const updateDeliveryPackage = asyncHandler(
       const updatedDeliveryPackage = await deliveryPackageModel.updateOne(
         deliveryPackageData,
         deliveryPackageId,
+        user,
       );
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         updatedDeliveryPackage,
+      );
+      notificationModel.createNotification(
+        'updateDeliveryPackage',
+        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+        null,
+        user,
       );
       const auditUser = await authHandler(req, res, next);
       const action = 'updateDeliveryPackage';
@@ -166,17 +178,25 @@ export const deleteDeliveryPackage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deliveryPackageId = req.params.id;
-      const deletedDeliveryPackage =
-        await deliveryPackageModel.deleteOne(deliveryPackageId);
+      const user = await authHandler(req, res, next);
+      const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(
+        deliveryPackageId,
+        user,
+      );
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         deletedDeliveryPackage,
       );
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'deleteDeliveryPackage',
+        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'deleteDeliveryPackage';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
       );
@@ -195,24 +215,8 @@ export const getUserDeliveryPackages = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { status } = req.query;
-      // Extract token from the request headers
-      const token = req.headers.authorization?.replace('Bearer ', '');
 
-      if (!token) {
-        const user = await authHandler(req, res, next);
-        const source = 'getUserDeliveryPackages';
-        systemLog.createSystemLog(user, 'Token Not Provided', source);
-        return ResponseHandler.badRequest(res, i18n.__('TOKEN_NOT_PROVIDED'));
-      }
-
-      const user = await userModel.findByToken(token);
-
-      if (!user) {
-        const user = await authHandler(req, res, next);
-        const source = 'getUserDeliveryPackages';
-        systemLog.createSystemLog(user, 'Token Invalid', source);
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-      }
+      const user = await authHandler(req, res, next);
 
       const deliveryPackages = await deliveryPackageModel.getPackagesByUser(
         user,

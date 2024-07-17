@@ -9,8 +9,12 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const box_image_model_1 = __importDefault(require("../../models/box/box.image.model"));
 const uploadSingleImage_1 = require("../../middlewares/uploadSingleImage");
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const auditTrail = new audit_trail_model_1.default();
+const notificationModel = new notification_model_1.default();
 const systemLog = new system_log_model_1.default();
 const boxImageModel = new box_image_model_1.default();
 exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -32,6 +36,10 @@ exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         try {
             const createdBoxImage = await boxImageModel.createBoxImage(boxId, deliveryPackageId, imageName);
             responsesHandler_1.default.success(res, i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'), createdBoxImage);
+            const auditUser = await (0, authHandler_1.default)(req, res, next);
+            notificationModel.createNotification('uploadBoxImage', i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'), imageName, auditUser);
+            const action = 'uploadSingleImage';
+            auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'));
         }
         catch (error) {
             const user = await (0, authHandler_1.default)(req, res, next);
@@ -82,6 +90,9 @@ exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const imageName = req.file ? req.file.filename : req.body.image;
         const updatedBoxImage = await boxImageModel.updateBoxImage(boxImageId, boxId, deliveryPackageId, imageName);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'), updatedBoxImage);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateBoxImage';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -96,6 +107,9 @@ exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const boxImageId = parseInt(req.params.id, 10);
         await boxImageModel.deleteBoxImage(boxImageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteBoxImage';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

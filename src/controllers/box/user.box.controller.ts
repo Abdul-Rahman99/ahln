@@ -11,15 +11,18 @@ import BoxModel from '../../models/box/box.model';
 import authHandler from '../../utils/authHandler';
 import AddressModel from '../../models/box/address.model';
 import { Address } from '../../types/address.type';
+import SystemLogModel from '../../models/logs/system.log.model';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+
+import NotificationModel from '../../models/logs/notification.model';
+const notificationModel = new NotificationModel();
+
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
 const addressModel = new AddressModel();
-import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
-
-import AuditTrailModel from '../../models/logs/audit.trail.model';
 const auditTrail = new AuditTrailModel();
 
 export const createUserBox = asyncHandler(
@@ -200,6 +203,14 @@ export const assignBoxToUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         assignedUserBox,
       );
+
+      notificationModel.createNotification(
+        'assignBoxToUser',
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        null,
+        userId,
+      );
+
       const auditUser = await authHandler(req, res, next);
       const action = 'assignBoxToUser';
       auditTrail.createAuditTrail(
@@ -237,6 +248,12 @@ export const userAssignBoxToHimself = asyncHandler(
         res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         assignedUserBox,
+      );
+      notificationModel.createNotification(
+        'userAssignBoxToHimself',
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        null,
+        user,
       );
       const action = 'userAssignBoxToHimself';
       auditTrail.createAuditTrail(
@@ -291,6 +308,12 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         res,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
         assignedUserBox,
+      );
+      notificationModel.createNotification(
+        'userAssignBoxToRelativeUser',
+        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        null,
+        user,
       );
       const action = 'userAssignBoxToRelativeUser';
       auditTrail.createAuditTrail(

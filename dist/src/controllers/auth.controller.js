@@ -15,10 +15,14 @@ const user_devices_model_1 = __importDefault(require("../models/users/user.devic
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const authHandler_1 = __importDefault(require("../utils/authHandler"));
 const system_log_model_1 = __importDefault(require("../models/logs/system.log.model"));
+const audit_trail_model_1 = __importDefault(require("../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../models/logs/notification.model"));
+const notificationModel = new notification_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
-const sendVerificationEmail = (email, otp) => {
+const sendVerificationEmail = async (email, otp, req, res, next) => {
     const transporter = nodemailer_1.default.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
@@ -35,6 +39,8 @@ const sendVerificationEmail = (email, otp) => {
         html: `<p>Your OTP for email verification is: <b>${otp}</b></p>`,
     };
     transporter.sendMail(mailOptions);
+    const user = await (0, authHandler_1.default)(req, res, next);
+    notificationModel.createNotification('updateOnePinByUser', i18n_1.default.__('PIN_UPDATED_SUCCESSFULLY'), null, user);
 };
 exports.register = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, user_name, phone_number, password } = req.body;
@@ -63,10 +69,12 @@ exports.register = (0, asyncHandler_1.default)(async (req, res, next) => {
     });
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await userModel.saveOtp(email, otp);
-    sendVerificationEmail(email, otp);
+    sendVerificationEmail(email, otp, req, res, next);
     const token = jsonwebtoken_1.default.sign({ email, password }, config_1.default.JWT_SECRET_KEY);
     await userModel.updateUserToken(user.id, token);
-    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
+    responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('REGISTER_SUCCESS'), null, token);
+    const action = 'register';
+    auditTrail.createAuditTrail(user.id, action, i18n_1.default.__('REGISTER_SUCCESS'));
 });
 exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, otp, fcmToken } = req.body;
@@ -90,9 +98,9 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res, next) => {
         systemLog.createSystemLog(user, 'Unauthorized email verification', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('UNAUTHORIZED_EMAIL_VERIFICATION'));
     }
+    const user = await (0, authHandler_1.default)(req, res, next);
     const isOtpValid = await userModel.verifyOtp(emailLower, otp);
     if (!isOtpValid) {
-        const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'verifyEmail';
         systemLog.createSystemLog(user, 'Invalid Otp', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_OTP'));
@@ -105,7 +113,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res, next) => {
     if (fcmToken) {
         await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
     }
-    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), {
+    responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), {
         id: currentUser.id,
         user_name: currentUser.user_name,
         role_id: currentUser.role_id,
@@ -114,6 +122,7 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res, next) => {
         email: currentUser.email,
         preferred_language: currentUser.preferred_language,
     }, token);
+    notificationModel.createNotification('verifyEmail', i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), null, user);
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, password, fcmToken } = req.body;
@@ -146,7 +155,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res, next) => {
         await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
     const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
-    return responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('LOGIN_SUCCESS'), {
+    responsesHandler_1.default.logInSuccess(res, i18n_1.default.__('LOGIN_SUCCESS'), {
         id: user.id,
         user_name: user.user_name,
         role_id: user.role_id,
@@ -158,6 +167,8 @@ exports.login = (0, asyncHandler_1.default)(async (req, res, next) => {
         country: user.country,
         city: user.city,
     }, token);
+    const action = 'login';
+    auditTrail.createAuditTrail(user.id, action, i18n_1.default.__('LOGIN_SUCCESS'));
 });
 exports.currentUser = (0, asyncHandler_1.default)(async (req, res) => {
     const user = req.currentUser;
@@ -168,12 +179,14 @@ exports.logout = (0, asyncHandler_1.default)(async (req, res, next) => {
     await userModel.updateUserToken(user, null);
     return responsesHandler_1.default.success(res, i18n_1.default.__('LOGOUT_SUCCESS'));
 });
-exports.resendOtpAndUpdateDB = (0, asyncHandler_1.default)(async (req, res) => {
+exports.resendOtpAndUpdateDB = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email } = req.body;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await userModel.updateResetPasswordOTP(email, otp);
-    sendVerificationEmail(email, otp);
-    return responsesHandler_1.default.success(res, i18n_1.default.__('OTP_SENT_SUCCESSFULLY'));
+    sendVerificationEmail(email, otp, req, res, next);
+    responsesHandler_1.default.success(res, i18n_1.default.__('OTP_SENT_SUCCESSFULLY'));
+    const user = await (0, authHandler_1.default)(req, res, next);
+    notificationModel.createNotification('resendOtpAndUpdateDB', i18n_1.default.__('OTP_SENT_SUCCESSFULLY'), null, user);
 });
 exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, otp, newPassword } = req.body;
@@ -187,7 +200,9 @@ exports.updatePasswordWithOTP = (0, asyncHandler_1.default)(async (req, res, nex
     const hashedPassword = bcrypt_1.default.hashSync(newPassword, 10);
     await userModel.updateUserPassword(email, hashedPassword);
     await userModel.updateResetPasswordOTP(email, null);
-    return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+    responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+    const user = await (0, authHandler_1.default)(req, res, next);
+    notificationModel.createNotification('updatePasswordWithOTP', i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null, user);
 });
 exports.updatePassword = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { password, newPassword } = req.body;
@@ -208,6 +223,7 @@ exports.updatePassword = (0, asyncHandler_1.default)(async (req, res, next) => {
     }
     const hashedPassword = bcrypt_1.default.hashSync(newPassword, 10);
     await userModel.updateUserPassword(result.email, hashedPassword);
-    return responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+    responsesHandler_1.default.success(res, i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null);
+    notificationModel.createNotification('updatePassword', i18n_1.default.__('PASSWORD_RESET_SUCCESS'), null, user);
 });
 //# sourceMappingURL=auth.controller.js.map

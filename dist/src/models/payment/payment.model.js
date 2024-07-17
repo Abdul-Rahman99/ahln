@@ -5,16 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class PaymentModel {
-    async createPayment(payment) {
+    async createPayment(payment, user) {
         const connection = await database_1.default.connect();
         try {
-            const sql = `INSERT INTO payment (amount, card_id, billing_date, is_paid)
-                   VALUES ($1, $2, $3, $4) RETURNING *`;
+            const sql = `INSERT INTO payment (amount, card_id, billing_date, is_paid, customer_id)
+                   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
             const result = await connection.query(sql, [
                 payment.amount,
                 payment.card_id,
                 payment.billing_date,
                 payment.is_paid || false,
+                user,
             ]);
             return result.rows[0];
         }

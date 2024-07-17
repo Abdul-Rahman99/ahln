@@ -125,7 +125,7 @@ class UserModel {
       }
 
       //fetch user from db
-      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, country, city, avatar FROM users 
+      const sql = `SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language, country, city, avatar, password FROM users 
                     WHERE id=$1`;
       const result = await connection.query(sql, [id]);
 

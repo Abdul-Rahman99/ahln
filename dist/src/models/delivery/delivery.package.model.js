@@ -132,11 +132,11 @@ class DeliveryPackageModel {
             connection.release();
         }
     }
-    async updateOne(deliveryPackage, id) {
+    async updateOne(deliveryPackage, id, user) {
         const connection = await database_2.default.connect();
         try {
-            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1';
-            const checkResult = await connection.query(checkSql, [id]);
+            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND user_id=$2';
+            const checkResult = await connection.query(checkSql, [id, user]);
             if (checkResult.rows.length === 0) {
                 throw new Error(`Delivery package with ID ${id} does not exist`);
             }
@@ -168,15 +168,19 @@ class DeliveryPackageModel {
             connection.release();
         }
     }
-    async deleteOne(id) {
+    async deleteOne(id, user) {
         const connection = await database_2.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid Delivery Package ID.');
             }
+            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND user_id=$2';
+            const checkResult = await connection.query(checkSql, [id, user]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`Delivery package with ID ${id} does not exist`);
+            }
             const otp = `SELECT * FROM OTP WHERE delivery_package_id=$1`;
             const otpResult = await connection.query(otp, [id]);
-            console.log(otpResult);
             if (otpResult) {
                 await connection.query(`DELETE FROM OTP WHERE delivery_package_id=$1`, [
                     id,
@@ -206,6 +210,20 @@ class DeliveryPackageModel {
             const params = [userId, status];
             const result = await connection.query(sql, params);
             return result.rows;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async getUserByDeliveryPackageId(id) {
+        const connection = await database_2.default.connect();
+        try {
+            const sql = 'SELECT user_id FROM Delivery_Package WHERE id=$1';
+            const result = await connection.query(sql, [id]);
+            return result.rows[0];
         }
         catch (error) {
             throw new Error(error.message);

@@ -6,4 +6,6 @@ export interface Payment {
   updatedAt?: Date;
   billing_date: Date | string;
   is_paid?: boolean;
+  customer_id: string;
+  sales_id: string;
 }

@@ -1,6 +1,6 @@
 import { Payment } from '../../types/payment.type';
 declare class PaymentModel {
-    createPayment(payment: Partial<Payment>): Promise<Payment>;
+    createPayment(payment: Partial<Payment>, user: string): Promise<Payment>;
     getAllPayments(): Promise<Payment[]>;
     getPaymentById(id: number): Promise<Payment>;
     updatePayment(id: number, paymentData: Partial<Payment>): Promise<Payment>;

@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express';
-
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
-
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+
 const systemLog = new SystemLogModel();
 const shippingCompanyModel = new ShippingCompanyModel();
-
-import AuditTrailModel from '../../models/logs/audit.trail.model';
 const auditTrail = new AuditTrailModel();
 
 export const createShippingCompany = asyncHandler(

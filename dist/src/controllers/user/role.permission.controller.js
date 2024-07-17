@@ -10,6 +10,8 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const rolePermissionModel = new role_permission_model_1.default();
 const assignPermissionToRole = async (req, res, next) => {
     try {
@@ -23,6 +25,9 @@ const assignPermissionToRole = async (req, res, next) => {
         }
         await rolePermissionModel.assignPermission(role_id, permission_id);
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_ASSIGNED_SUCCESSFULLY'), role_id);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'assignPermissionToRole';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ROLE_ASSIGNED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -45,6 +50,9 @@ const removePermissionFromRole = async (req, res, next) => {
         }
         await rolePermissionModel.revokePermission(role_id, permission_id);
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'), role_id);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'removePermissionFromRole';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

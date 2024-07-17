@@ -10,13 +10,18 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
 const systemLog = new system_log_model_1.default();
 const shippingCompanyModel = new shipping_company_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { tracking_system, title, logo } = req.body;
     try {
         const shippingCompany = await shippingCompanyModel.createShippingCompany(tracking_system, title, logo);
-        return responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'), shippingCompany);
+        responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'), shippingCompany);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createShippingCompany';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -64,7 +69,10 @@ exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
     const { tracking_system } = req.body;
     try {
         const updatedShippingCompany = await shippingCompanyModel.updateShippingCompany(parseInt(id, 10), tracking_system);
-        return responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'), updatedShippingCompany);
+        responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'), updatedShippingCompany);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateShippingCompany';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -78,7 +86,10 @@ exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
     const { id } = req.params;
     try {
         await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));
-        return responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'));
+        responsesHandler_1.default.success(res, i18n_1.default.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'));
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteShippingCompany';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

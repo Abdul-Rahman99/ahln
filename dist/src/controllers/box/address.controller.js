@@ -11,12 +11,17 @@ const address_model_1 = __importDefault(require("../../models/box/address.model"
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const addressModel = new address_model_1.default();
 exports.createAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newAddress = req.body;
         const createdAddress = await addressModel.createAddress(newAddress);
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_CREATED_SUCCESSFULLY'), createdAddress);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createAddress';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ADDRESS_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -59,6 +64,9 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         const addressData = req.body;
         const updatedAddress = await addressModel.updateOne(addressData, addressId);
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_UPDATED_SUCCESSFULLY'), updatedAddress);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateAddress';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ADDRESS_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -73,6 +81,9 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         const addressId = parseInt(req.params.id, 10);
         const deletedAddress = await addressModel.deleteOne(addressId);
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_DELETED_SUCCESSFULLY'), deletedAddress);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteAddress';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ADDRESS_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

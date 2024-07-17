@@ -8,8 +8,10 @@ import authHandler from '../../utils/authHandler';
 import BoxModel from '../../models/box/box.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
+import NotificationModel from '../../models/logs/notification.model';
 
+const notificationModel = new NotificationModel();
+const auditTrail = new AuditTrailModel();
 const boxModel = new BoxModel();
 const pinModel = new PINModel();
 const systemLog = new SystemLogModel();
@@ -32,10 +34,15 @@ export const createPin = asyncHandler(
         i18n.__('PIN_CREATED_SUCCESSFULLY'),
         createdPin,
       );
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'createPin',
+        i18n.__('PIN_CREATED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'createPin';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('PIN_CREATED_SUCCESSFULLY'),
       );
@@ -93,10 +100,15 @@ export const deleteOnePinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'deleteOnePinByUser',
+        i18n.__('PIN_DELETED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'deleteOnePinByUser';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
       );
@@ -118,10 +130,15 @@ export const updateOnePinByUser = asyncHandler(
       const pinData: Partial<PIN> = req.body;
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
-      const auditUser = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'updateOnePinByUser',
+        i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'updateOnePinByUser';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
       );
@@ -137,7 +154,7 @@ export const updateOnePinByUser = asyncHandler(
 export const checkPIN = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await authHandler(req, res, next);
+      const user = await authHandler(req, res, next);
       const { passcode, box_id } = req.body;
 
       const checkPinResult = await pinModel.checkPIN(passcode, box_id);
@@ -148,12 +165,17 @@ export const checkPIN = asyncHandler(
           i18n.__('PIN_CHECKED_SUCCESSFULLY'),
           checkPinResult,
         );
+        notificationModel.createNotification(
+          'checkPIN',
+          i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+          null,
+          user,
+        );
       } else {
-        const user = await authHandler(req, res, next);
         const source = 'checkPIN';
         systemLog.createSystemLog(
           user,
-          'Pin Invalid Or Out Of Time Range',
+          i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
           source,
         );
         ResponseHandler.badRequest(

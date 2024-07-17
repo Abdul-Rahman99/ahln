@@ -3,7 +3,10 @@ import { Notification } from '../../types/notification.type';
 
 export default class NotificationModel {
   async createNotification(
-    notificationData: Partial<Notification>,
+    title: string,
+    message: string,
+    image: string | null,
+    user: string,
   ): Promise<Notification> {
     const connection = await db.connect();
 
@@ -11,14 +14,15 @@ export default class NotificationModel {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = ['title', 'createdAt', 'updatedAt', 'message', 'image'];
-      const sqlParams = [
-        notificationData.title,
-        createdAt,
-        updatedAt,
-        notificationData.message,
-        notificationData.image,
+      const sqlFields = [
+        'title',
+        'createdAt',
+        'updatedAt',
+        'message',
+        'image',
+        'user_id',
       ];
+      const sqlParams = [title, createdAt, updatedAt, message, image, user];
       const sql = `INSERT INTO Notification (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
@@ -36,7 +40,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image FROM Notification`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification`;
       const result = await connection.query(sql);
 
       return result.rows as Notification[];
@@ -46,12 +50,12 @@ export default class NotificationModel {
       connection.release();
     }
   }
-  
+
   async getAllNotificationsByUser(user: string): Promise<Notification[]> {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image FROM Notification WHERE user_id=$1`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification WHERE user_id=$1`;
       const result = await connection.query(sql, [user]);
 
       return result.rows as Notification[];
@@ -66,7 +70,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image FROM Notification WHERE id = $1`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification WHERE id = $1`;
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] || null;

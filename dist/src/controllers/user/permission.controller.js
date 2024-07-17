@@ -10,12 +10,17 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const permissionModel = new permission_model_1.default();
 const createPermission = async (req, res, next) => {
     try {
         const { title, description } = req.body;
         const permission = await permissionModel.create(title, description);
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_CREATED_SUCCESSFULLY'), permission);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createPermission';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PERMISSION_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -61,6 +66,9 @@ const updatePermission = async (req, res, next) => {
         const { title, description } = req.body;
         const permission = await permissionModel.update(Number(id), title, description);
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_UPDATED_SUCCESSFULLY'), permission);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updatePermission';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PERMISSION_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -76,6 +84,9 @@ const deletePermission = async (req, res, next) => {
         const { id } = req.params;
         const permission = await permissionModel.delete(Number(id));
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_DELETED_SUCCESSFULLY'), permission);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deletePermission';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PERMISSION_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

@@ -10,7 +10,11 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const card_model_1 = __importDefault(require("../../models/payment/card.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const notificationModel = new notification_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const cardModel = new card_model_1.default();
 const paymentModel = new payment_model_1.default();
@@ -34,8 +38,12 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         if (!card) {
             throw new Error(`No Card Found, please add a card`);
         }
-        const createdPayment = await paymentModel.createPayment(newPayment);
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const createdPayment = await paymentModel.createPayment(newPayment, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'), createdPayment);
+        notificationModel.createNotification('checkOTP', i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), null, user);
+        const action = 'createPayment';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -80,6 +88,7 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
 });
 exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
+        const user = await (0, authHandler_1.default)(req, res, next);
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
             const user = await (0, authHandler_1.default)(req, res, next);
@@ -91,7 +100,6 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         if (paymentData.billing_date) {
             const billingDate = parseBillingDate(paymentData.billing_date);
             if (!billingDate) {
-                const user = await (0, authHandler_1.default)(req, res, next);
                 const source = 'updatePayment';
                 systemLog.createSystemLog(user, 'Invalid Billing Date Format', source);
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_BILLING_DATE_FORMAT'));
@@ -100,6 +108,10 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
         const updatedPayment = await paymentModel.updatePayment(paymentId, paymentData);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_UPDATED_SUCCESSFULLY'), updatedPayment);
+        notificationModel.createNotification('updatePayment', i18n_1.default.__('PAYMENT_UPDATED_SUCCESSFULLY'), null, user);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updatePayment';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PAYMENT_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -120,6 +132,9 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
         const deletedPayment = await paymentModel.deletePayment(paymentId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'), deletedPayment);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deletePayment';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

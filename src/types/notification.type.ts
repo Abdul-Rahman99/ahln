@@ -5,5 +5,6 @@ export interface Notification {
   updatedAt: Date;
   title: string;
   message: string;
-  image: string;
+  image: string | null;
+  user: string;
 }

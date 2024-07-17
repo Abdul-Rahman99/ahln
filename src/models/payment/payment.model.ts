@@ -4,18 +4,22 @@ import { Payment } from '../../types/payment.type';
 
 class PaymentModel {
   // Create new Payment
-  async createPayment(payment: Partial<Payment>): Promise<Payment> {
+  async createPayment(
+    payment: Partial<Payment>,
+    user: string,
+  ): Promise<Payment> {
     const connection = await db.connect();
 
     try {
-      const sql = `INSERT INTO payment (amount, card_id, billing_date, is_paid)
-                   VALUES ($1, $2, $3, $4) RETURNING *`;
+      const sql = `INSERT INTO payment (amount, card_id, billing_date, is_paid, customer_id)
+                   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
 
       const result = await connection.query(sql, [
         payment.amount,
         payment.card_id,
         payment.billing_date,
         payment.is_paid || false,
+        user,
       ]);
       return result.rows[0] as Payment;
     } catch (error) {

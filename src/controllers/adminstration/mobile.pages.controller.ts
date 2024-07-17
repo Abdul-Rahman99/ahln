@@ -9,6 +9,8 @@ import MobilePagesModel from '../../models/adminstration/mobile.pages.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const mobilePagesModel = new MobilePagesModel();
 
@@ -23,6 +25,13 @@ export const createMobilePage = asyncHandler(
         res,
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
         mobilePage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createMobilePage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -97,10 +106,17 @@ export const updateMobilePage = asyncHandler(
         pageData,
       );
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
         updatedMobilePage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateMobilePage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -121,17 +137,24 @@ export const deleteMobilePage = asyncHandler(
         parseInt(id, 10),
       );
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
         deletedMobilePage,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteMobilePage';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'deleteMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
+      ResponseHandler.badRequest(res, error.message);
     }
   },
 );

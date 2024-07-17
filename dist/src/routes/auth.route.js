@@ -8,7 +8,7 @@ const auth_controller_1 = require("../controllers/auth.controller");
 const auth_validation_1 = require("../validation/auth.validation");
 const verifyToken_1 = __importDefault(require("../middlewares/verifyToken"));
 const router = express_1.default.Router();
-router.post('/register', auth_controller_1.uploadUserImage, auth_validation_1.registerValidator, auth_controller_1.register);
+router.post('/register', auth_validation_1.registerValidator, auth_controller_1.register);
 router.post('/login', auth_validation_1.loginValidator, auth_controller_1.login);
 router.get('/current', verifyToken_1.default, auth_controller_1.currentUser);
 router.post('/logout', verifyToken_1.default, auth_validation_1.logoutValidator, auth_controller_1.logout);

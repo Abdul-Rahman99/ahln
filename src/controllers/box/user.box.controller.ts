@@ -19,6 +19,9 @@ const addressModel = new AddressModel();
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
 
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -28,6 +31,13 @@ export const createUserBox = asyncHandler(
         res,
         i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
         createdUserBox,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createUserBox';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -92,6 +102,13 @@ export const updateUserBox = asyncHandler(
         i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
         updatedUserBox,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateUserBox';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateUserBox';
@@ -111,6 +128,13 @@ export const deleteUserBox = asyncHandler(
         res,
         i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
         deletedUserBox,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteUserBox';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -176,6 +200,13 @@ export const assignBoxToUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         assignedUserBox,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'assignBoxToUser';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'assignBoxToUser';
@@ -195,10 +226,7 @@ export const userAssignBoxToHimself = asyncHandler(
       // create address
       const newAddress: Address = req.body;
 
-      console.log(req.body);
-
       const result = await addressModel.createAddress(newAddress);
-      console.log(result);
 
       const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
         user,
@@ -209,6 +237,12 @@ export const userAssignBoxToHimself = asyncHandler(
         res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         assignedUserBox,
+      );
+      const action = 'userAssignBoxToHimself';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -257,6 +291,12 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         res,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
         assignedUserBox,
+      );
+      const action = 'userAssignBoxToRelativeUser';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

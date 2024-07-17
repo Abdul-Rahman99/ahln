@@ -8,6 +8,9 @@ const box_model_1 = __importDefault(require("../../models/box/box.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const boxModel = new box_model_1.default();
 exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
@@ -16,6 +19,9 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_CREATED_SUCCESSFULLY'), createdBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -26,6 +32,9 @@ exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllBoxes';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -37,6 +46,9 @@ exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getBoxById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -49,6 +61,9 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_UPDATED_SUCCESSFULLY'), updatedBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -60,6 +75,9 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_DELETED_SUCCESSFULLY'), deletedBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -71,6 +89,9 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('BOXES_RETRIEVED_SUCCESSFULLY'), boxes);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getBoxesByGenerationId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -82,6 +103,9 @@ exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getBoxByTabletInfo';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -93,6 +117,9 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) =
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'assignTabletToBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -104,6 +131,9 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'resetTabletId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

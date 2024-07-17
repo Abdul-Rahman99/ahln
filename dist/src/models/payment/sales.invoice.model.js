@@ -21,7 +21,7 @@ class SalesInvoiceModel {
             throw new Error(error.message);
         }
     }
-    async createSalesInvoice(newSalesInvoice) {
+    async createSalesInvoice(newSalesInvoice, user) {
         const connection = await database_1.default.connect();
         try {
             const id = await this.generateSalesInvoiceId();
@@ -43,7 +43,7 @@ class SalesInvoiceModel {
                 newSalesInvoice.purchase_date,
                 createdAt,
                 updatedAt,
-                newSalesInvoice.sales_id,
+                user,
             ];
             const sql = `INSERT INTO sales_invoice (${sqlFields.join(', ')}) 
                    VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 

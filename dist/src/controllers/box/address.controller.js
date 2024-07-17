@@ -8,6 +8,9 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const address_model_1 = __importDefault(require("../../models/box/address.model"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const addressModel = new address_model_1.default();
 exports.createAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
@@ -16,6 +19,9 @@ exports.createAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_CREATED_SUCCESSFULLY'), createdAddress);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createAddress';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -26,6 +32,9 @@ exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESSES_RETRIEVED_SUCCESSFULLY'), addresses);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllAddresses';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -37,6 +46,9 @@ exports.getAddressById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_RETRIEVED_SUCCESSFULLY'), address);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAddressById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -49,6 +61,9 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_UPDATED_SUCCESSFULLY'), updatedAddress);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateAddress';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -60,6 +75,9 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ADDRESS_DELETED_SUCCESSFULLY'), deletedAddress);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteAddress';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

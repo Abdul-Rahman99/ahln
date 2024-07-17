@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_2 = __importDefault(require("../../config/database"));
 class UserModel {
     async createUser(u) {
@@ -125,16 +124,13 @@ class UserModel {
                 if (u[key] !== undefined &&
                     key !== 'id' &&
                     key !== 'createdAt') {
-                    if (key === 'password' && u.password) {
-                        queryParams.push(bcrypt_1.default.hashSync(u.password, 10));
-                    }
-                    else if (key === 'email' && u.email) {
+                    if (key === 'email' && u.email) {
                         queryParams.push(u.email.toLowerCase());
                     }
                     else {
                         queryParams.push(u[key]);
+                        return `${key}=$${paramIndex++}`;
                     }
-                    return `${key}=$${paramIndex++}`;
                 }
                 return null;
             })
@@ -144,6 +140,7 @@ class UserModel {
             queryParams.push(id);
             const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
             const result = await connection.query(sql, queryParams);
+            result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${result.rows[0].avatar}`;
             return result.rows[0];
         }
         catch (error) {

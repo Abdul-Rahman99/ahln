@@ -18,6 +18,8 @@ const userBoxModel = new user_box_model_1.default();
 const relativeCustomerModel = new relative_customer_model_1.default();
 const boxModel = new box_model_1.default();
 const addressModel = new address_model_1.default();
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const systemLog = new system_log_model_1.default();
 exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newUserBox = req.body;
@@ -25,6 +27,9 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'), createdUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createUserBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -35,6 +40,9 @@ exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllUserBoxes';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -46,6 +54,9 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_RETRIEVED_SUCCESSFULLY'), userBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserBoxById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -58,6 +69,9 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'), updatedUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateUserBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -69,6 +83,9 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'), deletedUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteUserBox';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -80,6 +97,9 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserBoxesByUserId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -91,6 +111,9 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserBoxesByBoxId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -102,6 +125,9 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => 
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'assignBoxToUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -118,6 +144,9 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -128,11 +157,17 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         const { boxId, email, relation } = req.body;
         const boxExist = await boxModel.getOne(boxId);
         if (!boxExist) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'userAssignBoxToRelativeUser';
+            systemLog.createSystemLog(user, 'Box Does Not Exist', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('BOX_DOES_NOT_EXIST'));
         }
         const assignedUserBox = await userBoxModel.assignRelativeUser(user, boxId, email);
         const relative_customer = await userModel.findByEmail(email);
         if (!relative_customer) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'userAssignBoxToRelativeUser';
+            systemLog.createSystemLog(user, 'User Does Not Exist', source);
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_EXIST'));
         }
         else {
@@ -147,6 +182,9 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'), assignedUserBox);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

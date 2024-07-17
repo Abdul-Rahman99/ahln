@@ -7,6 +7,8 @@ import i18n from '../../config/i18n';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const userDevicesModel = new UserDevicesModel();
 
@@ -27,6 +29,13 @@ export const registerDevice = async (
       res,
       i18n.__('DEVICE_REGISTERED_SUCCESSFULLY'),
       savedDevice,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'registerDevice';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('DEVICE_REGISTERED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -53,6 +62,13 @@ export const deleteDevice = async (
       res,
       i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
       deletedDevice,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'deletedDevice';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -81,6 +97,13 @@ export const updateDevice = async (
       res,
       i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
       updatedDevice,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'updateDevice';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);

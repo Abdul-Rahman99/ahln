@@ -9,7 +9,9 @@ const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler")
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const cardModel = new card_model_1.default();
 const parseExpireDate = (dateString) => {
     const [month, year] = dateString.split('-');
@@ -21,6 +23,9 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         const newCard = req.body;
         const expireDate = parseExpireDate(newCard.expire_date);
         if (!expireDate) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'createCard';
+            systemLog.createSystemLog(user, 'Invalid Expire Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
         }
         newCard.expire_date = expireDate;
@@ -30,6 +35,9 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createCard';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -40,6 +48,9 @@ exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARDS_RETRIEVED_SUCCESSFULLY'), cards);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllCards';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -48,12 +59,18 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getCardById';
+            systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
         }
         const card = await cardModel.getCardById(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_RETRIEVED_SUCCESSFULLY'), card);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getCardById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -62,12 +79,18 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'updateCard';
+            systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
         }
         const cardData = req.body;
         if (cardData.expire_date) {
             const expireDate = parseExpireDate(cardData.expire_date);
             if (!expireDate) {
+                const user = await (0, authHandler_1.default)(req, res, next);
+                const source = 'updateById';
+                systemLog.createSystemLog(user, 'Invalid Expire Date Format', source);
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
             }
             cardData.expire_date = expireDate;
@@ -79,6 +102,9 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'), updatedCard);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateCard';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -87,12 +113,18 @@ exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'deleteCard';
+            systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
         }
         const deletedCard = await cardModel.deleteCard(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'), deletedCard);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteCard';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

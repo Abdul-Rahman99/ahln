@@ -5,4 +5,5 @@ export interface AuditTrail {
   updatedAt: Date;
   user_id: string;
   action: string;
+  message: string;
 }

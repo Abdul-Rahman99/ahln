@@ -10,6 +10,9 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const box_model_1 = __importDefault(require("../../models/box/box.model"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const salesInvoiceModel = new sales_invoice_model_1.default();
 const userModel = new user_model_1.default();
 const boxModel = new box_model_1.default();
@@ -21,26 +24,39 @@ const parseDate = (dateString) => {
 exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const newSalesInvoicePayload = req.body;
-        const user = await userModel.getOne(newSalesInvoicePayload.customer_id);
-        if (!user) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const userExist = await userModel.getOne(user);
+        if (!userExist) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'createSalesInvoice';
+            systemLog.createSystemLog(user, 'User Not Found', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_FOUND'));
         }
         const box = await boxModel.getOne(newSalesInvoicePayload.box_id);
         if (!box) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'createSalesInvoice';
+            systemLog.createSystemLog(user, 'Box Not Found', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('BOX_NOT_FOUND'));
         }
         const parsedDate = parseDate(newSalesInvoicePayload.purchase_date);
         if (!parsedDate) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'createSalesInvoice';
+            systemLog.createSystemLog(user, 'Invalid Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_DATE_FORMAT'));
         }
         const newSalesInvoice = {
             ...newSalesInvoicePayload,
             purchase_date: parsedDate,
         };
-        const createdSalesInvoice = await salesInvoiceModel.createSalesInvoice(newSalesInvoice);
+        const createdSalesInvoice = await salesInvoiceModel.createSalesInvoice(newSalesInvoice, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_CREATED_SUCCESSFULLY'), createdSalesInvoice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createSalesInvoice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -51,6 +67,9 @@ exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllSalesInvoices';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -62,6 +81,9 @@ exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next)
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_RETRIEVED_SUCCESSFULLY'), salesInvoice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getSalesInvoiceById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -72,6 +94,9 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         const newSalesInvoicePayload = req.body;
         const parsedDate = parseDate(newSalesInvoicePayload.purchase_date);
         if (!parsedDate) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'updateSalesInvoice';
+            systemLog.createSystemLog(user, 'Invalid Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_DATE_FORMAT'));
         }
         const newSalesInvoice = {
@@ -82,6 +107,9 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'), updatedSalesInvoice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateSalesInvoice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -93,6 +121,9 @@ exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'), deletedSalesInvoice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteSalesInvoice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -104,6 +135,9 @@ exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, 
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getSalesInvoiceByUserId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -115,6 +149,9 @@ exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res,
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getSalesInvoicesBySalesId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -126,6 +163,9 @@ exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, n
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getSalesInvoicesByBoxId';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

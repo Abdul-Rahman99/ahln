@@ -6,6 +6,8 @@ import DPFavListModel from '../../models/delivery/dp.favlist.model';
 import i18n from '../../config/i18n';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 import authHandler from '../../utils/authHandler';
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
@@ -57,6 +59,13 @@ export const createDPFavList = async (
       res,
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
       newDPFavList,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'createDPFavList';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -115,10 +124,17 @@ export const deleteDPFavList = asyncHandler(
     try {
       const { id } = req.params;
       const deletedDPFavList = await dpFavListModel.deleteDPFavList(id);
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
         deletedDPFavList,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteDPFavList';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

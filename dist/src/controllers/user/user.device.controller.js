@@ -7,6 +7,9 @@ exports.getUserDeviceById = exports.getDevicesByUser = exports.updateDevice = ex
 const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const registerDevice = async (req, res, next) => {
     const { fcm_token } = req.body;
@@ -16,6 +19,9 @@ const registerDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_REGISTERED_SUCCESSFULLY'), savedDevice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'registerDevice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -28,6 +34,9 @@ const deleteDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_DELETED_SUCCESSFULLY'), deletedDevice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteDevice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -41,6 +50,9 @@ const updateDevice = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_UPDATED_SUCCESSFULLY'), updatedDevice);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateDevice';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -53,6 +65,9 @@ const getDevicesByUser = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_RETRIVED_BY_USER_SUCCESSFULLY'), devices);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getDevicesByUser';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -63,11 +78,17 @@ const getUserDeviceById = async (req, res, next) => {
         const { deviceId } = req.params;
         const device = await userDevicesModel.getUserDeviceById(parseInt(deviceId));
         if (!device) {
+            const user = await (0, authHandler_1.default)(req, res, next);
+            const source = 'getUserDeviceById';
+            systemLog.createSystemLog(user, 'User Device Not Found', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_DEVICE_NOT_FOUND'));
         }
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), device);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getUserDeviceById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

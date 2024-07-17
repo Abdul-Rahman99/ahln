@@ -7,6 +7,9 @@ exports.deleteRole = exports.updateRole = exports.getRoleById = exports.getAllRo
 const role_model_1 = __importDefault(require("../../models/users/role.model"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
+const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const systemLog = new system_log_model_1.default();
 const roleModel = new role_model_1.default();
 const createRole = async (req, res, next) => {
     try {
@@ -15,6 +18,9 @@ const createRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_CREATED_SUCCESSFULLY'), role);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'createRole';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -26,6 +32,9 @@ const getAllRoles = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLES_RETRIEVED_SUCCESSFULLY'), roles);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getAllRoles';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -38,6 +47,9 @@ const getRoleById = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_RETRIEVED_SUCCESSFULLY'), role);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'getRoleById';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -51,6 +63,9 @@ const updateRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_UPDATED_SUCCESSFULLY'), role);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'updateRole';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
@@ -63,6 +78,9 @@ const deleteRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_DELETED_SUCCESSFULLY'), role);
     }
     catch (error) {
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const source = 'deleteRole';
+        systemLog.createSystemLog(user, error.message, source);
         next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }

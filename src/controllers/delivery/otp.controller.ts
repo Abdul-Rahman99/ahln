@@ -8,6 +8,8 @@ import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 const otpModel = new OTPModel();
 
@@ -21,6 +23,13 @@ export const createOTP = asyncHandler(
         res,
         i18n.__('OTP_CREATED_SUCCESSFULLY'),
         createdOTP,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createOTP';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('OTP_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -78,6 +87,13 @@ export const updateOTP = asyncHandler(
         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
         updatedOTP,
       );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateOTP';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+      );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'updateOPT';
@@ -97,6 +113,13 @@ export const deleteOTP = asyncHandler(
         res,
         i18n.__('OTP_DELETED_SUCCESSFULLY'),
         deletedOTP,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteOTP';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('OTP_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);

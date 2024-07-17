@@ -11,6 +11,9 @@ import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
 const shippingCompanyModel = new ShippingCompanyModel();
 
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 export const createShippingCompany = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { tracking_system, title, logo } = req.body;
@@ -22,10 +25,17 @@ export const createShippingCompany = asyncHandler(
         logo,
       );
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
         shippingCompany,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createShippingCompany';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -104,10 +114,17 @@ export const updateShippingCompany = asyncHandler(
           tracking_system,
         );
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
         updatedShippingCompany,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateShippingCompany';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -126,8 +143,15 @@ export const deleteShippingCompany = asyncHandler(
     try {
       await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
+        i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteShippingCompany';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {

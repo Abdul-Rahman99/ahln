@@ -2,15 +2,25 @@ import db from '../../config/database';
 import { AuditTrail } from '../../types/audit.trail.type';
 
 export default class AuditTrailModel {
-  async createAuditTrail(user_id: string, action: string): Promise<AuditTrail> {
+  async createAuditTrail(
+    user_id: string,
+    action: string,
+    message: string,
+  ): Promise<AuditTrail> {
     const connection = await db.connect();
 
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = ['createdAt', 'updatedAt', 'user_id', 'action'];
-      const sqlParams = [createdAt, updatedAt, user_id, action];
+      const sqlFields = [
+        'createdAt',
+        'updatedAt',
+        'user_id',
+        'action',
+        'message',
+      ];
+      const sqlParams = [createdAt, updatedAt, user_id, action, message];
       const sql = `INSERT INTO Audit_Trail (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;

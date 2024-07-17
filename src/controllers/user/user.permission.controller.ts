@@ -7,6 +7,9 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 const systemLog = new SystemLogModel();
 
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
+
 const userPermissionModel = new UserPermissionModel();
 
 export const assignPermissionToUser = async (
@@ -37,6 +40,13 @@ export const assignPermissionToUser = async (
       res,
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
       user_id,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'assignPermissionToUser';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);
@@ -79,6 +89,13 @@ export const removePermissionFromUser = async (
       res,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       user_id,
+    );
+    const auditUser = await authHandler(req, res, next);
+    const action = 'removePermissionFromUser';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
     const user = await authHandler(req, res, next);

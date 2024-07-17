@@ -9,6 +9,8 @@ import authHandler from '../../utils/authHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
 const contactUsModel = new ContactUsModel();
+import AuditTrailModel from '../../models/logs/audit.trail.model';
+const auditTrail = new AuditTrailModel();
 
 export const createContactUs = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -21,10 +23,18 @@ export const createContactUs = asyncHandler(
         newContactUs,
         user,
       );
+
       ResponseHandler.success(
         res,
         i18n.__('CONTACT_US_CREATED'),
         createdContactUs,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'createContactUs';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CONTACT_US_CREATED'),
       );
     } catch (error: any) {
       const user = await authHandler(req, res, next);
@@ -86,10 +96,18 @@ export const updateContactUs = asyncHandler(
         contactUsId,
         contactUsData,
       );
+
       ResponseHandler.success(
         res,
         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
         updatedContactUs,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'updateContactUs';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);
@@ -107,10 +125,18 @@ export const deleteContactUs = asyncHandler(
       const contactUsId = parseInt(req.params.id, 10);
       const deletedContactUs =
         await contactUsModel.deleteContactUs(contactUsId);
+
       ResponseHandler.success(
         res,
         i18n.__('CONTACT_US_DELETED_SUCCESSFULLY'),
         deletedContactUs,
+      );
+      const auditUser = await authHandler(req, res, next);
+      const action = 'deleteContactUs';
+      auditTrail.createAuditTrail(
+        auditUser,
+        action,
+        i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
       );
     } catch (error) {
       const user = await authHandler(req, res, next);

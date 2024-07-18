@@ -208,15 +208,13 @@ exports.updatePassword = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { password, newPassword } = req.body;
     const user = await (0, authHandler_1.default)(req, res, next);
     const result = await userModel.getOne(user);
-    if (!result || !result.password) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+    if (!password || !result.password) {
         const source = 'updatePassword';
         systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));
     }
     const isPasswordValid = bcrypt_1.default.compareSync(password, result.password);
     if (!isPasswordValid) {
-        const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updatePassword';
         systemLog.createSystemLog(user, 'Invalid credentials', source);
         return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CREDENTIALS'));

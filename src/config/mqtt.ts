@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mqtt, { MqttClient } from 'mqtt';
+import mqtt, { MqttClient, IClientOptions } from 'mqtt';
 import config from '../../config';
 
-const options = {
+const options: IClientOptions = {
   host: config.MQTT_HOST,
-  port: config.MQTT_PORT,
-  protocol: config.MQTT_PROTOCOL,
+  port: config.MQTT_PORT as any,
+  protocol: config.MQTT_PROTOCOL as any,
   username: config.MQTT_USERNAME,
   password: config.MQTT_PASSWORD,
 };
@@ -14,12 +14,11 @@ const options = {
 export let client: MqttClient;
 
 function connect() {
-  client = mqtt.connect(options as any);
+  client = mqtt.connect(options);
 
   client.on('connect', () => {
     console.log('MQTT Connected');
 
-    // subscribe to all topics under 'data/' --<adjust as needed>--
     const wildcardTopic = '#';
     client.subscribe(wildcardTopic, { qos: 1 }, (err, granted) => {
       if (err) {
@@ -40,20 +39,18 @@ function connect() {
     }
 
     if (shouldSubscribeToTopic(topic)) {
-      const specificTopic = topic;
-      client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
+      client.subscribe(topic, { qos: 1 }, (err, granted) => {
         if (err) {
-          console.error(`Subscription error for topic ${specificTopic}:`, err);
+          console.error(`Subscription error for topic ${topic}:`, err);
         } else {
-          console.log(`Subscribed to new topic: ${specificTopic}`, granted);
+          console.log(`Subscribed to new topic: ${topic}`, granted);
         }
       });
     }
   });
 
-  client.on('error', function (error) {
-    console.log('MQTT connection error:', error);
-    // Disconnect and attempt to reconnect
+  client.on('error', (error) => {
+    console.error('MQTT connection error:', error);
     client.end();
     setTimeout(connect, 10000); // try to reconnect after 10 seconds
   });
@@ -64,16 +61,14 @@ function connect() {
 
   client.on('end', () => {
     console.log('Connection to MQTT broker ended');
-    // Handle disconnection, attempt to reconnect
     setTimeout(connect, 10000); // try to reconnect after 10 seconds
   });
 }
 
-// Start initial MQTT connection
 connect();
 
 const shouldSubscribeToTopic = (topic: string): boolean => {
   // add logic to determine if a specific topic should be subscribed to
-  // for example subscribe to certain patterns or newly discovered topics
+  // for example, subscribe to certain patterns or newly discovered topics
   return true; // for demonstration, subscribe to all
 };

@@ -64,7 +64,7 @@ class OTPModel {
     otp: string,
     delivery_package_id: string,
     boxId: string,
-  ): Promise<string | null> {
+  ): Promise<any> {
     const connection = await db.connect();
     try {
       if (!otp) {
@@ -73,7 +73,7 @@ class OTPModel {
 
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
-        'SELECT box_locker_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2',
+        'SELECT box_locker_id, delivery_package_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2',
         [otp, boxId],
       );
 
@@ -100,7 +100,17 @@ class OTPModel {
       // Mark the OTP as used and delete the record
       await connection.query('DELETE FROM OTP WHERE otp = $1', [otp]);
 
-      return parsedSerialPort;
+      let otpResultDP;
+      let otpResultt;
+      if (otpResult.rows[0].delivery_package_id) {
+        otpResultDP = await connection.query(
+          'SELECT otp FROM Delivery_Package WHERE id = $1',
+          [otpResult.rows[0].delivery_package_id],
+        );
+        otpResultt = otpResultDP.rows[0].otp;
+      }
+
+      return [parsedSerialPort, otpResultt];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -283,7 +293,7 @@ class OTPModel {
         throw new Error('The package has already been delivered');
       }
       const pin_result = deliveryPackage.delivery_pin;
-
+      const otp_result = deliveryPackage.otp;
       const boxLockerResult = await connection.query(
         'SELECT serial_port FROM box_locker WHERE id = $1',
         [deliveryPackage.box_locker_id],
@@ -304,7 +314,7 @@ class OTPModel {
         ['delivered', true, updatedAt, trackingNumber],
       );
 
-      return [parsedSerialPort, pin_result];
+      return [parsedSerialPort, pin_result, otp_result];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

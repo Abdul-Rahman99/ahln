@@ -17,4 +17,5 @@ export interface DeliveryPackage {
   delivery_pin: string;
   description: string;
   other_shipping_company: string;
+  otp: string;
 }

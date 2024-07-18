@@ -10,8 +10,12 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const i18n_1 = __importDefault(require("../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../utils/responsesHandler"));
 const validatorMiddleware_1 = __importDefault(require("../middlewares/validatorMiddleware"));
+const multer_1 = __importDefault(require("multer"));
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({ storage });
 const userModel = new user_model_1.default();
 exports.registerValidator = [
+    upload.none(),
     (0, express_validator_1.body)('email')
         .notEmpty()
         .withMessage(i18n_1.default.__('EMAIL_REQUIRED'))

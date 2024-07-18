@@ -7,10 +7,12 @@ import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import { RelativeCustomer } from '../../types/relative.customer.type';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
+import NotificationModel from '../../models/logs/notification.model';
 
+const notificationModel = new NotificationModel();
+const systemLog = new SystemLogModel();
+const auditTrail = new AuditTrailModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 
 export const createRelativeCustomer = asyncHandler(
@@ -113,10 +115,16 @@ export const updateRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice,
       );
-      const auditUser = await authHandler(req, res, next);
+      const user = await authHandler(req, res, next);
+      notificationModel.createNotification(
+        'updateRelativeCustomer',
+        i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'updateRelativeCustomer';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
       );
@@ -142,10 +150,17 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer,
       );
-      const auditUser = await authHandler(req, res, next);
+      const user = await authHandler(req, res, next);
+
+      notificationModel.createNotification(
+        'deleteRelativeCustomer',
+        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
+        null,
+        user,
+      );
       const action = 'deleteRelativeCustomer';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
       );

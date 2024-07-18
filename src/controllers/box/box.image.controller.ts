@@ -5,16 +5,14 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import BoxImageModel from '../../models/box/box.image.model';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
-// import UserModel from '../../models/users/user.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
-
+import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+const auditTrail = new AuditTrailModel();
+const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
-
 const boxImageModel = new BoxImageModel();
-// const userModel = new UserModel();
 
 export const uploadBoxImage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,6 +45,14 @@ export const uploadBoxImage = asyncHandler(
           createdBoxImage,
         );
         const auditUser = await authHandler(req, res, next);
+
+        notificationModel.createNotification(
+          'uploadBoxImage',
+          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          imageName,
+          auditUser,
+        );
+
         const action = 'uploadSingleImage';
         auditTrail.createAuditTrail(
           auditUser,

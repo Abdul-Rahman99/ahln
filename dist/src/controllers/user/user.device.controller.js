@@ -10,6 +10,8 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const userDevicesModel = new user_devices_model_1.default();
 const registerDevice = async (req, res, next) => {
     const { fcm_token } = req.body;
@@ -17,6 +19,9 @@ const registerDevice = async (req, res, next) => {
     try {
         const savedDevice = await userDevicesModel.saveUserDevice(user_id, fcm_token);
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_REGISTERED_SUCCESSFULLY'), savedDevice);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'registerDevice';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DEVICE_REGISTERED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -32,6 +37,9 @@ const deleteDevice = async (req, res, next) => {
     try {
         const deletedDevice = await userDevicesModel.deleteUserDevice(parseInt(deviceId, 10));
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_DELETED_SUCCESSFULLY'), deletedDevice);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deletedDevice';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DEVICE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -48,6 +56,9 @@ const updateDevice = async (req, res, next) => {
     try {
         const updatedDevice = await userDevicesModel.updateUserDevice(parseInt(deviceId, 10), fcm_token);
         responsesHandler_1.default.success(res, i18n_1.default.__('DEVICE_UPDATED_SUCCESSFULLY'), updatedDevice);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateDevice';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DEVICE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

@@ -8,12 +8,14 @@ const delivery_package_model_1 = __importDefault(require("../../models/delivery/
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
-const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const shipping_company_model_1 = __importDefault(require("../../models/delivery/shipping.company.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const notificationModel = new notification_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
-const userModel = new user_model_1.default();
 const shippingCompanyModel = new shipping_company_model_1.default();
 const deliveryPackageModel = new delivery_package_model_1.default();
 exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -37,6 +39,10 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const newDeliveryPackage = req.body;
         const createdDeliveryPackage = await deliveryPackageModel.createDeliveryPackage(user, newDeliveryPackage);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), createdDeliveryPackage);
+        notificationModel.createNotification('createDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'), null, user);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createDeliveryPackage';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -77,6 +83,7 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackageData = req.body;
+        const user = await (0, authHandler_1.default)(req, res, next);
         try {
             if (req.body.shipping_company_id) {
                 const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
@@ -93,8 +100,12 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
             req.body.other_shipping_company = req.body.shipping_company_id;
             req.body.shipping_company_id = null;
         }
-        const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId);
+        const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
+        notificationModel.createNotification('updateDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), null, user);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateDeliveryPackage';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -107,8 +118,12 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const deliveryPackageId = req.params.id;
-        const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(deliveryPackageId);
+        const user = await (0, authHandler_1.default)(req, res, next);
+        const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(deliveryPackageId, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
+        notificationModel.createNotification('deleteDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), null, user);
+        const action = 'deleteDeliveryPackage';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -121,20 +136,7 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
     try {
         const { status } = req.query;
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        if (!token) {
-            const user = await (0, authHandler_1.default)(req, res, next);
-            const source = 'getUserDeliveryPackages';
-            systemLog.createSystemLog(user, 'Token Not Provided', source);
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('TOKEN_NOT_PROVIDED'));
-        }
-        const user = await userModel.findByToken(token);
-        if (!user) {
-            const user = await (0, authHandler_1.default)(req, res, next);
-            const source = 'getUserDeliveryPackages';
-            systemLog.createSystemLog(user, 'Token Invalid', source);
-            return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
-        }
+        const user = await (0, authHandler_1.default)(req, res, next);
         const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user, status);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
-import { Notification } from '../../types/notification.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import NotificationModel from '../../models/logs/notification.model';
@@ -12,9 +11,13 @@ const notificationModel = new NotificationModel();
 export const createNotification = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newNotiication: Notification = req.body;
-      const createdNotification =
-        await notificationModel.createNotification(newNotiication);
+      const { title, message, image, user } = req.body;
+      const createdNotification = await notificationModel.createNotification(
+        title,
+        message,
+        image,
+        user,
+      );
       ResponseHandler.success(
         res,
         i18n.__('NOTIFICATION_CREATED_SUCCESSFULLY'),

@@ -10,6 +10,8 @@ const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const boxModel = new box_model_1.default();
 exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -17,6 +19,9 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const newBox = req.body;
         const createdBox = await boxModel.createBox(newBox);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_CREATED_SUCCESSFULLY'), createdBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -59,6 +64,9 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const boxData = req.body;
         const updatedBox = await boxModel.updateOne(boxData, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_UPDATED_SUCCESSFULLY'), updatedBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -73,6 +81,9 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const boxId = req.params.id;
         const deletedBox = await boxModel.deleteOne(boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_DELETED_SUCCESSFULLY'), deletedBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -115,6 +126,9 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) =
         const { tabletId, boxId } = req.body;
         const assignTabletToBox = await boxModel.assignTabletToBox(tabletId, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'assignTabletToBox';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -129,6 +143,9 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
         const { tabletId, boxId } = req.body;
         const assignTabletToBox = await boxModel.resetTabletId(tabletId, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'), assignTabletToBox);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'resetTabletId';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

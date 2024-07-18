@@ -8,6 +8,8 @@ const box_locker_model_1 = __importDefault(require("../../models/box/box.locker.
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
@@ -17,6 +19,9 @@ exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const newBoxLocker = req.body;
         const createdBoxLocker = await boxLockerModel.createBoxLocker(newBoxLocker);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_CREATED_SUCCESSFULLY'), createdBoxLocker);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createBoxLocker';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -59,6 +64,9 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const boxLockerData = req.body;
         const updatedBoxLocker = await boxLockerModel.updateOne(boxLockerData, String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'), updatedBoxLocker);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateBoxLocker';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -73,6 +81,9 @@ exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const boxLockerId = req.params.id;
         const deletedBoxLocker = await boxLockerModel.deleteOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'), deletedBoxLocker);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteBoxLocker';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

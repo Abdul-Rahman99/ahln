@@ -13,6 +13,8 @@ const system_log_model_1 = __importDefault(require("../../models/logs/system.log
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
 const cardModel = new card_model_1.default();
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const parseExpireDate = (dateString) => {
     const [month, year] = dateString.split('-');
     const date = new Date(`${year}-${month}-01`);
@@ -33,6 +35,9 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const createdCard = await cardModel.createCard(newCard, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createCard';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -100,6 +105,9 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
         const updatedCard = await cardModel.updateCard(cardId, cardData);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'), updatedCard);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateCard';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -120,6 +128,9 @@ exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
         const deletedCard = await cardModel.deleteCard(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'), deletedCard);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteCard';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

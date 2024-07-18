@@ -9,6 +9,8 @@ const responsesHandler_1 = __importDefault(require("../../utils/responsesHandler
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const roleModel = new role_model_1.default();
 const createRole = async (req, res, next) => {
@@ -16,6 +18,9 @@ const createRole = async (req, res, next) => {
         const { title, description } = req.body;
         const role = await roleModel.create(title, description);
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_CREATED_SUCCESSFULLY'), role);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'createRole';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ROLE_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -61,6 +66,9 @@ const updateRole = async (req, res, next) => {
         const { title, description } = req.body;
         const role = await roleModel.update(Number(id), title, description);
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_UPDATED_SUCCESSFULLY'), role);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateRole';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ROLE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -76,6 +84,9 @@ const deleteRole = async (req, res, next) => {
         const { id } = req.params;
         const role = await roleModel.delete(Number(id));
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_DELETED_SUCCESSFULLY'), role);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteRole';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ROLE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

@@ -12,6 +12,10 @@ const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const box_model_1 = __importDefault(require("../../models/box/box.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
+const notificationModel = new notification_model_1.default();
+const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
 const salesInvoiceModel = new sales_invoice_model_1.default();
 const userModel = new user_model_1.default();
@@ -52,6 +56,9 @@ exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         };
         const createdSalesInvoice = await salesInvoiceModel.createSalesInvoice(newSalesInvoice, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_CREATED_SUCCESSFULLY'), createdSalesInvoice);
+        notificationModel.createNotification('createSalesInvoice', i18n_1.default.__('SALES_INVOICE_CREATED_SUCCESSFULLY'), null, user);
+        const action = 'createSalesInvoice';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('SALES_INVOICE_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -105,6 +112,9 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         };
         const updatedSalesInvoice = await salesInvoiceModel.updateOne(newSalesInvoice, salesInvoiceId);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'), updatedSalesInvoice);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'updateSalesInvoice';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -119,6 +129,9 @@ exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         const salesInvoiceId = req.params.id;
         const deletedSalesInvoice = await salesInvoiceModel.deleteOne(salesInvoiceId);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'), deletedSalesInvoice);
+        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const action = 'deleteSalesInvoice';
+        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);

@@ -74,13 +74,30 @@ class PINModel {
     }
   }
 
-  // get one pin management
+  // get one pin management by user
   async getOnePinByUser(id: number, user: string): Promise<PIN[]> {
     const connection = await db.connect();
     try {
       const sql = 'SELECT * FROM PIN WHERE id=$1 AND user_id=$2';
       const result = await connection.query(sql, [id, user]);
       return result.rows as PIN[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // get one pin management
+  async getOnePinByPasscode(pass: string, user: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = 'SELECT * FROM PIN WHERE passcode=$1 AND user_id=$2';
+      const result = await connection.query(sql, [pass, user]);
+      if (result.rows.length > 0) {
+        return true;
+      }
+      return false;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

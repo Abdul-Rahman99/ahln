@@ -28,6 +28,17 @@ export const createPin = asyncHandler(
         systemLog.createSystemLog(user, 'Box Id Invalid', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_ID_INVALID'));
       }
+
+      const passcodeExist = await pinModel.getOnePinByPasscode(
+        newPin.passcode,
+        user,
+      );
+      if (passcodeExist) {
+        const source = 'createPin';
+        systemLog.createSystemLog(user, 'Passcode Dublicated', source);
+        return ResponseHandler.badRequest(res, i18n.__('DUBLICATED_PASSCODE'));
+      }
+
       const createdPin = await pinModel.createPIN(newPin, user);
       ResponseHandler.success(
         res,

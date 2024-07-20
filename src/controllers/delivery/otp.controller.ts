@@ -2,6 +2,8 @@
 import { Request, Response, NextFunction } from 'express';
 import OTPModel from '../../models/delivery/otp.model';
 import asyncHandler from '../../middlewares/asyncHandler';
+import db from '../../config/database';
+
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -9,7 +11,9 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
+import UserDevicesModel from '../../models/users/user.devices.model';
 
+const userDevicesModel = new UserDevicesModel();
 const systemLog = new SystemLogModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
@@ -41,6 +45,7 @@ export const createOTP = asyncHandler(
         action,
         i18n.__('OTP_CREATED_SUCCESSFULLY'),
       );
+      // next();
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'createOTP';
@@ -86,39 +91,56 @@ export const getOTPById = asyncHandler(
   },
 );
 
-export const updateOTP = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const otpId = req.params.id;
-      const otpData: Partial<OTP> = req.body;
-      const updatedOTP = await otpModel.updateOne(otpData, Number(otpId));
-      ResponseHandler.success(
-        res,
-        i18n.__('OTP_UPDATED_SUCCESSFULLY'),
-        updatedOTP,
-      );
-      const auditUser = await authHandler(req, res, next);
-      notificationModel.createNotification(
-        'updateOTP',
-        i18n.__('OTP_UPDATED_SUCCESSFULLY'),
-        null,
-        auditUser,
-      );
-      const action = 'updateOTP';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('OTP_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res, next);
-      const source = 'updateOPT';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      next(error);
-    }
-  },
-);
+// export const updateOTP = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       const otpId = req.params.id;
+//       const otpData: Partial<OTP> = req.body;
+//       const updatedOTP = await otpModel.updateOne(otpData, Number(otpId));
+//       ResponseHandler.success(
+//         res,
+//         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+//         updatedOTP,
+//       );
+//       const auditUser = await authHandler(req, res, next);
+//       notificationModel.createNotification(
+//         'updateOTP',
+//         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+//         null,
+//         auditUser,
+//       );
+//       const action = 'updateOTP';
+//       auditTrail.createAuditTrail(
+//         auditUser,
+//         action,
+//         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+//       );
+//       const fcmToken =
+//         await userDevicesModel.getFcmTokenDevicesByUser(auditUser);
+//       try {
+//         notificationModel.pushNotification(
+//           fcmToken,
+//           i18n.__('UPDATE_OTP'),
+//           i18n.__('OTP_UPDATED_SUCCESSFULLY'),
+//         );
+//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//       } catch (error: any) {
+//         const source = 'checkPIN';
+//         systemLog.createSystemLog(
+//           auditUser,
+//           i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+//           source,
+//         );
+//       }
+//     } catch (error: any) {
+//       const user = await authHandler(req, res, next);
+//       const source = 'updateOPT';
+//       systemLog.createSystemLog(user, (error as Error).message, source);
+//       ResponseHandler.badRequest(res, error.message);
+//       next(error);
+//     }
+//   },
+// );
 
 export const deleteOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -143,6 +165,23 @@ export const deleteOTP = asyncHandler(
         action,
         i18n.__('OTP_DELETED_SUCCESSFULLY'),
       );
+      const fcmToken =
+        await userDevicesModel.getFcmTokenDevicesByUser(auditUser);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('DELETE_OTP'),
+          i18n.__('OTP_DELETED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'deleteOTP';
+        systemLog.createSystemLog(
+          auditUser,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'deleteOTP';
@@ -156,7 +195,7 @@ export const deleteOTP = asyncHandler(
 export const getOTPsByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.params.userId;
+      const userId = await authHandler(req, res, next);
       const otps = await otpModel.getOTPsByUser(userId);
       ResponseHandler.success(
         res,
@@ -181,9 +220,17 @@ export const checkOTP = asyncHandler(
       const verifiedOTP = await otpModel.checkOTP(
         otp,
         delivery_package_id,
+
         boxId,
       );
-      const user = await authHandler(req, res, next);
+      const connection = await db.connect();
+
+      const userResult = await connection.query(
+        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+        [boxId],
+      );
+      connection.release();
+      const user = userResult.rows[0].user_id;
       if (verifiedOTP) {
         ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
           box_locker_string: verifiedOTP[0],
@@ -195,10 +242,42 @@ export const checkOTP = asyncHandler(
           null,
           user,
         );
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('CHECK_OTP'),
+            i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'checkOTP';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
       } else {
         const source = 'checkOTP';
         systemLog.createSystemLog(user, 'Invalid Otp', source);
         ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('CHECK_OTP'),
+            i18n.__('INVALID_OTP'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'checkOTP';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
       }
     } catch (error: any) {
       const user = await authHandler(req, res, next);

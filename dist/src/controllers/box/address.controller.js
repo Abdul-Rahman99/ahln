@@ -27,8 +27,8 @@ exports.createAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createAddress';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -40,8 +40,8 @@ exports.getAllAddresses = (0, asyncHandler_1.default)(async (req, res, next) => 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllAddresses';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAddressById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -54,8 +54,8 @@ exports.getAddressById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAddressById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -72,8 +72,8 @@ exports.updateAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateAddress';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -89,8 +89,8 @@ exports.deleteAddress = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteAddress';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=address.controller.js.map

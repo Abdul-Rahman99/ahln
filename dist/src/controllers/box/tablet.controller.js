@@ -27,8 +27,8 @@ exports.createTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createTablet';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -40,8 +40,8 @@ exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllTablets';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getTabletById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -54,8 +54,8 @@ exports.getTabletById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getTabletById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -72,8 +72,8 @@ exports.updateTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateTablet';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -89,8 +89,8 @@ exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteTablet';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=tablet.controller.js.map

@@ -13,6 +13,8 @@ const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
 const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
+const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
+const userDevicesModel = new user_devices_model_1.default();
 const notificationModel = new notification_model_1.default();
 const auditTrail = new audit_trail_model_1.default();
 const systemLog = new system_log_model_1.default();
@@ -43,13 +45,21 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const auditUser = await (0, authHandler_1.default)(req, res, next);
         const action = 'createDeliveryPackage';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'));
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+            notificationModel.pushNotification(fcmToken, i18n_1.default.__('CREATE_DELIVERY_PACKAGE'), i18n_1.default.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'));
+        }
+        catch (error) {
+            const source = 'createDeliveryPackage';
+            systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+        }
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -61,8 +71,8 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, ne
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -75,8 +85,8 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getDeliveryPackageById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -111,8 +121,8 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -124,13 +134,21 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         notificationModel.createNotification('deleteDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), null, user);
         const action = 'deleteDeliveryPackage';
         auditTrail.createAuditTrail(user, action, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'));
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+            notificationModel.pushNotification(fcmToken, i18n_1.default.__('DELETE_DELIVERY_PACKAGE'), i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'));
+        }
+        catch (error) {
+            const source = 'deleteDeliveryPackage';
+            systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+        }
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -144,8 +162,8 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, n
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getUserDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

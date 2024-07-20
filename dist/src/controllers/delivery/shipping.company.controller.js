@@ -27,8 +27,8 @@ exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
-        return responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -40,8 +40,8 @@ exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res, n
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllShippingCompanies';
         systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
-        return responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -60,8 +60,8 @@ exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res, ne
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getShippingCompanyById';
         systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
-        return responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -78,8 +78,8 @@ exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
-        return responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -95,8 +95,8 @@ exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
         next(error);
-        return responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 //# sourceMappingURL=shipping.company.controller.js.map

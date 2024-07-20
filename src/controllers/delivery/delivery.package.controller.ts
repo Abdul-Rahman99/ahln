@@ -10,7 +10,9 @@ import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
+import UserDevicesModel from '../../models/users/user.devices.model';
 
+const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
@@ -66,6 +68,22 @@ export const createDeliveryPackage = asyncHandler(
         action,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
       );
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('CREATE_DELIVERY_PACKAGE'),
+          i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'createDeliveryPackage';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'createDeliveryPackage';
@@ -200,6 +218,22 @@ export const deleteDeliveryPackage = asyncHandler(
         action,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
       );
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('DELETE_DELIVERY_PACKAGE'),
+          i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'deleteDeliveryPackage';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'deleteDeliveryPackage';

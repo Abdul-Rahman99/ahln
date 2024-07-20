@@ -26,8 +26,8 @@ const createRole = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createRole';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.createRole = createRole;
@@ -40,8 +40,8 @@ const getAllRoles = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllRoles';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getAllRoles = getAllRoles;
@@ -55,8 +55,8 @@ const getRoleById = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getRoleById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getRoleById = getRoleById;
@@ -74,8 +74,8 @@ const updateRole = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateRole';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.updateRole = updateRole;
@@ -92,8 +92,8 @@ const deleteRole = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteRole';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.deleteRole = deleteRole;

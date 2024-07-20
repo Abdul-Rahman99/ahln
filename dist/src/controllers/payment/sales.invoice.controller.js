@@ -64,8 +64,8 @@ exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createSalesInvoice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -77,8 +77,8 @@ exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllSalesInvoices';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -91,8 +91,8 @@ exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getSalesInvoiceById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -120,8 +120,8 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateSalesInvoice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -137,8 +137,8 @@ exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res, next) 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteSalesInvoice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -151,8 +151,8 @@ exports.getSalesInvoicesByUserId = (0, asyncHandler_1.default)(async (req, res, 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getSalesInvoiceByUserId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -165,8 +165,8 @@ exports.getSalesInvoicesBySalesId = (0, asyncHandler_1.default)(async (req, res,
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getSalesInvoicesBySalesId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -179,8 +179,8 @@ exports.getSalesInvoicesByBoxId = (0, asyncHandler_1.default)(async (req, res, n
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getSalesInvoicesByBoxId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=sales.invoice.controller.js.map

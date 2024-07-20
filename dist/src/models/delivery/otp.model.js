@@ -4,6 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
+const user_devices_model_1 = __importDefault(require("../users/user.devices.model"));
+const notification_model_1 = __importDefault(require("../logs/notification.model"));
+const system_log_model_1 = __importDefault(require("../logs/system.log.model"));
+const i18n_1 = __importDefault(require("../../config/i18n"));
+const userDevicesModel = new user_devices_model_1.default();
+const notificationModel = new notification_model_1.default();
+const systemLog = new system_log_model_1.default();
 class OTPModel {
     async createOTP(otpData, delivery_package_id) {
         const connection = await database_1.default.connect();
@@ -56,6 +63,16 @@ class OTPModel {
             }
             const otpResult = await connection.query('SELECT box_locker_id, delivery_package_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2', [otp, boxId]);
             if (otpResult.rows.length === 0) {
+                const userResult = await connection.query('SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1', [boxId]);
+                const user_id = userResult.rows[0].user_id;
+                const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user_id);
+                try {
+                    notificationModel.pushNotification(fcmToken, i18n_1.default.__('CHECK_OTP'), i18n_1.default.__('OTP_INVALID'));
+                }
+                catch (error) {
+                    const source = 'checkOTP';
+                    systemLog.createSystemLog(user_id, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+                }
                 throw new Error('OTP not found or already used');
             }
             const box_locker_id = otpResult.rows[0].box_locker_id;

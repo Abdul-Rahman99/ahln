@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { OTP } from '../../types/otp.type';
+import UserDevicesModel from '../users/user.devices.model';
+import NotificationModel from '../logs/notification.model';
+import SystemLogModel from '../logs/system.log.model';
+import i18n from '../../config/i18n';
+
+const userDevicesModel = new UserDevicesModel();
+const notificationModel = new NotificationModel();
+const systemLog = new SystemLogModel();
 
 class OTPModel {
   // Create OTP
@@ -78,6 +86,30 @@ class OTPModel {
       );
 
       if (otpResult.rows.length === 0) {
+        const userResult = await connection.query(
+          'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+          [boxId],
+        );
+
+        const user_id = userResult.rows[0].user_id;
+
+        const fcmToken =
+          await userDevicesModel.getFcmTokenDevicesByUser(user_id);
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('CHECK_OTP'),
+            i18n.__('OTP_INVALID'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'checkOTP';
+          systemLog.createSystemLog(
+            user_id,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
         throw new Error('OTP not found or already used');
       }
 

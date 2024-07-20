@@ -44,6 +44,7 @@ exports.config = {
     MQTT_PROTOCOL: process.env.MQTT_PROTOCOL,
     MQTT_USERNAME: process.env.MQTT_USERNAME,
     MQTT_PASSWORD: process.env.MQTT_PASSWORD,
+    FCM_TOKEN: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 };
 exports.default = exports.config;
 //# sourceMappingURL=config.js.map

@@ -19,6 +19,7 @@ const models_1 = __importDefault(require("./models"));
 const localization_middleware_1 = __importDefault(require("./middlewares/localization.middleware"));
 const path_1 = __importDefault(require("path"));
 const responsesHandler_1 = __importDefault(require("./utils/responsesHandler"));
+const app_1 = require("firebase-admin/app");
 dotenv_1.default.config({ path: '../.env' });
 const app = (0, express_1.default)();
 (0, models_1.default)();
@@ -42,6 +43,11 @@ const limiter = (0, express_rate_limit_1.default)({
 app.use('/api', limiter);
 app.use('/uploads', express_1.default.static(path_1.default.join(config_1.config.UPLOADS)));
 (0, routes_1.default)(app);
+config_1.config.FCM_TOKEN;
+(0, app_1.initializeApp)({
+    credential: (0, app_1.applicationDefault)(),
+    projectId: 'ahlnowner-eaf04',
+});
 app.use((_req, res) => {
     responsesHandler_1.default.badRequest(res, i18n_1.default.__('YOU_ARE_LOST'));
 });

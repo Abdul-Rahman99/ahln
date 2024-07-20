@@ -121,7 +121,8 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         if (verifiedOTP) {
             responsesHandler_1.default.success(res, i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), {
-                box_locker_string: verifiedOTP,
+                box_locker_string: verifiedOTP[0],
+                otp: verifiedOTP[1],
             });
             notificationModel.createNotification('checkOTP', i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), null, user);
         }
@@ -154,6 +155,7 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
         responsesHandler_1.default.success(res, i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
             box_locker_string: result[0],
             pin: result[1],
+            otp: result[2],
         });
         const user = await (0, authHandler_1.default)(req, res, next);
         notificationModel.createNotification('checkTrackingNumberAndUpdateStatus', i18n_1.default.__('PACKAGE_UPDATED_SUCCESSFULLY'), null, user);

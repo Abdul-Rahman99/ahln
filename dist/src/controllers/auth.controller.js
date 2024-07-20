@@ -44,6 +44,7 @@ const sendVerificationEmail = async (email, otp, req, res, next) => {
 };
 exports.register = (0, asyncHandler_1.default)(async (req, res, next) => {
     const { email, user_name, phone_number, password } = req.body;
+    const { fcmToken } = req.body;
     const emailExists = await userModel.emailExists(email);
     if (emailExists) {
         const user = await (0, authHandler_1.default)(req, res, next);
@@ -67,6 +68,9 @@ exports.register = (0, asyncHandler_1.default)(async (req, res, next) => {
         email_verified: false,
         avatar: req.file?.filename,
     });
+    if (fcmToken) {
+        await userDevicesModel.saveUserDevice(user.id, fcmToken);
+    }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await userModel.saveOtp(email, otp);
     sendVerificationEmail(email, otp, req, res, next);

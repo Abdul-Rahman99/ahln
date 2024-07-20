@@ -1,5 +1,6 @@
 import db from '../../config/database';
 import { Notification } from '../../types/notification.type';
+import { getMessaging } from 'firebase-admin/messaging';
 
 export default class NotificationModel {
   async createNotification(
@@ -90,6 +91,24 @@ export default class NotificationModel {
       throw new Error((error as Error).message);
     } finally {
       connection.release();
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async pushNotification(fcmToken: string): Promise<any> {
+    try {
+      const message = {
+        notification: {
+          title: 'Notification',
+          body: 'This is a Test Notification',
+        },
+        token: fcmToken,
+      };
+
+      getMessaging().send(message);
+      return message;
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
   }
 }

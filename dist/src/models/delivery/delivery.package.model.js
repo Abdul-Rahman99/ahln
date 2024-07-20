@@ -52,6 +52,7 @@ class DeliveryPackageModel {
                 'delivery_pin',
                 'description',
                 'other_shipping_company',
+                'otp',
             ];
             const sqlParams = [
                 customId,
@@ -72,10 +73,11 @@ class DeliveryPackageModel {
                 deliveryPackage.delivery_pin || null,
                 deliveryPackage.description || null,
                 deliveryPackage.other_shipping_company || null,
+                deliveryPackage.otp || null,
             ];
             const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company`;
+                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp`;
             const result = await connection.query(sql, sqlParams);
             return result.rows[0];
         }

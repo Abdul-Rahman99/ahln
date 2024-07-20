@@ -5,6 +5,7 @@ import {
   getAllNotifications,
   getAllNotificationsByUser,
   getNotificationById,
+  pushNotification,
 } from '../../controllers/logs/notification.controller';
 import {
   getNotificationByIdValidation,
@@ -27,4 +28,5 @@ router.delete(
   deleteNotificationById,
 );
 
+router.post('/send', pushNotification);
 export default router;

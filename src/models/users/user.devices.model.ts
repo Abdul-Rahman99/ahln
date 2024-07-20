@@ -21,9 +21,23 @@ class UserDevicesModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM user_devices WHERE id = $1`; // this needs to be replaced with user id
+      const sql = `SELECT * FROM user_devices WHERE id = $1`;
       const result = await connection.query(sql, [deviceId]);
       return result.rows.length ? (result.rows[0] as UserDevice) : null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async getFcmTokenDevicesByUser(user: string): Promise<any | []> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT fcm_token FROM user_devices WHERE user_id = $1`;
+      const result = await connection.query(sql, [user]);
+      return result.rows.length ? result.rows : [];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

@@ -171,7 +171,9 @@ export const checkPIN = asyncHandler(
 
       const checkPinResult = await pinModel.checkPIN(passcode, box_id);
       const userId = await pinModel.getUserByPasscode(passcode);
+
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
+
       if (checkPinResult) {
         ResponseHandler.success(
           res,

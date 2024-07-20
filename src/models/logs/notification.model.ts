@@ -1,6 +1,15 @@
 import db from '../../config/database';
 import { Notification } from '../../types/notification.type';
 import { getMessaging } from 'firebase-admin/messaging';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import { config } from '../../../config';
+
+config.FCM_TOKEN;
+
+initializeApp({
+  credential: applicationDefault(),
+  projectId: 'ahlnowner-eaf04',
+});
 
 export default class NotificationModel {
   async createNotification(
@@ -95,18 +104,37 @@ export default class NotificationModel {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async pushNotification(fcmToken: string): Promise<any> {
+  async pushNotification(fcmToken: any): Promise<any> {
     try {
+      const registrationTokens = fcmToken;
       const message = {
+        tokens: fcmToken,
+        data: {},
+        android: {},
+        messageId: '103564652569',
         notification: {
-          title: 'Notification',
+          title: 'A7AAA Fe Kees',
           body: 'This is a Test Notification',
         },
-        token: fcmToken,
       };
+      // console.log(message);
 
-      getMessaging().send(message);
-      return message;
+      getMessaging()
+        .sendMulticast(message)
+        .then((response) => {
+          if (response.failureCount > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const failedTokens: string | any[] = [];
+            response.responses.forEach((resp, idx) => {
+              if (!resp.success) {
+                failedTokens.push(registrationTokens[idx]);
+              }
+            });
+            console.log('List of tokens that caused failures: ' + response);
+          } else {
+            console.log('Success Send Notification');
+          }
+        });
     } catch (error) {
       throw new Error((error as Error).message);
     }

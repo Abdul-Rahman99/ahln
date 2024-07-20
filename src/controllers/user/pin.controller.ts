@@ -9,7 +9,9 @@ import BoxModel from '../../models/box/box.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
+import UserDevicesModel from '../../models/users/user.devices.model';
 
+const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
 const boxModel = new BoxModel();
@@ -165,11 +167,11 @@ export const updateOnePinByUser = asyncHandler(
 export const checkPIN = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await authHandler(req, res, next);
       const { passcode, box_id } = req.body;
 
       const checkPinResult = await pinModel.checkPIN(passcode, box_id);
-
+      const userId = await pinModel.getUserByPasscode(passcode);
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
       if (checkPinResult) {
         ResponseHandler.success(
           res,
@@ -178,14 +180,26 @@ export const checkPIN = asyncHandler(
         );
         notificationModel.createNotification(
           'checkPIN',
-          i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+          i18n.__('PIN_CHECKED_SUCCESSFULLY'),
           null,
-          user,
+          userId,
         );
+
+        try {
+          notificationModel.pushNotification(fcmToken);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'checkPIN';
+          systemLog.createSystemLog(
+            userId,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
       } else {
         const source = 'checkPIN';
         systemLog.createSystemLog(
-          user,
+          userId,
           i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
           source,
         );
@@ -193,6 +207,7 @@ export const checkPIN = asyncHandler(
           res,
           i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
         );
+        notificationModel.pushNotification(fcmToken);
       }
     } catch (error) {
       const user = await authHandler(req, res, next);

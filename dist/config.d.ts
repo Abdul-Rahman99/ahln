@@ -16,5 +16,6 @@ export declare const config: {
     MQTT_PROTOCOL: string | undefined;
     MQTT_USERNAME: string | undefined;
     MQTT_PASSWORD: string | undefined;
+    FCM_TOKEN: string | undefined;
 };
 export default config;

@@ -37,19 +37,18 @@ function connect() {
             console.log('Received non-JSON message:', message.toString());
         }
         if (shouldSubscribeToTopic(topic)) {
-            const specificTopic = topic;
-            exports.client.subscribe(specificTopic, { qos: 1 }, (err, granted) => {
+            exports.client.subscribe(topic, { qos: 1 }, (err, granted) => {
                 if (err) {
-                    console.error(`Subscription error for topic ${specificTopic}:`, err);
+                    console.error(`Subscription error for topic ${topic}:`, err);
                 }
                 else {
-                    console.log(`Subscribed to new topic: ${specificTopic}`, granted);
+                    console.log(`Subscribed to new topic: ${topic}`, granted);
                 }
             });
         }
     });
-    exports.client.on('error', function (error) {
-        console.log('MQTT connection error:', error);
+    exports.client.on('error', (error) => {
+        console.error('MQTT connection error:', error);
         exports.client.end();
         setTimeout(connect, 10000);
     });

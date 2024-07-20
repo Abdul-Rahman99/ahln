@@ -32,6 +32,20 @@ class UserDevicesModel {
             connection.release();
         }
     }
+    async getFcmTokenDevicesByUser(user) {
+        const connection = await database_1.default.connect();
+        try {
+            const sql = `SELECT fcm_token FROM user_devices WHERE user_id = $1`;
+            const result = await connection.query(sql, [user]);
+            return result.rows.length ? result.rows : [];
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
     async getAllUserDevices(userId) {
         const connection = await database_1.default.connect();
         try {

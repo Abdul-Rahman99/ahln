@@ -28,7 +28,6 @@ const sendVerificationEmail = async (
   res: Response,
   next: NextFunction,
 ) => {
-  
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -59,6 +58,7 @@ const sendVerificationEmail = async (
 export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, user_name, phone_number, password }: User = req.body;
+    const { fcmToken } = req.body;
     // Check if email or phone already exists
     const emailExists = await userModel.emailExists(email);
     if (emailExists) {
@@ -93,6 +93,11 @@ export const register = asyncHandler(
       email_verified: false,
       avatar: req.file?.filename,
     } as User);
+
+    // Save the FCM token and user ID to the user_devices table
+    if (fcmToken) {
+      await userDevicesModel.saveUserDevice(user.id, fcmToken);
+    }
 
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -260,6 +265,7 @@ export const login = asyncHandler(
       },
       token,
     );
+
     const action = 'login';
     auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
   },
@@ -341,7 +347,6 @@ export const updatePassword = asyncHandler(
       const source = 'updatePassword';
       systemLog.createSystemLog(user, 'Invalid credentials', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
-      
     }
 
     const isPasswordValid = bcrypt.compareSync(password, result.password);

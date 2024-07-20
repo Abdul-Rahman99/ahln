@@ -105,6 +105,23 @@ class PINModel {
     }
   }
 
+  // get one pin management
+  async getUserByPasscode(pass: string): Promise<string> {
+    const connection = await db.connect();
+    try {
+      const sql = 'SELECT user_id FROM PIN WHERE passcode=$1';
+      const result = await connection.query(sql, [pass]);
+      if (result.rows.length > 0) {
+        throw new Error('No Pin Founded for user by this passcode');
+      }
+      return result.rows[0].user_id;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // delete Pin
   async deleteOnePinByUser(id: number, user: string): Promise<PIN[]> {
     const connection = await db.connect();

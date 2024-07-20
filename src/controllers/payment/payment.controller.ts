@@ -68,8 +68,8 @@ export const createPayment = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createPayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -87,8 +87,8 @@ export const getAllPayments = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllPayments';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -113,8 +113,8 @@ export const getPaymentById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getPaymentById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -179,8 +179,8 @@ export const updatePayment = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updatePayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -212,8 +212,8 @@ export const deletePayment = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deletePayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -234,8 +234,8 @@ export const getPaymentsByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getPaymentsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

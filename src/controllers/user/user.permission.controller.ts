@@ -52,8 +52,8 @@ export const assignPermissionToUser = async (
     const user = await authHandler(req, res, next);
     const source = 'assignPermissionToUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -101,8 +101,8 @@ export const removePermissionFromUser = async (
     const user = await authHandler(req, res, next);
     const source = 'removePermissionFromUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -137,7 +137,7 @@ export const getPermissionsByUser = async (
     const user = await authHandler(req, res, next);
     const source = 'getPermissionsByUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

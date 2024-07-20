@@ -36,8 +36,8 @@ export const createUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -55,8 +55,8 @@ export const getAllUsers = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllUsers';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -82,8 +82,8 @@ export const getUserById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getUserById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -123,8 +123,8 @@ export const updateUser = asyncHandler(
         const user = await authHandler(req, res, next);
         const source = 'updateUser';
         systemLog.createSystemLog(user, (error as Error).message, source);
-        next(error);
         ResponseHandler.badRequest(res, error.message);
+        next(error);
       }
     });
   },
@@ -151,8 +151,8 @@ export const deleteUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

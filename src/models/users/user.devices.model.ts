@@ -38,8 +38,8 @@ class UserDevicesModel {
       const sql = `SELECT fcm_token FROM user_devices WHERE user_id = $1`;
       const result = await connection.query(sql, [user]);
       // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ', result.rows);
-      const array: Array = [];
-      
+      const array: Array<any> = [];
+
       result.rows.forEach((element) => {
         array.push(element.fcm_token);
       });

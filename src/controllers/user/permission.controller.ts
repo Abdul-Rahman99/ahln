@@ -35,8 +35,8 @@ export const createPermission = async (
     const user = await authHandler(req, res, next);
     const source = 'createPermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -56,8 +56,8 @@ export const getAllPermissions = async (
     const user = await authHandler(req, res, next);
     const source = 'getAllPermissions';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -78,8 +78,8 @@ export const getPermissionById = async (
     const user = await authHandler(req, res, next);
     const source = 'getPermissionById';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -112,8 +112,8 @@ export const updatePermission = async (
     const user = await authHandler(req, res, next);
     const source = 'updatePermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -142,7 +142,7 @@ export const deletePermission = async (
     const user = await authHandler(req, res, next);
     const source = 'deletePermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

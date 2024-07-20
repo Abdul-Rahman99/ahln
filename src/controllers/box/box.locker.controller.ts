@@ -36,8 +36,8 @@ export const createBoxLocker = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -55,8 +55,8 @@ export const getAllBoxLockers = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -75,8 +75,8 @@ export const getBoxLockerById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxLockerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -106,8 +106,8 @@ export const updateBoxLocker = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -135,8 +135,8 @@ export const deleteBoxLocker = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -156,8 +156,8 @@ export const getAllLockersById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxLockersById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

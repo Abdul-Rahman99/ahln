@@ -34,8 +34,8 @@ export const createRole = async (
     const user = await authHandler(req, res, next);
     const source = 'createRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -55,8 +55,8 @@ export const getAllRoles = async (
     const user = await authHandler(req, res, next);
     const source = 'getAllRoles';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -73,8 +73,8 @@ export const getRoleById = async (
     const user = await authHandler(req, res, next);
     const source = 'getRoleById';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -99,8 +99,8 @@ export const updateRole = async (
     const user = await authHandler(req, res, next);
     const source = 'updateRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -124,7 +124,7 @@ export const deleteRole = async (
     const user = await authHandler(req, res, next);
     const source = 'deleteRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

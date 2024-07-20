@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { Notification } from '../../types/notification.type';
 import { getMessaging } from 'firebase-admin/messaging';
@@ -103,8 +104,11 @@ export default class NotificationModel {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async pushNotification(fcmToken: any): Promise<any> {
+  async pushNotification(
+    fcmToken: any,
+    title: string,
+    body: string,
+  ): Promise<any> {
     try {
       const registrationTokens = fcmToken;
       const message = {
@@ -113,28 +117,30 @@ export default class NotificationModel {
         android: {},
         messageId: '103564652569',
         notification: {
-          title: 'A7AAA Fe Kees',
-          body: 'This is a Test Notification',
+          title: title,
+          body: body,
         },
       };
       // console.log(message);
 
-      getMessaging()
-        .sendMulticast(message)
-        .then((response) => {
-          if (response.failureCount > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const failedTokens: string | any[] = [];
-            response.responses.forEach((resp, idx) => {
-              if (!resp.success) {
-                failedTokens.push(registrationTokens[idx]);
-              }
-            });
-            console.log('List of tokens that caused failures: ' + response);
-          } else {
-            console.log('Success Send Notification');
-          }
-        });
+      if (fcmToken.length > 0) {
+        getMessaging()
+          .sendEachForMulticast(message)
+          .then((response) => {
+            if (response.failureCount > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const failedTokens: string | any[] = [];
+              response.responses.forEach((resp, idx) => {
+                if (!resp.success) {
+                  failedTokens.push(registrationTokens[idx]);
+                }
+              });
+              console.log('List of tokens that caused failures: ' + response);
+            } else {
+              console.log('Success Send Notification');
+            }
+          });
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     }

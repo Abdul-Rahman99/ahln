@@ -40,8 +40,8 @@ export const createRelativeCustomer = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -62,8 +62,8 @@ export const getAllRelativeCustomers = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllRelativeCustomers';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -89,8 +89,8 @@ export const getRelativeCustomerById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getRelativeCustomerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -132,8 +132,8 @@ export const updateRelativeCustomer = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -168,8 +168,8 @@ export const deleteRelativeCustomer = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

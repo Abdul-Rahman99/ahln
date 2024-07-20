@@ -94,8 +94,8 @@ export const createSalesInvoice = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -113,8 +113,8 @@ export const getAllSalesInvoices = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllSalesInvoices';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -133,8 +133,8 @@ export const getSalesInvoiceById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getSalesInvoiceById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -179,8 +179,8 @@ export const updateSalesInvoice = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -207,8 +207,8 @@ export const deleteSalesInvoice = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -232,8 +232,8 @@ export const getSalesInvoicesByUserId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getSalesInvoiceByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -257,8 +257,8 @@ export const getSalesInvoicesBySalesId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getSalesInvoicesBySalesId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -278,8 +278,8 @@ export const getSalesInvoicesByBoxId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getSalesInvoicesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

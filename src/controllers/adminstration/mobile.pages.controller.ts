@@ -37,8 +37,8 @@ export const createMobilePage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -57,8 +57,8 @@ export const getAllMobilePages = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllMobilePages';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -89,8 +89,8 @@ export const getMobilePageByTitle = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getMobilePageByTitle';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -122,8 +122,8 @@ export const updateMobilePage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -153,8 +153,8 @@ export const deleteMobilePage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

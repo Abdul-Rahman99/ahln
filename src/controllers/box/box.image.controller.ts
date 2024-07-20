@@ -63,8 +63,8 @@ export const uploadBoxImage = asyncHandler(
         const user = await authHandler(req, res, next);
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (error as Error).message, source);
-        next(error);
         ResponseHandler.badRequest(res, error.message);
+        next(error);
       }
     });
   },
@@ -196,8 +196,8 @@ export const deleteBoxImage = asyncHandler(
 //  const user = await authHandler(req, res, next);
 //  const source = 'getBoxImagesByUser';
 //  systemLog.createSystemLog(user, (error as Error).message, source);
-//        next(error);
 //       ResponseHandler.badRequest(
+//        next(error);
 //         res,
 //         error.message,
 //       );

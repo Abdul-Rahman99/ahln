@@ -24,8 +24,8 @@ export const createMqttTopic = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -43,8 +43,8 @@ export const getAllMqttTopic = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -65,8 +65,8 @@ export const getOneMqttTopic = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -87,8 +87,8 @@ export const deleteOneMqttTopic = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

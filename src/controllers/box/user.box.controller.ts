@@ -13,10 +13,11 @@ import AddressModel from '../../models/box/address.model';
 import { Address } from '../../types/address.type';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-
+import UserDevicesModel from '../../models/users/user.devices.model';
 import NotificationModel from '../../models/logs/notification.model';
-const notificationModel = new NotificationModel();
 
+const userDevicesModel = new UserDevicesModel();
+const notificationModel = new NotificationModel();
 const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
@@ -46,8 +47,8 @@ export const createUserBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -65,8 +66,8 @@ export const getAllUserBoxes = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllUserBoxes';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -85,8 +86,8 @@ export const getUserBoxById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getUserBoxById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -116,8 +117,8 @@ export const updateUserBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -143,8 +144,8 @@ export const deleteUserBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -167,8 +168,8 @@ export const getUserBoxesByUserId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getUserBoxesByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -186,8 +187,8 @@ export const getUserBoxesByBoxId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getUserBoxesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -210,7 +211,6 @@ export const assignBoxToUser = asyncHandler(
         null,
         userId,
       );
-
       const auditUser = await authHandler(req, res, next);
       const action = 'assignBoxToUser';
       auditTrail.createAuditTrail(
@@ -222,8 +222,8 @@ export const assignBoxToUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'assignBoxToUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -255,6 +255,22 @@ export const userAssignBoxToHimself = asyncHandler(
         null,
         user,
       );
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('ASSIGN_BOX_TO_USER'),
+          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'checkPIN';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       const action = 'userAssignBoxToHimself';
       auditTrail.createAuditTrail(
         user,
@@ -265,8 +281,8 @@ export const userAssignBoxToHimself = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'userAssignBoxToHimself';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -325,8 +341,8 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'userAssignBoxToRelativeUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

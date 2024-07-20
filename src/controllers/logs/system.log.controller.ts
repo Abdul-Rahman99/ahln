@@ -23,8 +23,8 @@ export const createSystemLog = asyncHandler(
         createdSystemLog,
       );
     } catch (error) {
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -42,8 +42,8 @@ export const getAllSystemLogs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllSystemLog';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -64,8 +64,8 @@ export const getSystemLogById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getSystemLogById';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -88,8 +88,8 @@ export const updateSystemLog = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateSystemLog';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -110,8 +110,8 @@ export const deleteSystemLogById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteSystemLogById';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

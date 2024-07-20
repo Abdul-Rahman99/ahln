@@ -35,8 +35,8 @@ export const createAddress = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -54,8 +54,8 @@ export const getAllAddresses = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllAddresses';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -74,8 +74,8 @@ export const getAddressById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAddressById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -106,8 +106,8 @@ export const updateAddress = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -134,8 +134,8 @@ export const deleteAddress = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

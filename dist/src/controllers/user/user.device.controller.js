@@ -27,8 +27,8 @@ const registerDevice = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'registerDevice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.registerDevice = registerDevice;
@@ -45,8 +45,8 @@ const deleteDevice = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteDevice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.deleteDevice = deleteDevice;
@@ -64,8 +64,8 @@ const updateDevice = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateDevice';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.updateDevice = updateDevice;
@@ -79,8 +79,8 @@ const getDevicesByUser = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getDevicesByUser';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getDevicesByUser = getDevicesByUser;
@@ -100,8 +100,8 @@ const getUserDeviceById = async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getUserDeviceById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 };
 exports.getUserDeviceById = getUserDeviceById;

@@ -264,7 +264,7 @@ export const userAssignBoxToHimself = asyncHandler(
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        const source = 'checkPIN';
+        const source = 'userAssignBoxToHimself';
         systemLog.createSystemLog(
           user,
           i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
@@ -337,6 +337,23 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         action,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
       );
+
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+          i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
     } catch (error: any) {
       const user = await authHandler(req, res, next);
       const source = 'userAssignBoxToRelativeUser';

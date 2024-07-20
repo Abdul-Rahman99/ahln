@@ -39,8 +39,8 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createUserBox';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -52,8 +52,8 @@ exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllUserBoxes';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -66,8 +66,8 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getUserBoxById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -84,8 +84,8 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateUserBox';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -101,8 +101,8 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteUserBox';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -115,8 +115,8 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getUserBoxesByUserId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -129,8 +129,8 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getUserBoxesByBoxId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -147,8 +147,8 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'assignBoxToUser';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -165,7 +165,7 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
             notificationModel.pushNotification(fcmToken, i18n_1.default.__('ASSIGN_BOX_TO_USER'), i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
         }
         catch (error) {
-            const source = 'checkPIN';
+            const source = 'userAssignBoxToHimself';
             systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
         }
         const action = 'userAssignBoxToHimself';
@@ -175,8 +175,8 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'userAssignBoxToHimself';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -211,13 +211,21 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         notificationModel.createNotification('userAssignBoxToRelativeUser', i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'), null, user);
         const action = 'userAssignBoxToRelativeUser';
         auditTrail.createAuditTrail(user, action, i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'));
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+            notificationModel.pushNotification(fcmToken, i18n_1.default.__('ASSIGN_BOX_TO_RELATIVE_USER'), i18n_1.default.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'));
+        }
+        catch (error) {
+            const source = 'userAssignBoxToRelativeUser';
+            systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+        }
     }
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'userAssignBoxToRelativeUser';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=user.box.controller.js.map

@@ -122,6 +122,23 @@ class BoxModel {
             connection.release();
         }
     }
+    async boxExists(id) {
+        const connection = await database_1.default.connect();
+        try {
+            if (!id) {
+                throw new Error('ID cannot be null. Please provide a valid box ID.');
+            }
+            const sql = 'SELECT id FROM Box WHERE serial_number=$1';
+            const result = await connection.query(sql, [id]);
+            return result.rows[0];
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
     async updateOne(box, id) {
         const connection = await database_1.default.connect();
         try {

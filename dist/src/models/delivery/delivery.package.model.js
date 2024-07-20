@@ -176,7 +176,7 @@ class DeliveryPackageModel {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid Delivery Package ID.');
             }
-            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND user_id=$2';
+            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND customer_id=$2';
             const checkResult = await connection.query(checkSql, [id, user]);
             if (checkResult.rows.length === 0) {
                 throw new Error(`Delivery package with ID ${id} does not exist`);

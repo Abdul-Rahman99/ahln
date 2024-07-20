@@ -27,8 +27,8 @@ exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'createBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -40,8 +40,8 @@ exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -54,8 +54,8 @@ exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getBoxGenerationById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -72,8 +72,8 @@ exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -89,8 +89,8 @@ exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=box.generation.controller.js.map

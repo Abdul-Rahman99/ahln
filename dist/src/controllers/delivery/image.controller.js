@@ -35,8 +35,8 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'uploadImage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
+        next(error);
     }
 });
 //# sourceMappingURL=image.controller.js.map

@@ -70,8 +70,8 @@ export const createDeliveryPackage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -89,8 +89,8 @@ export const getAllDeliveryPackages = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -110,8 +110,8 @@ export const getDeliveryPackageById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getDeliveryPackageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -168,8 +168,8 @@ export const updateDeliveryPackage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -204,8 +204,8 @@ export const deleteDeliveryPackage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -232,8 +232,8 @@ export const getUserDeliveryPackages = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getUserDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

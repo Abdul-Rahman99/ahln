@@ -45,8 +45,8 @@ export const createOTP = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -64,8 +64,8 @@ export const getAllOTPs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllOPTs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.internalError(res, error.message);
+      next(error);
     }
   },
 );
@@ -80,8 +80,8 @@ export const getOTPById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getOTPById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -114,8 +114,8 @@ export const updateOTP = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateOPT';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -147,8 +147,8 @@ export const deleteOTP = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -167,8 +167,8 @@ export const getOTPsByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getOPTsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -204,8 +204,8 @@ export const checkOTP = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'checkOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -243,8 +243,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'checkTrackingNumberAndUpdateStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

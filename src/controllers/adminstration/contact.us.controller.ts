@@ -40,8 +40,8 @@ export const createContactUs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -59,8 +59,8 @@ export const getAllContactUs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -81,8 +81,8 @@ export const getOneContactUs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getOneContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -113,8 +113,8 @@ export const updateContactUs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -142,8 +142,8 @@ export const deleteContactUs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

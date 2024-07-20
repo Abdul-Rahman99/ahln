@@ -63,8 +63,8 @@ export const createPin = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createPin';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -83,8 +83,8 @@ export const getAllPinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllPinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -100,8 +100,8 @@ export const getOnePinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -129,8 +129,8 @@ export const deleteOnePinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -159,8 +159,8 @@ export const updateOnePinByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -171,7 +171,9 @@ export const checkPIN = asyncHandler(
 
       const checkPinResult = await pinModel.checkPIN(passcode, box_id);
       const userId = await pinModel.getUserByPasscode(passcode);
+
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
+
       if (checkPinResult) {
         ResponseHandler.success(
           res,
@@ -186,7 +188,11 @@ export const checkPIN = asyncHandler(
         );
 
         try {
-          notificationModel.pushNotification(fcmToken);
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DELIVERY_CHECK_PIN'),
+            i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+          );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           const source = 'checkPIN';
@@ -197,17 +203,21 @@ export const checkPIN = asyncHandler(
           );
         }
       } else {
-        const source = 'checkPIN';
-        systemLog.createSystemLog(
-          userId,
-          i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
-          source,
-        );
         ResponseHandler.badRequest(
           res,
           i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
         );
-        notificationModel.pushNotification(fcmToken);
+        notificationModel.createNotification(
+          'checkPIN',
+          i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
+          null,
+          userId,
+        );
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('DELIVERY_CHECK_PIN'),
+          i18n.__('PIN_CHECKED_FAILED'),
+        );
       }
     } catch (error) {
       const user = await authHandler(req, res, next);

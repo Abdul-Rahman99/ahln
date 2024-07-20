@@ -36,8 +36,8 @@ export const createBoxGeneration = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -55,8 +55,8 @@ export const getAllBoxGenerations = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -75,8 +75,8 @@ export const getBoxGenerationById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxGenerationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -106,8 +106,8 @@ export const updateBoxGeneration = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -134,8 +134,8 @@ export const deleteBoxGeneration = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

@@ -23,8 +23,8 @@ export const getAllAuditTrail = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllAuditTrail';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -43,8 +43,8 @@ export const getAuditTrailById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -63,8 +63,8 @@ export const deleteAuditTrailById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

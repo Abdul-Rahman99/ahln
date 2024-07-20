@@ -41,8 +41,8 @@ export const registerDevice = async (
     const user = await authHandler(req, res, next);
     const source = 'registerDevice';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -74,8 +74,8 @@ export const deleteDevice = async (
     const user = await authHandler(req, res, next);
     const source = 'deleteDevice';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -109,8 +109,8 @@ export const updateDevice = async (
     const user = await authHandler(req, res, next);
     const source = 'updateDevice';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -133,8 +133,8 @@ export const getDevicesByUser = async (
     const user = await authHandler(req, res, next);
     const source = 'getDevicesByUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -163,7 +163,7 @@ export const getUserDeviceById = async (
     const user = await authHandler(req, res, next);
     const source = 'getUserDeviceById';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };

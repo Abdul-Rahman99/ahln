@@ -140,8 +140,8 @@ export const deleteDPFavList = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteDPFavList';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -162,8 +162,8 @@ export const getDPFavListsByUser = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getDPFavListByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

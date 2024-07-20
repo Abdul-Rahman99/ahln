@@ -15,7 +15,6 @@ import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
 import path from 'path';
 import ResponseHandler from './utils/responsesHandler';
-import { initializeApp, applicationDefault } from 'firebase-admin/app';
 
 // import patchDatabase from './config/patch';
 dotenv.config({ path: '../.env' });
@@ -75,12 +74,6 @@ mountRoutes(app);
 //   res.sendFile(path.join(__dirname, 'pages/index.html'));
 // });
 
-config.FCM_TOKEN;
-
-initializeApp({
-  credential: applicationDefault(),
-  projectId: 'ahlnowner-eaf04',
-});
 
 // 404 Not Found middleware
 app.use((_req: Request, res: Response) => {

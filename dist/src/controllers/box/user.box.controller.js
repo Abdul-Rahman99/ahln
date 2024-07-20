@@ -15,7 +15,9 @@ const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const address_model_1 = __importDefault(require("../../models/box/address.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
+const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
 const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
+const userDevicesModel = new user_devices_model_1.default();
 const notificationModel = new notification_model_1.default();
 const userModel = new user_model_1.default();
 const userBoxModel = new user_box_model_1.default();
@@ -158,6 +160,14 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(user, serialNumber, result.id);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
         notificationModel.createNotification('userAssignBoxToHimself', i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), null, user);
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        try {
+            notificationModel.pushNotification(fcmToken, i18n_1.default.__('ASSIGN_BOX_TO_USER'), i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
+        }
+        catch (error) {
+            const source = 'checkPIN';
+            systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+        }
         const action = 'userAssignBoxToHimself';
         auditTrail.createAuditTrail(user, action, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
     }

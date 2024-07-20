@@ -42,8 +42,8 @@ export const createBoxScreenMessage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'boxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -62,8 +62,8 @@ export const getAllBoxScreenMessages = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxScreenMessages';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -95,8 +95,8 @@ export const getBoxScreenMessageById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxScreenMessageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -132,8 +132,8 @@ export const updateBoxScreenMessage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );
@@ -162,8 +162,8 @@ export const deleteBoxScreenMessage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

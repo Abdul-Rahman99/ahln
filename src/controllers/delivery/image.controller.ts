@@ -33,8 +33,8 @@ export const uploadImage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'uploadImage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, error.message);
+      next(error);
     }
   },
 );

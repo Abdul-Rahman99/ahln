@@ -17,6 +17,15 @@ export const createBox = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newBox: Box = req.body;
+
+      const boxExist = await boxModel.boxExists(newBox.serial_number);
+      if (boxExist) {
+        const user = await authHandler(req, res, next);
+        const source = 'createBox';
+        systemLog.createSystemLog(user, i18n.__('BOX_ALREADY_EXISTS'), source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_ALREADY_EXISTS'));
+      }
+
       const createdBox = await boxModel.createBox(newBox);
       ResponseHandler.success(
         res,
@@ -34,8 +43,8 @@ export const createBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -53,8 +62,8 @@ export const getAllBoxes = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxes';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -69,8 +78,8 @@ export const getBoxById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -97,8 +106,8 @@ export const updateBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -124,8 +133,8 @@ export const deleteBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -145,8 +154,8 @@ export const getBoxesByGenerationId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxesByGenerationId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -164,8 +173,8 @@ export const getBoxByTabletInfo = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxByTabletInfo';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -194,8 +203,8 @@ export const assignTabletToBox = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'assignTabletToBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -221,8 +230,8 @@ export const resetTabletId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'resetTabletId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

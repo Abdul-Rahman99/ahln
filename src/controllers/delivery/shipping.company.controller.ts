@@ -39,8 +39,8 @@ export const createShippingCompany = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -60,8 +60,8 @@ export const getAllShippingCompanies = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllShippingCompanies';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -94,8 +94,8 @@ export const getShippingCompanyById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getShippingCompanyById';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -128,8 +128,8 @@ export const updateShippingCompany = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );
@@ -156,8 +156,8 @@ export const deleteShippingCompany = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
       next(error);
-      return ResponseHandler.badRequest(res, error.message);
     }
   },
 );

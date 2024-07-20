@@ -36,8 +36,8 @@ export const createMqttLog = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'createMqttLog';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -55,8 +55,8 @@ export const getAllMqttLogs = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllMqttLogs';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -75,8 +75,8 @@ export const getMqttLog = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getMqttLog';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );
@@ -95,8 +95,8 @@ export const deleteMqttLog = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteMqttLog';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
       ResponseHandler.badRequest(res, (error as Error).message);
+      next(error);
     }
   },
 );

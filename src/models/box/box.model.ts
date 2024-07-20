@@ -150,6 +150,25 @@ class BoxModel {
     }
   }
 
+  // Get specific box
+  async boxExists(id: string): Promise<Box> {
+    const connection = await db.connect();
+
+    try {
+      if (!id) {
+        throw new Error('ID cannot be null. Please provide a valid box ID.');
+      }
+      const sql = 'SELECT id FROM Box WHERE serial_number=$1';
+      const result = await connection.query(sql, [id]);
+
+      return result.rows[0] as Box;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // Update box
   async updateOne(box: Partial<Box>, id: string): Promise<Box> {
     const connection = await db.connect();

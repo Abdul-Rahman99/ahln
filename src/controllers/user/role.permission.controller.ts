@@ -52,8 +52,8 @@ export const assignPermissionToRole = async (
     const user = await authHandler(req, res, next);
     const source = 'assignPermissionToRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -101,8 +101,8 @@ export const removePermissionFromRole = async (
     const user = await authHandler(req, res, next);
     const source = 'removePermissionFromRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, error.message);
+    next(error);
   }
 };
 
@@ -140,7 +140,7 @@ export const getPermissionsByRole = async (
     const user = await authHandler(req, res, next);
     const source = 'getPermissionsByRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
     ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
+    next(error);
   }
 };

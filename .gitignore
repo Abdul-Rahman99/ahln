@@ -3,3 +3,6 @@
 .env
 /dist
 ahlnowner.json
+env
+./.env
+/uploads

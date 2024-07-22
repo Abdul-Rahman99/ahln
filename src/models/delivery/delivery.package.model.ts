@@ -177,7 +177,7 @@ class DeliveryPackageModel {
 
     try {
       const checkSql =
-        'SELECT * FROM Delivery_Package WHERE id=$1 AND user_id=$2';
+        'SELECT * FROM Delivery_Package WHERE id=$1 AND customer_id=$2';
       const checkResult = await connection.query(checkSql, [id, user]);
 
       if (checkResult.rows.length === 0) {

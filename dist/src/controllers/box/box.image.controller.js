@@ -13,6 +13,9 @@ const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.tra
 const notification_model_1 = __importDefault(require("../../models/logs/notification.model"));
 const system_log_model_1 = __importDefault(require("../../models/logs/system.log.model"));
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
+const user_devices_model_1 = __importDefault(require("../../models/users/user.devices.model"));
+const database_1 = __importDefault(require("../../config/database"));
+const userDevicesModel = new user_devices_model_1.default();
 const auditTrail = new audit_trail_model_1.default();
 const notificationModel = new notification_model_1.default();
 const systemLog = new system_log_model_1.default();
@@ -40,6 +43,18 @@ exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res) => {
             notificationModel.createNotification('uploadBoxImage', i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'), imageName, auditUser);
             const action = 'uploadSingleImage';
             auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('IMAGE_UPLOADED_SUCCESSFULLY'));
+            const connection = await database_1.default.connect();
+            const userResult = await connection.query('SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1', [boxId]);
+            connection.release();
+            const user = userResult.rows[0].user_id;
+            const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+            try {
+                notificationModel.pushNotification(fcmToken, i18n_1.default.__('Delivery Man Arrived'), i18n_1.default.__('Delivery man tries to open the box'));
+            }
+            catch (error) {
+                const source = 'updateRelativeCustomer';
+                systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+            }
         }
         catch (error) {
             const user = await (0, authHandler_1.default)(req, res);

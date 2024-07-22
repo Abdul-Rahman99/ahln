@@ -266,9 +266,33 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       }
     }
   } catch (error: any) {
-    const user = await authHandler(req, res);
+    const connection = await db.connect();
+
+    const userResult = await connection.query(
+      'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+      [req.body.boxId],
+    );
+    connection.release();
+    const user = userResult.rows[0].user_id;
     const source = 'checkOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
+    const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+
+    try {
+      notificationModel.pushNotification(
+        fcmToken,
+        i18n.__('CHECK_OTP'),
+        i18n.__('INVALID_OTP'),
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const source = 'checkOTP';
+      systemLog.createSystemLog(
+        user,
+        i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+        source,
+      );
+    }
     ResponseHandler.badRequest(res, error.message);
     // next(error);
   }
@@ -311,6 +335,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
           user,
         );
         const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+
         try {
           notificationModel.pushNotification(
             fcmToken,
@@ -329,7 +354,6 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       } else {
         const source = 'checkTrackingNumberAndUpdateStatus';
         systemLog.createSystemLog(user, 'Invalid Otp', source);
-        ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
         const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
         try {
           notificationModel.pushNotification(
@@ -346,11 +370,36 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             source,
           );
         }
+        ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       }
     } catch (error: any) {
-      const user = await authHandler(req, res);
+      const connection = await db.connect();
+
+      const userResult = await connection.query(
+        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+        [req.body.boxId],
+      );
+      connection.release();
+      const user = userResult.rows[0].user_id;
       const source = 'checkTrackingNumberAndUpdateStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('CHECK_TRACKING_NUMBER'),
+          i18n.__('PACKAGE_ID_INVALID'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'checkTrackingNumberAndUpdateStatus';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.badRequest(res, error.message);
       // next(error);
     }

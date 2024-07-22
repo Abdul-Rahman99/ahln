@@ -9,6 +9,10 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+import UserDevicesModel from '../../models/users/user.devices.model';
+import db from '../../config/database';
+
+const userDevicesModel = new UserDevicesModel();
 const auditTrail = new AuditTrailModel();
 const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
@@ -59,6 +63,33 @@ export const uploadBoxImage = asyncHandler(
           action,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
         );
+
+        const connection = await db.connect();
+
+        const userResult = await connection.query(
+          'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+          [boxId],
+        );
+        connection.release();
+        const user = userResult.rows[0].user_id;
+
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('Delivery Man Arrived'),
+            i18n.__('Delivery man tries to open the box'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'updateRelativeCustomer';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
       } catch (error: any) {
         const user = await authHandler(req, res);
         const source = 'uploadBoxImage';

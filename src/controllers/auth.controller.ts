@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
@@ -26,7 +26,6 @@ const sendVerificationEmail = async (
   otp: string,
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -46,7 +45,7 @@ const sendVerificationEmail = async (
   };
 
   transporter.sendMail(mailOptions);
-  const user = await authHandler(req, res, next);
+  const user = await authHandler(req, res);
   notificationModel.createNotification(
     'updateOnePinByUser',
     i18n.__('PIN_UPDATED_SUCCESSFULLY'),
@@ -55,248 +54,226 @@ const sendVerificationEmail = async (
   );
 };
 
-export const register = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { email, user_name, phone_number, password }: User = req.body;
-    const { fcmToken } = req.body;
-    // Check if email or phone already exists
-    const emailExists = await userModel.emailExists(email);
-    if (emailExists) {
-      const user = await authHandler(req, res, next);
-      const source = 'register';
-      systemLog.createSystemLog(user, 'Email already Registerd', source);
-      return ResponseHandler.badRequest(
-        res,
-        i18n.__('EMAIL_ALREADY_REGISTERED'),
-      );
-    }
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const { email, user_name, phone_number, password }: User = req.body;
+  const { fcmToken } = req.body;
+  // Check if email or phone already exists
+  const emailExists = await userModel.emailExists(email);
+  if (emailExists) {
+    const user = await authHandler(req, res);
+    const source = 'register';
+    systemLog.createSystemLog(user, 'Email already Registerd', source);
+    return ResponseHandler.badRequest(res, i18n.__('EMAIL_ALREADY_REGISTERED'));
+  }
 
-    const phoneExists = await userModel.phoneExists(phone_number);
-    if (phoneExists) {
-      const user = await authHandler(req, res, next);
-      const source = 'phoneExists';
-      systemLog.createSystemLog(user, 'Phone Already Exists', source);
-      return ResponseHandler.badRequest(
-        res,
-        i18n.__('PHONE_ALREADY_REGISTERED'),
-      );
-    }
-    // Hash the password
-    const hashedPassword = bcrypt.hashSync(password, 10);
+  const phoneExists = await userModel.phoneExists(phone_number);
+  if (phoneExists) {
+    const user = await authHandler(req, res);
+    const source = 'phoneExists';
+    systemLog.createSystemLog(user, 'Phone Already Exists', source);
+    return ResponseHandler.badRequest(res, i18n.__('PHONE_ALREADY_REGISTERED'));
+  }
+  // Hash the password
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Create the user
-    const user = await userModel.createUser({
-      email,
-      user_name,
-      phone_number,
-      password: hashedPassword,
-      email_verified: false,
-      avatar: req.file?.filename,
-    } as User);
+  // Create the user
+  const user = await userModel.createUser({
+    email,
+    user_name,
+    phone_number,
+    password: hashedPassword,
+    email_verified: false,
+    avatar: req.file?.filename,
+  } as User);
 
-    // Save the FCM token and user ID to the user_devices table
-    if (fcmToken) {
-      await userDevicesModel.saveUserDevice(user.id, fcmToken);
-    }
+  // Save the FCM token and user ID to the user_devices table
+  if (fcmToken) {
+    await userDevicesModel.saveUserDevice(user.id, fcmToken);
+  }
 
-    // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  // Generate OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await userModel.saveOtp(email, otp);
+  await userModel.saveOtp(email, otp);
 
-    // Send verification email
-    sendVerificationEmail(email, otp, req, res, next);
+  // Send verification email
+  sendVerificationEmail(email, otp, req, res);
 
-    // Generate JWT token
-    const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+  // Generate JWT token
+  const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
 
-    // Update user token in the database
-    await userModel.updateUserToken(user.id, token);
+  // Update user token in the database
+  await userModel.updateUserToken(user.id, token);
 
-    ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
-    const action = 'register';
-    auditTrail.createAuditTrail(user.id, action, i18n.__('REGISTER_SUCCESS'));
-  },
-);
+  ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
+  const action = 'register';
+  auditTrail.createAuditTrail(user.id, action, i18n.__('REGISTER_SUCCESS'));
+});
 
-export const verifyEmail = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { email, otp, fcmToken } = req.body;
-    const emailLower = email.toLowerCase();
-    const currentUser = await userModel.findByEmail(emailLower);
+export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+  const { email, otp, fcmToken } = req.body;
+  const emailLower = email.toLowerCase();
+  const currentUser = await userModel.findByEmail(emailLower);
 
-    if (!currentUser) {
-      const user = await authHandler(req, res, next);
-      const source = 'verifyEmail';
-      systemLog.createSystemLog(user, 'User Not Found', source);
-      return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
-    }
+  if (!currentUser) {
+    const user = await authHandler(req, res);
+    const source = 'verifyEmail';
+    systemLog.createSystemLog(user, 'User Not Found', source);
+    return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
+  }
 
-    // Verify the token from the request matches the one in the database
-    if (currentUser.token !== currentUser.token) {
-      const user = await authHandler(req, res, next);
-      const source = 'verifyEmail';
-      systemLog.createSystemLog(user, 'Invalid Token', source);
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
-    }
+  // Verify the token from the request matches the one in the database
+  if (currentUser.token !== currentUser.token) {
+    const user = await authHandler(req, res);
+    const source = 'verifyEmail';
+    systemLog.createSystemLog(user, 'Invalid Token', source);
+    return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+  }
 
-    // Check if the provided email matches the current user's email
-    if (currentUser.email.toLowerCase() !== emailLower) {
-      const user = await authHandler(req, res, next);
-      const source = 'verifyEmail';
-      systemLog.createSystemLog(
-        user,
-        'Unauthorized email verification',
-        source,
-      );
-      return ResponseHandler.badRequest(
-        res,
-        i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
-      );
-    }
-    const user = await authHandler(req, res, next);
-
-    // Check if the provided OTP matches the user's OTP
-    const isOtpValid = await userModel.verifyOtp(emailLower, otp);
-    if (!isOtpValid) {
-      const source = 'verifyEmail';
-      systemLog.createSystemLog(user, 'Invalid Otp', source);
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
-    }
-
-    // Update the user's email_verified status
-    await userModel.updateUser(emailLower, {
-      email_verified: true,
-      register_otp: null,
-    });
-
-    // Retrieve the token from the database user
-    const token = currentUser.token;
-
-    // Save the FCM token and user ID to the user_devices table
-    if (fcmToken) {
-      await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
-    }
-
-    ResponseHandler.logInSuccess(
+  // Check if the provided email matches the current user's email
+  if (currentUser.email.toLowerCase() !== emailLower) {
+    const user = await authHandler(req, res);
+    const source = 'verifyEmail';
+    systemLog.createSystemLog(user, 'Unauthorized email verification', source);
+    return ResponseHandler.badRequest(
       res,
-      i18n.__('EMAIL_VERIFIED_SUCCESS'),
-      {
-        id: currentUser.id,
-        user_name: currentUser.user_name,
-        role_id: currentUser.role_id,
-        is_active: currentUser.is_active,
-        phone_number: currentUser.phone_number,
-        email: currentUser.email,
-        preferred_language: currentUser.preferred_language,
-      },
-      token,
+      i18n.__('UNAUTHORIZED_EMAIL_VERIFICATION'),
     );
-    notificationModel.createNotification(
-      'verifyEmail',
-      i18n.__('EMAIL_VERIFIED_SUCCESS'),
-      null,
-      user,
-    );
-  },
-);
+  }
+  const user = await authHandler(req, res);
 
-export const login = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password, fcmToken } = req.body;
+  // Check if the provided OTP matches the user's OTP
+  const isOtpValid = await userModel.verifyOtp(emailLower, otp);
+  if (!isOtpValid) {
+    const source = 'verifyEmail';
+    systemLog.createSystemLog(user, 'Invalid Otp', source);
+    return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
+  }
 
-    const user = await userModel.findByEmail(email);
-    if (!user) {
-      const user = await authHandler(req, res, next);
-      const source = 'login';
-      systemLog.createSystemLog(user, 'Invalid credentials', source);
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
-    }
+  // Update the user's email_verified status
+  await userModel.updateUser(emailLower, {
+    email_verified: true,
+    register_otp: null,
+  });
 
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
-    if (!isPasswordValid) {
-      const user = await authHandler(req, res, next);
-      const source = 'login';
-      systemLog.createSystemLog(user, 'Invalid credentials', source);
-      return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
-    }
+  // Retrieve the token from the database user
+  const token = currentUser.token;
 
-    const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
-    await userModel.updateUserToken(user.id, token);
+  // Save the FCM token and user ID to the user_devices table
+  if (fcmToken) {
+    await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
+  }
 
-    if (!user.is_active || !user.email_verified) {
-      const userAuth = await authHandler(req, res, next);
-      const source = 'login';
-      systemLog.createSystemLog(
-        userAuth,
-        'User Inactive or Unverified',
-        source,
-      );
-      return ResponseHandler.badRequest(
-        res,
-        i18n.__('USER_INACTIVE_OR_UNVERIFIED'),
-        {
-          is_active: user.is_active,
-          email_verified: user.email_verified,
-        },
-        token,
-      );
-    }
+  ResponseHandler.logInSuccess(
+    res,
+    i18n.__('EMAIL_VERIFIED_SUCCESS'),
+    {
+      id: currentUser.id,
+      user_name: currentUser.user_name,
+      role_id: currentUser.role_id,
+      is_active: currentUser.is_active,
+      phone_number: currentUser.phone_number,
+      email: currentUser.email,
+      preferred_language: currentUser.preferred_language,
+    },
+    token,
+  );
+  notificationModel.createNotification(
+    'verifyEmail',
+    i18n.__('EMAIL_VERIFIED_SUCCESS'),
+    null,
+    user,
+  );
+});
 
-    if (fcmToken) {
-      await userDevicesModel.saveUserDevice(user.id, fcmToken);
-    }
-    const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password, fcmToken } = req.body;
 
-    ResponseHandler.logInSuccess(
+  const user = await userModel.findByEmail(email);
+  if (!user) {
+    const user = await authHandler(req, res);
+    const source = 'login';
+    systemLog.createSystemLog(user, 'Invalid credentials', source);
+    return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+  }
+
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
+  if (!isPasswordValid) {
+    const user = await authHandler(req, res);
+    const source = 'login';
+    systemLog.createSystemLog(user, 'Invalid credentials', source);
+    return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
+  }
+
+  const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+  await userModel.updateUserToken(user.id, token);
+
+  if (!user.is_active || !user.email_verified) {
+    const userAuth = await authHandler(req, res);
+    const source = 'login';
+    systemLog.createSystemLog(userAuth, 'User Inactive or Unverified', source);
+    return ResponseHandler.badRequest(
       res,
-      i18n.__('LOGIN_SUCCESS'),
+      i18n.__('USER_INACTIVE_OR_UNVERIFIED'),
       {
-        id: user.id,
-        user_name: user.user_name,
-        role_id: user.role_id,
         is_active: user.is_active,
-        phone_number: user.phone_number,
-        email: user.email,
-        preferred_language: user.preferred_language,
-        avatar: userAvatar,
-        country: user.country,
-        city: user.city,
+        email_verified: user.email_verified,
       },
       token,
     );
+  }
 
-    const action = 'login';
-    auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
-  },
-);
+  if (fcmToken) {
+    await userDevicesModel.saveUserDevice(user.id, fcmToken);
+  }
+  const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+
+  ResponseHandler.logInSuccess(
+    res,
+    i18n.__('LOGIN_SUCCESS'),
+    {
+      id: user.id,
+      user_name: user.user_name,
+      role_id: user.role_id,
+      is_active: user.is_active,
+      phone_number: user.phone_number,
+      email: user.email,
+      preferred_language: user.preferred_language,
+      avatar: userAvatar,
+      country: user.country,
+      city: user.city,
+    },
+    token,
+  );
+
+  const action = 'login';
+  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
+});
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.currentUser;
   return ResponseHandler.success(res, user);
 });
 
-export const logout = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const user = await authHandler(req, res, next);
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
 
-    await userModel.updateUserToken(user, null);
-    return ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
-  },
-);
+  await userModel.updateUserToken(user, null);
+  return ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
+});
 
 export const resendOtpAndUpdateDB = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { email } = req.body;
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await userModel.updateResetPasswordOTP(email, otp);
 
-    sendVerificationEmail(email, otp, req, res, next);
+    sendVerificationEmail(email, otp, req, res);
 
     ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
 
     notificationModel.createNotification(
       'resendOtpAndUpdateDB',
@@ -308,13 +285,13 @@ export const resendOtpAndUpdateDB = asyncHandler(
 );
 
 export const updatePasswordWithOTP = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { email, otp, newPassword } = req.body;
 
     const isValidOTP = await userModel.checkResetPasswordOTP(email, otp);
 
     if (!isValidOTP) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'updatePasswordWithOTP';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
@@ -325,7 +302,7 @@ export const updatePasswordWithOTP = asyncHandler(
     await userModel.updateResetPasswordOTP(email, null);
 
     ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
 
     notificationModel.createNotification(
       'updatePasswordWithOTP',
@@ -337,9 +314,9 @@ export const updatePasswordWithOTP = asyncHandler(
 );
 
 export const updatePassword = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { password, newPassword } = req.body;
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
 
     const result = await userModel.getOne(user);
 

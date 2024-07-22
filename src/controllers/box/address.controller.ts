@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Address } from '../../types/address.type';
 import i18n from '../../config/i18n';
@@ -14,7 +14,7 @@ const auditTrail = new AuditTrailModel();
 const addressModel = new AddressModel();
 
 export const createAddress = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress);
@@ -24,7 +24,7 @@ export const createAddress = asyncHandler(
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
         createdAddress,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'createAddress';
       auditTrail.createAuditTrail(
         auditUser,
@@ -32,7 +32,7 @@ export const createAddress = asyncHandler(
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -42,7 +42,7 @@ export const createAddress = asyncHandler(
 );
 
 export const getAllAddresses = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const addresses = await addressModel.getMany();
       ResponseHandler.success(
@@ -51,7 +51,7 @@ export const getAllAddresses = asyncHandler(
         addresses,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllAddresses';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -61,7 +61,7 @@ export const getAllAddresses = asyncHandler(
 );
 
 export const getAddressById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const address = await addressModel.getOne(addressId);
@@ -71,7 +71,7 @@ export const getAddressById = asyncHandler(
         address,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAddressById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -81,7 +81,7 @@ export const getAddressById = asyncHandler(
 );
 
 export const updateAddress = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const addressData: Partial<Address> = req.body;
@@ -95,7 +95,7 @@ export const updateAddress = asyncHandler(
         i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
         updatedAddress,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'updateAddress';
       auditTrail.createAuditTrail(
         auditUser,
@@ -103,7 +103,7 @@ export const updateAddress = asyncHandler(
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'updateAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -113,7 +113,7 @@ export const updateAddress = asyncHandler(
 );
 
 export const deleteAddress = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const addressId = parseInt(req.params.id, 10);
       const deletedAddress = await addressModel.deleteOne(addressId);
@@ -123,7 +123,7 @@ export const deleteAddress = asyncHandler(
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
         deletedAddress,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'deleteAddress';
       auditTrail.createAuditTrail(
         auditUser,
@@ -131,7 +131,7 @@ export const deleteAddress = asyncHandler(
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

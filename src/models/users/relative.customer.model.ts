@@ -114,6 +114,12 @@ class RelativeCustomerModel {
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
     try {
+      // check if the main user already exist
+      const mainUser = 'SELECT customer_id FROM Relative_Customer WHERE id=$1';
+      const checkMainUser = await connection.query(mainUser, [id]);
+      if (!checkMainUser.rows.length) {
+        throw new Error(`Main Customer with ID does not exist`);
+      }
       // Check if the relative cutomer already exists
       const checkSql = 'SELECT * FROM Relative_Customer WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
@@ -145,7 +151,7 @@ class RelativeCustomerModel {
       queryParams.push(updatedAt); // Add the updatedAt timestamp
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
 
-      queryParams.push(id); // Add the address ID to the query parameters
+      queryParams.push(id); // Add the rc ID to the query parameters
 
       const sql = `UPDATE Relative_Customer SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 

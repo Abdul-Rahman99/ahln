@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -11,7 +11,7 @@ const systemLog = new SystemLogModel();
 const auditTrailModel = new AuditTrailModel();
 
 export const getAllAuditTrail = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const auditTrails = await auditTrailModel.getAllAuditTrail();
       ResponseHandler.success(
@@ -20,7 +20,7 @@ export const getAllAuditTrail = asyncHandler(
         auditTrails,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllAuditTrail';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -30,7 +30,7 @@ export const getAllAuditTrail = asyncHandler(
 );
 
 export const getAuditTrailById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const auditTrailId = parseInt(req.params.id, 10);
       const auditTrail = await auditTrailModel.getAuditTrailById(auditTrailId);
@@ -40,7 +40,7 @@ export const getAuditTrailById = asyncHandler(
         auditTrail,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -50,7 +50,7 @@ export const getAuditTrailById = asyncHandler(
 );
 
 export const deleteAuditTrailById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const auditTrailId = parseInt(req.params.id, 10);
       const auditTrail = await auditTrailModel.deleteAuditTrail(auditTrailId);
@@ -60,7 +60,7 @@ export const deleteAuditTrailById = asyncHandler(
         auditTrail,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

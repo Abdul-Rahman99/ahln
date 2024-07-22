@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import MqttLogModel from '../../models/logs/mqtt.log.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { MqttLog } from '../../types/mqtt.log.type';
@@ -12,7 +12,7 @@ const mqttLogModel = new MqttLogModel();
 const mqttTopic = new MqttTopicModel();
 
 export const createMqttLog = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const newMqttLog: MqttLog = req.body;
       const mqttTopicExist = await mqttTopic.getMqttTopic(
@@ -33,7 +33,7 @@ export const createMqttLog = asyncHandler(
         createdMqttLog,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createMqttLog';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -43,7 +43,7 @@ export const createMqttLog = asyncHandler(
 );
 
 export const getAllMqttLogs = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const mqttLogs = await mqttLogModel.getAllMqttLogs();
       ResponseHandler.success(
@@ -52,7 +52,7 @@ export const getAllMqttLogs = asyncHandler(
         mqttLogs,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllMqttLogs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -61,28 +61,26 @@ export const getAllMqttLogs = asyncHandler(
   },
 );
 
-export const getMqttLog = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const mqttLogId = req.params.id;
-      const mqttLog = await mqttLogModel.getMqttLog(parseInt(mqttLogId));
-      ResponseHandler.success(
-        res,
-        i18n.__('MQTT_LOG_RETRIEVED_SUCCESSFULLY'),
-        mqttLog,
-      );
-    } catch (error) {
-      const user = await authHandler(req, res, next);
-      const source = 'getMqttLog';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      // next(error);
-    }
-  },
-);
+export const getMqttLog = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const mqttLogId = req.params.id;
+    const mqttLog = await mqttLogModel.getMqttLog(parseInt(mqttLogId));
+    ResponseHandler.success(
+      res,
+      i18n.__('MQTT_LOG_RETRIEVED_SUCCESSFULLY'),
+      mqttLog,
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'getMqttLog';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
 
 export const deleteMqttLog = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const mqttLogId = req.params.id;
       const mqttLog = await mqttLogModel.deleteMqttLog(parseInt(mqttLogId));
@@ -92,7 +90,7 @@ export const deleteMqttLog = asyncHandler(
         mqttLog,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteMqttLog';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

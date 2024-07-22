@@ -24,6 +24,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
       err instanceof jwt.TokenExpiredError
     ) {
       return ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
+
     }
     return ResponseHandler.internalError(res, i18n.__('SERVER_ERROR'));
   }

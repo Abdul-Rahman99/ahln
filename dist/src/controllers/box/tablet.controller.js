@@ -14,75 +14,75 @@ const systemLog = new system_log_model_1.default();
 const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
 const auditTrail = new audit_trail_model_1.default();
 const tabletModel = new tablet_model_1.default();
-exports.createTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.createTablet = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newTablet = req.body;
         const createdTablet = await tabletModel.createTablet(newTablet);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_CREATED_SUCCESSFULLY'), createdTablet);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createTablet';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('TABLET_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createTablet';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllTablets = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const tablets = await tabletModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLETS_RETRIEVED_SUCCESSFULLY'), tablets);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllTablets';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getTabletById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getTabletById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const tabletId = req.params.id;
         const tablet = await tabletModel.getOne(tabletId);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_RETRIEVED_SUCCESSFULLY'), tablet);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getTabletById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.updateTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.updateTablet = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const tabletId = req.params.id;
         const tabletData = req.body;
         const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_UPDATED_SUCCESSFULLY'), updatedTablet);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateTablet';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('TABLET_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateTablet';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.deleteTablet = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const tabletId = req.params.id;
         const deletedTablet = await tabletModel.deleteOne(tabletId);
         responsesHandler_1.default.success(res, i18n_1.default.__('TABLET_DELETED_SUCCESSFULLY'), deletedTablet);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteTablet';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('TABLET_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteTablet';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);

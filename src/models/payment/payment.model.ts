@@ -118,6 +118,20 @@ class PaymentModel {
       connection.release();
     }
   }
+
+  // get user by Payment
+  async getUserByPayment(id: number): Promise<string> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT customer_id FROM payment WHERE id=$1`;
+      const result = await connection.query(sql, [id]);
+      return result.rows[0].customer_id as string;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default PaymentModel;

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -9,7 +9,7 @@ const systemLog = new SystemLogModel();
 const notificationModel = new NotificationModel();
 
 export const createNotification = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { title, message, image, user } = req.body;
       const createdNotification = await notificationModel.createNotification(
@@ -24,7 +24,7 @@ export const createNotification = asyncHandler(
         createdNotification,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createNotification';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -34,7 +34,7 @@ export const createNotification = asyncHandler(
 );
 
 export const getAllNotifications = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const notifications = await notificationModel.getAllNotifications();
       ResponseHandler.success(
@@ -43,7 +43,7 @@ export const getAllNotifications = asyncHandler(
         notifications,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllNotifications';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -53,9 +53,9 @@ export const getAllNotifications = asyncHandler(
 );
 
 export const getAllNotificationsByUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
 
       const notifications =
         await notificationModel.getAllNotificationsByUser(user);
@@ -65,7 +65,7 @@ export const getAllNotificationsByUser = asyncHandler(
         notifications,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllNotificationsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -75,7 +75,7 @@ export const getAllNotificationsByUser = asyncHandler(
 );
 
 export const getNotificationById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const notificationId = parseInt(req.params.id, 10);
       const notification =
@@ -86,7 +86,7 @@ export const getNotificationById = asyncHandler(
         notification,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getNotificationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -96,7 +96,7 @@ export const getNotificationById = asyncHandler(
 );
 
 export const deleteNotificationById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const notificationId = parseInt(req.params.id, 10);
       const notification =
@@ -107,7 +107,7 @@ export const deleteNotificationById = asyncHandler(
         notification,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteNotificationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -117,7 +117,7 @@ export const deleteNotificationById = asyncHandler(
 );
 
 // export const pushNotification = asyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
+//   async (req: Request, res: Response) => {
 //     try {
 //       const user = req.body;
 //       const { title, body } = req.body;
@@ -134,7 +134,7 @@ export const deleteNotificationById = asyncHandler(
 
 //       await notificationModel.pushNotification(fcmTokens, title, body);
 //     } catch (error) {
-//       const user = await authHandler(req, res, next);
+//       const user = await authHandler(req, res);
 //       const source = 'pushNotification';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, (error as Error).message);

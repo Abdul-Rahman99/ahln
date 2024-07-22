@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
@@ -13,7 +13,7 @@ const auditTrail = new AuditTrailModel();
 const boxScreenMessagesModel = new BoxScreenMessagesModel();
 const systemLog = new SystemLogModel();
 export const createBoxScreenMessage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { box_id, user_id, tablet_id, title, message } = req.body;
 
     try {
@@ -31,7 +31,7 @@ export const createBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
         boxScreenMessage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'createBoxScreenMessage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -39,7 +39,7 @@ export const createBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'boxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -49,7 +49,7 @@ export const createBoxScreenMessage = asyncHandler(
 );
 
 export const getAllBoxScreenMessages = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const boxScreenMessages =
         await boxScreenMessagesModel.getAllBoxScreenMessages();
@@ -59,7 +59,7 @@ export const getAllBoxScreenMessages = asyncHandler(
         boxScreenMessages,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllBoxScreenMessages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -69,7 +69,7 @@ export const getAllBoxScreenMessages = asyncHandler(
 );
 
 export const getBoxScreenMessageById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -77,7 +77,7 @@ export const getBoxScreenMessageById = asyncHandler(
         await boxScreenMessagesModel.getBoxScreenMessageById(parseInt(id, 10));
 
       if (!boxScreenMessage) {
-        const user = await authHandler(req, res, next);
+        const user = await authHandler(req, res);
         const source = 'getBoxScreenMessageById';
         systemLog.createSystemLog(user, 'Box Screen Message Not Found', source);
         return ResponseHandler.badRequest(
@@ -92,7 +92,7 @@ export const getBoxScreenMessageById = asyncHandler(
         boxScreenMessage,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getBoxScreenMessageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -102,7 +102,7 @@ export const getBoxScreenMessageById = asyncHandler(
 );
 
 export const updateBoxScreenMessage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
     const { box_id, user_id, tablet_id, title, message } = req.body;
 
@@ -121,7 +121,7 @@ export const updateBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
         updatedBoxScreenMessage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'updateBoxScreenMessage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -129,7 +129,7 @@ export const updateBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'updateBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -139,7 +139,7 @@ export const updateBoxScreenMessage = asyncHandler(
 );
 
 export const deleteBoxScreenMessage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -151,7 +151,7 @@ export const deleteBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
         deletedBoxScreenMessage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'deleteBoxScreenMessage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -159,7 +159,7 @@ export const deleteBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

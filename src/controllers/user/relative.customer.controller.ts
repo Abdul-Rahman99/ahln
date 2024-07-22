@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -9,16 +9,18 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
+import UserDevicesModel from '../../models/users/user.devices.model';
 
+const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
 const auditTrail = new AuditTrailModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 
 export const createRelativeCustomer = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
-      await authHandler(req, res, next);
+      await authHandler(req, res);
       const newRelaticeCustomerData: RelativeCustomer = req.body;
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
@@ -29,7 +31,7 @@ export const createRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
         createdRelativeCustomer,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'createRelativeCustomer';
       auditTrail.createAuditTrail(
         auditUser,
@@ -37,7 +39,7 @@ export const createRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -47,10 +49,10 @@ export const createRelativeCustomer = asyncHandler(
 );
 
 export const getAllRelativeCustomers = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       // Extract token from the request headers
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
 
       const relativeCustomers = await relativeCustomerModel.getMany(user);
       ResponseHandler.success(
@@ -59,7 +61,7 @@ export const getAllRelativeCustomers = asyncHandler(
         relativeCustomers,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllRelativeCustomers';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -69,11 +71,11 @@ export const getAllRelativeCustomers = asyncHandler(
 );
 
 export const getRelativeCustomerById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const relativeCustomerId = parseInt(req.params.id, 10);
       if (isNaN(relativeCustomerId)) {
-        const user = await authHandler(req, res, next);
+        const user = await authHandler(req, res);
         const source = 'getRelativeCustomerById';
         systemLog.createSystemLog(user, 'Invalid Card Id', source);
         return ResponseHandler.badRequest(res, i18n.__('INVALID_CARD_ID'));
@@ -86,7 +88,7 @@ export const getRelativeCustomerById = asyncHandler(
         relativeCustomer,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getRelativeCustomerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -96,50 +98,70 @@ export const getRelativeCustomerById = asyncHandler(
 );
 
 export const updateRelativeCustomer = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    console.log(user);
+
     try {
       const relativeCustomerId = req.params.id;
-      const newRelaticeCustomer: RelativeCustomer = req.body;
+      const newRelaticeCustomerData: RelativeCustomer = req.body;
 
-      // Convert payload to SalesInvoice type
-      const newRelativeCustomerData: RelativeCustomer = {
-        ...newRelaticeCustomer,
-      };
-
-      const updatedSalesInvoice = await relativeCustomerModel.updateOne(
-        newRelativeCustomerData,
+      const updatedRelativeCustomer = await relativeCustomerModel.updateOne(
+        newRelaticeCustomerData,
         Number(relativeCustomerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
-        updatedSalesInvoice,
-      );
-      const user = await authHandler(req, res, next);
+
+      console.log('dsddddddddddddddddddddddddddd');
+
       notificationModel.createNotification(
         'updateRelativeCustomer',
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         null,
         user,
       );
+
       const action = 'updateRelativeCustomer';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
       );
+
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('UPDATE_RELATIVE_CUSTOMER'),
+          i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'updateRelativeCustomer';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
+      console.log('ffffffffffffffffffffffffff');
+
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+        updatedRelativeCustomer,
+      );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      ResponseHandler.badRequest(res, error.message);
+      console.log('ffffffffffffffffffffffffffffdsssssa', error);
       const source = 'updateRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
       // next(error);
     }
   },
 );
 
 export const deleteRelativeCustomer = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const relativeCustomerId = req.params.id;
       const deletedRelativeCustomer = await relativeCustomerModel.deleteOne(
@@ -150,7 +172,7 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer,
       );
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
 
       notificationModel.createNotification(
         'deleteRelativeCustomer',
@@ -165,7 +187,7 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

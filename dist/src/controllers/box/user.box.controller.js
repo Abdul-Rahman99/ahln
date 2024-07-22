@@ -26,126 +26,126 @@ const boxModel = new box_model_1.default();
 const addressModel = new address_model_1.default();
 const systemLog = new system_log_model_1.default();
 const auditTrail = new audit_trail_model_1.default();
-exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.createUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newUserBox = req.body;
         const createdUserBox = await userBoxModel.createUserBox(newUserBox);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'), createdUserBox);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createUserBox';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const userBoxes = await userBoxModel.getAllUserBoxes();
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllUserBoxes';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const userBoxId = req.params.id;
         const userBox = await userBoxModel.getOne(userBoxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_RETRIEVED_SUCCESSFULLY'), userBox);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getUserBoxById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const userBoxId = req.params.id;
         const userBoxData = req.body;
         const updatedUserBox = await userBoxModel.updateOne(userBoxData, userBoxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'), updatedUserBox);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateUserBox';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const userBoxId = req.params.id;
         const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'), deletedUserBox);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteUserBox';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_BOX_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_USER_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getUserBoxesByUserId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxId = req.params.boxId;
         const userBoxes = await userBoxModel.getUserBoxesByBoxId(boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOXES_BY_BOX_ID_RETRIEVED_SUCCESSFULLY'), userBoxes);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getUserBoxesByBoxId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const { userId, boxId } = req.body;
         const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), assignedUserBox);
         notificationModel.createNotification('assignBoxToUser', i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'), null, userId);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'assignBoxToUser';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'assignBoxToUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const { serialNumber } = req.body;
         const newAddress = req.body;
         const result = await addressModel.createAddress(newAddress);
@@ -164,19 +164,19 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         auditTrail.createAuditTrail(user, action, i18n_1.default.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'userAssignBoxToHimself';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
-exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, res) => {
     try {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const { boxId, email, relation } = req.body;
         const boxExist = await boxModel.getOne(boxId);
         if (!boxExist) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'userAssignBoxToRelativeUser';
             systemLog.createSystemLog(user, 'Box Does Not Exist', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('BOX_DOES_NOT_EXIST'));
@@ -184,7 +184,7 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         const assignedUserBox = await userBoxModel.assignRelativeUser(user, boxId, email);
         const relative_customer = await userModel.findByEmail(email);
         if (!relative_customer) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'userAssignBoxToRelativeUser';
             systemLog.createSystemLog(user, 'User Does Not Exist', source);
             responsesHandler_1.default.badRequest(res, i18n_1.default.__('USER_NOT_EXIST'));
@@ -212,7 +212,7 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         }
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'userAssignBoxToRelativeUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);

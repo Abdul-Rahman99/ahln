@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import UserPermissionModel from '../../models/users/user.permission.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
@@ -12,11 +12,7 @@ const auditTrail = new AuditTrailModel();
 
 const userPermissionModel = new UserPermissionModel();
 
-export const assignPermissionToUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const assignPermissionToUser = async (req: Request, res: Response) => {
   try {
     const { user_id, permission_id } = req.body;
 
@@ -26,7 +22,7 @@ export const assignPermissionToUser = async (
       permission_id,
     );
     if (isAssigned) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'assignPermissionToUser';
       systemLog.createSystemLog(user, 'Permission Already Assigned', source);
       return ResponseHandler.badRequest(
@@ -41,7 +37,7 @@ export const assignPermissionToUser = async (
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
       user_id,
     );
-    const auditUser = await authHandler(req, res, next);
+    const auditUser = await authHandler(req, res);
     const action = 'assignPermissionToUser';
     auditTrail.createAuditTrail(
       auditUser,
@@ -49,7 +45,7 @@ export const assignPermissionToUser = async (
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'assignPermissionToUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -57,11 +53,7 @@ export const assignPermissionToUser = async (
   }
 };
 
-export const removePermissionFromUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const removePermissionFromUser = async (req: Request, res: Response) => {
   try {
     const { user_id, permission_id } = req.body;
 
@@ -71,7 +63,7 @@ export const removePermissionFromUser = async (
       permission_id,
     );
     if (!isAssigned) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'removePermissionFromUser';
       systemLog.createSystemLog(
         user,
@@ -90,7 +82,7 @@ export const removePermissionFromUser = async (
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       user_id,
     );
-    const auditUser = await authHandler(req, res, next);
+    const auditUser = await authHandler(req, res);
     const action = 'removePermissionFromUser';
     auditTrail.createAuditTrail(
       auditUser,
@@ -98,7 +90,7 @@ export const removePermissionFromUser = async (
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'removePermissionFromUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -106,11 +98,7 @@ export const removePermissionFromUser = async (
   }
 };
 
-export const getPermissionsByUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getPermissionsByUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const permissions =
@@ -118,7 +106,7 @@ export const getPermissionsByUser = async (
 
     // Check if permissions array is empty
     if (permissions.length === 0) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getPermissionsByUser';
       systemLog.createSystemLog(user, 'No Permissions Founf For User', source);
       return ResponseHandler.badRequest(
@@ -134,7 +122,7 @@ export const getPermissionsByUser = async (
       permissions,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'getPermissionsByUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);

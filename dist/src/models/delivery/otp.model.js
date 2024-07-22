@@ -226,6 +226,16 @@ class OTPModel {
             }
             if (deliveryPackage.shipment_status === 'delivered' &&
                 deliveryPackage.is_delivered === true) {
+                const userResult = await connection.query('SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1', [boxId]);
+                const user_id = userResult.rows[0].user_id;
+                const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user_id);
+                try {
+                    notificationModel.pushNotification(fcmToken, i18n_1.default.__('CHECK_TRACKING_NUMBER'), i18n_1.default.__('PACKAGE_ALREADY_DELIVERED'));
+                }
+                catch (error) {
+                    const source = 'checkTrackingNumberAndUpdateStatus';
+                    systemLog.createSystemLog(user_id, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+                }
                 throw new Error('The package has already been delivered');
             }
             const pin_result = deliveryPackage.delivery_pin;

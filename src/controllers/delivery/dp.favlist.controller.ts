@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import DPFavListModel from '../../models/delivery/dp.favlist.model';
@@ -14,16 +14,12 @@ const systemLog = new SystemLogModel();
 const dpFavListModel = new DPFavListModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
-export const createDPFavList = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const createDPFavList = async (req: Request, res: Response) => {
   try {
     const dpFavListData = req.body;
     const del = await deliveryPackageModel.getOne(req.body.delivery_package_id);
     if (!del) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createDPFavList';
       systemLog.createSystemLog(
         user,
@@ -40,7 +36,7 @@ export const createDPFavList = async (
       dpFavListData.delivery_package_id,
     );
     if (fav) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createDPFavList';
       systemLog.createSystemLog(user, 'Delivery Package Already Exist', source);
       return ResponseHandler.badRequest(
@@ -49,7 +45,7 @@ export const createDPFavList = async (
       );
     }
 
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
 
     const newDPFavList = await dpFavListModel.createDPFavList(
       dpFavListData,
@@ -60,7 +56,7 @@ export const createDPFavList = async (
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
       newDPFavList,
     );
-    const auditUser = await authHandler(req, res, next);
+    const auditUser = await authHandler(req, res);
     const action = 'createDPFavList';
     auditTrail.createAuditTrail(
       auditUser,
@@ -68,7 +64,7 @@ export const createDPFavList = async (
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'createDPFavList';
     systemLog.createSystemLog(user, (error as Error).message, source);
     // next(error);
@@ -86,7 +82,7 @@ export const createDPFavList = async (
 //         dpFavLists,
 //       );
 //     } catch (error: any) {  // next(error);
-// const user = await authHandler(req, res, next);
+// const user = await authHandler(req, res);
 // const source = 'getAllDPFavLists';
 // systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
@@ -110,7 +106,7 @@ export const createDPFavList = async (
 //         updatedDPFavList,
 //       );
 //     } catch (error: any) {// next(error);
-// const user = await authHandler(req, res, next);
+// const user = await authHandler(req, res);
 // const source = 'updateDPFavList';
 // systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
@@ -120,7 +116,7 @@ export const createDPFavList = async (
 // );
 
 export const deleteDPFavList = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const deletedDPFavList = await dpFavListModel.deleteDPFavList(id);
@@ -129,7 +125,7 @@ export const deleteDPFavList = asyncHandler(
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
         deletedDPFavList,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'deleteDPFavList';
       auditTrail.createAuditTrail(
         auditUser,
@@ -137,7 +133,7 @@ export const deleteDPFavList = asyncHandler(
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteDPFavList';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -147,10 +143,10 @@ export const deleteDPFavList = asyncHandler(
 );
 
 export const getDPFavListsByUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       // Extract token from the request headers
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
 
       const dpFavLists = await dpFavListModel.getDPFavListsByUser(user);
       ResponseHandler.success(
@@ -159,7 +155,7 @@ export const getDPFavListsByUser = asyncHandler(
         dpFavLists,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getDPFavListByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

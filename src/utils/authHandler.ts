@@ -22,10 +22,10 @@ const authHandler = async (
       if (!user) {
         ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
       } else {
-        return 'Ahln_24_U00000010';
+        return user;
       }
     }
-    return 'Ahln_24_U00000010';
+    return '';
   } catch (error) {
     throw new Error((error as Error).message);
   }

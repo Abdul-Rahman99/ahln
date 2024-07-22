@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import TabletModel from '../../models/box/tablet.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Tablet } from '../../types/tablet.type';
@@ -13,7 +13,7 @@ const auditTrail = new AuditTrailModel();
 const tabletModel = new TabletModel();
 
 export const createTablet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const newTablet: Tablet = req.body;
       const createdTablet = await tabletModel.createTablet(newTablet);
@@ -22,7 +22,7 @@ export const createTablet = asyncHandler(
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
         createdTablet,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'createTablet';
       auditTrail.createAuditTrail(
         auditUser,
@@ -30,17 +30,17 @@ export const createTablet = asyncHandler(
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getAllTablets = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const tablets = await tabletModel.getMany();
       ResponseHandler.success(
@@ -49,17 +49,17 @@ export const getAllTablets = asyncHandler(
         tablets,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllTablets';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getTabletById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const tabletId = req.params.id;
       const tablet = await tabletModel.getOne(tabletId);
@@ -69,17 +69,17 @@ export const getTabletById = asyncHandler(
         tablet,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getTabletById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const updateTablet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const tabletId = req.params.id;
       const tabletData: Partial<Tablet> = req.body;
@@ -89,7 +89,7 @@ export const updateTablet = asyncHandler(
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
         updatedTablet,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'updateTablet';
       auditTrail.createAuditTrail(
         auditUser,
@@ -97,17 +97,17 @@ export const updateTablet = asyncHandler(
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'updateTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const deleteTablet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const tabletId = req.params.id;
       const deletedTablet = await tabletModel.deleteOne(tabletId);
@@ -116,7 +116,7 @@ export const deleteTablet = asyncHandler(
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
         deletedTablet,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'deleteTablet';
       auditTrail.createAuditTrail(
         auditUser,
@@ -124,11 +124,11 @@ export const deleteTablet = asyncHandler(
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

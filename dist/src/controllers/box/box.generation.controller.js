@@ -14,83 +14,78 @@ const system_log_model_1 = __importDefault(require("../../models/logs/system.log
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
 const boxGenerationModel = new box_generation_model_1.default();
-exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.createBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newBoxGeneration = req.body;
         const createdBoxGeneration = await boxGenerationModel.createBoxGeneration(newBoxGeneration);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_CREATED_SUCCESSFULLY'), createdBoxGeneration);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createBoxGeneration';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllBoxGenerations = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxGenerations = await boxGenerationModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATIONS_RETRIEVED_SUCCESSFULLY'), boxGenerations);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getBoxGenerationById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxGenerationId = req.params.id;
         const boxGeneration = await boxGenerationModel.getOne(boxGenerationId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_RETRIEVED_SUCCESSFULLY'), boxGeneration);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getBoxGenerationById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.updateBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxGenerationId = req.params.id;
         const boxGenerationData = req.body;
         const updatedBoxGeneration = await boxGenerationModel.updateOne(boxGenerationData, boxGenerationId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'), updatedBoxGeneration);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateBoxGeneration';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.deleteBoxGeneration = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxGenerationId = req.params.id;
         const deletedBoxGeneration = await boxGenerationModel.deleteOne(boxGenerationId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_GENERATION_DELETED_SUCCESSFULLY'), deletedBoxGeneration);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteBoxGeneration';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_GENERATION_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteBoxGeneration';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=box.generation.controller.js.map

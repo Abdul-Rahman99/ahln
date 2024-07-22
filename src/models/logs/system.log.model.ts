@@ -7,7 +7,7 @@ class SystemLogModel {
     user: string,
     error: string,
     source: string,
-  ): Promise<SystemLog> {
+  ): Promise<SystemLog | null> {
     const connection = await db.connect();
     try {
       const createdAt = new Date();
@@ -22,8 +22,8 @@ class SystemLogModel {
       ];
       const sqlParams = [createdAt, updatedAt, user, error, source];
       const sql = `INSERT INTO System_Log (${sqlFields.join(', ')}) 
-                VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                   RETURNING *`;
+                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                     RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
       return result.rows[0] as SystemLog;

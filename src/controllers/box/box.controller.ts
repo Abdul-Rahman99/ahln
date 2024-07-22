@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import BoxModel from '../../models/box/box.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { Box } from '../../types/box.type';
@@ -13,134 +13,124 @@ const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const boxModel = new BoxModel();
 
-export const createBox = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const newBox: Box = req.body;
+export const createBox = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const newBox: Box = req.body;
 
-      const boxExist = await boxModel.boxExists(newBox.serial_number);
-      if (boxExist) {
-        const user = await authHandler(req, res, next);
-        const source = 'createBox';
-        systemLog.createSystemLog(user, i18n.__('BOX_ALREADY_EXISTS'), source);
-        return ResponseHandler.badRequest(res, i18n.__('BOX_ALREADY_EXISTS'));
-      }
-
-      const createdBox = await boxModel.createBox(newBox);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_CREATED_SUCCESSFULLY'),
-        createdBox,
-      );
-      const auditUser = await authHandler(req, res, next);
-      const action = 'createBox';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('BOX_CREATED_SUCCESSFULLY'),
-      );
-    } catch (error) {
-      const user = await authHandler(req, res, next);
+    const boxExist = await boxModel.boxExists(newBox.serial_number);
+    if (boxExist) {
+      const user = await authHandler(req, res);
       const source = 'createBox';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      systemLog.createSystemLog(user, i18n.__('BOX_ALREADY_EXISTS'), source);
+      return ResponseHandler.badRequest(res, i18n.__('BOX_ALREADY_EXISTS'));
     }
-  },
-);
 
-export const getAllBoxes = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const boxes = await boxModel.getMany();
-      ResponseHandler.success(
-        res,
-        i18n.__('BOXES_RETRIEVED_SUCCESSFULLY'),
-        boxes,
-      );
-    } catch (error) {
-      const user = await authHandler(req, res, next);
-      const source = 'getAllBoxes';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
-    }
-  },
-);
+    const createdBox = await boxModel.createBox(newBox);
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_CREATED_SUCCESSFULLY'),
+      createdBox,
+    );
+    const auditUser = await authHandler(req, res);
+    const action = 'createBox';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('BOX_CREATED_SUCCESSFULLY'),
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'createBox';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
 
-export const getBoxById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const boxId = req.params.id;
-      const box = await boxModel.getOne(boxId);
-      ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
-    } catch (error) {
-      const user = await authHandler(req, res, next);
-      const source = 'getBoxById';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
-    }
-  },
-);
+export const getAllBoxes = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const boxes = await boxModel.getMany();
+    ResponseHandler.success(
+      res,
+      i18n.__('BOXES_RETRIEVED_SUCCESSFULLY'),
+      boxes,
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'getAllBoxes';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
 
-export const updateBox = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const boxId = req.params.id;
-      const boxData: Partial<Box> = req.body;
-      const updatedBox = await boxModel.updateOne(boxData, boxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
-        updatedBox,
-      );
-      const auditUser = await authHandler(req, res, next);
-      const action = 'updateBox';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error) {
-      const user = await authHandler(req, res, next);
-      const source = 'updateBox';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
-    }
-  },
-);
+export const getBoxById = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const boxId = req.params.id;
+    const box = await boxModel.getOne(boxId);
+    ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'getBoxById';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
 
-export const deleteBox = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const boxId = req.params.id;
-      const deletedBox = await boxModel.deleteOne(boxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_DELETED_SUCCESSFULLY'),
-        deletedBox,
-      );
-      const auditUser = await authHandler(req, res, next);
-      const action = 'deleteBox';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('BOX_DELETED_SUCCESSFULLY'),
-      );
-    } catch (error) {
-      const user = await authHandler(req, res, next);
-      const source = 'deleteBox';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
-    }
-  },
-);
+export const updateBox = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const boxId = req.params.id;
+    const boxData: Partial<Box> = req.body;
+    const updatedBox = await boxModel.updateOne(boxData, boxId);
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+      updatedBox,
+    );
+    const auditUser = await authHandler(req, res);
+    const action = 'updateBox';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'updateBox';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
+
+export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const boxId = req.params.id;
+    const deletedBox = await boxModel.deleteOne(boxId);
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_DELETED_SUCCESSFULLY'),
+      deletedBox,
+    );
+    const auditUser = await authHandler(req, res);
+    const action = 'deleteBox';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('BOX_DELETED_SUCCESSFULLY'),
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'deleteBox';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
 
 export const getBoxesByGenerationId = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const boxGenerationId = req.params.generationId;
       const boxes = await boxModel.getBoxesByGenerationId(boxGenerationId);
@@ -151,17 +141,17 @@ export const getBoxesByGenerationId = asyncHandler(
         boxes,
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getBoxesByGenerationId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getBoxByTabletInfo = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { androidTabletId, tabletSerialNumber } = req.body;
       const box = await boxModel.getBoxByTabletInfo(
@@ -170,17 +160,17 @@ export const getBoxByTabletInfo = asyncHandler(
       );
       ResponseHandler.success(res, i18n.__('BOX_RETRIEVED_SUCCESSFULLY'), box);
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getBoxByTabletInfo';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const assignTabletToBox = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { tabletId, boxId } = req.body;
       const assignTabletToBox = await boxModel.assignTabletToBox(
@@ -192,7 +182,7 @@ export const assignTabletToBox = asyncHandler(
         i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
         assignTabletToBox,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'assignTabletToBox';
       auditTrail.createAuditTrail(
         auditUser,
@@ -200,17 +190,17 @@ export const assignTabletToBox = asyncHandler(
         i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'assignTabletToBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const resetTabletId = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { tabletId, boxId } = req.body;
       const assignTabletToBox = await boxModel.resetTabletId(tabletId, boxId);
@@ -219,7 +209,7 @@ export const resetTabletId = asyncHandler(
         i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
         assignTabletToBox,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'resetTabletId';
       auditTrail.createAuditTrail(
         auditUser,
@@ -227,11 +217,11 @@ export const resetTabletId = asyncHandler(
         i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'resetTabletId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

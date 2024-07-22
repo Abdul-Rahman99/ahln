@@ -13,57 +13,55 @@ const systemLog = new system_log_model_1.default();
 const audit_trail_model_1 = __importDefault(require("../../models/logs/audit.trail.model"));
 const auditTrail = new audit_trail_model_1.default();
 const rolePermissionModel = new role_permission_model_1.default();
-const assignPermissionToRole = async (req, res, next) => {
+const assignPermissionToRole = async (req, res) => {
     try {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (isAssigned) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'assignPermissionToRole';
             systemLog.createSystemLog(user, 'Role Already Assigned To User', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('ROLE_ALREADY_ASSIGNED_TO_USER'));
         }
         await rolePermissionModel.assignPermission(role_id, permission_id);
         responsesHandler_1.default.success(res, i18n_1.default.__('ROLE_ASSIGNED_SUCCESSFULLY'), role_id);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'assignPermissionToRole';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('ROLE_ASSIGNED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'assignPermissionToRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.assignPermissionToRole = assignPermissionToRole;
-const removePermissionFromRole = async (req, res, next) => {
+const removePermissionFromRole = async (req, res) => {
     try {
         const { role_id, permission_id } = req.body;
         const isAssigned = await rolePermissionModel.checkPermissionAssignment(role_id, permission_id);
         if (!isAssigned) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'removePermissionFromRole';
             systemLog.createSystemLog(user, 'Permission Not Assigned To User', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('PERMISSION_NOT_ASSIGNED_TO_USER'));
         }
         await rolePermissionModel.revokePermission(role_id, permission_id);
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'), role_id);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'removePermissionFromRole';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'removePermissionFromRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.removePermissionFromRole = removePermissionFromRole;
-const getPermissionsByRole = async (req, res, next) => {
+const getPermissionsByRole = async (req, res) => {
     try {
         const { roleId } = req.params;
         if (!roleId) {
@@ -71,7 +69,7 @@ const getPermissionsByRole = async (req, res, next) => {
         }
         const roleIdNumber = Number(roleId);
         if (isNaN(roleIdNumber)) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'getPermissionsByRole';
             systemLog.createSystemLog(user, 'Role Id Must Be Valid Number', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('ROLE_ID_MUST_BE_VALID_NUMBER'));
@@ -80,11 +78,10 @@ const getPermissionsByRole = async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PERMISSION_RETRIEVED_SUCCESSFULLY'), permissions);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getPermissionsByRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, i18n_1.default.__('PERMISSION_ROLE_RETRIVED_FAILED'));
-        next(error);
     }
 };
 exports.getPermissionsByRole = getPermissionsByRole;

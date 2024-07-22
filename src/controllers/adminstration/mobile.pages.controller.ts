@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -15,7 +15,7 @@ const auditTrail = new AuditTrailModel();
 const mobilePagesModel = new MobilePagesModel();
 
 export const createMobilePage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const pageData = req.body;
 
     try {
@@ -26,7 +26,7 @@ export const createMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
         mobilePage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'createMobilePage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -34,17 +34,17 @@ export const createMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'createMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getAllMobilePages = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const mobilePages = await mobilePagesModel.getAllMobilePages();
 
@@ -54,24 +54,24 @@ export const getAllMobilePages = asyncHandler(
         mobilePages,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getAllMobilePages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getMobilePageByTitle = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { title } = req.body;
 
     try {
       const mobilePage = await mobilePagesModel.getMobilePageByTitle(title);
 
       if (!mobilePage) {
-        const user = await authHandler(req, res, next);
+        const user = await authHandler(req, res);
         const source = 'getMobilePageByTitle';
         systemLog.createSystemLog(user, 'Mobile Page Not Found', source);
         return ResponseHandler.badRequest(
@@ -86,17 +86,17 @@ export const getMobilePageByTitle = asyncHandler(
         mobilePage,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getMobilePageByTitle';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const updateMobilePage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
     const pageData = req.body;
 
@@ -111,7 +111,7 @@ export const updateMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
         updatedMobilePage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'updateMobilePage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -119,17 +119,17 @@ export const updateMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'updateMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const deleteMobilePage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -142,7 +142,7 @@ export const deleteMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
         deletedMobilePage,
       );
-      const auditUser = await authHandler(req, res, next);
+      const auditUser = await authHandler(req, res);
       const action = 'deleteMobilePage';
       auditTrail.createAuditTrail(
         auditUser,
@@ -150,11 +150,11 @@ export const deleteMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'deleteMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

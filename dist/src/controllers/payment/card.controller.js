@@ -20,51 +20,49 @@ const parseExpireDate = (dateString) => {
     const date = new Date(`${year}-${month}-01`);
     return isNaN(date.getTime()) ? null : date;
 };
-exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.createCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newCard = req.body;
         const expireDate = parseExpireDate(newCard.expire_date);
         if (!expireDate) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'createCard';
             systemLog.createSystemLog(user, 'Invalid Expire Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
         }
         newCard.expire_date = expireDate;
         newCard.card_number = await bcrypt_1.default.hash(newCard.card_number, 10);
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const createdCard = await cardModel.createCard(newCard, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'), createdCard);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createCard';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllCards = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const cards = await cardModel.getAllCards();
         responsesHandler_1.default.success(res, i18n_1.default.__('CARDS_RETRIEVED_SUCCESSFULLY'), cards);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllCards';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getCardById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'getCardById';
             systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
@@ -73,18 +71,17 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_RETRIEVED_SUCCESSFULLY'), card);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getCardById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.updateCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'updateCard';
             systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
@@ -93,7 +90,7 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         if (cardData.expire_date) {
             const expireDate = parseExpireDate(cardData.expire_date);
             if (!expireDate) {
-                const user = await (0, authHandler_1.default)(req, res, next);
+                const user = await (0, authHandler_1.default)(req, res);
                 const source = 'updateById';
                 systemLog.createSystemLog(user, 'Invalid Expire Date Format', source);
                 return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_EXPIRE_DATE_FORMAT'));
@@ -105,39 +102,37 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         }
         const updatedCard = await cardModel.updateCard(cardId, cardData);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'), updatedCard);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateCard';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.deleteCard = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const cardId = parseInt(req.params.id, 10);
         if (isNaN(cardId)) {
-            const user = await (0, authHandler_1.default)(req, res, next);
+            const user = await (0, authHandler_1.default)(req, res);
             const source = 'deleteCard';
             systemLog.createSystemLog(user, 'Invalid Card Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_CARD_ID'));
         }
         const deletedCard = await cardModel.deleteCard(cardId);
         responsesHandler_1.default.success(res, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'), deletedCard);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteCard';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('CARD_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=card.controller.js.map

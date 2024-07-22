@@ -14,97 +14,91 @@ const system_log_model_1 = __importDefault(require("../../models/logs/system.log
 const authHandler_1 = __importDefault(require("../../utils/authHandler"));
 const systemLog = new system_log_model_1.default();
 const boxLockerModel = new box_locker_model_1.default();
-exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const newBoxLocker = req.body;
         const createdBoxLocker = await boxLockerModel.createBoxLocker(newBoxLocker);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_CREATED_SUCCESSFULLY'), createdBoxLocker);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createBoxLocker';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockers = await boxLockerModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
         const boxLocker = await boxLockerModel.getOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_RETRIEVED_SUCCESSFULLY'), boxLocker);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getBoxLockerById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
         const boxLockerData = req.body;
         const updatedBoxLocker = await boxLockerModel.updateOne(boxLockerData, String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'), updatedBoxLocker);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateBoxLocker';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxLockerId = req.params.id;
         const deletedBoxLocker = await boxLockerModel.deleteOne(String(boxLockerId));
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'), deletedBoxLocker);
-        const auditUser = await (0, authHandler_1.default)(req, res, next);
+        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteBoxLocker';
         auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('BOX_LOCKER_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
-exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) => {
+exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res) => {
     try {
         const boxId = req.body.boxId;
         const boxLockers = await boxLockerModel.getAllLockersById(boxId);
         responsesHandler_1.default.success(res, i18n_1.default.__('BOX_LOCKERS_RETRIEVED_SUCCESSFULLY'), boxLockers);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res, next);
+        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllBoxLockersById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=box.locker.controller.js.map

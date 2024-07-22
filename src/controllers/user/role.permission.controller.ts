@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import RolePermissionModel from '../../models/users/role.permission.model';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
@@ -11,11 +11,7 @@ const auditTrail = new AuditTrailModel();
 
 const rolePermissionModel = new RolePermissionModel();
 
-export const assignPermissionToRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const assignPermissionToRole = async (req: Request, res: Response) => {
   try {
     const { role_id, permission_id } = req.body;
 
@@ -25,7 +21,7 @@ export const assignPermissionToRole = async (
       permission_id,
     );
     if (isAssigned) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'assignPermissionToRole';
       systemLog.createSystemLog(user, 'Role Already Assigned To User', source);
       return ResponseHandler.badRequest(
@@ -41,7 +37,7 @@ export const assignPermissionToRole = async (
       i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
       role_id,
     );
-    const auditUser = await authHandler(req, res, next);
+    const auditUser = await authHandler(req, res);
     const action = 'assignPermissionToRole';
     auditTrail.createAuditTrail(
       auditUser,
@@ -49,19 +45,15 @@ export const assignPermissionToRole = async (
       i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'assignPermissionToRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
-export const removePermissionFromRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const removePermissionFromRole = async (req: Request, res: Response) => {
   try {
     const { role_id, permission_id } = req.body;
 
@@ -71,7 +63,7 @@ export const removePermissionFromRole = async (
       permission_id,
     );
     if (!isAssigned) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'removePermissionFromRole';
       systemLog.createSystemLog(
         user,
@@ -90,7 +82,7 @@ export const removePermissionFromRole = async (
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       role_id,
     );
-    const auditUser = await authHandler(req, res, next);
+    const auditUser = await authHandler(req, res);
     const action = 'removePermissionFromRole';
     auditTrail.createAuditTrail(
       auditUser,
@@ -98,19 +90,15 @@ export const removePermissionFromRole = async (
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'removePermissionFromRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
-export const getPermissionsByRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getPermissionsByRole = async (req: Request, res: Response) => {
   try {
     const { roleId } = req.params;
 
@@ -120,7 +108,7 @@ export const getPermissionsByRole = async (
 
     const roleIdNumber = Number(roleId);
     if (isNaN(roleIdNumber)) {
-      const user = await authHandler(req, res, next);
+      const user = await authHandler(req, res);
       const source = 'getPermissionsByRole';
       systemLog.createSystemLog(user, 'Role Id Must Be Valid Number', source);
       return ResponseHandler.badRequest(
@@ -137,10 +125,10 @@ export const getPermissionsByRole = async (
       permissions,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res, next);
+    const user = await authHandler(req, res);
     const source = 'getPermissionsByRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, i18n.__('PERMISSION_ROLE_RETRIVED_FAILED'));
-    next(error);
+    // next(error);
   }
 };

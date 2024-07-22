@@ -100,7 +100,6 @@ export const getRelativeCustomerById = asyncHandler(
 export const updateRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
-    console.log(user);
 
     try {
       const relativeCustomerId = req.params.id;
@@ -110,9 +109,6 @@ export const updateRelativeCustomer = asyncHandler(
         newRelaticeCustomerData,
         Number(relativeCustomerId),
       );
-
-      console.log('dsddddddddddddddddddddddddddd');
-
       notificationModel.createNotification(
         'updateRelativeCustomer',
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
@@ -143,8 +139,6 @@ export const updateRelativeCustomer = asyncHandler(
           source,
         );
       }
-      console.log('ffffffffffffffffffffffffff');
-
       ResponseHandler.success(
         res,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
@@ -152,7 +146,6 @@ export const updateRelativeCustomer = asyncHandler(
       );
     } catch (error: any) {
       ResponseHandler.badRequest(res, error.message);
-      console.log('ffffffffffffffffffffffffffffdsssssa', error);
       const source = 'updateRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       // next(error);

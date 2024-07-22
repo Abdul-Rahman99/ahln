@@ -184,6 +184,22 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     null,
     user,
   );
+  await userDevicesModel.getFcmTokenDevicesByUser(user);
+  try {
+    notificationModel.pushNotification(
+      fcmToken,
+      i18n.__('UPDATE_RELATIVE_CUSTOMER'),
+      i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    const source = 'updateRelativeCustomer';
+    systemLog.createSystemLog(
+      user,
+      i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+      source,
+    );
+  }
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {

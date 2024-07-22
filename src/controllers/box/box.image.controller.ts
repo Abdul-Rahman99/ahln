@@ -64,7 +64,7 @@ export const uploadBoxImage = asyncHandler(
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (error as Error).message, source);
         ResponseHandler.badRequest(res, error.message);
-        next(error);
+        // next(error);
       }
     });
   },
@@ -83,7 +83,7 @@ export const getAllBoxImages = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getAllBoxImages';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },
@@ -109,7 +109,7 @@ export const getBoxImageById = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxImageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },
@@ -144,7 +144,7 @@ export const updateBoxImage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'updateBoxImage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },
@@ -167,7 +167,7 @@ export const deleteBoxImage = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'deleteBoxImage';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },
@@ -197,7 +197,7 @@ export const deleteBoxImage = asyncHandler(
 //  const source = 'getBoxImagesByUser';
 //  systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(
-//        next(error);
+//        // next(error);
 //         res,
 //         error.message,
 //       );
@@ -220,7 +220,7 @@ export const getBoxImagesByBoxId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxImagesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },
@@ -240,7 +240,7 @@ export const getBoxImagesByPackageId = asyncHandler(
       const user = await authHandler(req, res, next);
       const source = 'getBoxImagesByPackageId';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      next(error);
+      // next(error);
       ResponseHandler.badRequest(res, error.message);
     }
   },

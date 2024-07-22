@@ -40,7 +40,6 @@ exports.createUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -53,7 +52,6 @@ exports.getAllUserBoxes = (0, asyncHandler_1.default)(async (req, res, next) => 
         const source = 'getAllUserBoxes';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -67,7 +65,6 @@ exports.getUserBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getUserBoxById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -85,7 +82,6 @@ exports.updateUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'updateUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -102,7 +98,6 @@ exports.deleteUserBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deleteUserBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -116,7 +111,6 @@ exports.getUserBoxesByUserId = (0, asyncHandler_1.default)(async (req, res, next
         const source = 'getUserBoxesByUserId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -130,7 +124,6 @@ exports.getUserBoxesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         const source = 'getUserBoxesByBoxId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -148,7 +141,6 @@ exports.assignBoxToUser = (0, asyncHandler_1.default)(async (req, res, next) => 
         const source = 'assignBoxToUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -176,7 +168,6 @@ exports.userAssignBoxToHimself = (0, asyncHandler_1.default)(async (req, res, ne
         const source = 'userAssignBoxToHimself';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -225,7 +216,6 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
         const source = 'userAssignBoxToRelativeUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=user.box.controller.js.map

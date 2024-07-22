@@ -35,7 +35,7 @@ export const createRole = async (
     const source = 'createRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -56,7 +56,7 @@ export const getAllRoles = async (
     const source = 'getAllRoles';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -74,7 +74,7 @@ export const getRoleById = async (
     const source = 'getRoleById';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -100,7 +100,7 @@ export const updateRole = async (
     const source = 'updateRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -125,6 +125,6 @@ export const deleteRole = async (
     const source = 'deleteRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };

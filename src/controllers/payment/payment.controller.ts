@@ -69,7 +69,7 @@ export const createPayment = asyncHandler(
       const source = 'createPayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -88,7 +88,7 @@ export const getAllPayments = asyncHandler(
       const source = 'getAllPayments';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -114,7 +114,7 @@ export const getPaymentById = asyncHandler(
       const source = 'getPaymentById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -180,7 +180,7 @@ export const updatePayment = asyncHandler(
       const source = 'updatePayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -213,7 +213,7 @@ export const deletePayment = asyncHandler(
       const source = 'deletePayment';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -235,7 +235,7 @@ export const getPaymentsByUser = asyncHandler(
       const source = 'getPaymentsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

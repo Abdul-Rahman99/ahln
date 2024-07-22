@@ -28,7 +28,7 @@ export const createNotification = asyncHandler(
       const source = 'createNotification';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -47,7 +47,7 @@ export const getAllNotifications = asyncHandler(
       const source = 'getAllNotifications';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -69,7 +69,7 @@ export const getAllNotificationsByUser = asyncHandler(
       const source = 'getAllNotificationsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -90,7 +90,7 @@ export const getNotificationById = asyncHandler(
       const source = 'getNotificationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -111,7 +111,7 @@ export const deleteNotificationById = asyncHandler(
       const source = 'deleteNotificationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -138,7 +138,7 @@ export const deleteNotificationById = asyncHandler(
 //       const source = 'pushNotification';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, (error as Error).message);
-//       next(error);
+//       // next(error);
 //     }
 //   },
 // );

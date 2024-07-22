@@ -25,7 +25,7 @@ export const createMqttTopic = asyncHandler(
       const source = 'createMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -44,7 +44,7 @@ export const getAllMqttTopic = asyncHandler(
       const source = 'getAllMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -66,7 +66,7 @@ export const getOneMqttTopic = asyncHandler(
       const source = 'getOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -88,7 +88,7 @@ export const deleteOneMqttTopic = asyncHandler(
       const source = 'deleteOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

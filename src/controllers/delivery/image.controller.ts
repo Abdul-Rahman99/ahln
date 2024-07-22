@@ -34,7 +34,7 @@ export const uploadImage = asyncHandler(
       const source = 'uploadImage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

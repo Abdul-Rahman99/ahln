@@ -34,7 +34,6 @@ const assignPermissionToUser = async (req, res, next) => {
         const source = 'assignPermissionToUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.assignPermissionToUser = assignPermissionToUser;
@@ -59,7 +58,6 @@ const removePermissionFromUser = async (req, res, next) => {
         const source = 'removePermissionFromUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.removePermissionFromUser = removePermissionFromUser;
@@ -80,7 +78,6 @@ const getPermissionsByUser = async (req, res, next) => {
         const source = 'getPermissionsByUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.getPermissionsByUser = getPermissionsByUser;

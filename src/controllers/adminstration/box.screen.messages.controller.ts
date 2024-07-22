@@ -43,7 +43,7 @@ export const createBoxScreenMessage = asyncHandler(
       const source = 'boxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -63,7 +63,7 @@ export const getAllBoxScreenMessages = asyncHandler(
       const source = 'getAllBoxScreenMessages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -96,7 +96,7 @@ export const getBoxScreenMessageById = asyncHandler(
       const source = 'getBoxScreenMessageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -133,7 +133,7 @@ export const updateBoxScreenMessage = asyncHandler(
       const source = 'updateBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -163,7 +163,7 @@ export const deleteBoxScreenMessage = asyncHandler(
       const source = 'deleteBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

@@ -37,7 +37,7 @@ export const createBoxLocker = asyncHandler(
       const source = 'createBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -56,7 +56,7 @@ export const getAllBoxLockers = asyncHandler(
       const source = 'getAllBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -76,7 +76,7 @@ export const getBoxLockerById = asyncHandler(
       const source = 'getBoxLockerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -107,7 +107,7 @@ export const updateBoxLocker = asyncHandler(
       const source = 'updateBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -136,7 +136,7 @@ export const deleteBoxLocker = asyncHandler(
       const source = 'deleteBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -157,7 +157,7 @@ export const getAllLockersById = asyncHandler(
       const source = 'getAllBoxLockersById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

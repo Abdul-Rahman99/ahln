@@ -24,7 +24,7 @@ export const getAllAuditTrail = asyncHandler(
       const source = 'getAllAuditTrail';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -44,7 +44,7 @@ export const getAuditTrailById = asyncHandler(
       const source = 'getAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -64,7 +64,7 @@ export const deleteAuditTrailById = asyncHandler(
       const source = 'deleteAuditTrailById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

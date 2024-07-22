@@ -36,7 +36,6 @@ exports.createOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createOTP';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -49,7 +48,6 @@ exports.getAllOTPs = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getAllOPTs';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.internalError(res, error.message);
-        next(error);
     }
 });
 exports.getOTPById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -63,7 +61,6 @@ exports.getOTPById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getOTPById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -89,7 +86,6 @@ exports.deleteOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deleteOTP';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -103,7 +99,6 @@ exports.getOTPsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getOPTsByUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -148,7 +143,6 @@ exports.checkOTP = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'checkOTP';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -176,7 +170,6 @@ exports.checkTrackingNumberAndUpdateStatus = (0, asyncHandler_1.default)(async (
         const source = 'checkTrackingNumberAndUpdateStatus';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=otp.controller.js.map

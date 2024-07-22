@@ -40,7 +40,7 @@ export const createShippingCompany = asyncHandler(
       const source = 'createShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -61,7 +61,7 @@ export const getAllShippingCompanies = asyncHandler(
       const source = 'getAllShippingCompanies';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -95,7 +95,7 @@ export const getShippingCompanyById = asyncHandler(
       const source = 'getShippingCompanyById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -129,7 +129,7 @@ export const updateShippingCompany = asyncHandler(
       const source = 'updateShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -157,7 +157,7 @@ export const deleteShippingCompany = asyncHandler(
       const source = 'deleteShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

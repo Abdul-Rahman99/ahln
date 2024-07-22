@@ -37,7 +37,7 @@ export const createUser = asyncHandler(
       const source = 'createUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -56,7 +56,7 @@ export const getAllUsers = asyncHandler(
       const source = 'getAllUsers';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -83,7 +83,7 @@ export const getUserById = asyncHandler(
       const source = 'getUserById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -124,7 +124,7 @@ export const updateUser = asyncHandler(
         const source = 'updateUser';
         systemLog.createSystemLog(user, (error as Error).message, source);
         ResponseHandler.badRequest(res, error.message);
-        next(error);
+        // next(error);
       }
     });
   },
@@ -152,7 +152,7 @@ export const deleteUser = asyncHandler(
       const source = 'deleteUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

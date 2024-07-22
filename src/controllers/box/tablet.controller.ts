@@ -34,7 +34,7 @@ export const createTablet = asyncHandler(
       const source = 'createTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -53,7 +53,7 @@ export const getAllTablets = asyncHandler(
       const source = 'getAllTablets';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -73,7 +73,7 @@ export const getTabletById = asyncHandler(
       const source = 'getTabletById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -101,7 +101,7 @@ export const updateTablet = asyncHandler(
       const source = 'updateTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -128,7 +128,7 @@ export const deleteTablet = asyncHandler(
       const source = 'deleteTablet';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

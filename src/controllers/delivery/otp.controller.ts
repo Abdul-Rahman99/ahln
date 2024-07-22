@@ -51,7 +51,7 @@ export const createOTP = asyncHandler(
       const source = 'createOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -70,7 +70,7 @@ export const getAllOTPs = asyncHandler(
       const source = 'getAllOPTs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.internalError(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -86,7 +86,7 @@ export const getOTPById = asyncHandler(
       const source = 'getOTPById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -137,7 +137,7 @@ export const getOTPById = asyncHandler(
 //       const source = 'updateOPT';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
-//       next(error);
+//       // next(error);
 //     }
 //   },
 // );
@@ -187,7 +187,7 @@ export const deleteOTP = asyncHandler(
       const source = 'deleteOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -207,7 +207,7 @@ export const getOTPsByUser = asyncHandler(
       const source = 'getOPTsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -284,7 +284,7 @@ export const checkOTP = asyncHandler(
       const source = 'checkOTP';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      // next(error);
+      // // next(error);
     }
   },
 );
@@ -323,7 +323,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       const source = 'checkTrackingNumberAndUpdateStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

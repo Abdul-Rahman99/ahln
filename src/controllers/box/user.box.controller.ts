@@ -48,7 +48,7 @@ export const createUserBox = asyncHandler(
       const source = 'createUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -67,7 +67,7 @@ export const getAllUserBoxes = asyncHandler(
       const source = 'getAllUserBoxes';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -87,7 +87,7 @@ export const getUserBoxById = asyncHandler(
       const source = 'getUserBoxById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -118,7 +118,7 @@ export const updateUserBox = asyncHandler(
       const source = 'updateUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -145,7 +145,7 @@ export const deleteUserBox = asyncHandler(
       const source = 'deleteUserBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -169,7 +169,7 @@ export const getUserBoxesByUserId = asyncHandler(
       const source = 'getUserBoxesByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -188,7 +188,7 @@ export const getUserBoxesByBoxId = asyncHandler(
       const source = 'getUserBoxesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -223,7 +223,7 @@ export const assignBoxToUser = asyncHandler(
       const source = 'assignBoxToUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -282,7 +282,7 @@ export const userAssignBoxToHimself = asyncHandler(
       const source = 'userAssignBoxToHimself';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -359,7 +359,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       const source = 'userAssignBoxToRelativeUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

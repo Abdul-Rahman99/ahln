@@ -53,7 +53,7 @@ export const assignPermissionToUser = async (
     const source = 'assignPermissionToUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -102,7 +102,7 @@ export const removePermissionFromUser = async (
     const source = 'removePermissionFromUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };
 
@@ -138,6 +138,6 @@ export const getPermissionsByUser = async (
     const source = 'getPermissionsByUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
-    next(error);
+    // next(error);
   }
 };

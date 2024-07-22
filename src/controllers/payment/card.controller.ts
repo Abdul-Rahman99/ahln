@@ -61,7 +61,7 @@ export const createCard = asyncHandler(
       const source = 'createCard';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -80,7 +80,7 @@ export const getAllCards = asyncHandler(
       const source = 'getAllCards';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -106,7 +106,7 @@ export const getCardById = asyncHandler(
       const source = 'getCardById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -163,7 +163,7 @@ export const updateCard = asyncHandler(
       const source = 'updateCard';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -196,7 +196,7 @@ export const deleteCard = asyncHandler(
       const source = 'deleteCard';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

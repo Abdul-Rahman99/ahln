@@ -44,7 +44,7 @@ export const createBox = asyncHandler(
       const source = 'createBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -63,7 +63,7 @@ export const getAllBoxes = asyncHandler(
       const source = 'getAllBoxes';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -79,7 +79,7 @@ export const getBoxById = asyncHandler(
       const source = 'getBoxById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -107,7 +107,7 @@ export const updateBox = asyncHandler(
       const source = 'updateBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -134,7 +134,7 @@ export const deleteBox = asyncHandler(
       const source = 'deleteBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -155,7 +155,7 @@ export const getBoxesByGenerationId = asyncHandler(
       const source = 'getBoxesByGenerationId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -174,7 +174,7 @@ export const getBoxByTabletInfo = asyncHandler(
       const source = 'getBoxByTabletInfo';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -204,7 +204,7 @@ export const assignTabletToBox = asyncHandler(
       const source = 'assignTabletToBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -231,7 +231,7 @@ export const resetTabletId = asyncHandler(
       const source = 'resetTabletId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

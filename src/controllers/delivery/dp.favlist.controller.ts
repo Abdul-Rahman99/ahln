@@ -71,7 +71,7 @@ export const createDPFavList = async (
     const user = await authHandler(req, res, next);
     const source = 'createDPFavList';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    next(error);
+    // next(error);
     ResponseHandler.badRequest(res, error.message);
   }
 };
@@ -85,7 +85,7 @@ export const createDPFavList = async (
 //         i18n.__('FAV_LIST_RETRIEVED_SUCCESSFULLY'),
 //         dpFavLists,
 //       );
-//     } catch (error: any) {  next(error);
+//     } catch (error: any) {  // next(error);
 // const user = await authHandler(req, res, next);
 // const source = 'getAllDPFavLists';
 // systemLog.createSystemLog(user, (error as Error).message, source);
@@ -109,7 +109,7 @@ export const createDPFavList = async (
 //         i18n.__('FAV_LIST_UPDATED_SUCCESSFULLY'),
 //         updatedDPFavList,
 //       );
-//     } catch (error: any) {next(error);
+//     } catch (error: any) {// next(error);
 // const user = await authHandler(req, res, next);
 // const source = 'updateDPFavList';
 // systemLog.createSystemLog(user, (error as Error).message, source);
@@ -141,7 +141,7 @@ export const deleteDPFavList = asyncHandler(
       const source = 'deleteDPFavList';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -163,7 +163,7 @@ export const getDPFavListsByUser = asyncHandler(
       const source = 'getDPFavListByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

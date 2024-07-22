@@ -29,7 +29,6 @@ exports.createUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -42,7 +41,6 @@ exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getAllUsers';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -64,7 +62,6 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getUserById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -92,7 +89,6 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res, next) => {
             const source = 'updateUser';
             systemLog.createSystemLog(user, error.message, source);
             responsesHandler_1.default.badRequest(res, error.message);
-            next(error);
         }
     });
 });
@@ -110,7 +106,6 @@ exports.deleteUser = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deleteUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=users.controller.js.map

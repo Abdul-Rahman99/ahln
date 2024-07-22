@@ -27,7 +27,6 @@ const createPermission = async (req, res, next) => {
         const source = 'createPermission';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.createPermission = createPermission;
@@ -41,7 +40,6 @@ const getAllPermissions = async (req, res, next) => {
         const source = 'getAllPermissions';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.getAllPermissions = getAllPermissions;
@@ -56,7 +54,6 @@ const getPermissionById = async (req, res, next) => {
         const source = 'getPermissionById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.getPermissionById = getPermissionById;
@@ -75,7 +72,6 @@ const updatePermission = async (req, res, next) => {
         const source = 'updatePermission';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.updatePermission = updatePermission;
@@ -93,7 +89,6 @@ const deletePermission = async (req, res, next) => {
         const source = 'deletePermission';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.deletePermission = deletePermission;

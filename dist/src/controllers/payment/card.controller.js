@@ -44,7 +44,6 @@ exports.createCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -57,7 +56,6 @@ exports.getAllCards = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getAllCards';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -77,7 +75,6 @@ exports.getCardById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getCardById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -114,7 +111,6 @@ exports.updateCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'updateCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -137,7 +133,6 @@ exports.deleteCard = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deleteCard';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=card.controller.js.map

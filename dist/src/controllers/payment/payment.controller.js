@@ -50,7 +50,6 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createPayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -63,7 +62,6 @@ exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getAllPayments';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -83,7 +81,6 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getPaymentById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -118,7 +115,6 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'updatePayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -141,7 +137,6 @@ exports.deletePayment = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deletePayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -155,7 +150,6 @@ exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res, next) =
         const source = 'getPaymentsByUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=payment.controller.js.map

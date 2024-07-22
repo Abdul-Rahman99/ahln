@@ -41,7 +41,7 @@ export const createRelativeCustomer = asyncHandler(
       const source = 'createRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -63,7 +63,7 @@ export const getAllRelativeCustomers = asyncHandler(
       const source = 'getAllRelativeCustomers';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -90,7 +90,7 @@ export const getRelativeCustomerById = asyncHandler(
       const source = 'getRelativeCustomerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -133,7 +133,7 @@ export const updateRelativeCustomer = asyncHandler(
       const source = 'updateRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -169,7 +169,7 @@ export const deleteRelativeCustomer = asyncHandler(
       const source = 'deleteRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

@@ -46,7 +46,6 @@ exports.uploadBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
             const source = 'uploadBoxImage';
             systemLog.createSystemLog(user, error.message, source);
             responsesHandler_1.default.badRequest(res, error.message);
-            next(error);
         }
     });
 });
@@ -59,7 +58,6 @@ exports.getAllBoxImages = (0, asyncHandler_1.default)(async (req, res, next) => 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getAllBoxImages';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
@@ -79,7 +77,6 @@ exports.getBoxImageById = (0, asyncHandler_1.default)(async (req, res, next) => 
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getBoxImageById';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
@@ -98,7 +95,6 @@ exports.updateBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'updateBoxImage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
@@ -115,7 +111,6 @@ exports.deleteBoxImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'deleteBoxImage';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
@@ -129,7 +124,6 @@ exports.getBoxImagesByBoxId = (0, asyncHandler_1.default)(async (req, res, next)
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getBoxImagesByBoxId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
@@ -143,7 +137,6 @@ exports.getBoxImagesByPackageId = (0, asyncHandler_1.default)(async (req, res, n
         const user = await (0, authHandler_1.default)(req, res, next);
         const source = 'getBoxImagesByPackageId';
         systemLog.createSystemLog(user, error.message, source);
-        next(error);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });

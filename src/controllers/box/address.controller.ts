@@ -36,7 +36,7 @@ export const createAddress = asyncHandler(
       const source = 'createAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -55,7 +55,7 @@ export const getAllAddresses = asyncHandler(
       const source = 'getAllAddresses';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -75,7 +75,7 @@ export const getAddressById = asyncHandler(
       const source = 'getAddressById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -107,7 +107,7 @@ export const updateAddress = asyncHandler(
       const source = 'updateAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -135,7 +135,7 @@ export const deleteAddress = asyncHandler(
       const source = 'deleteAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

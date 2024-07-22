@@ -35,7 +35,6 @@ exports.createBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'createBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -48,7 +47,6 @@ exports.getAllBoxes = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getAllBoxes';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -62,7 +60,6 @@ exports.getBoxById = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'getBoxById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -80,7 +77,6 @@ exports.updateBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'updateBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -97,7 +93,6 @@ exports.deleteBox = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'deleteBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -111,7 +106,6 @@ exports.getBoxesByGenerationId = (0, asyncHandler_1.default)(async (req, res, ne
         const source = 'getBoxesByGenerationId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -125,7 +119,6 @@ exports.getBoxByTabletInfo = (0, asyncHandler_1.default)(async (req, res, next) 
         const source = 'getBoxByTabletInfo';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -142,7 +135,6 @@ exports.assignTabletToBox = (0, asyncHandler_1.default)(async (req, res, next) =
         const source = 'assignTabletToBox';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -159,7 +151,6 @@ exports.resetTabletId = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'resetTabletId';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=box.controller.js.map

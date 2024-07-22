@@ -28,7 +28,6 @@ exports.createBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const source = 'createBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -41,7 +40,6 @@ exports.getAllBoxLockers = (0, asyncHandler_1.default)(async (req, res, next) =>
         const source = 'getAllBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -55,7 +53,6 @@ exports.getBoxLockerById = (0, asyncHandler_1.default)(async (req, res, next) =>
         const source = 'getBoxLockerById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -73,7 +70,6 @@ exports.updateBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const source = 'updateBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -90,7 +86,6 @@ exports.deleteBoxLocker = (0, asyncHandler_1.default)(async (req, res, next) => 
         const source = 'deleteBoxLocker';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -104,7 +99,6 @@ exports.getAllLockersById = (0, asyncHandler_1.default)(async (req, res, next) =
         const source = 'getAllBoxLockersById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=box.locker.controller.js.map

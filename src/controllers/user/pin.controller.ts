@@ -64,7 +64,7 @@ export const createPin = asyncHandler(
       const source = 'createPin';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -84,7 +84,7 @@ export const getAllPinByUser = asyncHandler(
       const source = 'getAllPinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -101,7 +101,7 @@ export const getOnePinByUser = asyncHandler(
       const source = 'getOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -130,7 +130,7 @@ export const deleteOnePinByUser = asyncHandler(
       const source = 'deleteOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -160,7 +160,7 @@ export const updateOnePinByUser = asyncHandler(
       const source = 'updateOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -224,7 +224,7 @@ export const checkPIN = asyncHandler(
       const source = 'checkPIN';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

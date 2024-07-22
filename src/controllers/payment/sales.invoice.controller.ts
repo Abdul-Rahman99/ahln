@@ -95,7 +95,7 @@ export const createSalesInvoice = asyncHandler(
       const source = 'createSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -114,7 +114,7 @@ export const getAllSalesInvoices = asyncHandler(
       const source = 'getAllSalesInvoices';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -134,7 +134,7 @@ export const getSalesInvoiceById = asyncHandler(
       const source = 'getSalesInvoiceById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -180,7 +180,7 @@ export const updateSalesInvoice = asyncHandler(
       const source = 'updateSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -208,7 +208,7 @@ export const deleteSalesInvoice = asyncHandler(
       const source = 'deleteSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -233,7 +233,7 @@ export const getSalesInvoicesByUserId = asyncHandler(
       const source = 'getSalesInvoiceByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -258,7 +258,7 @@ export const getSalesInvoicesBySalesId = asyncHandler(
       const source = 'getSalesInvoicesBySalesId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -279,7 +279,7 @@ export const getSalesInvoicesByBoxId = asyncHandler(
       const source = 'getSalesInvoicesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

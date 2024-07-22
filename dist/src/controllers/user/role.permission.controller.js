@@ -34,7 +34,6 @@ const assignPermissionToRole = async (req, res, next) => {
         const source = 'assignPermissionToRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.assignPermissionToRole = assignPermissionToRole;
@@ -59,7 +58,6 @@ const removePermissionFromRole = async (req, res, next) => {
         const source = 'removePermissionFromRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 };
 exports.removePermissionFromRole = removePermissionFromRole;
@@ -84,7 +82,6 @@ const getPermissionsByRole = async (req, res, next) => {
         const source = 'getPermissionsByRole';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, i18n_1.default.__('PERMISSION_ROLE_RETRIVED_FAILED'));
-        next(error);
     }
 };
 exports.getPermissionsByRole = getPermissionsByRole;

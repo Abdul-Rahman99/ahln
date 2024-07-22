@@ -37,7 +37,7 @@ export const createBoxGeneration = asyncHandler(
       const source = 'createBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -56,7 +56,7 @@ export const getAllBoxGenerations = asyncHandler(
       const source = 'getAllBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -76,7 +76,7 @@ export const getBoxGenerationById = asyncHandler(
       const source = 'getBoxGenerationById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -107,7 +107,7 @@ export const updateBoxGeneration = asyncHandler(
       const source = 'updateBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -135,7 +135,7 @@ export const deleteBoxGeneration = asyncHandler(
       const source = 'deleteBoxGeneration';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

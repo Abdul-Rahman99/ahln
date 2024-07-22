@@ -89,7 +89,7 @@ export const createDeliveryPackage = asyncHandler(
       const source = 'createDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -108,7 +108,7 @@ export const getAllDeliveryPackages = asyncHandler(
       const source = 'getAllDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -129,7 +129,7 @@ export const getDeliveryPackageById = asyncHandler(
       const source = 'getDeliveryPackageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -187,7 +187,7 @@ export const updateDeliveryPackage = asyncHandler(
       const source = 'updateDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -239,7 +239,7 @@ export const deleteDeliveryPackage = asyncHandler(
       const source = 'deleteDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -267,7 +267,7 @@ export const getUserDeliveryPackages = asyncHandler(
       const source = 'getUserDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );

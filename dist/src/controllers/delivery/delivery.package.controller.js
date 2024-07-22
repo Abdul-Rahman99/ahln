@@ -59,7 +59,6 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'createDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -72,7 +71,6 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, ne
         const source = 'getAllDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -86,7 +84,6 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
         const source = 'getDeliveryPackageById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -122,7 +119,6 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'updateDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -148,7 +144,6 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'deleteDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -163,7 +158,6 @@ exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, n
         const source = 'getUserDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=delivery.package.controller.js.map

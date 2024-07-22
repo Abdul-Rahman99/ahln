@@ -28,7 +28,6 @@ exports.createShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'createShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -41,7 +40,6 @@ exports.getAllShippingCompanies = (0, asyncHandler_1.default)(async (req, res, n
         const source = 'getAllShippingCompanies';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -61,7 +59,6 @@ exports.getShippingCompanyById = (0, asyncHandler_1.default)(async (req, res, ne
         const source = 'getShippingCompanyById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -79,7 +76,6 @@ exports.updateShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'updateShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, next) => {
@@ -96,7 +92,6 @@ exports.deleteShippingCompany = (0, asyncHandler_1.default)(async (req, res, nex
         const source = 'deleteShippingCompany';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=shipping.company.controller.js.map

@@ -36,7 +36,6 @@ exports.uploadImage = (0, asyncHandler_1.default)(async (req, res, next) => {
         const source = 'uploadImage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
-        next(error);
     }
 });
 //# sourceMappingURL=image.controller.js.map

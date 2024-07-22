@@ -41,7 +41,7 @@ export const createContactUs = asyncHandler(
       const source = 'createContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -60,7 +60,7 @@ export const getAllContactUs = asyncHandler(
       const source = 'getAllContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -82,7 +82,7 @@ export const getOneContactUs = asyncHandler(
       const source = 'getOneContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -114,7 +114,7 @@ export const updateContactUs = asyncHandler(
       const source = 'updateContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );
@@ -143,7 +143,7 @@ export const deleteContactUs = asyncHandler(
       const source = 'deleteContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
-      next(error);
+      // next(error);
     }
   },
 );

@@ -127,6 +127,14 @@ exports.verifyEmail = (0, asyncHandler_1.default)(async (req, res) => {
         preferred_language: currentUser.preferred_language,
     }, token);
     notificationModel.createNotification('verifyEmail', i18n_1.default.__('EMAIL_VERIFIED_SUCCESS'), null, user);
+    await userDevicesModel.getFcmTokenDevicesByUser(user);
+    try {
+        notificationModel.pushNotification(fcmToken, i18n_1.default.__('UPDATE_RELATIVE_CUSTOMER'), i18n_1.default.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'));
+    }
+    catch (error) {
+        const source = 'updateRelativeCustomer';
+        systemLog.createSystemLog(user, i18n_1.default.__('ERROR_CREATING_NOTIFICATION', ' ', error.message), source);
+    }
 });
 exports.login = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, password, fcmToken } = req.body;

@@ -10,6 +10,7 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
+import db from '../../config/database';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -263,9 +264,37 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
       );
     }
   } catch (error) {
-    const user = await authHandler(req, res);
+
+    const connection = await db.connect();
+
+    const userResult = await connection.query(
+      'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+      [req.body.box_id],
+    );
+    connection.release();
+    const user = userResult.rows[0].user_id;
+    console.log(user);
+    
     const source = 'checkPIN';
     systemLog.createSystemLog(user, (error as Error).message, source);
+    const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+
+    try {
+      notificationModel.pushNotification(
+        fcmToken,
+        i18n.__('DELIVERY_CHECK_PIN'),
+        i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const source = 'checkPIN';
+      systemLog.createSystemLog(
+        user,
+        i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+        source,
+      );
+    }
+
     ResponseHandler.badRequest(res, (error as Error).message);
     // next(error);
   }

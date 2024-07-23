@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import OTPModel from '../../models/delivery/otp.model';
 import asyncHandler from '../../middlewares/asyncHandler';
-import db from '../../config/database';
 
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
@@ -12,7 +11,9 @@ import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
+import UserModel from '../../models/users/user.model';
 
+const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const systemLog = new SystemLogModel();
 const notificationModel = new NotificationModel();
@@ -209,14 +210,8 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
 
       boxId,
     );
-    const connection = await db.connect();
+    const user = await userModel.findUserByBoxId(req.body.boxId);
 
-    const userResult = await connection.query(
-      'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-      [boxId],
-    );
-    connection.release();
-    const user = userResult.rows[0].user_id;
     if (verifiedOTP) {
       ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
         box_locker_string: verifiedOTP[0],
@@ -266,14 +261,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       }
     }
   } catch (error: any) {
-    const connection = await db.connect();
-
-    const userResult = await connection.query(
-      'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-      [req.body.boxId],
-    );
-    connection.release();
-    const user = userResult.rows[0].user_id;
+    const user = await userModel.findUserByBoxId(req.body.boxId);
     const source = 'checkOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
@@ -304,14 +292,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
     try {
       const trackingNumber = req.body.trackingNumber.toLowerCase();
       const boxId = req.body.boxId;
-      const connection = await db.connect();
+      const user = await userModel.findUserByBoxId(req.body.boxId);
 
-      const userResult = await connection.query(
-        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-        [boxId],
-      );
-      connection.release();
-      const user = userResult.rows[0].user_id;
       if (!trackingNumber) {
         const source = 'checkTrackingNumberAndUpdateStatus';
         systemLog.createSystemLog(user, 'Tracking number Required', source);
@@ -373,14 +355,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       }
     } catch (error: any) {
-      const connection = await db.connect();
-
-      const userResult = await connection.query(
-        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-        [req.body.boxId],
-      );
-      connection.release();
-      const user = userResult.rows[0].user_id;
+      const user = await userModel.findUserByBoxId(req.body.boxId);
       const source = 'checkTrackingNumberAndUpdateStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);

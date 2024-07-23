@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import OTPModel from '../../models/delivery/otp.model';
 import asyncHandler from '../../middlewares/asyncHandler';
-
 import { OTP } from '../../types/otp.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
@@ -21,6 +20,8 @@ const auditTrail = new AuditTrailModel();
 const otpModel = new OTPModel();
 
 export const createOTP = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const newOTP: OTP = req.body;
     const delivery_package_id = req.body.delivery_package_id;
@@ -30,7 +31,6 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
       createdOTP,
     );
-    const user = await authHandler(req, res);
 
     notificationModel.createNotification(
       'createOTP',
@@ -38,16 +38,13 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       null,
       user,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'createOTP';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
     );
-    // next();
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'createOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -56,11 +53,12 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const otps = await otpModel.getMany();
     ResponseHandler.success(res, i18n.__('OTPS_RETRIEVED_SUCCESSFULLY'), otps);
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getAllOPTs';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.internalError(res, error.message);
@@ -69,12 +67,13 @@ export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const otpId = req.params.id;
     const otp = await otpModel.getOne(Number(otpId));
     ResponseHandler.success(res, i18n.__('OTP_RETRIEVED_SUCCESSFULLY'), otp);
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getOTPById';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -84,6 +83,7 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 
 // export const updateOTP = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
+// const user = await authHandler(req, res);
 //     try {
 //       const otpId = req.params.id;
 //       const otpData: Partial<OTP> = req.body;
@@ -93,21 +93,20 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 //         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
 //         updatedOTP,
 //       );
-//       const auditUser = await authHandler(req, res, next);
 //       notificationModel.createNotification(
 //         'updateOTP',
 //         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
 //         null,
-//         auditUser,
+//         user,
 //       );
 //       const action = 'updateOTP';
 //       auditTrail.createAuditTrail(
-//         auditUser,
+//         user,
 //         action,
 //         i18n.__('OTP_UPDATED_SUCCESSFULLY'),
 //       );
 //       const fcmToken =
-//         await userDevicesModel.getFcmTokenDevicesByUser(auditUser);
+//         await userDevicesModel.getFcmTokenDevicesByUser(user);
 //       try {
 //         notificationModel.pushNotification(
 //           fcmToken,
@@ -118,22 +117,22 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 //       } catch (error: any) {
 //         const source = 'checkPIN';
 //         systemLog.createSystemLog(
-//           auditUser,
+//           user,
 //           i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
 //           source,
 //         );
 //       }
 //     } catch (error: any) {
-//       const user = await authHandler(req, res);
 //       const source = 'updateOPT';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
-//        next(error);
+//       next(error);
 //     }
 //   },
 // );
 
 export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
   try {
     const otpId = req.params.id;
     const deletedOTP = await otpModel.deleteOne(Number(otpId));
@@ -142,20 +141,19 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('OTP_DELETED_SUCCESSFULLY'),
       deletedOTP,
     );
-    const auditUser = await authHandler(req, res);
     notificationModel.createNotification(
       'deleteOTP',
       i18n.__('OTP_DELTED_SUCCESSFULLY'),
       null,
-      auditUser,
+      user,
     );
     const action = 'deleteOTP';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('OTP_DELETED_SUCCESSFULLY'),
     );
-    const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(auditUser);
+    const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
     try {
       notificationModel.pushNotification(
         fcmToken,
@@ -166,13 +164,12 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
     } catch (error: any) {
       const source = 'deleteOTP';
       systemLog.createSystemLog(
-        auditUser,
+        user,
         i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
         source,
       );
     }
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'deleteOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -182,16 +179,16 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
 
 export const getOTPsByUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
-      const userId = await authHandler(req, res);
-      const otps = await otpModel.getOTPsByUser(userId);
+      const otps = await otpModel.getOTPsByUser(user);
       ResponseHandler.success(
         res,
         i18n.__('OTPS_RETRIEVED_SUCCESSFULLY'),
         otps,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getOPTsByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

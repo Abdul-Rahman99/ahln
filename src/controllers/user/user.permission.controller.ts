@@ -5,14 +5,15 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
-
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
 
+const systemLog = new SystemLogModel();
+const auditTrail = new AuditTrailModel();
 const userPermissionModel = new UserPermissionModel();
 
 export const assignPermissionToUser = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const { user_id, permission_id } = req.body;
 
@@ -22,7 +23,6 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       permission_id,
     );
     if (isAssigned) {
-      const user = await authHandler(req, res);
       const source = 'assignPermissionToUser';
       systemLog.createSystemLog(user, 'Permission Already Assigned', source);
       return ResponseHandler.badRequest(
@@ -37,15 +37,13 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
       user_id,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'assignPermissionToUser';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'assignPermissionToUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -54,6 +52,8 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
 };
 
 export const removePermissionFromUser = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const { user_id, permission_id } = req.body;
 
@@ -63,7 +63,6 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       permission_id,
     );
     if (!isAssigned) {
-      const user = await authHandler(req, res);
       const source = 'removePermissionFromUser';
       systemLog.createSystemLog(
         user,
@@ -82,15 +81,13 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       user_id,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'removePermissionFromUser';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'removePermissionFromUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -99,6 +96,8 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
 };
 
 export const getPermissionsByUser = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const { userId } = req.params;
     const permissions =
@@ -106,7 +105,6 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
 
     // Check if permissions array is empty
     if (permissions.length === 0) {
-      const user = await authHandler(req, res);
       const source = 'getPermissionsByUser';
       systemLog.createSystemLog(user, 'No Permissions Founf For User', source);
       return ResponseHandler.badRequest(
@@ -122,7 +120,6 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
       permissions,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getPermissionsByUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);

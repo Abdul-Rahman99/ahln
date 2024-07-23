@@ -58,17 +58,22 @@ class CardModel {
   }
 
   // Update Card
-  async updateCard(id: number, cardData: Partial<Card>): Promise<Card> {
+  async updateCard(
+    id: number,
+    cardData: Partial<Card>,
+    user: string,
+  ): Promise<Card> {
     const connection = await db.connect();
 
     try {
       const updateFields = Object.keys(cardData)
         .map((key, index) => `${key}=$${index + 2}`)
         .join(', ');
-      const sql = `UPDATE card SET ${updateFields} WHERE id=$1 RETURNING *`;
+      const sql = `UPDATE card SET ${updateFields} WHERE id=$1 AND user_id=$2 RETURNING *`;
       const result = await connection.query(sql, [
         id,
         ...Object.values(cardData),
+        user,
       ]);
       return result.rows[0] as Card;
     } catch (error) {

@@ -10,8 +10,9 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
-import db from '../../config/database';
+import UserModel from '../../models/users/user.model';
 
+const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
@@ -100,8 +101,8 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllPinByUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     try {
-      const user = await authHandler(req, res);
       const pins = await pinModel.getAllPinByUser(user);
       ResponseHandler.success(
         res,
@@ -109,7 +110,6 @@ export const getAllPinByUser = asyncHandler(
         pins,
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'getAllPinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -120,13 +120,12 @@ export const getAllPinByUser = asyncHandler(
 
 export const getOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     try {
       const pinId = parseInt(req.params.id, 10);
-      const user = await authHandler(req, res);
       const pin = await pinModel.getOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_RETRIEVED_SUCCESSFULLY'), pin);
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'getOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -137,9 +136,10 @@ export const getOnePinByUser = asyncHandler(
 
 export const deleteOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const pinId = parseInt(req.params.id, 10);
-      const user = await authHandler(req, res);
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
       notificationModel.createNotification(
@@ -155,7 +155,6 @@ export const deleteOnePinByUser = asyncHandler(
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'deleteOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -166,9 +165,10 @@ export const deleteOnePinByUser = asyncHandler(
 
 export const updateOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const pinId = parseInt(req.params.id, 10);
-      const user = await authHandler(req, res);
       const pinData: Partial<PIN> = req.body;
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
       ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
@@ -201,7 +201,6 @@ export const updateOnePinByUser = asyncHandler(
         );
       }
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'updateOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -264,17 +263,8 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
       );
     }
   } catch (error) {
+    const user = await userModel.findUserByBoxId(req.body.box_id);
 
-    const connection = await db.connect();
-
-    const userResult = await connection.query(
-      'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-      [req.body.box_id],
-    );
-    connection.release();
-    const user = userResult.rows[0].user_id;
-    console.log(user);
-    
     const source = 'checkPIN';
     systemLog.createSystemLog(user, (error as Error).message, source);
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);

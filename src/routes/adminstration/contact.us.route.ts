@@ -5,13 +5,13 @@ import {
   deleteContactUs,
   getAllContactUs,
   getOneContactUs,
-  updateContactUs,
+  // updateContactUs,
 } from '../../controllers/adminstration/contact.us.controller';
 import {
   createContactUsValidation,
   deleteContactUsValidation,
   getContactUsByIdValidation,
-  updateContactUsValidation,
+  // updateContactUsValidation,
 } from '../../validation/adminstration/contact.us.validation';
 import verifyToken from '../../middlewares/verifyToken';
 
@@ -25,12 +25,12 @@ router.get(
   getContactUsByIdValidation,
   getOneContactUs,
 );
-router.put(
-  '/update/:id',
-  verifyToken,
-  updateContactUsValidation,
-  updateContactUs,
-);
+// router.put(
+//   '/update/:id',
+//   verifyToken,
+//   updateContactUsValidation,
+//   updateContactUs,
+// );
 router.delete(
   '/delete/:id',
   verifyToken,

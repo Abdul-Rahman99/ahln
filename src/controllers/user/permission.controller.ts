@@ -5,13 +5,14 @@ import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
 
+const systemLog = new SystemLogModel();
+const auditTrail = new AuditTrailModel();
 const permissionModel = new PermissionModel();
 
 export const createPermission = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
   try {
     const { title, description } = req.body;
     const permission = await permissionModel.create(title, description);
@@ -20,15 +21,13 @@ export const createPermission = async (req: Request, res: Response) => {
       i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
       permission,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'createPermission';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'createPermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -37,6 +36,8 @@ export const createPermission = async (req: Request, res: Response) => {
 };
 
 export const getAllPermissions = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const permissions = await permissionModel.getAll();
     ResponseHandler.success(
@@ -45,7 +46,6 @@ export const getAllPermissions = async (req: Request, res: Response) => {
       permissions,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getAllPermissions';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -54,6 +54,7 @@ export const getAllPermissions = async (req: Request, res: Response) => {
 };
 
 export const getPermissionById = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
   try {
     const { id } = req.params;
     const permission = await permissionModel.getById(Number(id));
@@ -63,7 +64,6 @@ export const getPermissionById = async (req: Request, res: Response) => {
       permission,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getPermissionById';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -72,6 +72,7 @@ export const getPermissionById = async (req: Request, res: Response) => {
 };
 
 export const updatePermission = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
   try {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -85,15 +86,13 @@ export const updatePermission = async (req: Request, res: Response) => {
       i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
       permission,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'updatePermission';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'updatePermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -102,6 +101,7 @@ export const updatePermission = async (req: Request, res: Response) => {
 };
 
 export const deletePermission = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
   try {
     const { id } = req.params;
     const permission = await permissionModel.delete(Number(id));
@@ -111,15 +111,13 @@ export const deletePermission = async (req: Request, res: Response) => {
       i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
       permission,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'deletePermission';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'deletePermission';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);

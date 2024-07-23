@@ -6,16 +6,17 @@ import { BoxLocker } from '../../types/box.locker.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
-
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-const systemLog = new SystemLogModel();
 
+const auditTrail = new AuditTrailModel();
+const systemLog = new SystemLogModel();
 const boxLockerModel = new BoxLockerModel();
 
 export const createBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const newBoxLocker: BoxLocker = req.body;
       const createdBoxLocker =
@@ -25,15 +26,13 @@ export const createBoxLocker = asyncHandler(
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
         createdBoxLocker,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'createBoxLocker';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'createBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -44,6 +43,8 @@ export const createBoxLocker = asyncHandler(
 
 export const getAllBoxLockers = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const boxLockers = await boxLockerModel.getMany();
       ResponseHandler.success(
@@ -52,7 +53,6 @@ export const getAllBoxLockers = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -83,6 +83,8 @@ export const getBoxLockerById = asyncHandler(
 
 export const updateBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const boxLockerId = req.params.id;
       const boxLockerData: Partial<BoxLocker> = req.body;
@@ -95,15 +97,13 @@ export const updateBoxLocker = asyncHandler(
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
         updatedBoxLocker,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'updateBoxLocker';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'updateBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -114,6 +114,8 @@ export const updateBoxLocker = asyncHandler(
 
 export const deleteBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const boxLockerId = req.params.id;
       const deletedBoxLocker = await boxLockerModel.deleteOne(
@@ -124,15 +126,13 @@ export const deleteBoxLocker = asyncHandler(
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
         deletedBoxLocker,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteBoxLocker';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'deleteBoxLocker';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -143,6 +143,8 @@ export const deleteBoxLocker = asyncHandler(
 
 export const getAllLockersById = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const boxId = req.body.boxId;
 
@@ -153,7 +155,6 @@ export const getAllLockersById = asyncHandler(
         boxLockers,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllBoxLockersById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

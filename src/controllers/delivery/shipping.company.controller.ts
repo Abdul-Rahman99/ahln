@@ -14,6 +14,7 @@ const auditTrail = new AuditTrailModel();
 
 export const createShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     const { tracking_system, title, logo } = req.body;
 
     try {
@@ -28,15 +29,13 @@ export const createShippingCompany = asyncHandler(
         i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
         shippingCompany,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'createShippingCompany';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'createShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -47,6 +46,7 @@ export const createShippingCompany = asyncHandler(
 
 export const getAllShippingCompanies = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     try {
       const shippingCompanies =
         await shippingCompanyModel.getAllShippingCompanies();
@@ -57,7 +57,6 @@ export const getAllShippingCompanies = asyncHandler(
         shippingCompanies,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllShippingCompanies';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -69,6 +68,7 @@ export const getAllShippingCompanies = asyncHandler(
 export const getShippingCompanyById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const user = await authHandler(req, res);
 
     try {
       const shippingCompany = await shippingCompanyModel.getShippingCompanyById(
@@ -76,7 +76,6 @@ export const getShippingCompanyById = asyncHandler(
       );
 
       if (!shippingCompany) {
-        const user = await authHandler(req, res);
         const source = 'uploadImage';
         systemLog.createSystemLog(user, 'Shipping Company Not Found', source);
         return ResponseHandler.badRequest(
@@ -91,7 +90,6 @@ export const getShippingCompanyById = asyncHandler(
         shippingCompany,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getShippingCompanyById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -102,6 +100,8 @@ export const getShippingCompanyById = asyncHandler(
 
 export const updateShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     const { id } = req.params;
     const { tracking_system } = req.body;
 
@@ -117,15 +117,13 @@ export const updateShippingCompany = asyncHandler(
         i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
         updatedShippingCompany,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'updateShippingCompany';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'updateShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -137,6 +135,7 @@ export const updateShippingCompany = asyncHandler(
 export const deleteShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const user = await authHandler(req, res);
 
     try {
       await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));
@@ -145,15 +144,13 @@ export const deleteShippingCompany = asyncHandler(
         res,
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteShippingCompany';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'deleteShippingCompany';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

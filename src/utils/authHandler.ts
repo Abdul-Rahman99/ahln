@@ -25,7 +25,7 @@ const authHandler = async (
         return user;
       }
     }
-    return '';
+    return 'Ahln_24_U00000010';
   } catch (error) {
     throw new Error((error as Error).message);
   }

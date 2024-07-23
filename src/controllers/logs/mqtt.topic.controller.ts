@@ -6,11 +6,14 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+
 const systemLog = new SystemLogModel();
 const mqttTopicModel = new MqttTopicModel();
 
 export const createMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const newMqttTopic: MqttTopic = req.body;
       const createdMqttTopic =
@@ -21,7 +24,6 @@ export const createMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'createMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -32,6 +34,8 @@ export const createMqttTopic = asyncHandler(
 
 export const getAllMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const createdMqttTopic = await mqttTopicModel.getAllMqttTopics();
       ResponseHandler.success(
@@ -40,7 +44,6 @@ export const getAllMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'getAllMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -51,6 +54,8 @@ export const getAllMqttTopic = asyncHandler(
 
 export const getOneMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const mqttTopicId = req.params.id;
       const createdMqttTopic = await mqttTopicModel.getMqttTopic(
@@ -62,7 +67,6 @@ export const getOneMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'getOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -73,6 +77,8 @@ export const getOneMqttTopic = asyncHandler(
 
 export const deleteOneMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const mqttTopicId = req.params.id;
       const createdMqttTopic = await mqttTopicModel.deleteMqttTopic(
@@ -84,7 +90,6 @@ export const deleteOneMqttTopic = asyncHandler(
         createdMqttTopic,
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'deleteOneMqttTopic';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

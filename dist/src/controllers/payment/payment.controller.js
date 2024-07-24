@@ -26,11 +26,11 @@ const parseBillingDate = (dateString) => {
     return isNaN(date.getTime()) ? null : date;
 };
 exports.createPayment = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const newPayment = req.body;
         const billingDate = parseBillingDate(newPayment.billing_date);
         if (!billingDate) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'createPayment';
             systemLog.createSystemLog(user, 'Invalid Billing Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_BILLING_DATE_FORMAT'));
@@ -40,7 +40,6 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res) => {
         if (!card) {
             throw new Error(`No Card Found, please add a card`);
         }
-        const user = await (0, authHandler_1.default)(req, res);
         const createdPayment = await paymentModel.createPayment(newPayment, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'), createdPayment);
         notificationModel.createNotification('checkOTP', i18n_1.default.__('OTP_VERIFIED_SUCCESSFULLY'), null, user);
@@ -48,29 +47,28 @@ exports.createPayment = (0, asyncHandler_1.default)(async (req, res) => {
         auditTrail.createAuditTrail(user, action, i18n_1.default.__('PAYMENT_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createPayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllPayments = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const payments = await paymentModel.getAllPayments();
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllPayments';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'getPaymentById';
             systemLog.createSystemLog(user, 'Invalid Payment Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_PAYMENT_ID'));
@@ -79,13 +77,13 @@ exports.getPaymentById = (0, asyncHandler_1.default)(async (req, res) => {
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_RETRIEVED_SUCCESSFULLY'), payment);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getPaymentById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updatePayment = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const paymentId = parseInt(req.params.id, 10);
         const user = await paymentModel.getUserByPayment(paymentId);
@@ -121,7 +119,6 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res) => {
         }
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updatePayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
@@ -136,35 +133,32 @@ exports.updatePayment = (0, asyncHandler_1.default)(async (req, res) => {
     }
 });
 exports.deletePayment = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const paymentId = parseInt(req.params.id, 10);
         if (isNaN(paymentId)) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'deletePayment';
             systemLog.createSystemLog(user, 'Invalid Payment Id', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_PAYMENT_ID'));
         }
         const deletedPayment = await paymentModel.deletePayment(paymentId);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'), deletedPayment);
-        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deletePayment';
-        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'));
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('PAYMENT_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deletePayment';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getPaymentsByUser = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
-        const user = await (0, authHandler_1.default)(req, res);
         const payments = await paymentModel.getPaymentsByUser(user);
         responsesHandler_1.default.success(res, i18n_1.default.__('PAYMENTS_RETRIEVED_SUCCESSFULLY'), payments);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getPaymentsByUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);

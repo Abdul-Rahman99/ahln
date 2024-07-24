@@ -137,7 +137,7 @@ class DeliveryPackageModel {
     async updateOne(deliveryPackage, id, user) {
         const connection = await database_2.default.connect();
         try {
-            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND user_id=$2';
+            const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1 AND customer_id=$2';
             const checkResult = await connection.query(checkSql, [id, user]);
             if (checkResult.rows.length === 0) {
                 throw new Error(`Delivery package with ID ${id} does not exist`);

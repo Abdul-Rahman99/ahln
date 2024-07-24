@@ -24,18 +24,18 @@ function connect() {
       if (err) {
         console.error('Subscription error:', err);
       } else {
-        console.log('Subscribed to wildcard topic:', granted);
+        // console.log('Subscribed to wildcard topic:', granted);
       }
     });
   });
 
   client.on('message', (topic, message) => {
-    console.log(`Received message on topic ${topic}: ${message.toString()}`);
+    // console.log(`Received message on topic ${topic}: ${message.toString()}`);
     try {
       const parsedMessage = JSON.parse(message.toString());
-      console.log('Parsed message:', parsedMessage);
+      // console.log('Parsed message:', parsedMessage);
     } catch (err) {
-      console.log('Received non-JSON message:', message.toString());
+      // console.log('Received non-JSON message:', message.toString());
     }
 
     if (shouldSubscribeToTopic(topic)) {
@@ -43,7 +43,7 @@ function connect() {
         if (err) {
           console.error(`Subscription error for topic ${topic}:`, err);
         } else {
-          console.log(`Subscribed to new topic: ${topic}`, granted);
+          // console.log(`Subscribed to new topic: ${topic}`, granted);
         }
       });
     }

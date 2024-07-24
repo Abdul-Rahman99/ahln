@@ -61,12 +61,12 @@ exports.createDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
     }
 });
 exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const deliveryPackages = await deliveryPackageModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_RETRIEVED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
@@ -74,13 +74,13 @@ exports.getAllDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, ne
     }
 });
 exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackage = await deliveryPackageModel.getOne(deliveryPackageId);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_RETRIEVED_SUCCESSFULLY'), deliveryPackage);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getDeliveryPackageById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
@@ -88,10 +88,10 @@ exports.getDeliveryPackageById = (0, asyncHandler_1.default)(async (req, res, ne
     }
 });
 exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const deliveryPackageId = req.params.id;
         const deliveryPackageData = req.body;
-        const user = await (0, authHandler_1.default)(req, res);
         try {
             if (req.body.shipping_company_id) {
                 const shipping_company_id = await shippingCompanyModel.getShippingCompanyById(req.body.shipping_company_id);
@@ -111,12 +111,10 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         const updatedDeliveryPackage = await deliveryPackageModel.updateOne(deliveryPackageData, deliveryPackageId, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), updatedDeliveryPackage);
         notificationModel.createNotification('updateDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'), null, user);
-        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateDeliveryPackage';
-        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'));
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
@@ -124,9 +122,9 @@ exports.updateDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
     }
 });
 exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const deliveryPackageId = req.params.id;
-        const user = await (0, authHandler_1.default)(req, res);
         const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(deliveryPackageId, user);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), deletedDeliveryPackage);
         notificationModel.createNotification('deleteDeliveryPackage', i18n_1.default.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'), null, user);
@@ -142,7 +140,6 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
         }
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteDeliveryPackage';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
@@ -150,14 +147,13 @@ exports.deleteDeliveryPackage = (0, asyncHandler_1.default)(async (req, res, nex
     }
 });
 exports.getUserDeliveryPackages = (0, asyncHandler_1.default)(async (req, res, next) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const { status } = req.query;
-        const user = await (0, authHandler_1.default)(req, res);
         const deliveryPackages = await deliveryPackageModel.getPackagesByUser(user, status);
         responsesHandler_1.default.success(res, i18n_1.default.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'), deliveryPackages);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getUserDeliveryPackages';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);

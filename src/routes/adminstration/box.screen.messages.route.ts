@@ -11,24 +11,39 @@ import {
   getBoxScreenMessageByIdValidation,
   updateBoxScreenMessageValidation,
   deleteBoxScreenMessageValidation,
+  getAllBoxScreenMessagesValidation,
 } from '../../validation/adminstration/box.screen.messages.validation';
+import verifyToken from '../../middlewares/verifyToken';
 
 const router = Router();
 
-router.post('/new', createBoxScreenMessageValidation, createBoxScreenMessage);
-router.get('/get-all', getAllBoxScreenMessages);
+router.post(
+  '/new',
+  verifyToken,
+  createBoxScreenMessageValidation,
+  createBoxScreenMessage,
+);
+router.get(
+  '/get-all',
+  verifyToken,
+  getAllBoxScreenMessagesValidation,
+  getAllBoxScreenMessages,
+);
 router.get(
   '/get-one/:id',
+  verifyToken,
   getBoxScreenMessageByIdValidation,
   getBoxScreenMessageById,
 );
 router.put(
   '/update/:id',
+  verifyToken,
   updateBoxScreenMessageValidation,
   updateBoxScreenMessage,
 );
 router.delete(
   '/delete/:id',
+  verifyToken,
   deleteBoxScreenMessageValidation,
   deleteBoxScreenMessage,
 );

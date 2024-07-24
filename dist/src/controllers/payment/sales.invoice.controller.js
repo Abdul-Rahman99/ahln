@@ -76,37 +76,37 @@ exports.createSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
     }
 });
 exports.getAllSalesInvoices = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const salesInvoices = await salesInvoiceModel.getAllSalesInvoices();
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICES_RETRIEVED_SUCCESSFULLY'), salesInvoices);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllSalesInvoices';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getSalesInvoiceById = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const salesInvoiceId = req.params.id;
         const salesInvoice = await salesInvoiceModel.getOne(salesInvoiceId);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_RETRIEVED_SUCCESSFULLY'), salesInvoice);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getSalesInvoiceById';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const salesInvoiceId = req.params.id;
         const newSalesInvoicePayload = req.body;
         const parsedDate = parseDate(newSalesInvoicePayload.purchase_date);
         if (!parsedDate) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'updateSalesInvoice';
             systemLog.createSystemLog(user, 'Invalid Date Format', source);
             return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_DATE_FORMAT'));
@@ -117,28 +117,25 @@ exports.updateSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
         };
         const updatedSalesInvoice = await salesInvoiceModel.updateOne(newSalesInvoice, salesInvoiceId);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'), updatedSalesInvoice);
-        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'updateSalesInvoice';
-        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'));
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'updateSalesInvoice';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.deleteSalesInvoice = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const salesInvoiceId = req.params.id;
         const deletedSalesInvoice = await salesInvoiceModel.deleteOne(salesInvoiceId);
         responsesHandler_1.default.success(res, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'), deletedSalesInvoice);
-        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'deleteSalesInvoice';
-        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'));
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('SALES_INVOICE_DELETED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteSalesInvoice';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);

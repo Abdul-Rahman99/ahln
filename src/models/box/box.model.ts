@@ -150,8 +150,52 @@ class BoxModel {
     }
   }
 
+  // Get specific tablet id by box
+  async getTabletIdByBoxId(id: number): Promise<Box> {
+    const connection = await db.connect();
+
+    try {
+      if (!id) {
+        throw new Error('ID cannot be null. Please provide a valid box ID.');
+      }
+      const sql = 'SELECT current_tablet_id FROM Box WHERE id=$1';
+      const result = await connection.query(sql, [id]);
+
+      return result.rows[0].current_tablet_id as Box;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Get specific box by user id
+  async getOneByUser(userId: string, boxId: string): Promise<boolean> {
+    const connection = await db.connect();
+
+    try {
+      if (!userId || !boxId) {
+        throw new Error(
+          'ID cannot be null. Please provide a valid box ID Or User ID.',
+        );
+      }
+      const sql =
+        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1 AND User_Box.user_id=$2';
+      const result = await connection.query(sql, [userId, boxId]);
+
+      if (!result) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // Get specific box
-  async boxExists(id: string): Promise<Box> {
+  async boxExistsSerialNumber(id: string): Promise<Box> {
     const connection = await db.connect();
 
     try {
@@ -176,8 +220,11 @@ class BoxModel {
     try {
       // Check if the box exists
       const checkSql = 'SELECT * FROM Box WHERE id=$1';
-      await connection.query(checkSql, [id]);
+      const checkResult = await connection.query(checkSql, [id]);
 
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Box with ID ${id} does not exist`);
+      }
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 

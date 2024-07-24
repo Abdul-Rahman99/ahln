@@ -14,11 +14,10 @@ const auditTrail = new AuditTrailModel();
 
 export const createContactUs = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const newContactUs: ContactUs = req.body;
-
-      const user = await authHandler(req, res);
-
       const createdContactUs = await contactUsModel.createContactUs(
         newContactUs,
         user,
@@ -37,7 +36,6 @@ export const createContactUs = asyncHandler(
         i18n.__('CONTACT_US_CREATED'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'createContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -87,40 +85,42 @@ export const getOneContactUs = asyncHandler(
   },
 );
 
-export const updateContactUs = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const contactUsId = parseInt(req.params.id, 10);
-      const contactUsData: Partial<ContactUs> = req.body;
-      const updatedContactUs = await contactUsModel.updateContactUs(
-        contactUsId,
-        contactUsData,
-      );
+// export const updateContactUs = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const auditUser = await authHandler(req, res);
+//     try {
+//       const contactUsId = parseInt(req.params.id, 10);
+//       const contactUsData: Partial<ContactUs> = req.body;
+//       const updatedContactUs = await contactUsModel.updateContactUs(
+//         contactUsId,
+//         contactUsData,
+//       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
-        updatedContactUs,
-      );
-      const auditUser = await authHandler(req, res);
-      const action = 'updateContactUs';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error) {
-      const user = await authHandler(req, res);
-      const source = 'updateContactUs';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      // next(error);
-    }
-  },
-);
+//       ResponseHandler.success(
+//         res,
+//         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
+//         updatedContactUs,
+//       );
+//       const action = 'updateContactUs';
+//       auditTrail.createAuditTrail(
+//         auditUser,
+//         action,
+//         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
+//       );
+//     } catch (error) {
+//       const user = await authHandler(req, res);
+//       const source = 'updateContactUs';
+//       systemLog.createSystemLog(user, (error as Error).message, source);
+//       ResponseHandler.badRequest(res, (error as Error).message);
+//       // next(error);
+//     }
+//   },
+// );
 
 export const deleteContactUs = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const contactUsId = parseInt(req.params.id, 10);
       const deletedContactUs =
@@ -131,15 +131,13 @@ export const deleteContactUs = asyncHandler(
         i18n.__('CONTACT_US_DELETED_SUCCESSFULLY'),
         deletedContactUs,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteContactUs';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
       );
     } catch (error) {
-      const user = await authHandler(req, res);
       const source = 'deleteContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

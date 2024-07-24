@@ -4,7 +4,10 @@ import db from '../../config/database';
 
 class AddressModel {
   // Create new address
-  async createAddress(address: Partial<Address>): Promise<Address> {
+  async createAddress(
+    address: Partial<Address>,
+    user: string,
+  ): Promise<Address> {
     const connection = await db.connect();
 
     try {
@@ -22,6 +25,7 @@ class AddressModel {
         'building_number',
         'floor',
         'apartment_number',
+        'user_id',
       ];
       const sqlParams = [
         createdAt,
@@ -34,11 +38,12 @@ class AddressModel {
         address.building_number,
         address.floor,
         address.apartment_number,
+        user,
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
+                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number, user_id`;
 
       const result = await connection.query(sql, sqlParams);
 
@@ -66,7 +71,7 @@ class AddressModel {
   }
 
   // Get specific address
-  async getOne(id: number): Promise<Address> {
+  async getOne(id: number, user: string): Promise<Address> {
     const connection = await db.connect();
     try {
       if (!id) {
@@ -74,8 +79,8 @@ class AddressModel {
           'ID cannot be null. Please provide a valid address ID.',
         );
       }
-      const sql = 'SELECT * FROM Address WHERE id=$1';
-      const result = await connection.query(sql, [id]);
+      const sql = 'SELECT * FROM Address WHERE id=$1 AND user_id=$2';
+      const result = await connection.query(sql, [id, user]);
 
       // if (result.rows.length === 0) {
       //   throw new Error(`Could not find address with ID ${id}`);
@@ -89,12 +94,16 @@ class AddressModel {
   }
 
   // Update address
-  async updateOne(address: Partial<Address>, id: number): Promise<Address> {
+  async updateOne(
+    address: Partial<Address>,
+    id: number,
+    user: string,
+  ): Promise<Address> {
     const connection = await db.connect();
     try {
       // Check if the address exists
-      const checkSql = 'SELECT * FROM address WHERE id=$1';
-      const checkResult = await connection.query(checkSql, [id]);
+      const checkSql = 'SELECT * FROM address WHERE id=$1 AND user_id=$2';
+      const checkResult = await connection.query(checkSql, [id, user]);
 
       if (checkResult.rows.length === 0) {
         throw new Error(`Address with ID ${id} does not exist`);
@@ -136,7 +145,7 @@ class AddressModel {
   }
 
   // Delete address
-  async deleteOne(id: number): Promise<Address> {
+  async deleteOne(id: number, user: string): Promise<Address> {
     const connection = await db.connect();
 
     try {
@@ -145,9 +154,9 @@ class AddressModel {
           'ID cannot be null. Please provide a valid address ID.',
         );
       }
-      const sql = `DELETE FROM Address WHERE id=$1 RETURNING *`;
+      const sql = `DELETE FROM Address WHERE id=$1 AND user_id=$2 RETURNING *`;
 
-      const result = await connection.query(sql, [id]);
+      const result = await connection.query(sql, [id, user]);
 
       return result.rows[0] as Address;
     } catch (error) {

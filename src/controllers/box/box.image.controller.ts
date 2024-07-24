@@ -10,8 +10,9 @@ import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import UserDevicesModel from '../../models/users/user.devices.model';
-import db from '../../config/database';
+import UserModel from '../../models/users/user.model';
 
+const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const auditTrail = new AuditTrailModel();
 const notificationModel = new NotificationModel();
@@ -21,14 +22,14 @@ const boxImageModel = new BoxImageModel();
 export const uploadBoxImage = asyncHandler(
   async (req: Request, res: Response) => {
     uploadSingleImage('image')(req, res, async (err: any) => {
+      const user = await authHandler(req, res);
+
       if (err) {
-        const user = await authHandler(req, res);
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (err as Error).message, source);
         return ResponseHandler.badRequest(res, err.message);
       }
       if (!req.file) {
-        const user = await authHandler(req, res);
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, 'No File Provided', source);
         return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
@@ -38,6 +39,8 @@ export const uploadBoxImage = asyncHandler(
       const imageName = req.file.filename;
 
       try {
+        const user = await authHandler(req, res);
+
         const createdBoxImage = await boxImageModel.createBoxImage(
           boxId,
           deliveryPackageId,
@@ -48,38 +51,31 @@ export const uploadBoxImage = asyncHandler(
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           createdBoxImage,
         );
-        const auditUser = await authHandler(req, res);
 
         notificationModel.createNotification(
           'uploadBoxImage',
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           imageName,
-          auditUser,
+          user,
         );
 
         const action = 'uploadSingleImage';
         auditTrail.createAuditTrail(
-          auditUser,
+          user,
           action,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
         );
 
-        const connection = await db.connect();
+        const userFcm = await userModel.findUserByBoxId(boxId);
 
-        const userResult = await connection.query(
-          'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
-          [boxId],
-        );
-        connection.release();
-        const user = userResult.rows[0].user_id;
-
-        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+        const fcmToken =
+          await userDevicesModel.getFcmTokenDevicesByUser(userFcm);
 
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('Delivery Man Arrived'),
-            i18n.__('Delivery man tries to open the box'),
+            i18n.__('DELIVERY_MAN_ARRIEVED'),
+            i18n.__('DELIVERY_MAN_TRIES_TO_OPEN_BOX'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -91,7 +87,6 @@ export const uploadBoxImage = asyncHandler(
           );
         }
       } catch (error: any) {
-        const user = await authHandler(req, res);
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (error as Error).message, source);
         ResponseHandler.badRequest(res, error.message);
@@ -103,15 +98,16 @@ export const uploadBoxImage = asyncHandler(
 
 export const getAllBoxImages = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    const boxId = req.body.box_id;
     try {
-      const boxImages = await boxImageModel.getAllBoxImages();
+      const boxImages = await boxImageModel.getAllBoxImages(boxId);
       ResponseHandler.success(
         res,
         i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
         boxImages,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllBoxImages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       // next(error);
@@ -120,89 +116,89 @@ export const getAllBoxImages = asyncHandler(
   },
 );
 
-export const getBoxImageById = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const boxImageId = parseInt(req.params.id, 10);
-      const boxImage = await boxImageModel.getBoxImageById(boxImageId);
-      if (!boxImage) {
-        const user = await authHandler(req, res);
-        const source = 'getBoxImageById';
-        systemLog.createSystemLog(user, 'Box Image Not Found', source);
-        return ResponseHandler.badRequest(res, i18n.__('BOX_IMAGE_NOT_FOUND'));
-      }
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_IMAGE_RETRIEVED_SUCCESSFULLY'),
-        boxImage,
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res);
-      const source = 'getBoxImageById';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      // next(error);
-      ResponseHandler.badRequest(res, error.message);
-    }
-  },
-);
+// export const getBoxImageById = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const user = await authHandler(req, res);
 
-export const updateBoxImage = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const boxImageId = parseInt(req.params.id, 10);
-      const { boxId, deliveryPackageId } = req.body;
-      const imageName = req.file ? req.file.filename : req.body.image;
+//     try {
+//       const boxImageId = parseInt(req.params.id, 10);
+//       const boxImage = await boxImageModel.getBoxImageById(boxImageId);
+//       if (!boxImage) {
+//         const source = 'getBoxImageById';
+//         systemLog.createSystemLog(user, 'Box Image Not Found', source);
+//         return ResponseHandler.badRequest(res, i18n.__('BOX_IMAGE_NOT_FOUND'));
+//       }
+//       ResponseHandler.success(
+//         res,
+//         i18n.__('BOX_IMAGE_RETRIEVED_SUCCESSFULLY'),
+//         boxImage,
+//       );
+//     } catch (error: any) {
+//       const source = 'getBoxImageById';
+//       systemLog.createSystemLog(user, (error as Error).message, source);
+//       // next(error);
+//       ResponseHandler.badRequest(res, error.message);
+//     }
+//   },
+// );
 
-      const updatedBoxImage = await boxImageModel.updateBoxImage(
-        boxImageId,
-        boxId,
-        deliveryPackageId,
-        imageName,
-      );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
-        updatedBoxImage,
-      );
-      const auditUser = await authHandler(req, res);
-      const action = 'updateBoxImage';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res);
-      const source = 'updateBoxImage';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      // next(error);
-      ResponseHandler.badRequest(res, error.message);
-    }
-  },
-);
+// export const updateBoxImage = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     try {
+//       const boxImageId = parseInt(req.params.id, 10);
+//       const { boxId, deliveryPackageId } = req.body;
+//       const imageName = req.file ? req.file.filename : req.body.image;
 
-export const deleteBoxImage = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const boxImageId = parseInt(req.params.id, 10);
-      await boxImageModel.deleteBoxImage(boxImageId);
-      ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
-      const auditUser = await authHandler(req, res);
-      const action = 'deleteBoxImage';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res);
-      const source = 'deleteBoxImage';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      // next(error);
-      ResponseHandler.badRequest(res, error.message);
-    }
-  },
-);
+//       const updatedBoxImage = await boxImageModel.updateBoxImage(
+//         boxImageId,
+//         boxId,
+//         deliveryPackageId,
+//         imageName,
+//       );
+//       ResponseHandler.success(
+//         res,
+//         i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
+//         updatedBoxImage,
+//       );
+//       const auditUser = await authHandler(req, res);
+//       const action = 'updateBoxImage';
+//       auditTrail.createAuditTrail(
+//         auditUser,
+//         action,
+//         i18n.__('BOX_IMAGE_UPDATED_SUCCESSFULLY'),
+//       );
+//     } catch (error: any) {
+//       const user = await authHandler(req, res);
+//       const source = 'updateBoxImage';
+//       systemLog.createSystemLog(user, (error as Error).message, source);
+//       // next(error);
+//       ResponseHandler.badRequest(res, error.message);
+//     }
+//   },
+// );
+
+// export const deleteBoxImage = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     try {
+//       const boxImageId = parseInt(req.params.id, 10);
+//       await boxImageModel.deleteBoxImage(boxImageId);
+//       ResponseHandler.success(res, i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'));
+//       const auditUser = await authHandler(req, res);
+//       const action = 'deleteBoxImage';
+//       auditTrail.createAuditTrail(
+//         auditUser,
+//         action,
+//         i18n.__('BOX_IMAGE_DELETED_SUCCESSFULLY'),
+//       );
+//     } catch (error: any) {
+//       const user = await authHandler(req, res);
+//       const source = 'deleteBoxImage';
+//       systemLog.createSystemLog(user, (error as Error).message, source);
+//       // next(error);
+//       ResponseHandler.badRequest(res, error.message);
+//     }
+//   },
+// );
 
 // export const getBoxImagesByUser = asyncHandler(
 //   async (req: Request, res: Response, next:NextFunction) => {

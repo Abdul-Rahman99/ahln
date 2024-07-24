@@ -17,6 +17,7 @@ const mobilePagesModel = new MobilePagesModel();
 export const createMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const pageData = req.body;
+    const user = await authHandler(req, res);
 
     try {
       const mobilePage = await mobilePagesModel.createMobilePage(pageData);
@@ -26,15 +27,13 @@ export const createMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
         mobilePage,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'createMobilePage';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'createMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -45,6 +44,7 @@ export const createMobilePage = asyncHandler(
 
 export const getAllMobilePages = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     try {
       const mobilePages = await mobilePagesModel.getAllMobilePages();
 
@@ -54,7 +54,6 @@ export const getAllMobilePages = asyncHandler(
         mobilePages,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllMobilePages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -66,6 +65,7 @@ export const getAllMobilePages = asyncHandler(
 export const getMobilePageByTitle = asyncHandler(
   async (req: Request, res: Response) => {
     const { title } = req.body;
+    const user = await authHandler(req, res);
 
     try {
       const mobilePage = await mobilePagesModel.getMobilePageByTitle(title);
@@ -86,7 +86,6 @@ export const getMobilePageByTitle = asyncHandler(
         mobilePage,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getMobilePageByTitle';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -99,6 +98,7 @@ export const updateMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const pageData = req.body;
+    const user = await authHandler(req, res);
 
     try {
       const updatedMobilePage = await mobilePagesModel.updateMobilePage(
@@ -111,15 +111,13 @@ export const updateMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
         updatedMobilePage,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'updateMobilePage';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'updateMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -131,6 +129,7 @@ export const updateMobilePage = asyncHandler(
 export const deleteMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const user = await authHandler(req, res);
 
     try {
       const deletedMobilePage = await mobilePagesModel.deleteMobilePage(
@@ -142,15 +141,13 @@ export const deleteMobilePage = asyncHandler(
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
         deletedMobilePage,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteMobilePage';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'deleteMobilePage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

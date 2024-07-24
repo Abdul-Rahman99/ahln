@@ -8,20 +8,36 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import BoxModel from '../../models/box/box.model';
+
 const auditTrail = new AuditTrailModel();
+const boxModel = new BoxModel();
 
 const boxScreenMessagesModel = new BoxScreenMessagesModel();
 const systemLog = new SystemLogModel();
 export const createBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
-    const { box_id, user_id, tablet_id, title, message } = req.body;
+    const { box_id, title, message } = req.body;
+    const user = await authHandler(req, res);
 
     try {
+      const boxUserExist = await boxModel.getOneByUser(user, box_id);
+      if (!boxUserExist) {
+        const source = 'boxScreenMessage';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('BOX_NOT_ASSIGNED_TO_USER'),
+          source,
+        );
+        ResponseHandler.badRequest(res, i18n.__('BOX_NOT_ASSIGNED_TO_USER'));
+      }
+      const tablet = await boxModel.getTabletIdByBoxId(box_id);
+
       const boxScreenMessage =
         await boxScreenMessagesModel.createBoxScreenMessage(
           box_id,
-          user_id,
-          tablet_id,
+          user,
+          Number(tablet),
           title,
           message,
         );
@@ -39,7 +55,6 @@ export const createBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'boxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -50,16 +65,16 @@ export const createBoxScreenMessage = asyncHandler(
 
 export const getAllBoxScreenMessages = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
     try {
       const boxScreenMessages =
-        await boxScreenMessagesModel.getAllBoxScreenMessages();
+        await boxScreenMessagesModel.getAllBoxScreenMessages(user);
       ResponseHandler.success(
         res,
         i18n.__('BOX_SCREEN_MESSAGES_FETCHED_SUCCESSFULLY'),
         boxScreenMessages,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getAllBoxScreenMessages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -71,13 +86,16 @@ export const getAllBoxScreenMessages = asyncHandler(
 export const getBoxScreenMessageById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const user = await authHandler(req, res);
 
     try {
       const boxScreenMessage =
-        await boxScreenMessagesModel.getBoxScreenMessageById(parseInt(id, 10));
+        await boxScreenMessagesModel.getBoxScreenMessageById(
+          parseInt(id, 10),
+          user,
+        );
 
       if (!boxScreenMessage) {
-        const user = await authHandler(req, res);
         const source = 'getBoxScreenMessageById';
         systemLog.createSystemLog(user, 'Box Screen Message Not Found', source);
         return ResponseHandler.badRequest(
@@ -92,7 +110,6 @@ export const getBoxScreenMessageById = asyncHandler(
         boxScreenMessage,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getBoxScreenMessageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -104,17 +121,21 @@ export const getBoxScreenMessageById = asyncHandler(
 export const updateBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { box_id, user_id, tablet_id, title, message } = req.body;
-
+    const { box_id, tablet_id, title, message } = req.body;
+    const user = await authHandler(req, res);
     try {
       const updatedBoxScreenMessage =
-        await boxScreenMessagesModel.updateBoxScreenMessage(parseInt(id, 10), {
-          box_id,
-          user_id,
-          tablet_id,
-          title,
-          message,
-        });
+        await boxScreenMessagesModel.updateBoxScreenMessage(
+          parseInt(id, 10),
+
+          {
+            box_id,
+            user_id: user,
+            tablet_id,
+            title,
+            message,
+          },
+        );
 
       ResponseHandler.success(
         res,
@@ -129,7 +150,6 @@ export const updateBoxScreenMessage = asyncHandler(
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'updateBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -141,25 +161,27 @@ export const updateBoxScreenMessage = asyncHandler(
 export const deleteBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const user = await authHandler(req, res);
 
     try {
       const deletedBoxScreenMessage =
-        await boxScreenMessagesModel.deleteBoxScreenMessage(parseInt(id, 10));
+        await boxScreenMessagesModel.deleteBoxScreenMessage(
+          parseInt(id, 10),
+          user,
+        );
 
       ResponseHandler.success(
         res,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
         deletedBoxScreenMessage,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteBoxScreenMessage';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'deleteBoxScreenMessage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

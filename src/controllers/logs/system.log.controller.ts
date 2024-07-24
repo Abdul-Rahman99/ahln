@@ -5,6 +5,7 @@ import { SystemLog } from '../../types/system.log.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import authHandler from '../../utils/authHandler';
+
 const systemLogModel = new SystemLogModel();
 
 export const createSystemLog = asyncHandler(

@@ -350,6 +350,19 @@ class UserModel {
             connection.release();
         }
     }
+    async findUserByBoxId(boxId) {
+        const connection = await database_1.default.connect();
+        try {
+            const userResult = await connection.query('SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1', [boxId]);
+            return userResult.rows[0].user_id;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
     async findRoleIdByUserId(id) {
         const connection = await database_1.default.connect();
         try {

@@ -6,19 +6,20 @@ import i18n from '../../config/i18n';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+
 const systemLog = new SystemLogModel();
 
 export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     uploadSingleImage('image')(req, res, async (err: any) => {
       if (err) {
-        const user = await authHandler(req, res);
         const source = 'uploadImage';
         systemLog.createSystemLog(user, (err as Error).message, source);
         return ResponseHandler.badRequest(res, err.message);
       }
       if (!req.file) {
-        const user = await authHandler(req, res);
         const source = 'uploadImage';
         systemLog.createSystemLog(user, (err as Error).message, source);
         return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
@@ -29,7 +30,6 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
       });
     });
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'uploadImage';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);

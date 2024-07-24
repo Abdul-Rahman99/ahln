@@ -17,34 +17,33 @@ const systemLog = new system_log_model_1.default();
 const userModel = new user_model_1.default();
 exports.createUser = (0, asyncHandler_1.default)(async (req, res) => {
     const newUser = req.body;
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const createdUser = await userModel.createUser(newUser);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'), createdUser);
-        const auditUser = await (0, authHandler_1.default)(req, res);
         const action = 'createUser';
-        auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'));
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('USER_CREATED_SUCCESSFULLY'));
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'createUser';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getAllUsers = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     try {
         const users = await userModel.getMany();
         responsesHandler_1.default.success(res, i18n_1.default.__('USERS_RETRIEVED_SUCCESSFULLY'), users);
     }
     catch (error) {
-        const user = await (0, authHandler_1.default)(req, res);
         const source = 'getAllUsers';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }
 });
 exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.body.id;
     try {
         const user = await userModel.getOne(userId);
         if (!user) {
@@ -65,9 +64,9 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
     }
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
     (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, async (err) => {
         if (err) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'updateUser';
             systemLog.createSystemLog(user, 'Image Not Uploaded to user', source);
             return responsesHandler_1.default.badRequest(res, err.message);
@@ -77,15 +76,12 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
             userData.avatar = req.file.filename;
         }
         try {
-            const user = await (0, authHandler_1.default)(req, res);
             const updatedUser = await userModel.updateOne(userData, user);
             responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
-            const auditUser = await (0, authHandler_1.default)(req, res);
             const action = 'updateUser';
-            auditTrail.createAuditTrail(auditUser, action, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'));
+            auditTrail.createAuditTrail(user, action, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'));
         }
         catch (error) {
-            const user = await (0, authHandler_1.default)(req, res);
             const source = 'updateUser';
             systemLog.createSystemLog(user, error.message, source);
             responsesHandler_1.default.badRequest(res, error.message);
@@ -93,7 +89,7 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
     });
 });
 exports.deleteUser = (0, asyncHandler_1.default)(async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.body.id;
     try {
         const deletedUser = await userModel.deleteOne(userId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);

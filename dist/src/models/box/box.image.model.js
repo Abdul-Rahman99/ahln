@@ -39,65 +39,12 @@ class BoxImageModel {
             connection.release();
         }
     }
-    async getAllBoxImages() {
+    async getAllBoxImages(boxId) {
         const connection = await database_1.default.connect();
         try {
-            const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE`;
-            const result = await connection.query(sql);
+            const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE WHERE box_id=$1`;
+            const result = await connection.query(sql, [boxId]);
             return result.rows;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-        finally {
-            connection.release();
-        }
-    }
-    async getBoxImageById(id) {
-        const connection = await database_1.default.connect();
-        try {
-            const sql = `SELECT id, createdAt, updatedAt, box_id, image, delivery_package_id FROM Box_IMAGE WHERE id = $1`;
-            const result = await connection.query(sql, [id]);
-            return result.rows[0] || null;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-        finally {
-            connection.release();
-        }
-    }
-    async updateBoxImage(id, boxId, deliveryPackageId, imageName) {
-        const connection = await database_1.default.connect();
-        try {
-            const updatedAt = new Date();
-            const sql = `
-        UPDATE Box_IMAGE 
-        SET box_id = $1, delivery_package_id = $2, image = $3, updatedAt = $4
-        WHERE id = $5
-        RETURNING id, createdAt, updatedAt, box_id, image, delivery_package_id
-      `;
-            const result = await connection.query(sql, [
-                boxId,
-                deliveryPackageId,
-                imageName,
-                updatedAt,
-                id,
-            ]);
-            return result.rows[0];
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-        finally {
-            connection.release();
-        }
-    }
-    async deleteBoxImage(id) {
-        const connection = await database_1.default.connect();
-        try {
-            const sql = `DELETE FROM Box_IMAGE WHERE id = $1`;
-            await connection.query(sql, [id]);
         }
         catch (error) {
             throw new Error(error.message);

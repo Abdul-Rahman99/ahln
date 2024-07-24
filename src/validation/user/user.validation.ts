@@ -57,6 +57,6 @@ export const updateUserValidator = [
 ];
 
 export const deleteUserValidator = [
-  check('id').isString().withMessage(i18n.__('INVALID_ID')),
+  body('userId').isString().withMessage(i18n.__('INVALID_ID')),
   validatorMiddleware,
 ];

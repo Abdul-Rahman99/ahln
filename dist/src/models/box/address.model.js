@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../config/database"));
 class AddressModel {
-    async createAddress(address) {
+    async createAddress(address, user) {
         const connection = await database_1.default.connect();
         try {
             const createdAt = new Date();
@@ -21,6 +21,7 @@ class AddressModel {
                 'building_number',
                 'floor',
                 'apartment_number',
+                'user_id',
             ];
             const sqlParams = [
                 createdAt,
@@ -33,10 +34,11 @@ class AddressModel {
                 address.building_number,
                 address.floor,
                 address.apartment_number,
+                user,
             ];
             const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number`;
+                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number, user_id`;
             const result = await connection.query(sql, sqlParams);
             return result.rows[0];
         }
@@ -61,14 +63,14 @@ class AddressModel {
             connection.release();
         }
     }
-    async getOne(id) {
+    async getOne(id, user) {
         const connection = await database_1.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid address ID.');
             }
-            const sql = 'SELECT * FROM Address WHERE id=$1';
-            const result = await connection.query(sql, [id]);
+            const sql = 'SELECT * FROM Address WHERE id=$1 AND user_id=$2';
+            const result = await connection.query(sql, [id, user]);
             return result.rows[0];
         }
         catch (error) {
@@ -78,11 +80,11 @@ class AddressModel {
             connection.release();
         }
     }
-    async updateOne(address, id) {
+    async updateOne(address, id, user) {
         const connection = await database_1.default.connect();
         try {
-            const checkSql = 'SELECT * FROM address WHERE id=$1';
-            const checkResult = await connection.query(checkSql, [id]);
+            const checkSql = 'SELECT * FROM address WHERE id=$1 AND user_id=$2';
+            const checkResult = await connection.query(checkSql, [id, user]);
             if (checkResult.rows.length === 0) {
                 throw new Error(`Address with ID ${id} does not exist`);
             }
@@ -114,14 +116,14 @@ class AddressModel {
             connection.release();
         }
     }
-    async deleteOne(id) {
+    async deleteOne(id, user) {
         const connection = await database_1.default.connect();
         try {
             if (!id) {
                 throw new Error('ID cannot be null. Please provide a valid address ID.');
             }
-            const sql = `DELETE FROM Address WHERE id=$1 RETURNING *`;
-            const result = await connection.query(sql, [id]);
+            const sql = `DELETE FROM Address WHERE id=$1 AND user_id=$2 RETURNING *`;
+            const result = await connection.query(sql, [id, user]);
             return result.rows[0];
         }
         catch (error) {

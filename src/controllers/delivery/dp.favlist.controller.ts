@@ -7,19 +7,20 @@ import i18n from '../../config/i18n';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-const auditTrail = new AuditTrailModel();
-
 import SystemLogModel from '../../models/logs/system.log.model';
+
+const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const dpFavListModel = new DPFavListModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDPFavList = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const dpFavListData = req.body;
     const del = await deliveryPackageModel.getOne(req.body.delivery_package_id);
     if (!del) {
-      const user = await authHandler(req, res);
       const source = 'createDPFavList';
       systemLog.createSystemLog(
         user,
@@ -36,7 +37,6 @@ export const createDPFavList = async (req: Request, res: Response) => {
       dpFavListData.delivery_package_id,
     );
     if (fav) {
-      const user = await authHandler(req, res);
       const source = 'createDPFavList';
       systemLog.createSystemLog(user, 'Delivery Package Already Exist', source);
       return ResponseHandler.badRequest(
@@ -44,8 +44,6 @@ export const createDPFavList = async (req: Request, res: Response) => {
         i18n.__('DELIVERY_PACKAGE_ALREADY_EXISTS'),
       );
     }
-
-    const user = await authHandler(req, res);
 
     const newDPFavList = await dpFavListModel.createDPFavList(
       dpFavListData,
@@ -56,19 +54,17 @@ export const createDPFavList = async (req: Request, res: Response) => {
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
       newDPFavList,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'createDPFavList';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'createDPFavList';
     systemLog.createSystemLog(user, (error as Error).message, source);
-    // next(error);
     ResponseHandler.badRequest(res, error.message);
+    // next(error);
   }
 };
 
@@ -117,6 +113,8 @@ export const createDPFavList = async (req: Request, res: Response) => {
 
 export const deleteDPFavList = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
     try {
       const { id } = req.params;
       const deletedDPFavList = await dpFavListModel.deleteDPFavList(id);
@@ -125,15 +123,13 @@ export const deleteDPFavList = asyncHandler(
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
         deletedDPFavList,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'deleteDPFavList';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'deleteDPFavList';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -144,10 +140,9 @@ export const deleteDPFavList = asyncHandler(
 
 export const getDPFavListsByUser = asyncHandler(
   async (req: Request, res: Response) => {
-    try {
-      // Extract token from the request headers
-      const user = await authHandler(req, res);
+    const user = await authHandler(req, res);
 
+    try {
       const dpFavLists = await dpFavListModel.getDPFavListsByUser(user);
       ResponseHandler.success(
         res,
@@ -155,7 +150,6 @@ export const getDPFavListsByUser = asyncHandler(
         dpFavLists,
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'getDPFavListByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

@@ -122,7 +122,44 @@ class BoxModel {
             connection.release();
         }
     }
-    async boxExists(id) {
+    async getTabletIdByBoxId(id) {
+        const connection = await database_1.default.connect();
+        try {
+            if (!id) {
+                throw new Error('ID cannot be null. Please provide a valid box ID.');
+            }
+            const sql = 'SELECT current_tablet_id FROM Box WHERE id=$1';
+            const result = await connection.query(sql, [id]);
+            return result.rows[0].current_tablet_id;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async getOneByUser(userId, boxId) {
+        const connection = await database_1.default.connect();
+        try {
+            if (!userId || !boxId) {
+                throw new Error('ID cannot be null. Please provide a valid box ID Or User ID.');
+            }
+            const sql = 'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1 AND User_Box.user_id=$2';
+            const result = await connection.query(sql, [userId, boxId]);
+            if (!result) {
+                return false;
+            }
+            return true;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async boxExistsSerialNumber(id) {
         const connection = await database_1.default.connect();
         try {
             if (!id) {
@@ -143,7 +180,10 @@ class BoxModel {
         const connection = await database_1.default.connect();
         try {
             const checkSql = 'SELECT * FROM Box WHERE id=$1';
-            await connection.query(checkSql, [id]);
+            const checkResult = await connection.query(checkSql, [id]);
+            if (checkResult.rows.length === 0) {
+                throw new Error(`Box with ID ${id} does not exist`);
+            }
             const queryParams = [];
             let paramIndex = 1;
             const updatedAt = new Date();

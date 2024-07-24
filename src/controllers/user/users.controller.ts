@@ -9,14 +9,15 @@ import authHandler from '../../utils/authHandler';
 import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+
 const auditTrail = new AuditTrailModel();
-
 const systemLog = new SystemLogModel();
-
 const userModel = new UserModel();
 
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const newUser: User = req.body;
+  const user = await authHandler(req, res);
+
   try {
     const createdUser = await userModel.createUser(newUser);
     ResponseHandler.success(
@@ -24,15 +25,13 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('USER_CREATED_SUCCESSFULLY'),
       createdUser,
     );
-    const auditUser = await authHandler(req, res);
     const action = 'createUser';
     auditTrail.createAuditTrail(
-      auditUser,
+      user,
       action,
       i18n.__('USER_CREATED_SUCCESSFULLY'),
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'createUser';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -41,6 +40,8 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   try {
     const users = await userModel.getMany();
     ResponseHandler.success(
@@ -49,7 +50,6 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
       users,
     );
   } catch (error: any) {
-    const user = await authHandler(req, res);
     const source = 'getAllUsers';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -58,7 +58,7 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.params.id;
+  const userId = req.body.id;
   try {
     const user = await userModel.getOne(userId);
     if (!user) {
@@ -83,9 +83,10 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
   uploadSingleImage('image')(req, res, async (err: any) => {
     if (err) {
-      const user = await authHandler(req, res);
       const source = 'updateUser';
       systemLog.createSystemLog(user, 'Image Not Uploaded to user', source);
       return ResponseHandler.badRequest(res, err.message);
@@ -97,7 +98,6 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     try {
-      const user = await authHandler(req, res);
       const updatedUser = await userModel.updateOne(userData, user);
 
       ResponseHandler.success(
@@ -105,15 +105,13 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('USER_UPDATED_SUCCESSFULLY'),
         updatedUser,
       );
-      const auditUser = await authHandler(req, res);
       const action = 'updateUser';
       auditTrail.createAuditTrail(
-        auditUser,
+        user,
         action,
         i18n.__('USER_UPDATED_SUCCESSFULLY'),
       );
     } catch (error: any) {
-      const user = await authHandler(req, res);
       const source = 'updateUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -123,7 +121,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.params.id;
+  const userId = req.body.id;
   try {
     const deletedUser = await userModel.deleteOne(userId);
     ResponseHandler.success(

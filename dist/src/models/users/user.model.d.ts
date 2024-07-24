@@ -18,6 +18,7 @@ declare class UserModel {
     updateUserToken(userId: string, token: string | null): Promise<void>;
     deleteUserToken(userId: string, token: string): Promise<void>;
     findByToken(token: string): Promise<string | null>;
+    findUserByBoxId(boxId: string): Promise<string>;
     findRoleIdByUserId(id: string): Promise<number>;
 }
 export default UserModel;

@@ -46,7 +46,7 @@ router.put(
 );
 
 router.delete(
-  '/delete/:id',
+  '/delete',
   verifyToken,
   authorize(['delete_user']),
   deleteUserValidator,

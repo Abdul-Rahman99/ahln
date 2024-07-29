@@ -206,6 +206,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, fcmToken } = req.body;
 
   const user = await userModel.findByEmail(email);
+
   if (!user) {
     const user = await authHandler(req, res);
     const source = 'login';
@@ -258,6 +259,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       avatar: userAvatar,
       country: user.country,
       city: user.city,
+      role: user.title
     },
     token,
   );

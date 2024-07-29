@@ -23,18 +23,14 @@ function connect() {
                 console.error('Subscription error:', err);
             }
             else {
-                console.log('Subscribed to wildcard topic:', granted);
             }
         });
     });
     exports.client.on('message', (topic, message) => {
-        console.log(`Received message on topic ${topic}: ${message.toString()}`);
         try {
             const parsedMessage = JSON.parse(message.toString());
-            console.log('Parsed message:', parsedMessage);
         }
         catch (err) {
-            console.log('Received non-JSON message:', message.toString());
         }
         if (shouldSubscribeToTopic(topic)) {
             exports.client.subscribe(topic, { qos: 1 }, (err, granted) => {
@@ -42,7 +38,6 @@ function connect() {
                     console.error(`Subscription error for topic ${topic}:`, err);
                 }
                 else {
-                    console.log(`Subscribed to new topic: ${topic}`, granted);
                 }
             });
         }

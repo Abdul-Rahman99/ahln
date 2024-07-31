@@ -20,5 +20,4 @@ pool.on('error', (error: Error) => {
   console.error(error.message);
 });
 
-
 export default pool;

@@ -170,7 +170,7 @@ class UserModel {
     async findByEmail(email) {
         const connection = await database_1.default.connect();
         try {
-            const sql = `SELECT * FROM users WHERE email=$1`;
+            const sql = `SELECT Role.title, users.* FROM users INNER JOIN Role ON users.role_id=Role.id WHERE users.email=$1`;
             const result = await connection.query(sql, [email]);
             if (result.rows.length) {
                 return result.rows[0];

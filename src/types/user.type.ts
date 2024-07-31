@@ -1,5 +1,6 @@
 // User.ts
 export interface User {
+  title: string;
   id: string;
   user_name: string;
   createdAt: Date;

@@ -30,7 +30,7 @@ connectDatabase();
 // );
 
 // Connect to MQTT client
-client;
+// client;
 
 // Middlewares
 app.use(localizationMiddleware); // Use localization middleware
@@ -62,7 +62,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
 });
 
-app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
+// app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(config.UPLOADS)));

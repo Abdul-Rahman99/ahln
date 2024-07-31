@@ -178,6 +178,7 @@ exports.login = (0, asyncHandler_1.default)(async (req, res) => {
         avatar: userAvatar,
         country: user.country,
         city: user.city,
+        role: user.title
     }, token);
     const action = 'login';
     auditTrail.createAuditTrail(user.id, action, i18n_1.default.__('LOGIN_SUCCESS'));

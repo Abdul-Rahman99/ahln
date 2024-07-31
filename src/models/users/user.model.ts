@@ -216,11 +216,12 @@ class UserModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM users WHERE email=$1`;
+      const sql = `SELECT Role.title, users.* FROM users INNER JOIN Role ON users.role_id=Role.id WHERE users.email=$1`;
       const result = await connection.query(sql, [email]);
       if (result.rows.length) {
         return result.rows[0] as User;
       }
+
       return null;
     } catch (error) {
       throw new Error((error as Error).message);

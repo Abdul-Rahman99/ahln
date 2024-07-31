@@ -20,7 +20,7 @@ const authHandler = async (
     } else {
       const user = await userModel.findByToken(token);
       if (!user) {
-        ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
+        ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
       } else {
         return user;
       }

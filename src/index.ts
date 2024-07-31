@@ -41,7 +41,7 @@ app.use(helmet()); // HTTP security headers
 
 app.use(
   cors({
-    origin: '*', // needs adjustments for production
+    origin: ['http://localhost:3000'], // needs adjustments for production
     credentials: true,
   }),
 );
@@ -73,7 +73,6 @@ mountRoutes(app);
 // app.get('/', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'pages/index.html'));
 // });
-
 
 // 404 Not Found middleware
 app.use((_req: Request, res: Response) => {

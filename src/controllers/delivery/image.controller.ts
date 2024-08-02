@@ -72,14 +72,15 @@ export const getLiveStreamImage = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const image = process.env.BASE_URL + "/uploads/liveImage-"+req.params.id+'.png';
+      const image =
+        process.env.BASE_URL + '/uploads/liveImage-' + req.params.id + '.png';
       ResponseHandler.success(
         res,
         i18n.__('LIVE_IMAGE_RETRIVED_SUCCESSFULLY'),
         image,
       );
     } catch (error: any) {
-      const source = 'getDPFavListByUser';
+      const source = 'getLiveStreamImage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
       // next(error);

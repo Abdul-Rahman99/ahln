@@ -59,7 +59,8 @@ class AddressModel {
   async getMany(): Promise<Address[]> {
     const connection = await db.connect();
     try {
-      const sql = 'SELECT * FROM Address';
+      const sql =
+        'SELECT Box.id as box_id, Address.* FROM Address LEFT JOIN Box ON Box.address_id=Address.id';
       const result = await connection.query(sql);
 
       return result.rows as Address[];

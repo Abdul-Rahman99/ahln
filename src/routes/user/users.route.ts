@@ -5,12 +5,14 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  updateUserStatus,
 } from '../../controllers/user/users.controller';
 
 import {
   createUserValidator,
   deleteUserValidator,
   getUserValidator,
+  updateUserStatusValidator,
   updateUserValidator,
 } from '../../validation/user/user.validation';
 
@@ -43,6 +45,14 @@ router.put(
   // authorize(['update_user']),
   updateUserValidator,
   updateUser,
+);
+
+router.put(
+  '/update-user-status/:userId?',
+  verifyToken,
+  // authorize(['update_user']),
+  updateUserStatusValidator,
+  updateUserStatus,
 );
 
 router.delete(

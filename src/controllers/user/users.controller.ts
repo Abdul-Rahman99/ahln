@@ -149,3 +149,30 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
     // next(error);
   }
 });
+
+export const updateUserStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    const { userId, status } = req.body;
+
+    try {
+      const updatedUser = await userModel.updateUserStatus(userId, status);
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedUser,
+      );
+      const action = 'updateUserStatus';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'updateUserStatus';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);

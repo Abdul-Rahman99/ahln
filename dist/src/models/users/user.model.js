@@ -79,7 +79,7 @@ class UserModel {
     async getMany() {
         const connection = await database_1.default.connect();
         try {
-            const sql = 'SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users';
+            const sql = 'SELECT Role.title, id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users INNER JOIN roles ON users.role_id = roles.id';
             const result = await connection.query(sql);
             return result.rows;
         }
@@ -137,7 +137,7 @@ class UserModel {
                 .filter((field) => field !== null);
             queryParams.push(updatedAt);
             updateFields.push(`updatedAt=$${paramIndex++}`);
-            console.log(updateFields, "updateFields");
+            console.log(updateFields, 'updateFields');
             queryParams.push(id);
             console.log(queryParams);
             const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
@@ -377,6 +377,20 @@ class UserModel {
                 return result.rows[0].role_id;
             }
             return 0;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async updateUserStatus(userId, status) {
+        const connection = await database_1.default.connect();
+        try {
+            const sql = `UPDATE users SET is_active = $1 WHERE id = $2`;
+            const result = await connection.query(sql, [status, userId]);
+            return result.rows.length > 0;
         }
         catch (error) {
             throw new Error(error.message);

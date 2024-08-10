@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserValidator = exports.updateUserValidator = exports.createUserValidator = exports.getUserValidator = void 0;
+exports.deleteUserValidator = exports.updateUserStatusValidator = exports.updateUserValidator = exports.createUserValidator = exports.getUserValidator = void 0;
 const express_validator_1 = require("express-validator");
 const validatorMiddleware_1 = __importDefault(require("../../middlewares/validatorMiddleware"));
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
@@ -50,6 +50,11 @@ exports.updateUserValidator = [
         .optional()
         .isMobilePhone(['ar-AE', 'ar-SA'])
         .withMessage(i18n_1.default.__('INVALID_PHONE_FORMAT')),
+    validatorMiddleware_1.default,
+];
+exports.updateUserStatusValidator = [
+    (0, express_validator_1.body)('status').notEmpty().withMessage(i18n_1.default.__('STATUS_REQUIRED')),
+    (0, express_validator_1.body)('userId').notEmpty().withMessage(i18n_1.default.__('USER_ID_REQUIRED')),
     validatorMiddleware_1.default,
 ];
 exports.deleteUserValidator = [

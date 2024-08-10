@@ -79,7 +79,7 @@ class UserModel {
         u.email?.toLowerCase(),
         u.password,
         u.preferred_language || null,
-        2,
+        u.role_id || 2,
         u.country || null,
         u.city || null,
         u.avatar || null,
@@ -105,7 +105,7 @@ class UserModel {
 
     try {
       const sql =
-        'SELECT id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users';
+        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, updatedat FROM users INNER JOIN role ON users.role_id = role.id';
       const result = await connection.query(sql);
       return result.rows as User[];
     } catch (error) {
@@ -174,7 +174,7 @@ class UserModel {
 
       queryParams.push(updatedAt); // Add the updatedAt timestamp
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
-      console.log(updateFields , "updateFields");
+      console.log(updateFields, 'updateFields');
 
       queryParams.push(id); // Add the user ID to the query parameters
       console.log(queryParams);
@@ -438,6 +438,19 @@ class UserModel {
         return result.rows[0].role_id as number;
       }
       return 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async updateUserStatus(userId: string, status: boolean): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `UPDATE users SET is_active = $1 WHERE id = $2`;
+      const result = await connection.query(sql, [status, userId]);
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

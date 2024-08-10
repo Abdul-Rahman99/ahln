@@ -41,7 +41,6 @@ export const createUserValidator = [
     }),
   validatorMiddleware,
 ];
-
 export const updateUserValidator = [
   body('email').optional().isEmail().withMessage(i18n.__('EMAIL_REQUIRED')),
   body('user_name').optional().notEmpty().withMessage(i18n.__('NAME_REQUIRED')),
@@ -53,6 +52,11 @@ export const updateUserValidator = [
     .optional()
     .isMobilePhone(['ar-AE', 'ar-SA'])
     .withMessage(i18n.__('INVALID_PHONE_FORMAT')),
+  validatorMiddleware,
+];
+export const updateUserStatusValidator = [
+  body('status').notEmpty().withMessage(i18n.__('STATUS_REQUIRED')),
+  body('userId').notEmpty().withMessage(i18n.__('USER_ID_REQUIRED')),
   validatorMiddleware,
 ];
 

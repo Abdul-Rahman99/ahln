@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.updateUserStatus = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const user_model_1 = __importDefault(require("../../models/users/user.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -107,6 +107,21 @@ exports.deleteUser = (0, asyncHandler_1.default)(async (req, res) => {
     catch (error) {
         const user = await (0, authHandler_1.default)(req, res);
         const source = 'deleteUser';
+        systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
+    }
+});
+exports.updateUserStatus = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
+    const { userId, status } = req.body;
+    try {
+        const updatedUser = await userModel.updateUserStatus(userId, status);
+        responsesHandler_1.default.success(res, i18n_1.default.__('USER_STATUS_UPDATED_SUCCESSFULLY'), updatedUser);
+        const action = 'updateUserStatus';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('USER_STATUS_UPDATED_SUCCESSFULLY'));
+    }
+    catch (error) {
+        const source = 'updateUserStatus';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }

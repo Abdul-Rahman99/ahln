@@ -1,4 +1,4 @@
-import { body, check } from 'express-validator';
+import { body, check, param } from 'express-validator';
 import validatorMiddleware from '../../middlewares/validatorMiddleware';
 import UserModel from '../../models/users/user.model';
 import i18n from '../../config/i18n';
@@ -57,6 +57,6 @@ export const updateUserValidator = [
 ];
 
 export const deleteUserValidator = [
-  body('userId').isString().withMessage(i18n.__('INVALID_ID')),
+  param('userId').isString().withMessage(i18n.__('INVALID_ID')),
   validatorMiddleware,
 ];

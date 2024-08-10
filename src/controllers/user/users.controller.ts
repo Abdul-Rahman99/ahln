@@ -84,7 +84,7 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
-
+  const userId = req.params.userId;
   uploadSingleImage('image')(req, res, async (err: any) => {
     if (err) {
       const source = 'updateUser';
@@ -98,7 +98,12 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     try {
-      const updatedUser = await userModel.updateOne(userData, user);
+      let updatedUser;
+      if (userId) {
+        updatedUser = await userModel.updateOne(userData, userId);
+      } else {
+        updatedUser = await userModel.updateOne(userData, user);
+      }
 
       ResponseHandler.success(
         res,
@@ -121,7 +126,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.body.id;
+  const userId = req.params.userId;
   try {
     const deletedUser = await userModel.deleteOne(userId);
     ResponseHandler.success(

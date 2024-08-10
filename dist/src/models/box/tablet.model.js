@@ -43,7 +43,7 @@ class TabletModel {
     async getMany() {
         const connection = await database_1.default.connect();
         try {
-            const sql = 'SELECT id, serial_number, android_id, createdAt, updatedAt FROM tablet';
+            const sql = 'SELECT Box.id as box_id, Box.box_label, Box.previous_tablet_id, tablet.* FROM tablet LEFT JOIN Box ON Box.current_tablet_id=tablet.id';
             const result = await connection.query(sql);
             return result.rows;
         }

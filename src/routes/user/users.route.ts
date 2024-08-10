@@ -38,7 +38,7 @@ router.get(
 );
 
 router.put(
-  '/update',
+  '/update/:userId?',
   verifyToken,
   // authorize(['update_user']),
   updateUserValidator,
@@ -46,7 +46,7 @@ router.put(
 );
 
 router.delete(
-  '/delete',
+  '/delete/:userId',
   verifyToken,
   authorize(['delete_user']),
   deleteUserValidator,

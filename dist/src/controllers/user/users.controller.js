@@ -65,6 +65,7 @@ exports.getUserById = (0, asyncHandler_1.default)(async (req, res) => {
 });
 exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
     const user = await (0, authHandler_1.default)(req, res);
+    const userId = req.params.userId;
     (0, uploadSingleImage_1.uploadSingleImage)('image')(req, res, async (err) => {
         if (err) {
             const source = 'updateUser';
@@ -76,7 +77,13 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
             userData.avatar = req.file.filename;
         }
         try {
-            const updatedUser = await userModel.updateOne(userData, user);
+            let updatedUser;
+            if (userId) {
+                updatedUser = await userModel.updateOne(userData, userId);
+            }
+            else {
+                updatedUser = await userModel.updateOne(userData, user);
+            }
             responsesHandler_1.default.success(res, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'), updatedUser);
             const action = 'updateUser';
             auditTrail.createAuditTrail(user, action, i18n_1.default.__('USER_UPDATED_SUCCESSFULLY'));
@@ -89,7 +96,7 @@ exports.updateUser = (0, asyncHandler_1.default)(async (req, res) => {
     });
 });
 exports.deleteUser = (0, asyncHandler_1.default)(async (req, res) => {
-    const userId = req.body.id;
+    const userId = req.params.userId;
     try {
         const deletedUser = await userModel.deleteOne(userId);
         responsesHandler_1.default.success(res, i18n_1.default.__('USER_DELETED_SUCCESSFULLY'), deletedUser);

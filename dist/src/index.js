@@ -14,6 +14,7 @@ const i18n_1 = __importDefault(require("./config/i18n"));
 const routes_1 = __importDefault(require("./routes"));
 const config_1 = require("../config");
 const error_middleware_1 = require("./middlewares/error.middleware");
+const mqtt_1 = require("./config/mqtt");
 const models_1 = __importDefault(require("./models"));
 const localization_middleware_1 = __importDefault(require("./middlewares/localization.middleware"));
 const path_1 = __importDefault(require("path"));
@@ -21,6 +22,7 @@ const responsesHandler_1 = __importDefault(require("./utils/responsesHandler"));
 dotenv_1.default.config({ path: '../.env' });
 const app = (0, express_1.default)();
 (0, models_1.default)();
+mqtt_1.client;
 app.use(localization_middleware_1.default);
 app.use(i18n_1.default.init);
 app.use((0, morgan_1.default)('dev'));
@@ -37,6 +39,7 @@ const limiter = (0, express_rate_limit_1.default)({
     limit: 100,
     message: 'Too many requests from this IP, please try again later.',
 });
+app.use('/api', limiter);
 app.use('/uploads', express_1.default.static(path_1.default.join(config_1.config.UPLOADS)));
 (0, routes_1.default)(app);
 app.use((_req, res) => {

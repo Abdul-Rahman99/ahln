@@ -53,7 +53,7 @@ exports.updateUserValidator = [
     validatorMiddleware_1.default,
 ];
 exports.deleteUserValidator = [
-    (0, express_validator_1.body)('userId').isString().withMessage(i18n_1.default.__('INVALID_ID')),
+    (0, express_validator_1.param)('userId').isString().withMessage(i18n_1.default.__('INVALID_ID')),
     validatorMiddleware_1.default,
 ];
 //# sourceMappingURL=user.validation.js.map

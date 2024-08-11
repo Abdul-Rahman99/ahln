@@ -8,12 +8,14 @@ import {
   getBoxImagesByBoxId,
   // getBoxImagesByUser,
   getBoxImagesByPackageId,
+  getAll,
 } from '../../controllers/box/box.image.controller';
 
 const router = express.Router();
 
 router.post('/new', uploadBoxImage);
 router.get('/get-all', getAllBoxImages);
+router.get('/get-all-admin', getAll);
 // router.get('/get-one/:id', getBoxImageById);
 // router.put('/update/:id', updateBoxImage);
 // router.delete('/delete/:id', deleteBoxImage);

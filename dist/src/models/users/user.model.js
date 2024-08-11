@@ -58,7 +58,7 @@ class UserModel {
                 u.email?.toLowerCase(),
                 u.password,
                 u.preferred_language || null,
-                2,
+                u.role_id || 2,
                 u.country || null,
                 u.city || null,
                 u.avatar || null,
@@ -79,7 +79,7 @@ class UserModel {
     async getMany() {
         const connection = await database_1.default.connect();
         try {
-            const sql = 'SELECT Role.title, id, user_name, role_id, is_active, phone_number, email, preferred_language FROM users INNER JOIN roles ON users.role_id = roles.id';
+            const sql = 'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, updatedat FROM users INNER JOIN role ON users.role_id = role.id';
             const result = await connection.query(sql);
             return result.rows;
         }

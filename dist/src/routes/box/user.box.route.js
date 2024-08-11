@@ -18,5 +18,6 @@ router.get('/get-boxes-user', verifyToken_1.default, user_box_validation_1.getUs
 router.post('/assign-box-to-user', verifyToken_1.default, user_box_validation_1.assignBoxToUserValidation, user_box_controller_1.assignBoxToUser);
 router.post('/user-assign-box-to-himself', verifyToken_1.default, user_box_validation_1.userAssignBoxToHimselfValidation, user_box_controller_1.userAssignBoxToHimself);
 router.post('/user-assign-box-to-relative-user', verifyToken_1.default, user_box_validation_1.userAssignBoxToRelativeUserValidation, user_box_controller_1.userAssignBoxToRelativeUser);
+router.put('/update-box-status/:id?', verifyToken_1.default, user_box_validation_1.updateUserBoxStatusValidation, user_box_controller_1.updateUserBoxStatus);
 exports.default = router;
 //# sourceMappingURL=user.box.route.js.map

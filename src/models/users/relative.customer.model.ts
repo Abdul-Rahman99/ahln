@@ -61,6 +61,23 @@ class RelativeCustomerModel {
     }
   }
 
+  async getAllForAdmin(): Promise<RelativeCustomer[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, 
+        Relative_Customer.is_active,Relative_Customer.id, Relative_Customer.relation,
+        Relative_Customer.box_id, Relative_Customer.customer_id, Relative_Customer.relative_customer_id FROM Relative_Customer 
+        INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id`;
+      const result = await connection.query(sql);
+      return result.rows as RelativeCustomer[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // get specific relative customer
   async getOne(id: number): Promise<RelativeCustomer> {
     const connection = await db.connect();
@@ -201,7 +218,24 @@ class RelativeCustomerModel {
     }
   }
 
-  //
+  // Update Relative Customer Status
+  async updateStatus(id: number, status: boolean): Promise<RelativeCustomer> {
+    const connection = await db.connect();
+    try {
+      if (!id) {
+        throw new Error('ID cannot be null. Please provide a valid ID.');
+      } else if (status === null || status === undefined) {
+        throw new Error('Please provide a valid status');
+      }
+      const sql = `UPDATE Relative_Customer SET is_active = $1 WHERE id = $2 RETURNING *`;
+      const result = await connection.query(sql, [status, id]);
+      return result.rows[0] as RelativeCustomer;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default RelativeCustomerModel;

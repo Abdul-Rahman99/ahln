@@ -14,5 +14,6 @@ declare class UserBoxModel {
     userAssignBoxToHimslef(userId: string, serialNumber: string, addressId: number): Promise<UserBox>;
     checkUserBox(user: string, boxId: string): Promise<boolean>;
     assignRelativeUser(userId: string, boxId: string, email: string): Promise<UserBox>;
+    updateUserBoxStatus(is_active: boolean, id: string): Promise<boolean>;
 }
 export default UserBoxModel;

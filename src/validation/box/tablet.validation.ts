@@ -35,26 +35,11 @@ export const updateTabletValidation = [
   body('serial_number')
     .optional()
     .notEmpty()
-    .withMessage(i18n.__('SERIAL_NUMBER_REQUIRED'))
-    .custom(async (serialNumber) => {
-      const serialNumberExists =
-        await tabletModel.serialNumberExists(serialNumber);
-      if (serialNumberExists) {
-        throw new Error(i18n.__('SERIAL_NUMBER_IN_USE'));
-      }
-    }),
+    .withMessage(i18n.__('SERIAL_NUMBER_REQUIRED')),
   body('android_id')
     .optional()
     .notEmpty()
-    .withMessage(i18n.__('ANDROID_ID_REQUIRED'))
-    .custom(async (androidId) => {
-      if (androidId) {
-        const androidIdExists = await tabletModel.androidIdExists(androidId);
-        if (androidIdExists) {
-          throw new Error(i18n.__('ANDROID_ID_IN_USE'));
-        }
-      }
-    }),
+    .withMessage(i18n.__('ANDROID_ID_REQUIRED')),
   validatorMiddleware,
 ];
 

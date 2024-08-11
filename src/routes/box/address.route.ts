@@ -21,7 +21,7 @@ const router = express.Router();
 
 router.post(
   '/new',
-  // verifyToken,
+  verifyToken,
   // authorize(['create_box']),
   createAddressValidation,
   createAddress,

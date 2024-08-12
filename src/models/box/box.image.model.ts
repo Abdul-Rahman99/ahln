@@ -60,6 +60,22 @@ export default class BoxImageModel {
     }
   }
 
+  async getAll(): Promise<BoxImage[]> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT * FROM Box_IMAGE`;
+      const result = await connection.query(sql);
+      result.rows.forEach((row) => {
+        row.image = `${process.env.BASE_URL}/uploads/${row.image}`;
+      });
+      return result.rows as BoxImage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // async getBoxImageById(id: number): Promise<BoxImage | null> {
   //   const connection = await db.connect();
 
@@ -87,7 +103,7 @@ export default class BoxImageModel {
   //     const updatedAt = new Date();
 
   //     const sql = `
-  //       UPDATE Box_IMAGE 
+  //       UPDATE Box_IMAGE
   //       SET box_id = $1, delivery_package_id = $2, image = $3, updatedAt = $4
   //       WHERE id = $5
   //       RETURNING id, createdAt, updatedAt, box_id, image, delivery_package_id

@@ -10,7 +10,9 @@ import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
+import BoxModel from '../../models/box/box.model';
 
+const boxModel = new BoxModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
@@ -22,6 +24,23 @@ export const createRelativeCustomer = asyncHandler(
     const user = await authHandler(req, res);
     try {
       const newRelaticeCustomerData: RelativeCustomer = req.body;
+
+      const boxExist = await boxModel.getOne(newRelaticeCustomerData.box_id);
+      if (!boxExist) {
+        const source = 'createRelativeCustomer';
+        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
+      }
+
+      const boxRelatedToUSer = await boxModel.getOneByUser(
+        newRelaticeCustomerData.box_id,
+        newRelaticeCustomerData.customer_id,
+      );
+      if (!boxRelatedToUSer) {
+        const source = 'createRelativeCustomer';
+        systemLog.createSystemLog(user, 'Invalid Box Id', source);
+        return ResponseHandler.badRequest(res, i18n.__('INVALID_BOX_ID'));
+      }
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
@@ -58,6 +77,24 @@ export const getAllRelativeCustomersByUserId = asyncHandler(
       );
     } catch (error: any) {
       const source = 'getAllRelativeCustomers';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+export const getAllRelativeCustomersForAdmin = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    try {
+      const relativeCustomers = await relativeCustomerModel.getAllForAdmin();
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMERS_RETRIEVED_SUCCESSFULLY'),
+        relativeCustomers,
+      );
+    } catch (error: any) {
+      const source = 'getAllRelativeCustomersForAdmin';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
       // next(error);
@@ -176,6 +213,32 @@ export const deleteRelativeCustomer = asyncHandler(
       );
     } catch (error: any) {
       const source = 'deleteRelativeCustomer';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+
+// update relative customer status
+export const updateRelativeCustomerStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const { id, status } = req.body;
+
+      const updatedRelativeCustomer = await relativeCustomerModel.updateStatus(
+        Number(id),
+        status,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedRelativeCustomer,
+      );
+    } catch (error: any) {
+      const source = 'updateRelativeCustomerStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
       // next(error);

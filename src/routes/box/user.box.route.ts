@@ -10,6 +10,7 @@ import {
   assignBoxToUser,
   userAssignBoxToHimself,
   userAssignBoxToRelativeUser,
+  updateUserBoxStatus,
 } from '../../controllers/box/user.box.controller';
 
 import {
@@ -22,6 +23,7 @@ import {
   updateUserBoxValidation,
   userAssignBoxToHimselfValidation,
   userAssignBoxToRelativeUserValidation,
+  updateUserBoxStatusValidation,
 } from '../../validation/box/user.box.validation';
 import verifyToken from '../../middlewares/verifyToken';
 
@@ -76,6 +78,13 @@ router.post(
   verifyToken,
   userAssignBoxToRelativeUserValidation,
   userAssignBoxToRelativeUser,
+);
+
+router.put(
+  '/update-box-status/:id?',
+  verifyToken,
+  updateUserBoxStatusValidation,
+  updateUserBoxStatus,
 );
 
 export default router;

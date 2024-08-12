@@ -358,3 +358,34 @@ export const userAssignBoxToRelativeUser = asyncHandler(
     }
   },
 );
+
+export const updateUserBoxStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    const { id } = req.params;
+    const { is_active } = req.body;
+
+    try {
+      const updatedUserBox = await userBoxModel.updateUserBoxStatus(
+        is_active,
+        id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedUserBox,
+      );
+      const action = 'updateUserBoxStatus';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'updateUserBoxStatus';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);

@@ -57,7 +57,7 @@ class TabletModel {
       const sql =
         'SELECT Box.id as box_id, Box.box_label, Box.previous_tablet_id, tablet.* FROM tablet LEFT JOIN Box ON Box.current_tablet_id=tablet.id';
       const result = await connection.query(sql);
-      
+
       return result.rows as Tablet[];
     } catch (error) {
       throw new Error((error as Error).message);
@@ -158,10 +158,10 @@ class TabletModel {
     const connection = await db.connect();
 
     try {
-      const sql = 'SELECT COUNT(*) FROM tablet WHERE serial_number=$1';
+      const sql = 'SELECT serial_number FROM tablet WHERE serial_number=$1';
       const result = await connection.query(sql, [serial_number]);
 
-      return parseInt(result.rows[0].count) > 0;
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

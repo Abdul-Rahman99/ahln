@@ -6,7 +6,6 @@ import { Address } from '../../types/address.type';
 import UserModel from '../users/user.model';
 const user = new UserModel();
 
-
 class UserBoxModel {
   // Create new UserBox
   async createUserBox(userBox: Partial<UserBox>): Promise<UserBox> {
@@ -49,9 +48,10 @@ class UserBoxModel {
 
     try {
       const sql = `
-        SELECT ub.*, b.*
-        FROM User_Box ub
-        INNER JOIN Box b ON ub.box_id = b.id
+        SELECT User_Box.id AS user_box_id, User_Box.*, Box.id AS box_id,Box.*, 
+        tablet.serial_number 
+        FROM User_Box LEFT JOIN Box ON User_Box.box_id = Box.id
+        LEFT JOIN tablet ON Box.current_tablet_id = tablet.id;
       `;
       const result = await connection.query(sql);
 
@@ -321,7 +321,6 @@ class UserBoxModel {
   async checkUserBox(user: string, boxId: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-
       if (!user) {
         throw new Error('Please provide a userId');
       }
@@ -363,6 +362,19 @@ class UserBoxModel {
       } else {
         throw new Error(`You don't have enough permissions to do that`);
       }
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async updateUserBoxStatus(is_active: boolean, id: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `UPDATE User_Box SET is_active = $1 WHERE id = $2`;
+      const result = await connection.query(sql, [is_active, id]);
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

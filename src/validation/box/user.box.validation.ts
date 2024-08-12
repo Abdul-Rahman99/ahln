@@ -89,3 +89,9 @@ export const userAssignBoxToRelativeUserValidation = [
   body('email').notEmpty().withMessage(i18n.__('EMAIL_REQUIRED')),
   validatorMiddleware,
 ];
+
+export const updateUserBoxStatusValidation = [
+  body('is_active').notEmpty().withMessage(i18n.__('IS_ACTIVE_REQUIRED')),
+  body('id').notEmpty().withMessage(i18n.__('USER_BOX_ID_REQUIRED')),
+  validatorMiddleware,
+];

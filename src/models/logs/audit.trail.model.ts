@@ -38,7 +38,7 @@ export default class AuditTrailModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, user_id,action FROM Audit_Trail`;
+      const sql = `SELECT * FROM Audit_Trail`;
       const result = await connection.query(sql);
 
       return result.rows as AuditTrail[];

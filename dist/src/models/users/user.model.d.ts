@@ -20,5 +20,6 @@ declare class UserModel {
     findByToken(token: string): Promise<string | null>;
     findUserByBoxId(boxId: string): Promise<string>;
     findRoleIdByUserId(id: string): Promise<number>;
+    updateUserStatus(userId: string, status: boolean): Promise<boolean>;
 }
 export default UserModel;

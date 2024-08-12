@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userAssignBoxToRelativeUser = exports.userAssignBoxToHimself = exports.assignBoxToUser = exports.getUserBoxesByBoxId = exports.getUserBoxesByUserId = exports.deleteUserBox = exports.updateUserBox = exports.getUserBoxById = exports.getAllUserBoxes = exports.createUserBox = void 0;
+exports.updateUserBoxStatus = exports.userAssignBoxToRelativeUser = exports.userAssignBoxToHimself = exports.assignBoxToUser = exports.getUserBoxesByBoxId = exports.getUserBoxesByUserId = exports.deleteUserBox = exports.updateUserBox = exports.getUserBoxById = exports.getAllUserBoxes = exports.createUserBox = void 0;
 const user_box_model_1 = __importDefault(require("../../models/box/user.box.model"));
 const asyncHandler_1 = __importDefault(require("../../middlewares/asyncHandler"));
 const i18n_1 = __importDefault(require("../../config/i18n"));
@@ -205,6 +205,22 @@ exports.userAssignBoxToRelativeUser = (0, asyncHandler_1.default)(async (req, re
     }
     catch (error) {
         const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, error.message, source);
+        responsesHandler_1.default.badRequest(res, error.message);
+    }
+});
+exports.updateUserBoxStatus = (0, asyncHandler_1.default)(async (req, res) => {
+    const user = await (0, authHandler_1.default)(req, res);
+    const { id } = req.params;
+    const { is_active } = req.body;
+    try {
+        const updatedUserBox = await userBoxModel.updateUserBoxStatus(is_active, id);
+        responsesHandler_1.default.success(res, i18n_1.default.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'), updatedUserBox);
+        const action = 'updateUserBoxStatus';
+        auditTrail.createAuditTrail(user, action, i18n_1.default.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'));
+    }
+    catch (error) {
+        const source = 'updateUserBoxStatus';
         systemLog.createSystemLog(user, error.message, source);
         responsesHandler_1.default.badRequest(res, error.message);
     }

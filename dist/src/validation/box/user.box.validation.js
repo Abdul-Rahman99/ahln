@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userAssignBoxToRelativeUserValidation = exports.userAssignBoxToHimselfValidation = exports.assignBoxToUserValidation = exports.getUserBoxesByBoxIdValidation = exports.getUserBoxesByUserIdValidation = exports.deleteUserBoxValidation = exports.updateUserBoxValidation = exports.getUserBoxByIdValidation = exports.createUserBoxValidation = void 0;
+exports.updateUserBoxStatusValidation = exports.userAssignBoxToRelativeUserValidation = exports.userAssignBoxToHimselfValidation = exports.assignBoxToUserValidation = exports.getUserBoxesByBoxIdValidation = exports.getUserBoxesByUserIdValidation = exports.deleteUserBoxValidation = exports.updateUserBoxValidation = exports.getUserBoxByIdValidation = exports.createUserBoxValidation = void 0;
 const express_validator_1 = require("express-validator");
 const i18n_1 = __importDefault(require("../../config/i18n"));
 const validatorMiddleware_1 = __importDefault(require("../../middlewares/validatorMiddleware"));
@@ -80,6 +80,11 @@ exports.userAssignBoxToRelativeUserValidation = [
     }),
     (0, express_validator_1.body)('boxId').notEmpty().withMessage(i18n_1.default.__('BOX_SERIAL_NUMBER_REQUIRED')),
     (0, express_validator_1.body)('email').notEmpty().withMessage(i18n_1.default.__('EMAIL_REQUIRED')),
+    validatorMiddleware_1.default,
+];
+exports.updateUserBoxStatusValidation = [
+    (0, express_validator_1.body)('is_active').notEmpty().withMessage(i18n_1.default.__('IS_ACTIVE_REQUIRED')),
+    (0, express_validator_1.body)('id').notEmpty().withMessage(i18n_1.default.__('USER_BOX_ID_REQUIRED')),
     validatorMiddleware_1.default,
 ];
 //# sourceMappingURL=user.box.validation.js.map

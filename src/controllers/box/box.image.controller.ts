@@ -116,6 +116,24 @@ export const getAllBoxImages = asyncHandler(
   },
 );
 
+export const getAll = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
+  try {
+    const boxImages = await boxImageModel.getAll();
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_IMAGES_RETRIEVED_SUCCESSFULLY'),
+      boxImages,
+    );
+  } catch (error: any) {
+    const source = 'getAll';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    // next(error);
+    ResponseHandler.badRequest(res, error.message);
+  }
+});
+
 // export const getBoxImageById = asyncHandler(
 //   async (req: Request, res: Response) => {
 //     const user = await authHandler(req, res);

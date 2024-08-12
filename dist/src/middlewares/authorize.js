@@ -21,7 +21,7 @@ const authorize = (requiredPermissions) => {
             }
             const user = await userModel.findByToken(token);
             if (!user) {
-                return responsesHandler_1.default.badRequest(res, i18n_1.default.__('INVALID_TOKEN'));
+                return responsesHandler_1.default.unauthorized(res, i18n_1.default.__('INVALID_TOKEN'));
             }
             const userRoleId = await userModel.findRoleIdByUserId(user);
             const rolePermissions = await rolePermissionModel.getPermissionsByRole(userRoleId);

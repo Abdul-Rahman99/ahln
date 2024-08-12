@@ -41,9 +41,10 @@ class UserBoxModel {
         const connection = await database_1.default.connect();
         try {
             const sql = `
-        SELECT ub.*, b.*
-        FROM User_Box ub
-        INNER JOIN Box b ON ub.box_id = b.id
+        SELECT User_Box.id AS user_box_id, User_Box.*, Box.id AS box_id,Box.*, 
+        tablet.serial_number 
+        FROM User_Box LEFT JOIN Box ON User_Box.box_id = Box.id
+        LEFT JOIN tablet ON Box.current_tablet_id = tablet.id;
       `;
             const result = await connection.query(sql);
             return result.rows;
@@ -304,6 +305,20 @@ class UserBoxModel {
             else {
                 throw new Error(`You don't have enough permissions to do that`);
             }
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+        finally {
+            connection.release();
+        }
+    }
+    async updateUserBoxStatus(is_active, id) {
+        const connection = await database_1.default.connect();
+        try {
+            const sql = `UPDATE User_Box SET is_active = $1 WHERE id = $2`;
+            const result = await connection.query(sql, [is_active, id]);
+            return result.rows.length > 0;
         }
         catch (error) {
             throw new Error(error.message);

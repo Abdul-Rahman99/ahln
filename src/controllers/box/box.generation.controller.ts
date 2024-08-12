@@ -138,3 +138,101 @@ export const deleteBoxGeneration = asyncHandler(
     }
   },
 );
+
+// update has outside camera
+export const updateHasOutsideCameraStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const boxGenerationId = req.params.id;
+      const hasOutsideCamera = req.body.has_outside_camera;
+      const updatedBoxGeneration =
+        await boxGenerationModel.updateHasOutsideCameraStatus(
+          hasOutsideCamera,
+          boxGenerationId,
+        );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        updatedBoxGeneration,
+      );
+      const action = 'updateHasOutsideCamera';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'updateHasOutsideCamera';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+
+// update has inside camera
+export const updateHasInsideCameraStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    try {
+      const boxGenerationId = req.params.id;
+      const hasInsideCamera = req.body.has_inside_camera;
+      const updatedBoxGeneration =
+        await boxGenerationModel.updateHasInsideCameraStatus(
+          hasInsideCamera,
+          boxGenerationId,
+        );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        updatedBoxGeneration,
+      );
+      const action = 'updateHasInsideCamera';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'updateHasInsideCamera';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+
+// update tablet status
+export const updateHasTabletStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const boxGenerationId = req.params.id;
+      const tabletStatus = req.body.has_tablet;
+      const updatedBoxGeneration =
+        await boxGenerationModel.updateHasTabletStatus(
+          tabletStatus,
+          boxGenerationId,
+        );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        updatedBoxGeneration,
+      );
+      const action = 'updateTabletStatus';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'updateTabletStatus';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);

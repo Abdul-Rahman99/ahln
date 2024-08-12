@@ -70,3 +70,36 @@ export const deleteBoxGenerationValidation = [
   param('id').isString().withMessage(i18n.__('INVALID_BOX_ID')),
   validatorMiddleware,
 ];
+
+export const updateHasOutsideCameraStatusValidation = [
+  body('has_outside_camera')
+    .notEmpty()
+    .withMessage(i18n.__('HAS_OUTSIDE_CAMERA_STATUS_REQUIRED')),
+  param('id')
+    .isString()
+    .notEmpty()
+    .withMessage(i18n.__('BOX_GENERATION_ID_REQUIRED')),
+  validatorMiddleware,
+];
+
+export const updateHasInsideCameraStatusValidation = [
+  body('has_inside_camera')
+    .notEmpty()
+    .withMessage(i18n.__('HAS_INSIDE_CAMERA_STATUS_REQUIRED')),
+  param('id')
+    .isString()
+    .notEmpty()
+    .withMessage(i18n.__('BOX_GENERATION_ID_REQUIRED')),
+  validatorMiddleware,
+];
+
+export const updateHasTabletStatusValidation = [
+  body('has_tablet')
+    .notEmpty()
+    .withMessage(i18n.__('HAS_TABLET_CAMERA_STATUS_REQUIRED')),
+  param('id')
+    .isString()
+    .notEmpty()
+    .withMessage(i18n.__('BOX_GENERATION_ID_REQUIRED')),
+  validatorMiddleware,
+];

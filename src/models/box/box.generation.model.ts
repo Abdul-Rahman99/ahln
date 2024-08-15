@@ -211,10 +211,10 @@ class BoxGenerationModel {
   async modelNameExists(model_name: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-      const sql = 'SELECT COUNT(*) FROM Box_Generation WHERE model_name=$1';
+      const sql = 'SELECT * FROM Box_Generation WHERE model_name=$1';
       const result = await connection.query(sql, [model_name]);
 
-      return parseInt(result.rows[0].count) > 0;
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -222,45 +222,14 @@ class BoxGenerationModel {
     }
   }
 
-  async updateHasInsideCameraStatus(
-    has_inside_camera: boolean,
-    id: string,
-  ): Promise<boolean> {
+  async findModelNameById(id: string): Promise<string> {
     const connection = await db.connect();
     try {
-      const sql = `UPDATE Box_Generation SET has_inside_camera = $1 WHERE id = $2`;
-      const result = await connection.query(sql, [has_inside_camera, id]);
-      return result.rows.length > 0;
-    } catch (error) {
-      throw new Error((error as Error).message);
-    } finally {
-      connection.release();
-    }
-  }
-  async updateHasOutsideCameraStatus(
-    has_outside_camera: boolean,
-    id: string,
-  ): Promise<boolean> {
-    const connection = await db.connect();
-    try {
-      const sql = `UPDATE Box_Generation SET has_outside_camera = $1 WHERE id = $2`;
-      const result = await connection.query(sql, [has_outside_camera, id]);
-      return result.rows.length > 0;
-    } catch (error) {
-      throw new Error((error as Error).message);
-    } finally {
-      connection.release();
-    }
-  }
-  async updateHasTabletStatus(
-    has_tablet: boolean,
-    id: string,
-  ): Promise<boolean> {
-    const connection = await db.connect();
-    try {
-      const sql = `UPDATE Box_Generation SET has_tablet = $1 WHERE id = $2`;
-      const result = await connection.query(sql, [has_tablet, id]);
-      return result.rows.length > 0;
+      const sql = 'SELECT model_name FROM Box_Generation WHERE id=$1';
+      const result = await connection.query(sql, [id]);
+      console.log(result.rows[0].model_name);
+
+      return result.rows[0].model_name;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

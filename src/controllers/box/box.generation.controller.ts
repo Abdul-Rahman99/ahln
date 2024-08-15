@@ -18,6 +18,17 @@ export const createBoxGeneration = asyncHandler(
     const user = await authHandler(req, res);
     try {
       const newBoxGeneration: BoxGeneration = req.body;
+
+      const boxGenerationExists = await boxGenerationModel.modelNameExists(
+        newBoxGeneration.model_name,
+      );
+      if (boxGenerationExists) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('MODEL_NAME_ALREADY_EXISTS'),
+        );
+      }
+
       const createdBoxGeneration =
         await boxGenerationModel.createBoxGeneration(newBoxGeneration);
       ResponseHandler.success(
@@ -86,7 +97,24 @@ export const updateBoxGeneration = asyncHandler(
 
     try {
       const boxGenerationId = req.params.id;
-      const boxGenerationData: Partial<BoxGeneration> = req.body;
+      const boxGenerationData: BoxGeneration = req.body;
+
+      const modelNameExists = await boxGenerationModel.findModelNameById(
+        boxGenerationData.id,
+      );
+
+      if (modelNameExists !== boxGenerationData.model_name) {
+        const boxGenerationExists = await boxGenerationModel.modelNameExists(
+          boxGenerationData.model_name,
+        );
+        if (boxGenerationExists) {
+          return ResponseHandler.badRequest(
+            res,
+            i18n.__('MODEL_NAME_ALREADY_EXISTS'),
+          );
+        }
+      }
+
       const updatedBoxGeneration = await boxGenerationModel.updateOne(
         boxGenerationData,
         boxGenerationId,
@@ -132,104 +160,6 @@ export const deleteBoxGeneration = asyncHandler(
       );
     } catch (error: any) {
       const source = 'deleteBoxGeneration';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
-
-// update has outside camera
-export const updateHasOutsideCameraStatus = asyncHandler(
-  async (req: Request, res: Response) => {
-    const user = await authHandler(req, res);
-
-    try {
-      const boxGenerationId = req.params.id;
-      const hasOutsideCamera = req.body.has_outside_camera;
-      const updatedBoxGeneration =
-        await boxGenerationModel.updateHasOutsideCameraStatus(
-          hasOutsideCamera,
-          boxGenerationId,
-        );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-        updatedBoxGeneration,
-      );
-      const action = 'updateHasOutsideCamera';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const source = 'updateHasOutsideCamera';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
-
-// update has inside camera
-export const updateHasInsideCameraStatus = asyncHandler(
-  async (req: Request, res: Response) => {
-    const user = await authHandler(req, res);
-    try {
-      const boxGenerationId = req.params.id;
-      const hasInsideCamera = req.body.has_inside_camera;
-      const updatedBoxGeneration =
-        await boxGenerationModel.updateHasInsideCameraStatus(
-          hasInsideCamera,
-          boxGenerationId,
-        );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-        updatedBoxGeneration,
-      );
-      const action = 'updateHasInsideCamera';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const source = 'updateHasInsideCamera';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
-
-// update tablet status
-export const updateHasTabletStatus = asyncHandler(
-  async (req: Request, res: Response) => {
-    const user = await authHandler(req, res);
-
-    try {
-      const boxGenerationId = req.params.id;
-      const tabletStatus = req.body.has_tablet;
-      const updatedBoxGeneration =
-        await boxGenerationModel.updateHasTabletStatus(
-          tabletStatus,
-          boxGenerationId,
-        );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-        updatedBoxGeneration,
-      );
-      const action = 'updateTabletStatus';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-      );
-    } catch (error: any) {
-      const source = 'updateTabletStatus';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
       // next(error);

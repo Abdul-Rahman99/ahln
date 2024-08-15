@@ -39,10 +39,6 @@ export const updateBoxValidation = [
     .optional()
     .notEmpty()
     .withMessage(i18n.__('CURRENT_TABLET_ID_REQUIRED')),
-  body('previous_tablet_id')
-    .optional()
-    .notEmpty()
-    .withMessage(i18n.__('PREVIOUS_TABLET_ID_REQUIRED')),
   body('box_model_id')
     .optional()
     .isString()

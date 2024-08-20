@@ -174,15 +174,21 @@ class UserModel {
 
       queryParams.push(updatedAt); // Add the updatedAt timestamp
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
-      console.log(updateFields, 'updateFields');
 
       queryParams.push(id); // Add the user ID to the query parameters
-      console.log(queryParams);
 
       const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
       result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${result.rows[0].avatar}`;
+
+      const userRoleSql =
+        'SELECT role.title FROM users INNER JOIN role ON users.role_id = role.id WHERE users.id = $1';
+      const userRoleResult = await connection.query(userRoleSql, [
+        result.rows[0].id,
+      ]);
+
+      result.rows[0].title = userRoleResult.rows[0].title;
 
       return result.rows[0] as User;
     } catch (error) {

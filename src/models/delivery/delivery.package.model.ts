@@ -260,19 +260,21 @@ class DeliveryPackageModel {
   // Get all delivery packages for a specific user
   async getPackagesByUser(
     userId: string,
+    boxId: string,
     status: any,
   ): Promise<DeliveryPackage[]> {
     const connection = await db.connect();
-
     try {
       const sql = `SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label , Delivery_Package.is_fav,
-        Delivery_Package.id, Shipping_Company.title AS shipping_company_name ,tracking_number, Delivery_Package.box_id, box_locker_id, 
-        shipping_company_id, shipment_status, Delivery_Package.title AS name, delivery_pin, description, Delivery_Package.createdAt 
+        Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
+        Delivery_Package.box_locker_id, 
+        Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
+        Delivery_Package.description, Delivery_Package.createdAt 
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
-        WHERE customer_id = $1  AND shipment_status = $2`;
-      const params: any[] = [userId, status];
+        WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3`;
+      const params: any[] = [userId, boxId, status];
 
       const result = await connection.query(sql, params);
 

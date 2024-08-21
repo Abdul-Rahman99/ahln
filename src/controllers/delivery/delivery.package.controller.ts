@@ -11,7 +11,9 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
+import BoxModel from '../../models/box/box.model';
 
+const boxModel = new BoxModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
@@ -249,10 +251,18 @@ export const getUserDeliveryPackages = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { status } = req.query;
+      const { boxId, status } = req.query;
 
+      const boxRelatedToUser = await boxModel.getOneByUser(user, boxId as string);
+
+      if (!boxRelatedToUser) {
+        const source = 'getUserDeliveryPackages';
+        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
+      }
       const deliveryPackages = await deliveryPackageModel.getPackagesByUser(
         user,
+        boxId as string,
         status,
       );
 

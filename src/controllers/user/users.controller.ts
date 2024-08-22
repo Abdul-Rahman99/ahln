@@ -57,6 +57,45 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+export const getAllCustomers = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const users = await userModel.getCustomers();
+      ResponseHandler.success(
+        res,
+        i18n.__('CUSTOMERS_RETRIEVED_SUCCESSFULLY'),
+        users,
+      );
+    } catch (error: any) {
+      const source = 'getAllCustomers';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+export const getAllRelativeCustomers = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const users = await userModel.getRelativeCustomers();
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMERS_RETRIEVED_SUCCESSFULLY'),
+        users,
+      );
+    } catch (error: any) {
+      const source = 'getAllRelativeCustomers';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);
+
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.body.id;
   try {

@@ -2,6 +2,8 @@ import express from 'express';
 import {
   createUser,
   getAllUsers,
+  getAllCustomers,
+  getAllRelativeCustomers,
   getUserById,
   updateUser,
   deleteUser,
@@ -30,6 +32,18 @@ router.post(
 );
 
 router.get('/get-all', verifyToken, authorize(['read_user']), getAllUsers);
+router.get(
+  '/get-all-customers',
+  verifyToken,
+  authorize(['read_user']),
+  getAllCustomers,
+);
+router.get(
+  '/get-all-relative-customers',
+  verifyToken,
+  authorize(['read_user']),
+  getAllRelativeCustomers,
+);
 
 router.get(
   '/get-one/:id',

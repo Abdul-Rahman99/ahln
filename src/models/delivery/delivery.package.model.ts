@@ -115,7 +115,8 @@ class DeliveryPackageModel {
     const connection = await db.connect();
 
     try {
-      const sql = 'SELECT * FROM Delivery_Package';
+      const sql =
+        'SELECT Delivery_Package.* , Shipping_Company.title AS shipping_company_name FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id ORDER BY Delivery_Package.updatedAt DESC';
       const result = await connection.query(sql);
 
       return result.rows as DeliveryPackage[];
@@ -131,7 +132,8 @@ class DeliveryPackageModel {
     const connection = await db.connect();
 
     try {
-      const sql = 'SELECT * FROM Delivery_Package WHERE id=$1';
+      const sql =
+        'SELECT Delivery_Package.* , Shipping_Company.title AS shipping_company_name FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id WHERE Delivery_Package.id=$1';
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] as DeliveryPackage;
@@ -269,11 +271,11 @@ class DeliveryPackageModel {
         Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
         Delivery_Package.box_locker_id, 
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
-        Delivery_Package.description, Delivery_Package.createdAt 
+        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
-        WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3`;
+        WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3 ORDER BY Delivery_Package.updatedAt DESC`;
       const params: any[] = [userId, boxId, status];
 
       const result = await connection.query(sql, params);

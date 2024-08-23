@@ -51,7 +51,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification`;
       const result = await connection.query(sql);
 
       return result.rows as Notification[];
@@ -66,7 +66,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification WHERE user_id=$1`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification WHERE user_id=$1`;
       const result = await connection.query(sql, [user]);
 
       return result.rows as Notification[];
@@ -81,7 +81,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id FROM Notification WHERE id = $1`;
+      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification WHERE id = $1`;
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] || null;
@@ -121,7 +121,6 @@ export default class NotificationModel {
           body: body,
         },
       };
-      // console.log(message);
 
       if (fcmToken.length > 0) {
         getMessaging()
@@ -143,6 +142,19 @@ export default class NotificationModel {
       }
     } catch (error) {
       throw new Error((error as Error).message);
+    }
+  }
+
+  async updateNotification(id: number): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `UPDATE Notification SET is_read = $1 WHERE id = $2 RETURNING *`;
+      const result = await connection.query(sql, [true, id]);
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
     }
   }
 }

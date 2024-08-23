@@ -5,9 +5,7 @@ import {
   getBoxGenerationById,
   updateBoxGeneration,
   deleteBoxGeneration,
-  updateHasInsideCameraStatus,
-  updateHasOutsideCameraStatus,
-  updateHasTabletStatus,
+
 } from '../../controllers/box/box.generation.controller';
 
 import {
@@ -15,9 +13,7 @@ import {
   deleteBoxGenerationValidation,
   getBoxGenerationByIdValidation,
   updateBoxGenerationValidation,
-  updateHasInsideCameraStatusValidation,
-  updateHasOutsideCameraStatusValidation,
-  updateHasTabletStatusValidation,
+
 } from '../../validation/box/box.generation.validation';
 
 import verifyToken from '../../middlewares/verifyToken';
@@ -62,25 +58,6 @@ router.delete(
   authorize(['delete_box']),
   deleteBoxGenerationValidation,
   deleteBoxGeneration,
-);
-
-router.put(
-  '/update-has-outside-camera-status/:id?',
-  verifyToken,
-  updateHasOutsideCameraStatusValidation,
-  updateHasOutsideCameraStatus,
-);
-router.put(
-  '/update-has-inside-camera-status/:id?',
-  verifyToken,
-  updateHasInsideCameraStatusValidation,
-  updateHasInsideCameraStatus,
-);
-router.put(
-  '/update-has-tablet-status/:id?',
-  verifyToken,
-  updateHasTabletStatusValidation,
-  updateHasTabletStatus,
 );
 
 export default router;

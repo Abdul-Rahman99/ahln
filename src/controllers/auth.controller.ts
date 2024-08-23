@@ -259,7 +259,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       avatar: userAvatar,
       country: user.country,
       city: user.city,
-      role: user.title
+      role: user.title,
     },
     token,
   );
@@ -283,6 +283,14 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 export const resendOtpAndUpdateDB = asyncHandler(
   async (req: Request, res: Response) => {
     const { email } = req.body;
+
+    const emailExists = await userModel.emailExists(email);
+    if (!emailExists) {
+      const user = await authHandler(req, res);
+      const source = 'resendOtpAndUpdateDB';
+      systemLog.createSystemLog(user, 'Invalid Email', source);
+      return ResponseHandler.badRequest(res, i18n.__('INVALID_EMAIL'));
+    }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -364,3 +372,5 @@ export const updatePassword = asyncHandler(
     );
   },
 );
+
+

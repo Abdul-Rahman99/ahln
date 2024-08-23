@@ -91,6 +91,11 @@ class UserModel {
               RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, country, city, avatar`;
       const result = await connection.query(sql, sqlParams);
 
+      const roleSql = `SELECT role.title FROM users INNER JOIN role ON users.role_id = role.id WHERE users.id = $1`;
+
+      const roleResult = await connection.query(roleSql, [id]);
+      result.rows[0].title = roleResult.rows[0].title;
+
       return result.rows[0];
     } catch (error) {
       throw new Error((error as Error).message);
@@ -105,8 +110,40 @@ class UserModel {
 
     try {
       const sql =
-        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, updatedat FROM users INNER JOIN role ON users.role_id = role.id';
+        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id != 2 AND role_id != 3';
       const result = await connection.query(sql);
+      return result.rows as User[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // get all customers
+  async getCustomers(): Promise<User[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql =
+        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id = 2';
+      const result = await connection.query(sql);
+
+      return result.rows as User[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+  async getRelativeCustomers(): Promise<User[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql =
+        'SELECT relative_customer.*, box.box_label, users.id, users.user_name, users.role_id, users.is_active, users.phone_number, users.email, users.preferred_language, users.createdat, users.updatedat FROM relative_customer INNER JOIN users ON relative_customer.customer_id = users.id INNER JOIN box ON box.id = relative_customer.box_id';
+      const result = await connection.query(sql);
+
       return result.rows as User[];
     } catch (error) {
       throw new Error((error as Error).message);
@@ -174,15 +211,21 @@ class UserModel {
 
       queryParams.push(updatedAt); // Add the updatedAt timestamp
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
-      console.log(updateFields, 'updateFields');
 
       queryParams.push(id); // Add the user ID to the query parameters
-      console.log(queryParams);
 
       const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
       result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${result.rows[0].avatar}`;
+
+      const userRoleSql =
+        'SELECT role.title FROM users INNER JOIN role ON users.role_id = role.id WHERE users.id = $1';
+      const userRoleResult = await connection.query(userRoleSql, [
+        result.rows[0].id,
+      ]);
+
+      result.rows[0].title = userRoleResult.rows[0].title;
 
       return result.rows[0] as User;
     } catch (error) {

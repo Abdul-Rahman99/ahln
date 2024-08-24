@@ -7,6 +7,7 @@ import ShippingCompanyModel from '../../models/delivery/shipping.company.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import { ShippingCompany } from '../../types/shipping.company.type';
 
 const systemLog = new SystemLogModel();
 const shippingCompanyModel = new ShippingCompanyModel();
@@ -103,13 +104,12 @@ export const updateShippingCompany = asyncHandler(
     const user = await authHandler(req, res);
 
     const { id } = req.params;
-    const { tracking_system } = req.body;
-
+    const shippingCompanyData: Partial<ShippingCompany> = req.body;
     try {
       const updatedShippingCompany =
         await shippingCompanyModel.updateShippingCompany(
-          parseInt(id, 10),
-          tracking_system,
+          shippingCompanyData,
+          parseInt(id),
         );
 
       ResponseHandler.success(

@@ -66,49 +66,45 @@ export default class ShippingCompanyModel {
   }
 
   async updateShippingCompany(
+    shipping_company: Partial<ShippingCompany>,
     id: number,
-    updateFields: Partial<ShippingCompany>,
   ): Promise<ShippingCompany> {
     const connection = await db.connect();
-
     try {
+      // Check if the shipping_company exists
+      const checkSql = 'SELECT * FROM Shipping_Company WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Shipping Company with ID ${id} does not exist`);
+      }
+      const queryParams: unknown[] = [];
+      let paramIndex = 1;
+
       const updatedAt = new Date();
 
-      // Prepare the dynamic SQL query
-      const sqlFields: string[] = [];
-      const sqlParams: unknown[] = [updatedAt];
+      const updateFields = Object.keys(shipping_company)
+        .map((key) => {
+          if (
+            shipping_company[key as keyof ShippingCompany] !== undefined &&
+            key !== 'id' &&
+            key !== 'createdAt'
+          ) {
+            queryParams.push(shipping_company[key as keyof ShippingCompany]);
+            return `${key}=$${paramIndex++}`;
+          }
+          return null;
+        })
+        .filter((field) => field !== null);
 
-      let paramIndex = 2; // Start from 2 because updatedAt is the first parameter
+      queryParams.push(updatedAt); // Add the updatedAt timestamp
+      updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
 
-      if (updateFields.tracking_system) {
-        sqlFields.push(`tracking_system = $${paramIndex++}`);
-        sqlParams.push(updateFields.tracking_system);
-      }
-      if (updateFields.title) {
-        sqlFields.push(`title = $${paramIndex++}`);
-        sqlParams.push(updateFields.title);
-      }
-      if (updateFields.logo) {
-        sqlFields.push(`logo = $${paramIndex++}`);
-        sqlParams.push(updateFields.logo);
-      }
+      queryParams.push(id); // Add the shipping_company ID to the query parameters
 
-      if (sqlFields.length === 0) {
-        throw new Error('No fields to update');
-      }
+      const sql = `UPDATE Shipping_Company SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
-      sqlFields.push(`updatedAt = $1`); // Ensure updatedAt is always set
-
-      const sql = `
-      UPDATE Shipping_Company 
-      SET ${sqlFields.join(', ')}
-      WHERE id = $${paramIndex}
-      RETURNING id, createdAt, updatedAt, tracking_system, title, logo
-    `;
-
-      sqlParams.push(id); // Add the ID as the last parameter
-
-      const result = await connection.query(sql, sqlParams);
+      const result = await connection.query(sql, queryParams);
 
       return result.rows[0] as ShippingCompany;
     } catch (error) {

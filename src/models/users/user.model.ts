@@ -110,7 +110,7 @@ class UserModel {
 
     try {
       const sql =
-        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id != 2 AND role_id != 3';
+        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id != 2 AND role_id != 3 ORDER BY createdat DESC';
       const result = await connection.query(sql);
       return result.rows as User[];
     } catch (error) {
@@ -126,7 +126,7 @@ class UserModel {
 
     try {
       const sql =
-        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id = 2';
+        'SELECT role.title, users.id, user_name, role_id, is_active, phone_number, email, preferred_language, createdat, updatedat FROM users INNER JOIN role ON users.role_id = role.id WHERE role_id = 2 ORDER BY createdat DESC';
       const result = await connection.query(sql);
 
       return result.rows as User[];
@@ -141,7 +141,7 @@ class UserModel {
 
     try {
       const sql =
-        'SELECT relative_customer.*, box.box_label, users.id, users.user_name, users.role_id, users.is_active, users.phone_number, users.email, users.preferred_language, users.createdat, users.updatedat FROM relative_customer INNER JOIN users ON relative_customer.customer_id = users.id INNER JOIN box ON box.id = relative_customer.box_id';
+        'SELECT relative_customer.*, box.box_label, users.id, users.user_name, users.role_id, users.is_active, users.phone_number, users.email, users.preferred_language, users.createdat, users.updatedat FROM relative_customer INNER JOIN users ON relative_customer.customer_id = users.id INNER JOIN box ON box.id = relative_customer.box_id ORDER BY relative_customer.createdat DESC';
       const result = await connection.query(sql);
 
       return result.rows as User[];

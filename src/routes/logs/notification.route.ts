@@ -5,10 +5,12 @@ import {
   getAllNotifications,
   getAllNotificationsByUser,
   getNotificationById,
+  updateNotification,
 } from '../../controllers/logs/notification.controller';
 import {
   getNotificationByIdValidation,
   deleteNotificationByIdValidation,
+  updateNotificationStatusByIdValidation,
 } from '../../validation/logs/notification.validation';
 const router = express.Router();
 
@@ -25,6 +27,13 @@ router.delete(
   verifyToken,
   deleteNotificationByIdValidation,
   deleteNotificationById,
+);
+
+router.put(
+  '/update-notification-status/:id',
+  verifyToken,
+  updateNotificationStatusByIdValidation,
+  updateNotification,
 );
 
 export default router;

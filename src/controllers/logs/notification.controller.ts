@@ -118,6 +118,28 @@ export const deleteNotificationById = asyncHandler(
   },
 );
 
+export const updateNotification = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const notificationId = parseInt(req.params.id, 10);
+      const notification =
+        await notificationModel.updateNotification(notificationId);
+      ResponseHandler.success(
+        res,
+        i18n.__('NOTIFICATION_UPDATED_SUCCESSFULLY'),
+        notification,
+      );
+    } catch (error) {
+      const source = 'updateNotification';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, (error as Error).message);
+      // next(error);
+    }
+  },
+);
+
 // export const pushNotification = asyncHandler(
 //   async (req: Request, res: Response) => {
 //     try {

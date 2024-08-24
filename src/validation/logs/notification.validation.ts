@@ -10,3 +10,8 @@ export const deleteNotificationByIdValidation = [
   param('id').isInt().withMessage(i18n.__('INVALID_NOTIFICATION_ID')),
   validatorMiddleware,
 ];
+
+export const updateNotificationStatusByIdValidation = [
+  param('id').isInt().withMessage(i18n.__('INVALID_NOTIFICATION_ID')),
+  validatorMiddleware,
+];

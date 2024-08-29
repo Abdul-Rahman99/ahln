@@ -52,6 +52,21 @@ class UserDevicesModel {
     }
   }
 
+  // check if fcm token already exists
+  async fcmTokenExists(fcmToken: string): Promise<boolean> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT * FROM user_devices WHERE fcm_token = $1`;
+      const result = await connection.query(sql, [fcmToken]);
+
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
   async getAllUserDevices(userId: string): Promise<UserDevice[]> {
     const connection = await db.connect();
 

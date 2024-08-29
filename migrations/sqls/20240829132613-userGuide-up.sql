@@ -1,0 +1,9 @@
+/* Replace with your SQL commands */
+
+CREATE TABLE IF NOT EXISTS User_Guide (
+    id SERIAL PRIMARY KEY,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    pdf_link TEXT NOT NULL,
+    video_link TEXT NOT NULL
+);

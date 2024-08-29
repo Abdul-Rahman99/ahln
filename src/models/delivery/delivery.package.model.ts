@@ -133,7 +133,7 @@ class DeliveryPackageModel {
 
     try {
       const sql =
-        'SELECT Delivery_Package.* , Shipping_Company.title AS shipping_company_name FROM Delivery_Package INNER JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id WHERE Delivery_Package.id=$1';
+        'SELECT Delivery_Package.* , Shipping_Company.title AS shipping_company_name FROM Delivery_Package LEFT JOIN Shipping_Company ON Delivery_Package.shipping_company_id = Shipping_Company.id WHERE Delivery_Package.id=$1';
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] as DeliveryPackage;

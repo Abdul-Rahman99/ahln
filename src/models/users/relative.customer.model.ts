@@ -37,7 +37,7 @@ class RelativeCustomerModel {
 
       const result = await connection.query(sql, sqlParams);
 
-      return result.rows[0];
+      return result.rows[0] as RelativeCustomer;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -51,7 +51,7 @@ class RelativeCustomerModel {
 
     try {
       const sql =
-        'SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.is_active,Relative_Customer.id, Relative_Customer.relation FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id WHERE Relative_Customer.customer_id=$1';
+        'SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.* FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id WHERE Relative_Customer.customer_id=$1';
       const result = await connection.query(sql, [user]);
       return result.rows as RelativeCustomer[];
     } catch (error) {

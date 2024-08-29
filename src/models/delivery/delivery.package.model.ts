@@ -98,7 +98,8 @@ class DeliveryPackageModel {
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp`;
+                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp,
+                createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string, address_id`;
 
       const result = await connection.query(sql, sqlParams);
 

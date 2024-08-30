@@ -1,15 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Permission } from '../../types/permission.type';
 import db from '../../config/database';
+import { RolePermission } from '../../types/role.permission.type';
 
 class RolePermissionModel {
   // Assign permission to role
-  async assignPermission(roleId: number, permissionId: number): Promise<void> {
+  async assignPermission(
+    roleId: number,
+    permissionId: number,
+  ): Promise<RolePermission> {
     const connection = await db.connect();
 
     try {
-      const sql = `INSERT INTO role_permission (role_id, permission_id) VALUES ($1, $2)`;
+      const sql = `INSERT INTO role_permission (role_id, permission_id) VALUES ($1, $2) RETURNING *`;
       await connection.query(sql, [roleId, permissionId]);
+
+      const sql2 = `SELECT role_permission.*, Role.title AS role_title, permission.title AS permission_title FROM role_permission INNER JOIN Role ON role_permission.role_id = Role.id INNER JOIN permission ON role_permission.permission_id = permission.id`;
+
+      const result2 = await connection.query(sql2);
+
+      return result2.rows[0] as RolePermission;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -18,12 +28,16 @@ class RolePermissionModel {
   }
 
   // Remove permission from role
-  async revokePermission(roleId: number, permissionId: number): Promise<void> {
+  async revokePermission(
+    roleId: number,
+    permissionId: number,
+  ): Promise<RolePermission> {
     const connection = await db.connect();
 
     try {
-      const sql = `DELETE FROM role_permission WHERE role_id=$1 AND permission_id=$2`;
-      await connection.query(sql, [roleId, permissionId]);
+      const sql = `DELETE FROM role_permission WHERE role_id=$1 AND permission_id=$2 RETURNING *`;
+      const result = await connection.query(sql, [roleId, permissionId]);
+      return result.rows[0] as RolePermission;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -49,7 +63,7 @@ class RolePermissionModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM role_permission`;
+      const sql = `SELECT role_permission.*, Role.title AS role_title, permission.title AS permission_title FROM role_permission INNER JOIN Role ON role_permission.role_id = Role.id INNER JOIN permission ON role_permission.permission_id = permission.id`;
       const result = await connection.query(sql);
       return result.rows;
     } catch (error) {

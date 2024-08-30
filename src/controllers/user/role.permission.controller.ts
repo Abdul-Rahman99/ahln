@@ -32,12 +32,11 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
     }
 
     // Proceed to assign permission if not already assigned
-    await rolePermissionModel.assignPermission(role_id, permission_id);
-    ResponseHandler.success(
-      res,
-      i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
+    const result = await rolePermissionModel.assignPermission(
       role_id,
+      permission_id,
     );
+    ResponseHandler.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'), result);
     const action = 'assignPermissionToRole';
     auditTrail.createAuditTrail(
       user,
@@ -63,6 +62,7 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
       role_id,
       permission_id,
     );
+
     if (!isAssigned) {
       const source = 'removePermissionFromRole';
       systemLog.createSystemLog(
@@ -76,11 +76,14 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
       );
     }
 
-    await rolePermissionModel.revokePermission(role_id, permission_id);
+    const result = await rolePermissionModel.revokePermission(
+      role_id,
+      permission_id,
+    );
     ResponseHandler.success(
       res,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
-      role_id,
+      result,
     );
     const action = 'removePermissionFromRole';
     auditTrail.createAuditTrail(

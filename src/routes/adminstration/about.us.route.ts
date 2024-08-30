@@ -17,13 +17,8 @@ import verifyToken from '../../middlewares/verifyToken';
 const router = express.Router();
 
 router.post('/new', verifyToken, createAboutUsValidation, createAboutUs);
-router.get('/get-all', verifyToken, getAllAboutUs);
-router.get(
-  '/get-one/:id',
-  verifyToken,
-  getAboutUsByIdValidation,
-  getAboutUsById,
-);
+router.get('/get-all', getAllAboutUs);
+router.get('/get-one/:id', getAboutUsByIdValidation, getAboutUsById);
 router.put('/update/:id', verifyToken, updateAboutUsValidation, updateAboutUs);
 router.delete(
   '/delete/:id',

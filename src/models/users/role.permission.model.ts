@@ -45,6 +45,20 @@ class RolePermissionModel {
     }
   }
 
+  async getAllRolePermissions(): Promise<Permission[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT * FROM role_permission`;
+      const result = await connection.query(sql);
+      return result.rows;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // check if role has a specific permission id
   async checkPermissionAssignment(
     role_id: number,

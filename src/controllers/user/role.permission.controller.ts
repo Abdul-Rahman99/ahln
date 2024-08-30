@@ -130,3 +130,20 @@ export const getPermissionsByRole = async (req: Request, res: Response) => {
     // next(error);
   }
 };
+
+export const getAllRolePermissions = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+  try {
+    const permissions = await rolePermissionModel.getAllRolePermissions();
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'),
+      permissions,
+    );
+  } catch (error: any) {
+    const source = 'getAllRolePermissions';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, error.message);
+    // next(error);
+  }
+};

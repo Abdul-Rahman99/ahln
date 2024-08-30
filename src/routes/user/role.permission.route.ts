@@ -4,6 +4,7 @@ import {
   assignPermissionToRole,
   removePermissionFromRole,
   getPermissionsByRole,
+  getAllRolePermissions,
 } from '../../controllers/user/role.permission.controller';
 import { authorize } from '../../middlewares/authorize';
 import verifyToken from '../../middlewares/verifyToken';
@@ -23,10 +24,17 @@ router.post(
   removePermissionFromRole,
 );
 router.get(
-  '/:roleId',
+  '/get-one/:roleId',
   verifyToken,
   authorize(['read_role_permission']),
   getPermissionsByRole,
+);
+
+router.get(
+  '/get-all',
+  verifyToken,
+  authorize(['read_role_permission']),
+  getAllRolePermissions,
 );
 
 export default router;

@@ -114,11 +114,13 @@ export default class AuditTrailModel {
     }
   }
 
-  async deleteAuditTrail(id: number): Promise<void> {
+  async deleteAuditTrail(id: number): Promise<AuditTrail> {
     const connection = await db.connect();
     try {
-      const sql = `DELETE FROM Audit_Trail WHERE id = $1`;
-      await connection.query(sql, [id]);
+      const sql = `DELETE FROM Audit_Trail WHERE id = $1 RETURNING *`;
+      const result = await connection.query(sql, [id]);
+
+      return result.rows[0] as AuditTrail;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

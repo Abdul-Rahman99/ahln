@@ -249,6 +249,16 @@ class DeliveryPackageModel {
           id,
         ]);
       }
+
+      // delete from fav list first
+      const fav_list_exist = `SELECT * FROM DP_Fav_List WHERE delivery_package_id=$1`;
+      const fav_list_exist_result = await connection.query(fav_list_exist, [
+        id,
+      ]);
+      if (fav_list_exist_result.rows.length > 0) {
+        const fav_list = `DELETE FROM DP_Fav_List WHERE delivery_package_id=$1 RETURNING *`;
+        await connection.query(fav_list, [id]);
+      }
       const sql = `DELETE FROM Delivery_Package WHERE id=$1 RETURNING *`;
       const result = await connection.query(sql, [id]);
 

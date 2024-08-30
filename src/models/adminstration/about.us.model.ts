@@ -17,6 +17,7 @@ class AboutUsModel {
         'description',
         'email',
         'phone',
+        'address',
       ];
       const sqlParams = [
         createdAt,
@@ -25,6 +26,7 @@ class AboutUsModel {
         pageData.description,
         pageData.email,
         pageData.phone,
+        pageData.address,
       ];
 
       const sql = `INSERT INTO About_Us (${sqlFields.join(', ')}) 

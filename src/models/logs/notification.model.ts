@@ -92,11 +92,20 @@ export default class NotificationModel {
     }
   }
 
-  async deleteNotification(id: number): Promise<void> {
+  async deleteNotification(id: number): Promise<Notification> {
     const connection = await db.connect();
     try {
+      // Check if the box exists
+      const checkSql = 'SELECT * FROM Notification WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
+
+      if (checkResult.rows.length === 0) {
+        throw new Error(`Notification with ID ${id} does not exist`);
+      }
+
       const sql = `DELETE FROM Notification WHERE id = $1`;
-      await connection.query(sql, [id]);
+      const result = await connection.query(sql, [id]);
+      return result.rows[0] as Notification;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

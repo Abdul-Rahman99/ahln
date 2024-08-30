@@ -4,6 +4,7 @@ import {
   assignPermissionToUser,
   removePermissionFromUser,
   getPermissionsByUser,
+  getAllPermissions,
 } from '../../controllers/user/user.permission.controller';
 import { authorize } from '../../middlewares/authorize';
 import verifyToken from '../../middlewares/verifyToken';
@@ -27,6 +28,12 @@ router.get(
   verifyToken,
   authorize(['read_user_permission']),
   getPermissionsByUser,
+);
+router.get(
+  '/get-all',
+  verifyToken,
+  authorize(['read_user_permission']),
+  getAllPermissions,
 );
 
 export default router;

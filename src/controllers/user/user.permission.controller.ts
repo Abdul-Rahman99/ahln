@@ -31,11 +31,14 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       );
     }
 
-    await userPermissionModel.assignPermission(user_id, permission_id);
+    const result = await userPermissionModel.assignPermission(
+      user_id,
+      permission_id,
+    );
     ResponseHandler.success(
       res,
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
-      user_id,
+      result,
     );
     const action = 'assignPermissionToUser';
     auditTrail.createAuditTrail(
@@ -75,11 +78,14 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       );
     }
 
-    await userPermissionModel.revokePermission(user_id, permission_id);
+    const result = await userPermissionModel.revokePermission(
+      user_id,
+      permission_id,
+    );
     ResponseHandler.success(
       res,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
-      user_id,
+      result,
     );
     const action = 'removePermissionFromUser';
     auditTrail.createAuditTrail(
@@ -121,6 +127,23 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
     );
   } catch (error: any) {
     const source = 'getPermissionsByUser';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, error.message);
+    // next(error);
+  }
+};
+
+export const getAllPermissions = async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+  try {
+    const permissions = await userPermissionModel.getAllUserPermissions();
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_RETRIEVED_SUCCESSFULLY'),
+      permissions,
+    );
+  } catch (error: any) {
+    const source = 'getAllRolePermissions';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
     // next(error);

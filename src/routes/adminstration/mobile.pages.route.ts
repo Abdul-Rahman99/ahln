@@ -17,13 +17,8 @@ import verifyToken from '../../middlewares/verifyToken';
 const router = express.Router();
 
 router.post('/new', verifyToken, createMobilePageValidation, createMobilePage);
-router.get('/get-all', verifyToken, getAllMobilePages);
-router.post(
-  '/get-one',
-  verifyToken,
-  getMobilePageByTitleValidation,
-  getMobilePageByTitle,
-);
+router.get('/get-all', getAllMobilePages);
+router.post('/get-one', getMobilePageByTitleValidation, getMobilePageByTitle);
 router.put(
   '/update/:id',
   verifyToken,

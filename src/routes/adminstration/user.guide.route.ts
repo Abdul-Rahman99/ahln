@@ -17,14 +17,14 @@ import verifyToken from '../../middlewares/verifyToken';
 const router = express.Router();
 
 router.post('/new', verifyToken, createUserGuideValidation, createUserGuide);
-router.get('/get-all', verifyToken, getAllUserGuide);
-router.get(
-  '/get-one/:id',
+router.get('/get-all', getAllUserGuide);
+router.get('/get-one/:id', getUserGuideByIdValidation, getUserGuideById);
+router.put(
+  '/update/:id',
   verifyToken,
-  getUserGuideByIdValidation,
-  getUserGuideById,
+  updateUserGuideValidation,
+  updateUserGuide,
 );
-router.put('/update/:id', verifyToken, updateUserGuideValidation, updateUserGuide);
 router.delete(
   '/delete/:id',
   verifyToken,

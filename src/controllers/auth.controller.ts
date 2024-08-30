@@ -241,7 +241,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (fcmToken) {
-    await userDevicesModel.saveUserDevice(user.id, fcmToken);
+    if (await userDevicesModel.fcmTokenExists(fcmToken)) {
+      //console.log('User already has a FCM token');
+    } else {
+      await userDevicesModel.saveUserDevice(user.id, fcmToken);
+    }
   }
   const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
 
@@ -372,5 +376,3 @@ export const updatePassword = asyncHandler(
     );
   },
 );
-
-

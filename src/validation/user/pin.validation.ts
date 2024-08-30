@@ -71,10 +71,10 @@ export const updatePinByValidation = [
       (req as any).token = token;
       return true;
     }),
-  body('reciepent_email')
-    .optional()
-    .notEmpty()
-    .withMessage(i18n.__('RECIEPENT_EMAIL_REQUIRED')),
+  // body('reciepent_email')
+  //   .optional()
+  //   .notEmpty()
+  //   .withMessage(i18n.__('RECIEPENT_EMAIL_REQUIRED')),
   body('title').optional().notEmpty().withMessage(i18n.__('TITLE_REQUIRED')),
   body('time_range')
     .optional()

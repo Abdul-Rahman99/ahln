@@ -26,6 +26,8 @@ class AddressModel {
         'floor',
         'apartment_number',
         'user_id',
+        'lat',
+        'lang',
       ];
       const sqlParams = [
         createdAt,
@@ -39,6 +41,8 @@ class AddressModel {
         address.floor,
         address.apartment_number,
         user,
+        address.lat,
+        address.lang,
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 

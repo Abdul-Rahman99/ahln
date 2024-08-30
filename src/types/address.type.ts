@@ -11,4 +11,6 @@ export interface Address {
   floor?: number;
   apartment_number?: number;
   user_id?: string;
+  lat?: number;
+  lang?: number;
 }

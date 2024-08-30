@@ -6,4 +6,5 @@ export interface AboutUs {
   description: string;
   email: string;
   phone: string;
+  address: string;
 }

@@ -33,6 +33,7 @@ import mqttLogRoute from './logs/mqtt.log.route';
 import pinRoute from './user/pin.route';
 import aboutUsRoute from './adminstration/about.us.route';
 import userGuideRoute from './adminstration/user.guide.route';
+import historyRoute from './user/history.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -78,6 +79,8 @@ const mountRoutes = (app: Express) => {
 
   app.use('/api/about-us', aboutUsRoute);
   app.use('/api/user-guide', userGuideRoute);
+
+  app.use('/api/history', historyRoute);
 };
 
 export default mountRoutes;

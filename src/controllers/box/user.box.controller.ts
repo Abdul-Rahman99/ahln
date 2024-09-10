@@ -389,3 +389,46 @@ export const updateUserBoxStatus = asyncHandler(
     }
   },
 );
+
+export const transferBoxOwnership = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    const { boxId, email } = req.body;
+    const newUserId = await userModel.findByEmail(email);
+
+    try {
+      // check if the boxId related to the user exists
+      const boxExist = await boxModel.getOneByUser(user, boxId);
+      if (!boxExist) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_NOT_RELATED_TO_USER'),
+        );
+      }
+
+      const updatedUserBox = await userBoxModel.transferBoxOwnership(
+        user,
+        boxId,
+        newUserId?.id as string,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        updatedUserBox,
+      );
+      const action = 'transferBoxOwnership';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+      );
+    } catch (error: any) {
+      const source = 'transferBoxOwnership';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);

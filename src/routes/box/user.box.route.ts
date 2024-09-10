@@ -11,6 +11,7 @@ import {
   userAssignBoxToHimself,
   userAssignBoxToRelativeUser,
   updateUserBoxStatus,
+  transferBoxOwnership,
 } from '../../controllers/box/user.box.controller';
 
 import {
@@ -24,6 +25,7 @@ import {
   userAssignBoxToHimselfValidation,
   userAssignBoxToRelativeUserValidation,
   updateUserBoxStatusValidation,
+  transferBoxOwnershipValidation,
 } from '../../validation/box/user.box.validation';
 import verifyToken from '../../middlewares/verifyToken';
 
@@ -85,6 +87,13 @@ router.put(
   verifyToken,
   updateUserBoxStatusValidation,
   updateUserBoxStatus,
+);
+
+router.post(
+  '/transfer-box-ownership',
+  verifyToken,
+  transferBoxOwnershipValidation,
+  transferBoxOwnership,
 );
 
 export default router;

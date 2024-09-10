@@ -389,6 +389,33 @@ class UserBoxModel {
       connection.release();
     }
   }
+
+  // Transfer Box Ownership from one user to another
+  async transferBoxOwnership(
+    userId: string,
+    boxId: string,
+    newUserId: string,
+  ): Promise<UserBox> {
+    const connection = await db.connect();
+    try {
+      const checkUserBox = await this.checkUserBox(userId, boxId);
+
+      if (!checkUserBox) {
+        throw new Error(`You don't have enough permissions to do that`);
+      }
+      const sql = `DELETE FROM User_Box WHERE user_id = $1 AND box_id = $2`;
+      await connection.query(sql, [userId, boxId]);
+
+      const newUserBoxData = { user_id: newUserId, box_id: boxId };
+      const result2 = await this.createUserBox(newUserBoxData);
+
+      return result2;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default UserBoxModel;

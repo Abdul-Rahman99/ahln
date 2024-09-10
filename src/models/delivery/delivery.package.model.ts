@@ -314,6 +314,33 @@ class DeliveryPackageModel {
       connection.release();
     }
   }
+
+  // Transfer delivery packages from box to another box
+  async transferDeliveryPackages(
+    fromBoxId: string,
+    toBoxId: string,
+    userId: string,
+  ): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+    try {
+      const result = [];
+      const sql = `SELECT * FROM Delivery_Package WHERE box_id = $1 AND customer_id = $2`;
+      const params = [fromBoxId, userId];
+      const deliveryPackages = (await connection.query(sql, params)).rows;
+      for (const deliveryPackage of deliveryPackages) {
+        const updateSql = `UPDATE Delivery_Package SET box_id = $1 WHERE id = $2 RETURNING *`;
+        const updateParams = [toBoxId, deliveryPackage.id];
+        const updateResult = (await connection.query(updateSql, updateParams))
+          .rows[0];
+        result.push(updateResult);
+      }
+      return result as DeliveryPackage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default DeliveryPackageModel;

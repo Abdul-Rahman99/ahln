@@ -232,6 +232,13 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('CHECK_OTP'),
           i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         );
+        const action = 'checkOTP';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+          boxId,
+        );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkOTP';
@@ -252,6 +259,8 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('CHECK_OTP'),
           i18n.__('INVALID_OTP'),
         );
+        const action = 'checkOTP';
+        auditTrail.createAuditTrail(user, action, i18n.__('CHECK_OTP'), boxId);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkOTP';
@@ -327,6 +336,15 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             i18n.__('CHECK_TRACKING_NUMBER'),
             i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
           );
+
+          const action = 'checkTrackingNumberAndUpdateStatus';
+          auditTrail.createAuditTrail(
+            user,
+            action,
+            i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
+            boxId,
+          );
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           const source = 'checkTrackingNumberAndUpdateStatus';
@@ -345,6 +363,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             fcmToken,
             i18n.__('CHECK_TRACKING_NUMBER'),
             i18n.__('PACKAGE_ALREADY_DELIVERED'),
+          );
+          const action = 'checkTrackingNumberAndUpdateStatus';
+          auditTrail.createAuditTrail(
+            user,
+            action,
+            i18n.__('CHECK_TRACKING_NUMBER'),
+            boxId,
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

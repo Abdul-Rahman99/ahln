@@ -243,6 +243,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('DELIVERY_CHECK_PIN'),
           i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         );
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkPIN';

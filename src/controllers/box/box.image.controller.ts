@@ -78,7 +78,6 @@ export const uploadBoxImage = asyncHandler(
 
         const fcmToken =
           await userDevicesModel.getFcmTokenDevicesByUser(userFcm);
-        console.log('BBB');
 
         try {
           notificationModel.pushNotification(
@@ -86,7 +85,6 @@ export const uploadBoxImage = asyncHandler(
             i18n.__('DELIVERY_MAN_ARRIEVED'),
             i18n.__('DELIVERY_MAN_TRIES_TO_OPEN_BOX'),
           );
-          console.log('CCC');
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -97,6 +95,7 @@ export const uploadBoxImage = asyncHandler(
             source,
           );
         }
+
         ResponseHandler.success(
           res,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),

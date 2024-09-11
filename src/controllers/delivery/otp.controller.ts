@@ -300,9 +300,9 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
 // function to check by tracking number
 export const checkTrackingNumberAndUpdateStatus = asyncHandler(
   async (req: Request, res: Response) => {
+    const boxId = req.body.boxId;
     try {
       const trackingNumber = req.body.trackingNumber.toLowerCase();
-      const boxId = req.body.boxId;
       const user = await userModel.findUserByBoxId(req.body.boxId);
 
       if (!trackingNumber) {
@@ -393,6 +393,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
           fcmToken,
           i18n.__('CHECK_TRACKING_NUMBER'),
           i18n.__('PACKAGE_ID_INVALID'),
+        );
+        const action = 'checkTrackingNumberAndUpdateStatus';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('PACKAGE_ID_INVALID'),
+          boxId,
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {

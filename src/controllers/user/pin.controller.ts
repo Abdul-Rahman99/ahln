@@ -218,8 +218,8 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { passcode, box_id } = req.body;
 
-    const checkPinResult = await pinModel.checkPIN(passcode, box_id);
     const userId = await pinModel.getUserByPasscode(passcode);
+    const checkPinResult = await pinModel.checkPIN(passcode, box_id);
 
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
 
@@ -261,10 +261,6 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         box_id,
       );
     } else {
-      ResponseHandler.badRequest(
-        res,
-        i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
-      );
       notificationModel.createNotification(
         'checkPIN',
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
@@ -283,6 +279,10 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         action,
         i18n.__('PIN_CHECKED_FAILED'),
         box_id,
+      );
+      ResponseHandler.badRequest(
+        res,
+        i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
       );
     }
   } catch (error) {

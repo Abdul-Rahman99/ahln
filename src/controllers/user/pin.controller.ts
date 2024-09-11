@@ -252,6 +252,13 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
           source,
         );
       }
+      const action = 'checkPIN';
+      auditTrail.createAuditTrail(
+        userId,
+        action,
+        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+        box_id,
+      );
     } else {
       ResponseHandler.badRequest(
         res,
@@ -268,6 +275,13 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         fcmToken,
         i18n.__('DELIVERY_CHECK_PIN'),
         i18n.__('PIN_CHECKED_FAILED'),
+      );
+      const action = 'checkPIN';
+      auditTrail.createAuditTrail(
+        userId,
+        action,
+        i18n.__('PIN_CHECKED_FAILED'),
+        box_id,
       );
     }
   } catch (error) {

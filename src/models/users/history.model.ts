@@ -136,7 +136,7 @@ class HistoryModel {
 
     try {
       // Select from the audit trail table
-      const sql = `SELECT * FROM audit_trail WHERE box_id = $2`;
+      const sql = `SELECT * FROM audit_trail WHERE user_id = $1 AND box_id = $2`;
       const result = await connection.query(sql, [userId, boxId]);
       return result.rows;
     } catch (error) {

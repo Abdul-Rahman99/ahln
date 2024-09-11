@@ -249,8 +249,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
   }
-  const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
-
+  let userAvatar: string | null = null;
+  if (user.avatar) {
+    userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+  } else {
+    userAvatar = null;
+  }
   ResponseHandler.logInSuccess(
     res,
     i18n.__('LOGIN_SUCCESS'),

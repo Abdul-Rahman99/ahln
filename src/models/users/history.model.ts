@@ -145,13 +145,8 @@ class HistoryModel {
         throw new Error(`User with ID ${userId} does not have a box`);
       }
 
-      const boxResult = await connection.query(
-        `SELECT * FROM Box WHERE id = $1`,
-        [boxId],
-      );
-
       const boxImageResult = await connection.query(
-        `SELECT * FROM Box_Image WHERE box_id = $1`,
+        `SELECT 'Box_Image' AS tableName, * FROM Box_Image WHERE box_id = $1`,
         [boxId],
       );
       boxImageResult.rows.forEach((row) => {
@@ -159,45 +154,39 @@ class HistoryModel {
       });
 
       const dpFavListResult = await connection.query(
-        `SELECT * FROM DP_Fav_List WHERE delivery_package_id IN (
+        `SELECT 'DP_Fav_List' AS tableName, * FROM DP_Fav_List WHERE delivery_package_id IN (
           SELECT id FROM Delivery_Package WHERE box_id = $1
         )`,
         [boxId],
       );
 
       const pinResult = await connection.query(
-        `SELECT * FROM PIN WHERE box_id = $1`,
+        `SELECT 'PIN' AS tableName, * FROM PIN WHERE box_id = $1`,
         [boxId],
       );
 
       const relativeCustomerResult = await connection.query(
-        `SELECT * FROM Relative_Customer WHERE box_id = $1`,
+        `SELECT 'Relative_Customer' AS tableName, * FROM Relative_Customer WHERE box_id = $1`,
         [boxId],
       );
 
       const notificationResult = await connection.query(
-        `SELECT * FROM Notification WHERE box_id = $1`,
+        `SELECT 'Notification' AS tableName, * FROM Notification WHERE box_id = $1`,
         [boxId],
       );
 
       const result = [
-        ...boxResult.rows,
-        ...boxImageResult.rows,
         ...dpFavListResult.rows,
         ...pinResult.rows,
         ...relativeCustomerResult.rows,
         ...notificationResult.rows,
       ];
 
+      console.log(result);
+
       return result.map((row) => ({
+        tableName: row.tablename,
         id: row.id || null,
-        serial_number: row.serial_number || null,
-        box_label: row.box_label || null,
-        has_empty_lockers: row.has_empty_lockers || null,
-        current_tablet_id: row.current_tablet_id || null,
-        previous_tablet_id: row.previous_tablet_id || null,
-        box_model_id: row.box_model_id || null,
-        address_id: row.address_id || null,
         image: row.image || null,
         delivery_package_id: row.delivery_package_id || null,
         is_active: row.is_active || null,
@@ -212,9 +201,8 @@ class HistoryModel {
         customer_id: row.customer_id || null,
         relative_customer_id: row.relative_customer_id || null,
         relation: row.relation || null,
-        
-        createdAt: row.createdAt || null,
-        updatedAt: row.updatedAt || null,
+        createdat: row.createdat || null,
+        updatedat: row.updatedat || null,
         user_id: row.user_id || null,
         box_id: row.box_id || null,
       }));

@@ -32,6 +32,7 @@ export const createMobilePage = asyncHandler(
         user,
         action,
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createMobilePage';
@@ -116,6 +117,7 @@ export const updateMobilePage = asyncHandler(
         user,
         action,
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateMobilePage';
@@ -146,6 +148,7 @@ export const deleteMobilePage = asyncHandler(
         user,
         action,
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteMobilePage';

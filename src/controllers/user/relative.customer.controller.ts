@@ -55,6 +55,7 @@ export const createRelativeCustomer = asyncHandler(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
+        newRelaticeCustomerData.box_id,
       );
     } catch (error: any) {
       const source = 'createRelativeCustomer';
@@ -145,6 +146,7 @@ export const updateRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        newRelaticeCustomerData.box_id,
       );
 
       const action = 'updateRelativeCustomer';
@@ -152,6 +154,7 @@ export const updateRelativeCustomer = asyncHandler(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+        newRelaticeCustomerData.box_id,
       );
 
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
@@ -204,12 +207,14 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         null,
         user,
+        deletedRelativeCustomer.box_id,
       );
       const action = 'deleteRelativeCustomer';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
+        deletedRelativeCustomer.box_id,
       );
     } catch (error: any) {
       const source = 'deleteRelativeCustomer';

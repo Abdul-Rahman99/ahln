@@ -7,4 +7,5 @@ export interface Notification {
   message: string;
   image: string | null;
   user: string;
+  box_id: string | null;
 }

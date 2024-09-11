@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import { DeliveryPackage } from '../../types/delivery.package.type';
@@ -22,7 +22,7 @@ const shippingCompanyModel = new ShippingCompanyModel();
 const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
@@ -51,7 +51,6 @@ export const createDeliveryPackage = asyncHandler(
           user,
           newDeliveryPackage,
         );
-
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
@@ -62,12 +61,14 @@ export const createDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         null,
         user,
+        newDeliveryPackage.box_id as string,
       );
       const action = 'createDeliveryPackage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        newDeliveryPackage.box_id as string,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -89,13 +90,13 @@ export const createDeliveryPackage = asyncHandler(
       const source = 'createDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getAllDeliveryPackages = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
@@ -109,13 +110,13 @@ export const getAllDeliveryPackages = asyncHandler(
       const source = 'getAllDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const getDeliveryPackageById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
@@ -131,13 +132,13 @@ export const getDeliveryPackageById = asyncHandler(
       const source = 'getDeliveryPackageById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const updateDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
@@ -177,24 +178,26 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        deliveryPackageData.box_id as string,
       );
       const action = 'updateDeliveryPackage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+        deliveryPackageData.box_id as string,
       );
     } catch (error: any) {
       const source = 'updateDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 export const deleteDeliveryPackage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
@@ -213,12 +216,14 @@ export const deleteDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         null,
         user,
+        deletedDeliveryPackage.box_id,
       );
       const action = 'deleteDeliveryPackage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        deletedDeliveryPackage.box_id,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -240,20 +245,23 @@ export const deleteDeliveryPackage = asyncHandler(
       const source = 'deleteDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
     }
   },
 );
 
 // Controller function to get all delivery packages for the current user
 export const getUserDeliveryPackages = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
 
     try {
       const { boxId, status } = req.query;
 
-      const boxRelatedToUser = await boxModel.getOneByUser(user, boxId as string);
+      const boxRelatedToUser = await boxModel.getOneByUser(
+        user,
+        boxId as string,
+      );
 
       if (!boxRelatedToUser) {
         const source = 'getUserDeliveryPackages';
@@ -275,7 +283,47 @@ export const getUserDeliveryPackages = asyncHandler(
       const source = 'getUserDeliveryPackages';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
-      next(error);
+      // next(error);
+    }
+  },
+);
+
+export const transferDeliveryPackages = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    try {
+      const { fromBoxId, toBoxId } = req.body;
+      const fromBoxRelatedToUser = await boxModel.getOneByUser(user, fromBoxId);
+      const toBoxRelatedToUser = await boxModel.getOneByUser(user, toBoxId);
+
+      if (!fromBoxRelatedToUser && !toBoxRelatedToUser) {
+        const source = 'transferDeliveryPackages';
+        systemLog.createSystemLog(
+          user,
+          'fromBox Does Not Belong To User',
+          source,
+        );
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('FROM_BOX_DOES_NOT_BELONG_TO_USER'),
+        );
+      }
+      const deliveryPackages =
+        await deliveryPackageModel.transferDeliveryPackages(
+          fromBoxId,
+          toBoxId,
+          user,
+        );
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),
+        deliveryPackages,
+      );
+    } catch (error: any) {
+      const source = 'transferDeliveryPackages';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
     }
   },
 );

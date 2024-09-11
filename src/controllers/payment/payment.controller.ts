@@ -59,12 +59,14 @@ export const createPayment = asyncHandler(
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         null,
         user,
+        null,
       );
       const action = 'createPayment';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createPayment';
@@ -170,12 +172,14 @@ export const updatePayment = asyncHandler(
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
           null,
           user,
+          null,
         );
         const action = 'updatePayment';
         auditTrail.createAuditTrail(
           user,
           action,
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
+          null,
         );
         const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
         try {
@@ -240,6 +244,7 @@ export const deletePayment = asyncHandler(
         user,
         action,
         i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deletePayment';

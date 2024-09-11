@@ -35,6 +35,7 @@ export const createShippingCompany = asyncHandler(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createShippingCompany';
@@ -122,6 +123,7 @@ export const updateShippingCompany = asyncHandler(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateShippingCompany';
@@ -149,6 +151,7 @@ export const deleteShippingCompany = asyncHandler(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteShippingCompany';

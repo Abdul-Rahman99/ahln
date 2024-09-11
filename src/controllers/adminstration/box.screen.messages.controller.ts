@@ -53,6 +53,7 @@ export const createBoxScreenMessage = asyncHandler(
         auditUser,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
+        box_id,
       );
     } catch (error: any) {
       const source = 'boxScreenMessage';
@@ -148,6 +149,7 @@ export const updateBoxScreenMessage = asyncHandler(
         auditUser,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
+        box_id,
       );
     } catch (error: any) {
       const source = 'updateBoxScreenMessage';
@@ -180,6 +182,7 @@ export const deleteBoxScreenMessage = asyncHandler(
         user,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
+        deletedBoxScreenMessage.box_id,
       );
     } catch (error: any) {
       const source = 'deleteBoxScreenMessage';

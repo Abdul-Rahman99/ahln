@@ -6,6 +6,7 @@ import {
   updateDeliveryPackage,
   deleteDeliveryPackage,
   getUserDeliveryPackages,
+  transferDeliveryPackages,
 } from '../../controllers/delivery/delivery.package.controller';
 
 import verifyToken from '../../middlewares/verifyToken';
@@ -16,6 +17,7 @@ import {
   getDeliveryPackageByIdValidation,
   updateDeliveryPackageValidation,
   getUserDeliveryPackagesValidation,
+  transferDeliveryPackageValidation,
 } from '../../validation/delivery/delivery.package.validation';
 // import { authorize } from '../../middlewares/authorize';
 
@@ -51,6 +53,13 @@ router.get(
   '/user/delivery-packages/',
   getUserDeliveryPackagesValidation,
   getUserDeliveryPackages,
+);
+
+router.post(
+  '/transfer-delivery-package',
+  verifyToken,
+  transferDeliveryPackageValidation,
+  transferDeliveryPackages,
 );
 
 export default router;

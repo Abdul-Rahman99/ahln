@@ -52,6 +52,7 @@ export const createCard = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('CARD_CREATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'createCard';
@@ -143,6 +144,7 @@ export const updateCard = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('CARD_UPDATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'updateCard';
@@ -173,6 +175,7 @@ export const deleteCard = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('CARD_DELETED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'deleteCard';

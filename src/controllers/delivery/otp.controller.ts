@@ -37,12 +37,14 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
       null,
       user,
+      newOTP.box_id,
     );
     const action = 'createOTP';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
+      newOTP.box_id,
     );
   } catch (error: any) {
     const source = 'createOTP';
@@ -146,12 +148,14 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('OTP_DELTED_SUCCESSFULLY'),
       null,
       user,
+      deletedOTP.box_id,
     );
     const action = 'deleteOTP';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('OTP_DELETED_SUCCESSFULLY'),
+      deletedOTP.box_id,
     );
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
     try {
@@ -219,6 +223,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         null,
         user,
+        boxId,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -312,6 +317,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
           i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
           null,
           user,
+          boxId,
         );
         const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
 

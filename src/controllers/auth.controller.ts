@@ -47,10 +47,11 @@ const sendVerificationEmail = async (
   transporter.sendMail(mailOptions);
   const user = await authHandler(req, res);
   notificationModel.createNotification(
-    'updateOnePinByUser',
-    i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+    'sendVerificationEmail',
+    i18n.__('VERFICATION_SENT_SUCCESSFULLY'),
     null,
     user,
+    null,
   );
 };
 
@@ -107,7 +108,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
   const action = 'register';
-  auditTrail.createAuditTrail(user.id, action, i18n.__('REGISTER_SUCCESS'));
+  auditTrail.createAuditTrail(
+    user.id,
+    action,
+    i18n.__('REGISTER_SUCCESS'),
+    null,
+  );
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -183,6 +189,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     i18n.__('EMAIL_VERIFIED_SUCCESS'),
     null,
     user,
+    null,
   );
   await userDevicesModel.getFcmTokenDevicesByUser(user);
   try {
@@ -247,8 +254,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       await userDevicesModel.saveUserDevice(user.id, fcmToken);
     }
   }
-  const userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
-
+  let userAvatar: string | null = null;
+  if (user.avatar) {
+    userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+  } else {
+    userAvatar = null;
+  }
   ResponseHandler.logInSuccess(
     res,
     i18n.__('LOGIN_SUCCESS'),
@@ -269,7 +280,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const action = 'login';
-  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
+  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'), null);
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
@@ -310,6 +321,7 @@ export const resendOtpAndUpdateDB = asyncHandler(
       i18n.__('OTP_SENT_SUCCESSFULLY'),
       null,
       user,
+      null,
     );
   },
 );
@@ -339,6 +351,7 @@ export const updatePasswordWithOTP = asyncHandler(
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
       user,
+      null,
     );
   },
 );
@@ -373,6 +386,7 @@ export const updatePassword = asyncHandler(
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
       user,
+      null,
     );
   },
 );

@@ -52,12 +52,14 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
       null,
       user,
+      newPin.box_id,
     );
     const action = 'createPin';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
+      newPin.box_id,
     );
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
     try {
@@ -147,12 +149,14 @@ export const deleteOnePinByUser = asyncHandler(
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
         null,
         user,
+        pin.box_id,
       );
       const action = 'deleteOnePinByUser';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
+        pin.box_id,
       );
     } catch (error) {
       const source = 'deleteOnePinByUser';
@@ -177,12 +181,14 @@ export const updateOnePinByUser = asyncHandler(
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        pin.box_id,
       );
       const action = 'updateOnePinByUser';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+        pin.box_id,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -228,6 +234,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         null,
         userId,
+        box_id,
       );
 
       try {
@@ -245,6 +252,13 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
           source,
         );
       }
+      const action = 'checkPIN';
+      auditTrail.createAuditTrail(
+        userId,
+        action,
+        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+        box_id,
+      );
     } else {
       ResponseHandler.badRequest(
         res,
@@ -255,11 +269,19 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
         null,
         userId,
+        box_id,
       );
       notificationModel.pushNotification(
         fcmToken,
         i18n.__('DELIVERY_CHECK_PIN'),
         i18n.__('PIN_CHECKED_FAILED'),
+      );
+      const action = 'checkPIN';
+      auditTrail.createAuditTrail(
+        userId,
+        action,
+        i18n.__('PIN_CHECKED_FAILED'),
+        box_id,
       );
     }
   } catch (error) {

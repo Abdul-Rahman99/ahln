@@ -6,6 +6,7 @@ export default class AuditTrailModel {
     user_id: string,
     action: string,
     message: string,
+    box_id: string | null,
   ): Promise<AuditTrail> {
     const connection = await db.connect();
 
@@ -19,8 +20,16 @@ export default class AuditTrailModel {
         'user_id',
         'action',
         'message',
+        'box_id',
       ];
-      const sqlParams = [createdAt, updatedAt, user_id, action, message];
+      const sqlParams = [
+        createdAt,
+        updatedAt,
+        user_id,
+        action,
+        message,
+        box_id,
+      ];
       const sql = `INSERT INTO Audit_Trail (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;

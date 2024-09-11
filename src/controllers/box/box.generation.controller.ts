@@ -41,6 +41,7 @@ export const createBoxGeneration = asyncHandler(
         user,
         action,
         i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createBoxGeneration';
@@ -129,6 +130,7 @@ export const updateBoxGeneration = asyncHandler(
         user,
         action,
         i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateBoxGeneration';
@@ -157,6 +159,7 @@ export const deleteBoxGeneration = asyncHandler(
         user,
         action,
         i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteBoxGeneration';

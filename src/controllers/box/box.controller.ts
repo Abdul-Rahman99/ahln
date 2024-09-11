@@ -35,6 +35,7 @@ export const createBox = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('BOX_CREATED_SUCCESSFULLY'),
+      createdBox.id,
     );
   } catch (error) {
     const source = 'createBox';
@@ -92,6 +93,7 @@ export const updateBox = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+      updatedBox.id,
     );
   } catch (error) {
     const source = 'updateBox';
@@ -117,6 +119,7 @@ export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('BOX_DELETED_SUCCESSFULLY'),
+      deletedBox.id,
     );
   } catch (error) {
     const source = 'deleteBox';
@@ -188,6 +191,7 @@ export const assignTabletToBox = asyncHandler(
         user,
         action,
         i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
+        boxId,
       );
     } catch (error) {
       const source = 'assignTabletToBox';
@@ -214,6 +218,7 @@ export const resetTabletId = asyncHandler(
         user,
         action,
         i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
+        boxId,
       );
     } catch (error) {
       const source = 'resetTabletId';

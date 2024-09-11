@@ -29,6 +29,7 @@ export const createTablet = asyncHandler(
         user,
         action,
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'createTablet';
@@ -98,6 +99,7 @@ export const updateTablet = asyncHandler(
         user,
         action,
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'updateTablet';
@@ -125,6 +127,7 @@ export const deleteTablet = asyncHandler(
         user,
         action,
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'deleteTablet';

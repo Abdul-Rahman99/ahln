@@ -6,4 +6,5 @@ export interface AuditTrail {
   user_id: string;
   action: string;
   message: string;
+  box_id: string | null;
 }

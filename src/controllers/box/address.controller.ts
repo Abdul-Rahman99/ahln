@@ -28,6 +28,7 @@ export const createAddress = asyncHandler(
         user,
         action,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'createAddress';
@@ -99,6 +100,7 @@ export const updateAddress = asyncHandler(
         user,
         action,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'updateAddress';
@@ -126,6 +128,7 @@ export const deleteAddress = asyncHandler(
         user,
         action,
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'deleteAddress';

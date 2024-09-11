@@ -34,6 +34,7 @@ export const createContactUs = asyncHandler(
         auditUser,
         action,
         i18n.__('CONTACT_US_CREATED'),
+        null,
       );
     } catch (error: any) {
       const source = 'createContactUs';
@@ -136,6 +137,7 @@ export const deleteContactUs = asyncHandler(
         user,
         action,
         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error) {
       const source = 'deleteContactUs';

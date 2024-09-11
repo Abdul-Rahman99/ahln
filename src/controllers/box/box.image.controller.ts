@@ -11,6 +11,9 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import UserModel from '../../models/users/user.model';
+import moment from 'moment';
+import fs from 'fs';
+import path from 'path';
 
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
@@ -29,27 +32,27 @@ export const uploadBoxImage = asyncHandler(
         systemLog.createSystemLog(user, (err as Error).message, source);
         return ResponseHandler.badRequest(res, err.message);
       }
-      if (!req.file) {
-        const source = 'uploadBoxImage';
-        systemLog.createSystemLog(user, 'No File Provided', source);
-        return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
-      }
+      // if (!req.file) {
+      //   const source = 'uploadBoxImage';
+      //   systemLog.createSystemLog(user, 'No File Provided', source);
+      //   return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
+      // }
 
       const { boxId, deliveryPackageId } = req.body;
-      const imageName = req.file.filename;
+      const base64Image = req.body.image;
 
       try {
-        const user = await authHandler(req, res);
+        const buffer = Buffer.from(
+          base64Image.replace(/^data:image\/\w+;base64,/, ''),
+          'base64',
+        );
+        const imageName = `image-${moment().format('YYYYMMDD_HHmmss')}${path.extname(base64Image)}.png`;
+        fs.promises.writeFile(`uploads/${imageName}`, buffer);
 
         const createdBoxImage = await boxImageModel.createBoxImage(
           boxId,
           deliveryPackageId,
           imageName,
-        );
-        ResponseHandler.success(
-          res,
-          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
-          createdBoxImage,
         );
 
         notificationModel.createNotification(
@@ -57,6 +60,7 @@ export const uploadBoxImage = asyncHandler(
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           imageName,
           user,
+          boxId,
         );
 
         const action = 'uploadSingleImage';
@@ -64,12 +68,17 @@ export const uploadBoxImage = asyncHandler(
           user,
           action,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          boxId,
         );
 
+        if (!boxId) {
+          return ResponseHandler.badRequest(res, i18n.__('NO_BOX_ID_PROVIDED'));
+        }
         const userFcm = await userModel.findUserByBoxId(boxId);
 
         const fcmToken =
           await userDevicesModel.getFcmTokenDevicesByUser(userFcm);
+        console.log('BBB');
 
         try {
           notificationModel.pushNotification(
@@ -77,6 +86,8 @@ export const uploadBoxImage = asyncHandler(
             i18n.__('DELIVERY_MAN_ARRIEVED'),
             i18n.__('DELIVERY_MAN_TRIES_TO_OPEN_BOX'),
           );
+          console.log('CCC');
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           const source = 'updateRelativeCustomer';
@@ -86,6 +97,11 @@ export const uploadBoxImage = asyncHandler(
             source,
           );
         }
+        ResponseHandler.success(
+          res,
+          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          createdBoxImage,
+        );
       } catch (error: any) {
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (error as Error).message, source);

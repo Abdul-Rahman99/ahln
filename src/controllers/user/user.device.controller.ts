@@ -60,6 +60,7 @@ export const deleteDevice = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'deleteDevice';
@@ -90,6 +91,7 @@ export const updateDevice = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'updateDevice';

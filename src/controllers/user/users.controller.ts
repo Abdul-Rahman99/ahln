@@ -30,6 +30,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('USER_CREATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'createUser';
@@ -154,6 +155,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
         user,
         action,
         i18n.__('USER_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateUser';
@@ -179,6 +181,7 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
       auditUser,
       action,
       i18n.__('USER_DELETED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const user = await authHandler(req, res);
@@ -206,6 +209,7 @@ export const updateUserStatus = asyncHandler(
         user,
         action,
         i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateUserStatus';

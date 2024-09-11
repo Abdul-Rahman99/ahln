@@ -68,6 +68,7 @@ export const createDeliveryPackage = asyncHandler(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        newDeliveryPackage.box_id as string,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -184,6 +185,7 @@ export const updateDeliveryPackage = asyncHandler(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+        deliveryPackageData.box_id as string,
       );
     } catch (error: any) {
       const source = 'updateDeliveryPackage';
@@ -221,6 +223,7 @@ export const deleteDeliveryPackage = asyncHandler(
         user,
         action,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        deletedDeliveryPackage.box_id,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {

@@ -23,6 +23,7 @@ export const createRole = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('ROLE_CREATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'createRole';
@@ -75,6 +76,7 @@ export const updateRole = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('ROLE_UPDATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'updateRole';
@@ -96,6 +98,7 @@ export const deleteRole = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('ROLE_DELETED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'deleteRole';

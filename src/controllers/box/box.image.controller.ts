@@ -65,6 +65,7 @@ export const uploadBoxImage = asyncHandler(
           user,
           action,
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          boxId,
         );
 
         const userFcm = await userModel.findUserByBoxId(boxId);

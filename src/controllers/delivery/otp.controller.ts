@@ -44,6 +44,7 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
+      newOTP.box_id,
     );
   } catch (error: any) {
     const source = 'createOTP';
@@ -154,6 +155,7 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('OTP_DELETED_SUCCESSFULLY'),
+      deletedOTP.box_id,
     );
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
     try {

@@ -59,6 +59,7 @@ export const createDPFavList = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'createDPFavList';
@@ -128,6 +129,7 @@ export const deleteDPFavList = asyncHandler(
         user,
         action,
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteDPFavList';

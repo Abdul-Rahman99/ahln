@@ -42,6 +42,7 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'assignPermissionToRole';
@@ -90,6 +91,7 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'removePermissionFromRole';

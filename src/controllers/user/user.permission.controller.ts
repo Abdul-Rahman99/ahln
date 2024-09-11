@@ -45,6 +45,7 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'assignPermissionToUser';
@@ -92,6 +93,7 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'removePermissionFromUser';

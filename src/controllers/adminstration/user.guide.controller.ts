@@ -32,6 +32,7 @@ export const createUserGuide = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createUserGuide';
@@ -113,6 +114,7 @@ export const updateUserGuide = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateUserGuide';
@@ -143,6 +145,7 @@ export const deleteUserGuide = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteUserGuide';

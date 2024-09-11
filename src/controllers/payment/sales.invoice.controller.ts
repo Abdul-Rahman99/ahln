@@ -90,6 +90,7 @@ export const createSalesInvoice = asyncHandler(
         user,
         action,
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
+        newSalesInvoice.box_id,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -192,6 +193,7 @@ export const updateSalesInvoice = asyncHandler(
         user,
         action,
         i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
+        updatedSalesInvoice.box_id,
       );
     } catch (error: any) {
       const source = 'updateSalesInvoice';
@@ -219,6 +221,7 @@ export const deleteSalesInvoice = asyncHandler(
         user,
         action,
         i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
+        deletedSalesInvoice.box_id,
       );
     } catch (error: any) {
       const source = 'deleteSalesInvoice';

@@ -59,6 +59,7 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
+      newPin.box_id,
     );
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
     try {
@@ -155,6 +156,7 @@ export const deleteOnePinByUser = asyncHandler(
         user,
         action,
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
+        pin.box_id,
       );
     } catch (error) {
       const source = 'deleteOnePinByUser';
@@ -186,6 +188,7 @@ export const updateOnePinByUser = asyncHandler(
         user,
         action,
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+        pin.box_id,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {

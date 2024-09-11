@@ -31,6 +31,7 @@ export const createBoxLocker = asyncHandler(
         user,
         action,
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
+        newBoxLocker.box_id,
       );
     } catch (error: any) {
       const source = 'createBoxLocker';
@@ -102,6 +103,7 @@ export const updateBoxLocker = asyncHandler(
         user,
         action,
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
+        updatedBoxLocker.box_id,
       );
     } catch (error: any) {
       const source = 'updateBoxLocker';
@@ -131,6 +133,7 @@ export const deleteBoxLocker = asyncHandler(
         user,
         action,
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
+        deletedBoxLocker.box_id,
       );
     } catch (error: any) {
       const source = 'deleteBoxLocker';

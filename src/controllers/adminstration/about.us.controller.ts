@@ -32,6 +32,7 @@ export const createAboutUs = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'createAboutUs';
@@ -113,6 +114,7 @@ export const updateAboutUs = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateAboutUs';
@@ -141,6 +143,7 @@ export const deleteAboutUs = asyncHandler(
         user,
         action,
         i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'deleteAboutUs';

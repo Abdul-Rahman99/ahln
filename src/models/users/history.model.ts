@@ -135,77 +135,10 @@ class HistoryModel {
     const connection = await db.connect();
 
     try {
-      // check if the user connected to this box
-      const userBoxResult = await connection.query(
-        `SELECT * FROM User_Box WHERE user_id = $1 AND box_id = $2`,
-        [userId, boxId],
-      );
-
-      if (userBoxResult.rows.length === 0) {
-        throw new Error(`User with ID ${userId} does not have a box`);
-      }
-
-      const boxImageResult = await connection.query(
-        `SELECT 'Box_Image' AS tableName, * FROM Box_Image WHERE box_id = $1`,
-        [boxId],
-      );
-      boxImageResult.rows.forEach((row) => {
-        row.image = `${process.env.BASE_URL}/uploads/${row.image}`;
-      });
-
-      const dpFavListResult = await connection.query(
-        `SELECT 'DP_Fav_List' AS tableName, * FROM DP_Fav_List WHERE delivery_package_id IN (
-          SELECT id FROM Delivery_Package WHERE box_id = $1
-        )`,
-        [boxId],
-      );
-
-      const pinResult = await connection.query(
-        `SELECT 'PIN' AS tableName, * FROM PIN WHERE box_id = $1`,
-        [boxId],
-      );
-
-      const relativeCustomerResult = await connection.query(
-        `SELECT 'Relative_Customer' AS tableName, * FROM Relative_Customer WHERE box_id = $1`,
-        [boxId],
-      );
-
-      const notificationResult = await connection.query(
-        `SELECT 'Notification' AS tableName, * FROM Notification WHERE box_id = $1`,
-        [boxId],
-      );
-
-      const result = [
-        ...dpFavListResult.rows,
-        ...pinResult.rows,
-        ...relativeCustomerResult.rows,
-        ...notificationResult.rows,
-      ];
-
-      console.log(result);
-
-      return result.map((row) => ({
-        tableName: row.tablename,
-        id: row.id || null,
-        image: row.image || null,
-        delivery_package_id: row.delivery_package_id || null,
-        is_active: row.is_active || null,
-        title: row.title || null,
-        message: row.message || null,
-        is_read: row.is_read || null,
-        reciepent_email: row.reciepent_email || null,
-        time_range: row.time_range || null,
-        day_range: row.day_range || null,
-        type: row.type || null,
-        passcode: row.passcode || null,
-        customer_id: row.customer_id || null,
-        relative_customer_id: row.relative_customer_id || null,
-        relation: row.relation || null,
-        createdat: row.createdat || null,
-        updatedat: row.updatedat || null,
-        user_id: row.user_id || null,
-        box_id: row.box_id || null,
-      }));
+      // Select from the audit trail table
+      const sql = `SELECT * FROM audit_trail WHERE box_id = $2`;
+      const result = await connection.query(sql, [userId, boxId]);
+      return result.rows;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

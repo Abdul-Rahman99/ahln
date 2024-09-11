@@ -26,6 +26,7 @@ export const createPermission = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'createPermission';
@@ -91,6 +92,7 @@ export const updatePermission = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'updatePermission';
@@ -116,6 +118,7 @@ export const deletePermission = async (req: Request, res: Response) => {
       user,
       action,
       i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
+      null,
     );
   } catch (error: any) {
     const source = 'deletePermission';

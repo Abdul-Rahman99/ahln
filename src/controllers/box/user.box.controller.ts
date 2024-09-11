@@ -43,6 +43,7 @@ export const createUserBox = asyncHandler(
         user,
         action,
         i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
+        createdUserBox.box_id,
       );
     } catch (error: any) {
       const source = 'createUserBox';
@@ -115,6 +116,7 @@ export const updateUserBox = asyncHandler(
         user,
         action,
         i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
+        updatedUserBox.box_id,
       );
     } catch (error: any) {
       const source = 'updateUserBox';
@@ -142,6 +144,7 @@ export const deleteUserBox = asyncHandler(
         user,
         action,
         i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
+        deletedUserBox.box_id,
       );
     } catch (error: any) {
       const source = 'deleteUserBox';
@@ -219,6 +222,7 @@ export const assignBoxToUser = asyncHandler(
         user,
         action,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        boxId,
       );
     } catch (error: any) {
       const source = 'assignBoxToUser';
@@ -279,6 +283,7 @@ export const userAssignBoxToHimself = asyncHandler(
         user,
         action,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        boxId as unknown as string,
       );
     } catch (error: any) {
       const source = 'userAssignBoxToHimself';
@@ -336,6 +341,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         user,
         action,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        boxId,
       );
 
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
@@ -384,6 +390,7 @@ export const updateUserBoxStatus = asyncHandler(
         user,
         action,
         i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
+        null,
       );
     } catch (error: any) {
       const source = 'updateUserBoxStatus';
@@ -427,6 +434,7 @@ export const transferBoxOwnership = asyncHandler(
         user,
         action,
         i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        boxId,
       );
     } catch (error: any) {
       const source = 'transferBoxOwnership';

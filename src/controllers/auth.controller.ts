@@ -108,7 +108,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
   const action = 'register';
-  auditTrail.createAuditTrail(user.id, action, i18n.__('REGISTER_SUCCESS'));
+  auditTrail.createAuditTrail(
+    user.id,
+    action,
+    i18n.__('REGISTER_SUCCESS'),
+    null,
+  );
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -275,7 +280,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const action = 'login';
-  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'));
+  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'), null);
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {

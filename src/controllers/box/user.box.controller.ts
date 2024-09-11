@@ -212,6 +212,7 @@ export const assignBoxToUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         null,
         userId,
+        boxId,
       );
       const action = 'assignBoxToUser';
       auditTrail.createAuditTrail(
@@ -244,6 +245,7 @@ export const userAssignBoxToHimself = asyncHandler(
         serialNumber,
         result.id,
       );
+      const boxId = await boxModel.boxExistsSerialNumber(serialNumber);
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
@@ -254,6 +256,7 @@ export const userAssignBoxToHimself = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         null,
         user,
+        boxId as unknown as string,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -326,6 +329,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
         null,
         user,
+        boxId,
       );
       const action = 'userAssignBoxToRelativeUser';
       auditTrail.createAuditTrail(

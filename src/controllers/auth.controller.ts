@@ -47,10 +47,11 @@ const sendVerificationEmail = async (
   transporter.sendMail(mailOptions);
   const user = await authHandler(req, res);
   notificationModel.createNotification(
-    'updateOnePinByUser',
-    i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+    'sendVerificationEmail',
+    i18n.__('VERFICATION_SENT_SUCCESSFULLY'),
     null,
     user,
+    null,
   );
 };
 
@@ -183,6 +184,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     i18n.__('EMAIL_VERIFIED_SUCCESS'),
     null,
     user,
+    null,
   );
   await userDevicesModel.getFcmTokenDevicesByUser(user);
   try {
@@ -310,6 +312,7 @@ export const resendOtpAndUpdateDB = asyncHandler(
       i18n.__('OTP_SENT_SUCCESSFULLY'),
       null,
       user,
+      null,
     );
   },
 );
@@ -339,6 +342,7 @@ export const updatePasswordWithOTP = asyncHandler(
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
       user,
+      null,
     );
   },
 );
@@ -373,6 +377,7 @@ export const updatePassword = asyncHandler(
       i18n.__('PASSWORD_RESET_SUCCESS'),
       null,
       user,
+      null,
     );
   },
 );

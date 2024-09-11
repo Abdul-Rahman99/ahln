@@ -150,11 +150,6 @@ class HistoryModel {
         [boxId],
       );
 
-      const deliveryPackageResult = await connection.query(
-        `SELECT * FROM Delivery_Package WHERE box_id = $1`,
-        [boxId],
-      );
-
       const boxImageResult = await connection.query(
         `SELECT * FROM Box_Image WHERE box_id = $1`,
         [boxId],
@@ -180,16 +175,49 @@ class HistoryModel {
         [boxId],
       );
 
+      const notificationResult = await connection.query(
+        `SELECT * FROM Notification WHERE box_id = $1`,
+        [boxId],
+      );
+
       const result = [
         ...boxResult.rows,
-        ...deliveryPackageResult.rows,
         ...boxImageResult.rows,
         ...dpFavListResult.rows,
         ...pinResult.rows,
         ...relativeCustomerResult.rows,
+        ...notificationResult.rows,
       ];
 
-      return result;
+      return result.map((row) => ({
+        id: row.id || null,
+        serial_number: row.serial_number || null,
+        box_label: row.box_label || null,
+        has_empty_lockers: row.has_empty_lockers || null,
+        current_tablet_id: row.current_tablet_id || null,
+        previous_tablet_id: row.previous_tablet_id || null,
+        box_model_id: row.box_model_id || null,
+        address_id: row.address_id || null,
+        image: row.image || null,
+        delivery_package_id: row.delivery_package_id || null,
+        is_active: row.is_active || null,
+        title: row.title || null,
+        message: row.message || null,
+        is_read: row.is_read || null,
+        reciepent_email: row.reciepent_email || null,
+        time_range: row.time_range || null,
+        day_range: row.day_range || null,
+        type: row.type || null,
+        passcode: row.passcode || null,
+        customer_id: row.customer_id || null,
+        relative_customer_id: row.relative_customer_id || null,
+        relation: row.relation || null,
+        
+        createdAt: row.createdAt || null,
+        updatedAt: row.updatedAt || null,
+        user_id: row.user_id || null,
+        box_id: row.box_id || null,
+      }));
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

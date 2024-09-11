@@ -57,6 +57,7 @@ export const uploadBoxImage = asyncHandler(
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           imageName,
           user,
+          boxId,
         );
 
         const action = 'uploadSingleImage';

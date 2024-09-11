@@ -145,6 +145,7 @@ export const updateRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        newRelaticeCustomerData.box_id,
       );
 
       const action = 'updateRelativeCustomer';
@@ -204,6 +205,7 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         null,
         user,
+        deletedRelativeCustomer.box_id,
       );
       const action = 'deleteRelativeCustomer';
       auditTrail.createAuditTrail(

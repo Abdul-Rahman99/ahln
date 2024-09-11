@@ -52,6 +52,7 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
       null,
       user,
+      newPin.box_id,
     );
     const action = 'createPin';
     auditTrail.createAuditTrail(
@@ -147,6 +148,7 @@ export const deleteOnePinByUser = asyncHandler(
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
         null,
         user,
+        pin.box_id,
       );
       const action = 'deleteOnePinByUser';
       auditTrail.createAuditTrail(
@@ -177,6 +179,7 @@ export const updateOnePinByUser = asyncHandler(
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        pin.box_id,
       );
       const action = 'updateOnePinByUser';
       auditTrail.createAuditTrail(
@@ -228,6 +231,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         null,
         userId,
+        box_id,
       );
 
       try {
@@ -255,6 +259,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
         null,
         userId,
+        box_id,
       );
       notificationModel.pushNotification(
         fcmToken,

@@ -18,6 +18,7 @@ export default class NotificationModel {
     message: string,
     image: string | null,
     user: string,
+    box_id: string | null,
   ): Promise<Notification> {
     const connection = await db.connect();
 
@@ -32,8 +33,17 @@ export default class NotificationModel {
         'message',
         'image',
         'user_id',
+        'box_id',
       ];
-      const sqlParams = [title, createdAt, updatedAt, message, image, user];
+      const sqlParams = [
+        title,
+        createdAt,
+        updatedAt,
+        message,
+        image,
+        user,
+        box_id,
+      ];
       const sql = `INSERT INTO Notification (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
@@ -51,7 +61,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification`;
+      const sql = `SELECT * FROM Notification`;
       const result = await connection.query(sql);
 
       return result.rows as Notification[];
@@ -66,7 +76,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification WHERE user_id=$1`;
+      const sql = `SELECT * FROM Notification WHERE user_id=$1`;
       const result = await connection.query(sql, [user]);
 
       return result.rows as Notification[];
@@ -81,7 +91,7 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT id, createdAt, updatedAt, message, title, image, user_id, is_read FROM Notification WHERE id = $1`;
+      const sql = `SELECT * FROM Notification WHERE id = $1`;
       const result = await connection.query(sql, [id]);
 
       return result.rows[0] || null;

@@ -59,6 +59,7 @@ export const createPayment = asyncHandler(
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         null,
         user,
+        null,
       );
       const action = 'createPayment';
       auditTrail.createAuditTrail(
@@ -170,6 +171,7 @@ export const updatePayment = asyncHandler(
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
           null,
           user,
+          null
         );
         const action = 'updatePayment';
         auditTrail.createAuditTrail(

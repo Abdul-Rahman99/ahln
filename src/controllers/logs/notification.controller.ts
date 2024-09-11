@@ -14,12 +14,13 @@ export const createNotification = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { title, message, image, user } = req.body;
+      const { title, message, image, user, boxId } = req.body;
       const createdNotification = await notificationModel.createNotification(
         title,
         message,
         image,
         user,
+        boxId,
       );
       ResponseHandler.success(
         res,

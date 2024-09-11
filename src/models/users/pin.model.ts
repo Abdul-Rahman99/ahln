@@ -123,12 +123,12 @@ class PINModel {
   }
 
   // delete Pin
-  async deleteOnePinByUser(id: number, user: string): Promise<PIN[]> {
+  async deleteOnePinByUser(id: number, user: string): Promise<PIN> {
     const connection = await db.connect();
     try {
-      const sql = 'DELETE FROM PIN WHERE id=$1 AND user_id=$2';
+      const sql = 'DELETE FROM PIN WHERE id=$1 AND user_id=$2 RETURNING *';
       const result = await connection.query(sql, [id, user]);
-      return result.rows as PIN[];
+      return result.rows[0] as PIN;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

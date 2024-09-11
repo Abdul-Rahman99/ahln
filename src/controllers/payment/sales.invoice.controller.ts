@@ -83,6 +83,7 @@ export const createSalesInvoice = asyncHandler(
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
         null,
         user,
+        newSalesInvoice.box_id,
       );
       const action = 'createSalesInvoice';
       auditTrail.createAuditTrail(

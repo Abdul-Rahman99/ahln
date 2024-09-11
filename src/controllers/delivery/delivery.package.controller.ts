@@ -51,7 +51,6 @@ export const createDeliveryPackage = asyncHandler(
           user,
           newDeliveryPackage,
         );
-
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
@@ -62,6 +61,7 @@ export const createDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         null,
         user,
+        newDeliveryPackage.box_id as string,
       );
       const action = 'createDeliveryPackage';
       auditTrail.createAuditTrail(
@@ -177,6 +177,7 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         null,
         user,
+        deliveryPackageData.box_id as string,
       );
       const action = 'updateDeliveryPackage';
       auditTrail.createAuditTrail(
@@ -213,6 +214,7 @@ export const deleteDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         null,
         user,
+        deletedDeliveryPackage.box_id,
       );
       const action = 'deleteDeliveryPackage';
       auditTrail.createAuditTrail(

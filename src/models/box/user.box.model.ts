@@ -406,6 +406,9 @@ class UserBoxModel {
       const sql = `DELETE FROM User_Box WHERE user_id = $1 AND box_id = $2`;
       await connection.query(sql, [userId, boxId]);
 
+      const clearNotificationSql = `DELETE FROM Notification WHERE user_id = $1 AND box_id = $2`;
+      await connection.query(clearNotificationSql, [userId, boxId]);
+
       const newUserBoxData = { user_id: newUserId, box_id: boxId };
       const result2 = await this.createUserBox(newUserBoxData);
 

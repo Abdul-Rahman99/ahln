@@ -29,7 +29,7 @@ export default class BoxImageModel {
       ];
 
       const sql = `INSERT INTO Box_IMAGE (${sqlFields.join(', ')}) 
-                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
+                  VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);

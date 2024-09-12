@@ -5,10 +5,12 @@ import UserDevicesModel from '../users/user.devices.model';
 import NotificationModel from '../logs/notification.model';
 import SystemLogModel from '../logs/system.log.model';
 import i18n from '../../config/i18n';
+import AuditTrailModel from '../logs/audit.trail.model';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
+const auditTrail = new AuditTrailModel();
 
 class OTPModel {
   // Create OTP
@@ -110,6 +112,13 @@ class OTPModel {
             source,
           );
         }
+        const action = 'checkOTP';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('OTP_NOT_FOUND_OR_ALREADY_USED'),
+          boxId,
+        );
         throw new Error('OTP not found or already used');
       }
 

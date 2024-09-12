@@ -225,6 +225,13 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
         user,
         boxId,
       );
+      const action = 'checkOTP';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+        boxId,
+      );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
         notificationModel.pushNotification(
@@ -232,13 +239,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('CHECK_OTP'),
           i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         );
-        const action = 'checkOTP';
-        auditTrail.createAuditTrail(
-          user,
-          action,
-          i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
-          boxId,
-        );
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkOTP';
@@ -253,14 +254,14 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       systemLog.createSystemLog(user, 'Invalid Otp', source);
       ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      const action = 'checkOTP';
+      auditTrail.createAuditTrail(user, action, i18n.__('INVALID_OTP'), boxId);
       try {
         notificationModel.pushNotification(
           fcmToken,
           i18n.__('CHECK_OTP'),
           i18n.__('INVALID_OTP'),
         );
-        const action = 'checkOTP';
-        auditTrail.createAuditTrail(user, action, i18n.__('CHECK_OTP'), boxId);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkOTP';
@@ -321,6 +322,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
           pin: result[1],
           otp: result[2],
         });
+        const action = 'checkTrackingNumberAndUpdateStatus';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
+          boxId,
+        );
         notificationModel.createNotification(
           'checkTrackingNumberAndUpdateStatus',
           i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
@@ -336,15 +344,6 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             i18n.__('CHECK_TRACKING_NUMBER'),
             i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
           );
-
-          const action = 'checkTrackingNumberAndUpdateStatus';
-          auditTrail.createAuditTrail(
-            user,
-            action,
-            i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
-            boxId,
-          );
-
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           const source = 'checkTrackingNumberAndUpdateStatus';

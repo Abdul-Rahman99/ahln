@@ -1,6 +1,11 @@
 import { PIN } from '../../types/pin.type';
 import db from '../../config/database';
 import moment from 'moment-timezone';
+import AuditTrailModel from '../logs/audit.trail.model';
+import i18n from '../../config/i18n';
+
+const auditTrail = new AuditTrailModel();
+
 class PINModel {
   // create PIN
   async createPIN(pinData: Partial<PIN>, user: string): Promise<PIN> {
@@ -89,11 +94,14 @@ class PINModel {
   }
 
   // get one pin management
-  async getOnePinByPasscode(pass: string, user: string): Promise<boolean> {
+  async getOnePinByPasscodeAndBox(
+    pass: string,
+    boxId: string,
+  ): Promise<boolean> {
     const connection = await db.connect();
     try {
-      const sql = 'SELECT * FROM PIN WHERE passcode=$1 AND user_id=$2';
-      const result = await connection.query(sql, [pass, user]);
+      const sql = 'SELECT * FROM PIN WHERE passcode=$1 AND box_id=$2';
+      const result = await connection.query(sql, [pass, boxId]);
       if (result.rows.length > 0) {
         return true;
       }
@@ -200,7 +208,11 @@ class PINModel {
     }
   }
 
-  async checkPIN(passcode: string, box_id: string): Promise<boolean> {
+  async checkPIN(
+    passcode: string,
+    box_id: string,
+    user_id: string,
+  ): Promise<boolean> {
     const connection = await db.connect();
     try {
       if (!passcode) {
@@ -213,6 +225,13 @@ class PINModel {
       );
 
       if (pinResult.rows.length === 0) {
+        const action = 'checkOTP';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('OTP_NOT_FOUND_OR_ALREADY_USED'),
+          box_id,
+        );
         throw new Error('PIN not found or PIN is not activated');
       }
 

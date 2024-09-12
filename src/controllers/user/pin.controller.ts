@@ -31,9 +31,9 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       return ResponseHandler.badRequest(res, i18n.__('BOX_ID_INVALID'));
     }
 
-    const passcodeExist = await pinModel.getOnePinByPasscode(
+    const passcodeExist = await pinModel.getOnePinByPasscodeAndBox(
       newPin.passcode,
-      user,
+      newPin.box_id,
     );
     if (passcodeExist) {
       const source = 'createPin';
@@ -219,7 +219,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
     const { passcode, box_id } = req.body;
 
     const userId = await pinModel.getUserByPasscode(passcode);
-    const checkPinResult = await pinModel.checkPIN(passcode, box_id);
+    const checkPinResult = await pinModel.checkPIN(passcode, box_id, userId);
 
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
 

@@ -85,9 +85,18 @@ export const updateBoxAndAddressValidation = [
     .optional()
     .notEmpty()
     .withMessage(i18n.__('BOX_LABEL_REQUIRED')),
-  body('country').optional().withMessage(i18n.__('COUNTRY_ID_REQUIRED')),
-  body('city').optional().withMessage(i18n.__('CITY_ID_REQUIRED')),
-  body('district').optional().withMessage(i18n.__('DISTRICT_ID_REQUIRED')),
-  body('street').optional().withMessage(i18n.__('STREET_ID_REQUIRED')),
+  body('country')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('COUNTRY_ID_REQUIRED')),
+  body('city').optional().notEmpty().withMessage(i18n.__('CITY_ID_REQUIRED')),
+  body('district')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('DISTRICT_ID_REQUIRED')),
+  body('street')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('STREET_ID_REQUIRED')),
   validatorMiddleware,
 ];

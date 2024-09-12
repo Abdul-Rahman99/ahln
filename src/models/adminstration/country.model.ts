@@ -72,7 +72,9 @@ class CountryModel {
 
       const params = [id, ...Object.values(country), updatedAt];
       const result = await connection.query(sql, params);
-
+      if (result.rows.length === 0) {
+        throw new Error(`Could not find Country with ID ${id}`);
+      }
       return result.rows[0] as Country;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -81,14 +83,14 @@ class CountryModel {
     }
   }
 
-  // Delete Mobile Page
+  // Delete Country
   async deleteCountry(id: number): Promise<Country> {
     const connection = await db.connect();
 
     try {
       if (!id) {
         throw new Error(
-          'ID cannot be null. Please provide a valid Mobile Page ID.',
+          'ID cannot be null. Please provide a valid Country ID.',
         );
       }
       const sql = `DELETE FROM Country WHERE id=$1 RETURNING *`;
@@ -96,7 +98,7 @@ class CountryModel {
       const result = await connection.query(sql, [id]);
 
       if (result.rows.length === 0) {
-        throw new Error(`Could not find Mobile Page with ID ${id}`);
+        throw new Error(`Could not find Country with ID ${id}`);
       }
 
       return result.rows[0] as Country;

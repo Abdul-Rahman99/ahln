@@ -96,7 +96,7 @@ class CityModel {
       const result = await connection.query(sql, [id]);
 
       if (result.rows.length === 0) {
-        throw new Error(`Could not find Mobile Page with ID ${id}`);
+        throw new Error(`Could not find City with ID ${id}`);
       }
 
       return result.rows[0] as City;

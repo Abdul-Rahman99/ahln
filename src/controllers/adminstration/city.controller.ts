@@ -3,151 +3,133 @@ import { Request, Response } from 'express';
 import asyncHandler from '../../middlewares/asyncHandler';
 import ResponseHandler from '../../utils/responsesHandler';
 import i18n from '../../config/i18n';
-import CountryModel from '../../models/adminstration/country.model';
-import { Country } from '../../types/country.type';
+import CityModel from '../../models/adminstration/city.model';
+import { City } from '../../types/city.type';
 import authHandler from '../../utils/authHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
-const countryModel = new CountryModel();
+const cityModel = new CityModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 const auditTrail = new AuditTrailModel();
 
-export const createCountry = asyncHandler(
-  async (req: Request, res: Response) => {
-    const user = await authHandler(req, res);
+export const createCity = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
 
-    try {
-      const newCountry: Country = req.body;
+  try {
+    const newCity: City = req.body;
 
-      const countryExists = await countryModel.checkIfCountryExists(
-        newCountry.name,
-      );
-      if (countryExists) {
-        const source = 'createCountry';
-        systemLog.createSystemLog(user, 'Country Already Exists', source);
-        return ResponseHandler.badRequest(
-          res,
-          i18n.__('COUNTRY_ALREADY_EXISTS'),
-        );
-      }
-
-      const createdCountry = await countryModel.createCountry(newCountry);
-
-      ResponseHandler.success(res, i18n.__('COUNTRY_CREATED'), createdCountry);
-      const auditUser = await authHandler(req, res);
-      const action = 'createCountry';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('COUNTRY_CREATED'),
-        null,
-      );
-    } catch (error: any) {
-      const source = 'createCountry';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
+    const cityExists = await cityModel.checkIfCityExists(newCity.name);
+    if (cityExists) {
+      const source = 'createCity';
+      systemLog.createSystemLog(user, 'City Already Exists', source);
+      return ResponseHandler.badRequest(res, i18n.__('CITY_ALREADY_EXISTS'));
     }
-  },
-);
 
-export const getAllCountry = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const country = await countryModel.getAllCountry();
-      return ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_RETRIEVED_SUCCESSFULLY'),
-        country,
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res);
-      const source = 'getAllCountry';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
+    const createdCity = await cityModel.createCity(newCity);
 
-export const getOneCountry = asyncHandler(
-  async (req: Request, res: Response) => {
-    try {
-      const countryId = parseInt(req.params.id, 10);
-      const country = await countryModel.getCountryById(Number(countryId));
-      return ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_RETRIEVED_SUCCESSFULLY'),
-        country,
-      );
-    } catch (error: any) {
-      const user = await authHandler(req, res);
-      const source = 'getOneCountry';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
-
-export const updateCountry = asyncHandler(
-  async (req: Request, res: Response) => {
+    ResponseHandler.success(res, i18n.__('CITY_CREATED'), createdCity);
     const auditUser = await authHandler(req, res);
-    try {
-      const countryId = parseInt(req.params.id, 10);
-      const countryData: Partial<Country> = req.body;
-      const updatedCountry = await countryModel.updateCountry(
-        countryId,
-        countryData,
-      );
+    const action = 'createCity';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('CITY_CREATED'),
+      null,
+    );
+  } catch (error: any) {
+    const source = 'createCity';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, error.message);
+    // next(error);
+  }
+});
 
-      ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
-        updatedCountry,
-      );
-      const action = 'updateCountry';
-      auditTrail.createAuditTrail(
-        auditUser,
-        action,
-        i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
-        null,
-      );
-    } catch (error) {
-      const user = await authHandler(req, res);
-      const source = 'updateCountry';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      // next(error);
-    }
-  },
-);
-
-export const deleteCountry = asyncHandler(
-  async (req: Request, res: Response) => {
+export const getAllCity = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const city = await cityModel.getAllCity();
+    return ResponseHandler.success(
+      res,
+      i18n.__('CITY_RETRIEVED_SUCCESSFULLY'),
+      city,
+    );
+  } catch (error: any) {
     const user = await authHandler(req, res);
+    const source = 'getAllCity';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, error.message);
+    // next(error);
+  }
+});
 
-    try {
-      const countryId = parseInt(req.params.id, 10);
-      const deletedCountry = await countryModel.deleteCountry(countryId);
+export const getOneCity = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id, 10);
+    const city = await cityModel.getCityById(Number(cityId));
+    return ResponseHandler.success(
+      res,
+      i18n.__('CITY_RETRIEVED_SUCCESSFULLY'),
+      city,
+    );
+  } catch (error: any) {
+    const user = await authHandler(req, res);
+    const source = 'getOneCity';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, error.message);
+    // next(error);
+  }
+});
 
-      ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_DELETED_SUCCESSFULLY'),
-        deletedCountry,
-      );
-      const action = 'deleteCountry';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
-        null,
-      );
-    } catch (error) {
-      const source = 'deleteCountry';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, (error as Error).message);
-      // next(error);
-    }
-  },
-);
+export const updateCity = asyncHandler(async (req: Request, res: Response) => {
+  const auditUser = await authHandler(req, res);
+  try {
+    const cityId = parseInt(req.params.id, 10);
+    const cityData: Partial<City> = req.body;
+    const updatedCity = await cityModel.updateCity(cityId, cityData);
+
+    ResponseHandler.success(
+      res,
+      i18n.__('CITY_UPDATED_SUCCESSFULLY'),
+      updatedCity,
+    );
+    const action = 'updateCity';
+    auditTrail.createAuditTrail(
+      auditUser,
+      action,
+      i18n.__('CITY_UPDATED_SUCCESSFULLY'),
+      null,
+    );
+  } catch (error) {
+    const user = await authHandler(req, res);
+    const source = 'updateCity';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});
+
+export const deleteCity = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authHandler(req, res);
+
+  try {
+    const cityId = parseInt(req.params.id, 10);
+    const deletedCity = await cityModel.deleteCity(cityId);
+
+    ResponseHandler.success(
+      res,
+      i18n.__('CITY_DELETED_SUCCESSFULLY'),
+      deletedCity,
+    );
+    const action = 'deleteCity';
+    auditTrail.createAuditTrail(
+      user,
+      action,
+      i18n.__('CITY_UPDATED_SUCCESSFULLY'),
+      null,
+    );
+  } catch (error) {
+    const source = 'deleteCity';
+    systemLog.createSystemLog(user, (error as Error).message, source);
+    ResponseHandler.badRequest(res, (error as Error).message);
+    // next(error);
+  }
+});

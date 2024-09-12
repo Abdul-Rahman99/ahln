@@ -93,7 +93,10 @@ class UserBoxModel {
         b.box_model_id,
         a.district,
         a.city,
+        a.street,
         a.building_number,
+        a.building_type,
+        a.floor,
         a.lat,
         a.lang,
         b.current_tablet_id

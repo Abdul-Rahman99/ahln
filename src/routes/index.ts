@@ -34,6 +34,7 @@ import pinRoute from './user/pin.route';
 import aboutUsRoute from './adminstration/about.us.route';
 import userGuideRoute from './adminstration/user.guide.route';
 import historyRoute from './user/history.route';
+import countryRoute from './adminstration/country.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -81,6 +82,7 @@ const mountRoutes = (app: Express) => {
   app.use('/api/user-guide', userGuideRoute);
 
   app.use('/api/history', historyRoute);
+  app.use('/api/country', countryRoute);
 };
 
 export default mountRoutes;

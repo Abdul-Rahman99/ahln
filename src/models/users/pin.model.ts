@@ -68,7 +68,7 @@ class PINModel {
     const connection = await db.connect();
     try {
       const sql =
-        'SELECT b.box_label, PIN.* FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1';
+        'SELECT b.box_label, PIN.* FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1 ORDER BY createdat DESC';
       const result = await connection.query(sql, [user]);
 
       return result.rows as PIN[];

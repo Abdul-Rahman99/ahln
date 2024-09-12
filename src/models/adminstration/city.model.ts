@@ -1,18 +1,18 @@
 import db from '../../config/database';
-import { Country } from '../../types/country.type';
+import { City } from '../../types/city.type';
 
-class CountryModel {
-  // create country
-  async createCountry(country: Partial<Country>): Promise<Country> {
+class CityModel {
+  // create city
+  async createCity(city: Partial<City>): Promise<City> {
     const connection = await db.connect();
 
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = ['createdAt', 'updatedAt', 'code', 'name'];
-      const sqlParams = [createdAt, updatedAt, country.code, country.name];
-      const sql = `INSERT INTO Country (${sqlFields.join(', ')}) 
+      const sqlFields = ['createdAt', 'updatedAt', 'name', 'country'];
+      const sqlParams = [createdAt, updatedAt, city.name, city.country];
+      const sql = `INSERT INTO City (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                    RETURNING *`;
       const result = await connection.query(sql, sqlParams);
@@ -25,14 +25,14 @@ class CountryModel {
     }
   }
 
-  async getAllCountry(): Promise<Country[]> {
+  async getAllCity(): Promise<City[]> {
     const connection = await db.connect();
 
     try {
-      const sql = 'SELECT * FROM Country';
+      const sql = 'SELECT * FROM City';
       const result = await connection.query(sql);
 
-      return result.rows as Country[];
+      return result.rows as City[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -40,17 +40,17 @@ class CountryModel {
     }
   }
 
-  // Get country by id
-  async getCountryById(id: number): Promise<Country> {
+  // Get city by id
+  async getCityById(id: number): Promise<City> {
     const connection = await db.connect();
     try {
       if (!id) {
         throw new Error('Please provide an ID');
       }
-      const sql = 'SELECT * FROM Country WHERE id=$1';
+      const sql = 'SELECT * FROM City WHERE id=$1';
       const result = await connection.query(sql, [id]);
 
-      return result.rows[0] as Country;
+      return result.rows[0] as City;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -58,22 +58,22 @@ class CountryModel {
     }
   }
 
-  // Update Country
-  async updateCountry(id: number, country: Partial<Country>): Promise<Country> {
+  // Update City
+  async updateCity(id: number, city: Partial<City>): Promise<City> {
     const connection = await db.connect();
     try {
       const updatedAt = new Date();
 
-      const updateFields = Object.keys(country)
+      const updateFields = Object.keys(city)
         .map((key, index) => `${key}=$${index + 2}`)
         .join(', ');
 
-      const sql = `UPDATE Country SET ${updateFields}, updatedAt=$${Object.keys(country).length + 2} WHERE id=$1 RETURNING *`;
+      const sql = `UPDATE City SET ${updateFields}, updatedAt=$${Object.keys(city).length + 2} WHERE id=$1 RETURNING *`;
 
-      const params = [id, ...Object.values(country), updatedAt];
+      const params = [id, ...Object.values(city), updatedAt];
       const result = await connection.query(sql, params);
 
-      return result.rows[0] as Country;
+      return result.rows[0] as City;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -82,7 +82,7 @@ class CountryModel {
   }
 
   // Delete Mobile Page
-  async deleteCountry(id: number): Promise<Country> {
+  async deleteCity(id: number): Promise<City> {
     const connection = await db.connect();
 
     try {
@@ -91,7 +91,7 @@ class CountryModel {
           'ID cannot be null. Please provide a valid Mobile Page ID.',
         );
       }
-      const sql = `DELETE FROM Country WHERE id=$1 RETURNING *`;
+      const sql = `DELETE FROM City WHERE id=$1 RETURNING *`;
 
       const result = await connection.query(sql, [id]);
 
@@ -99,7 +99,7 @@ class CountryModel {
         throw new Error(`Could not find Mobile Page with ID ${id}`);
       }
 
-      return result.rows[0] as Country;
+      return result.rows[0] as City;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -107,14 +107,14 @@ class CountryModel {
     }
   }
 
-  // check if country exists
-  async checkIfCountryExists(name: string): Promise<boolean> {
+  // check if city exists
+  async checkIfCityExists(name: string): Promise<boolean> {
     const connection = await db.connect();
     try {
       if (!name) {
-        throw new Error('Please provide a valid Country Name');
+        throw new Error('Please provide a valid City Name');
       }
-      const sql = 'SELECT * FROM Country WHERE name=$1';
+      const sql = 'SELECT * FROM City WHERE name=$1';
       const result = await connection.query(sql, [name]);
       if (result.rows.length === 0) {
         return false;
@@ -128,4 +128,4 @@ class CountryModel {
   }
 }
 
-export default CountryModel;
+export default CityModel;

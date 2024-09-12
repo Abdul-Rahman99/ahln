@@ -323,6 +323,18 @@ class DeliveryPackageModel {
   ): Promise<DeliveryPackage[]> {
     const connection = await db.connect();
     try {
+      if (!fromBoxId || !toBoxId) {
+        throw new Error(
+          'Box ID cannot be null. Please provide a valid Box ID.',
+        );
+      }
+
+      if (fromBoxId === toBoxId) {
+        throw new Error(
+          'Box ID cannot be the same. Please provide a valid Box ID.',
+        );
+      }
+
       const result = [];
       const sql = `SELECT * FROM Delivery_Package WHERE box_id = $1 AND customer_id = $2`;
       const params = [fromBoxId, userId];

@@ -24,7 +24,7 @@ router.post(
   removePermissionFromUser,
 );
 router.get(
-  '/:userId',
+  '/get-one/:userId',
   verifyToken,
   authorize(['read_user_permission']),
   getPermissionsByUser,

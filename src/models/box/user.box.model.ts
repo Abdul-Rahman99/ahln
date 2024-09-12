@@ -94,6 +94,8 @@ class UserBoxModel {
         a.district,
         a.city,
         a.building_number,
+        a.lat,
+        a.lang,
         b.current_tablet_id
       FROM
         User_Box ub
@@ -321,8 +323,8 @@ class UserBoxModel {
   async checkUserBox(user: string, boxId: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-      if (!user) {
-        throw new Error('Please provide a userId');
+      if (!user && !boxId) {
+        throw new Error('Please provide a userId and boxId');
       }
       const sql = 'SELECT id FROM User_Box WHERE user_id=$1 AND box_id=$2';
       const result = await connection.query(sql, [user, boxId]);

@@ -419,6 +419,13 @@ export const transferBoxOwnership = asyncHandler(
         );
       }
 
+      const userExist = await userModel.findByEmail(email);
+      if (!userExist) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
+      }
+
       const updatedUserBox = await userBoxModel.transferBoxOwnership(
         user,
         boxId,

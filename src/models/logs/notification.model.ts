@@ -76,10 +76,19 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM Notification WHERE user_id=$1`;
+      const sql = `SELECT * FROM Notification WHERE user_id=$1 ORDER BY createdat DESC`;
       const result = await connection.query(sql, [user]);
 
-      return result.rows as Notification[];
+      const resultRows = result.rows.map((row) => {
+        return {
+          ...row,
+          image: row.image
+            ? `${process.env.BASE_URL}/uploads/${row.image}`
+            : null,
+        };
+      });
+
+      return resultRows as Notification[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

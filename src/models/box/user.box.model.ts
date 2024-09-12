@@ -419,6 +419,23 @@ class UserBoxModel {
       connection.release();
     }
   }
+
+  async getUserIdByBoxId(boxId: string): Promise<string> {
+    const connection = await db.connect();
+
+    try {
+      const userResult = await connection.query(
+        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+        [boxId],
+      );
+
+      return userResult.rows[0].user_id;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default UserBoxModel;

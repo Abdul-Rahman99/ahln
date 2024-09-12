@@ -14,7 +14,9 @@ import UserModel from '../../models/users/user.model';
 import moment from 'moment';
 import fs from 'fs';
 import path from 'path';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBoxModel = new UserBoxModel();
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const auditTrail = new AuditTrailModel();
@@ -27,6 +29,8 @@ export const uploadBoxImage = asyncHandler(
     uploadSingleImage('image')(req, res, async (err: any) => {
       const user = await authHandler(req, res);
 
+      const { boxId, deliveryPackageId } = req.body;
+      const userId = await userBoxModel.getUserIdByBoxId(boxId);
       if (err) {
         const source = 'uploadBoxImage';
         systemLog.createSystemLog(user, (err as Error).message, source);
@@ -38,7 +42,6 @@ export const uploadBoxImage = asyncHandler(
       //   return ResponseHandler.badRequest(res, i18n.__('NO_FILE_PROVIDED'));
       // }
 
-      const { boxId, deliveryPackageId } = req.body;
       const base64Image = req.body.image;
 
       try {
@@ -59,13 +62,13 @@ export const uploadBoxImage = asyncHandler(
           'uploadBoxImage',
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           imageName,
-          user,
+          userId,
           boxId,
         );
 
-        const action = 'IMAGE_UPLOADED_SUCCESSFULLY';
+        const action = i18n.__('IMAGE_UPLOADED_SUCCESSFULLY');
         auditTrail.createAuditTrail(
-          user,
+          userId,
           action,
           `${process.env.BASE_URL}/uploads/${imageName}`,
           boxId,
@@ -90,7 +93,7 @@ export const uploadBoxImage = asyncHandler(
         } catch (error: any) {
           const source = 'updateRelativeCustomer';
           systemLog.createSystemLog(
-            user,
+            userId,
             i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
             source,
           );
@@ -103,7 +106,7 @@ export const uploadBoxImage = asyncHandler(
         );
       } catch (error: any) {
         const source = 'uploadBoxImage';
-        systemLog.createSystemLog(user, (error as Error).message, source);
+        systemLog.createSystemLog(userId, (error as Error).message, source);
         ResponseHandler.badRequest(res, error.message);
         // next(error);
       }

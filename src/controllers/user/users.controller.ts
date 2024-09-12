@@ -6,9 +6,9 @@ import { User } from '../../types/user.type';
 import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import authHandler from '../../utils/authHandler';
-import { uploadSingleImage } from '../../middlewares/uploadSingleImage';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import { uploadFormData } from '../../middlewares/uploadImageFormData';
 
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
@@ -125,7 +125,7 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
   const userId = req.params.userId;
-  uploadSingleImage('image')(req, res, async (err: any) => {
+  uploadFormData('image')(req, res, async (err: any) => {
     if (err) {
       const source = 'updateUser';
       systemLog.createSystemLog(user, 'Image Not Uploaded to user', source);

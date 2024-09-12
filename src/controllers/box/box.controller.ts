@@ -7,6 +7,7 @@ import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import { Address } from '../../types/address.type';
 
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
@@ -222,6 +223,54 @@ export const resetTabletId = asyncHandler(
       );
     } catch (error) {
       const source = 'resetTabletId';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, (error as Error).message);
+      // next(error);
+    }
+  },
+);
+
+export const updateBoxAndAddress = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+
+    try {
+      const { boxId, boxLabel } = req.body;
+      const updatedAddress: Partial<Address> = req.body;
+
+      if (!boxId) {
+        return ResponseHandler.badRequest(res, i18n.__('BOX_ID_REQUIRED'));
+      }
+
+      const boxRelatedToUser = await boxModel.getOneByUser(boxId, user);
+
+      if (!boxRelatedToUser) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_NOT_RELATED_TO_USER'),
+        );
+      }
+
+      const updatedBox = await boxModel.updateBoxAndAddress(
+        boxId,
+        boxLabel,
+        updatedAddress,
+      );
+
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+        updatedBox,
+      );
+      const action = 'updateBoxAndAddress';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+        null,
+      );
+    } catch (error) {
+      const source = 'updateBoxAndAddress';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
       // next(error);

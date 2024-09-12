@@ -9,6 +9,7 @@ import {
   getBoxByTabletInfo,
   assignTabletToBox,
   resetTabletId,
+  updateBoxAndAddress,
 } from '../../controllers/box/box.controller';
 
 import {
@@ -16,6 +17,7 @@ import {
   deleteBoxValidation,
   getBoxByIdValidation,
   getBoxGenerationByIdValidation,
+  updateBoxAndAddressValidation,
   updateBoxValidation,
 } from '../../validation/box/box.validation';
 
@@ -81,4 +83,13 @@ router.post(
   authorize(['create_tablet']),
   resetTabletId,
 );
+
+router.post(
+  '/update-box-label-and-address',
+  verifyToken,
+  authorize(['update_box']),
+  updateBoxAndAddressValidation,
+  updateBoxAndAddress,
+);
+
 export default router;

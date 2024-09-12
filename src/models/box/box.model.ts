@@ -3,6 +3,7 @@ import { Box } from '../../types/box.type';
 import db from '../../config/database';
 import pool from '../../config/database';
 import BoxLockerModel from '../../models/box/box.locker.model';
+import { Address } from '../../types/address.type';
 
 class BoxModel {
   private boxLockerModel = new BoxLockerModel();
@@ -413,6 +414,49 @@ class BoxModel {
       ]);
 
       return result.rows[0]; // Return the updated box data
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // update some fields in the box and the address together
+  async updateBoxAndAddress(
+    id: string,
+    boxLabel: string,
+    addressData: Partial<Address>,
+  ): Promise<Array<any>> {
+    const connection = await db.connect();
+    try {
+      if (!id) {
+        throw new Error('Please provide a Box ID');
+      }
+
+      const updatedAt = new Date();
+
+      const boxLabelSql = `UPDATE box SET box_label = $1, updatedAt = $2 WHERE id = $3 RETURNING *`;
+      const boxLabelResult = await connection.query(boxLabelSql, [
+        boxLabel,
+        updatedAt,
+        id,
+      ]);
+
+      const addressSql = `UPDATE address SET ${Object.keys(addressData)
+        .map((key, index) => `${key}=$${index + 3}`)
+        .join(', ')} WHERE id = $1 RETURNING *`;
+      const addressResult = await connection.query(addressSql, [
+        id,
+        ...Object.values(addressData),
+        updatedAt,
+      ]);
+
+      const result = {
+        ...boxLabelResult.rows[0],
+        ...addressResult.rows[0],
+      };
+
+      return result.rows[0] as Array<any>;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

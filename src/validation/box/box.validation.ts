@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, header, param } from 'express-validator';
 import i18n from '../../config/i18n';
 import validatorMiddleware from '../../middlewares/validatorMiddleware';
 
@@ -64,5 +64,30 @@ export const getBoxGenerationByIdValidation = [
   param('generationId')
     .isString()
     .withMessage(i18n.__('INVALID_BOX_GENERATION_ID')),
+  validatorMiddleware,
+];
+
+export const updateBoxAndAddressValidation = [
+  header('authorization')
+    .notEmpty()
+    .withMessage(i18n.__('AUTH_HEADER_REQUIRED'))
+    .custom((value, { req }) => {
+      if (!value.startsWith('Bearer ')) {
+        throw new Error(i18n.__('AUTH_HEADER_INVALID'));
+      }
+      const token = value.split(' ')[1];
+      // Perform further validation on the token if necessary
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any).token = token;
+      return true;
+    }),
+  body('box_label')
+    .optional()
+    .notEmpty()
+    .withMessage(i18n.__('BOX_LABEL_REQUIRED')),
+  body('country').optional().withMessage(i18n.__('COUNTRY_ID_REQUIRED')),
+  body('city').optional().withMessage(i18n.__('CITY_ID_REQUIRED')),
+  body('district').optional().withMessage(i18n.__('DISTRICT_ID_REQUIRED')),
+  body('street').optional().withMessage(i18n.__('STREET_ID_REQUIRED')),
   validatorMiddleware,
 ];

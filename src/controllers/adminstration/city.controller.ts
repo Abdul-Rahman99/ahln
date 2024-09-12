@@ -10,7 +10,10 @@ import SystemLogModel from '../../models/logs/system.log.model';
 const systemLog = new SystemLogModel();
 const cityModel = new CityModel();
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import CountryModel from '../../models/adminstration/country.model';
+
 const auditTrail = new AuditTrailModel();
+const countryModel = new CountryModel();
 
 export const createCity = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
@@ -23,6 +26,13 @@ export const createCity = asyncHandler(async (req: Request, res: Response) => {
       const source = 'createCity';
       systemLog.createSystemLog(user, 'City Already Exists', source);
       return ResponseHandler.badRequest(res, i18n.__('CITY_ALREADY_EXISTS'));
+    }
+
+    const countryExists = await countryModel.getCountryById(newCity.country);
+    if (!countryExists) {
+      const source = 'createCity';
+      systemLog.createSystemLog(user, 'Country Not Found', source);
+      return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_FOUND'));
     }
 
     const createdCity = await cityModel.createCity(newCity);

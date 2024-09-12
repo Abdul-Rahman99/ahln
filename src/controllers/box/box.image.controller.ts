@@ -63,11 +63,11 @@ export const uploadBoxImage = asyncHandler(
           boxId,
         );
 
-        const action = 'uploadSingleImage';
+        const action = 'IMAGE_UPLOADED_SUCCESSFULLY';
         auditTrail.createAuditTrail(
           user,
           action,
-          i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
+          `${process.env.BASE_URL}/uploads/${imageName}`,
           boxId,
         );
 

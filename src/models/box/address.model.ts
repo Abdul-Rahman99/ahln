@@ -13,7 +13,6 @@ class AddressModel {
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
-
       const sqlFields = [
         'createdAt',
         'updatedAt',

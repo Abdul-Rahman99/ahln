@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { UserBox } from '../../types/user.box.type';
-import { Address } from '../../types/address.type';
 import UserBoxModel from '../../models/box/user.box.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
@@ -10,7 +9,6 @@ import UserModel from '../../models/users/user.model';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import BoxModel from '../../models/box/box.model';
 import authHandler from '../../utils/authHandler';
-import AddressModel from '../../models/box/address.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
@@ -22,7 +20,6 @@ const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
-const addressModel = new AddressModel();
 const systemLog = new SystemLogModel();
 const auditTrail = new AuditTrailModel();
 
@@ -238,30 +235,41 @@ export const userAssignBoxToHimself = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { serialNumber } = req.body;
-      // create address
-      const newAddress: Address = req.body;
-
-      const result = await addressModel.createAddress(newAddress, user);
-
-      const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
-        user,
-        serialNumber,
-        result.id,
-      );
+      const { serialNumber, country_id, city_id, district, street } = req.body;
+      let assignedUserBox;
+      try {
+        assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
+          user,
+          serialNumber,
+          parseInt(country_id, 10),
+          parseInt(city_id, 10),
+          district,
+          street,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(user, (error as Error).message, source);
+        return ResponseHandler.badRequest(res, error.message);
+        // next(error);
+      }
       const boxId = await boxModel.boxExistsSerialNumber(serialNumber);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        assignedUserBox,
-      );
-      notificationModel.createNotification(
-        'userAssignBoxToHimself',
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        null,
-        user,
-        boxId as unknown as string,
-      );
+
+      try {
+        notificationModel.createNotification(
+          'userAssignBoxToHimself',
+          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+          null,
+          user,
+          boxId.id as unknown as string,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
         notificationModel.pushNotification(
@@ -278,12 +286,26 @@ export const userAssignBoxToHimself = asyncHandler(
           source,
         );
       }
-      const action = 'userAssignBoxToHimself';
-      auditTrail.createAuditTrail(
-        user,
-        action,
+      try {
+        const action = 'userAssignBoxToHimself';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+          boxId.id as unknown as string,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_AUDIT_TRAIL', ' ', error.message),
+          source,
+        );
+      }
+      ResponseHandler.success(
+        res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        boxId as unknown as string,
+        assignedUserBox,
       );
     } catch (error: any) {
       const source = 'userAssignBoxToHimself';

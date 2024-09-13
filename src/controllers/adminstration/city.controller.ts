@@ -28,7 +28,7 @@ export const createCity = asyncHandler(async (req: Request, res: Response) => {
       return ResponseHandler.badRequest(res, i18n.__('CITY_ALREADY_EXISTS'));
     }
 
-    const countryExists = await countryModel.getCountryById(newCity.country);
+    const countryExists = await countryModel.getOne(newCity.country);
     if (!countryExists) {
       const source = 'createCity';
       systemLog.createSystemLog(user, 'Country Not Found', source);

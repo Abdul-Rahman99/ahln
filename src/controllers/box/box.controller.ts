@@ -7,7 +7,11 @@ import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
+import CountryModel from '../../models/adminstration/country.model';
+import CityModel from '../../models/adminstration/city.model';
 
+const countryModel = new CountryModel();
+const cityModel = new CityModel();
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const boxModel = new BoxModel();
@@ -248,6 +252,17 @@ export const updateBoxAndAddress = asyncHandler(
           res,
           i18n.__('BOX_NOT_RELATED_TO_USER'),
         );
+      }
+
+      // check if the city and country exist
+      const countryExist = await countryModel.getOne(country);
+      if (!countryExist) {
+        return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_EXIST'));
+      }
+
+      const cityExist = await cityModel.getCityById(city);
+      if (!cityExist) {
+        return ResponseHandler.badRequest(res, i18n.__('CITY_NOT_EXIST'));
       }
 
       const updatedBox = await boxModel.updateBoxAndAddress(

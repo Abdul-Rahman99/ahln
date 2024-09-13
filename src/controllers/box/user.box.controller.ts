@@ -405,13 +405,13 @@ export const transferBoxOwnership = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
     const { boxId, email } = req.body;
-    const newUserId = await userModel.findByEmail(email);
-    if (!newUserId) {
-      const source = 'transferBoxOwnership';
-      systemLog.createSystemLog(user, 'User Does Not Exist', source);
-      return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
-    }
     try {
+      const newUserId = await userModel.findByEmail(email);
+      if (!newUserId) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
+      }
       // check if the boxId related to the user exists
       const boxExist = await boxModel.getOneByUser(user, boxId);
       if (!boxExist) {

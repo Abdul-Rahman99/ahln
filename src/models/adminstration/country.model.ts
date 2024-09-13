@@ -59,6 +59,24 @@ class CountryModel {
     }
   }
 
+  // Get country by id
+  async getOne(id: number): Promise<Country> {
+    const connection = await db.connect();
+    try {
+      if (!id) {
+        throw new Error('Please provide an ID');
+      }
+      const sql = 'SELECT * FROM Country WHERE id=$1';
+      const result = await connection.query(sql, [id]);
+
+      return result.rows[0] as Country;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // Update Country
   async updateCountry(id: number, country: Partial<Country>): Promise<Country> {
     const connection = await db.connect();

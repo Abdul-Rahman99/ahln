@@ -424,8 +424,8 @@ class BoxModel {
   async updateBoxAndAddress(
     id: string,
     boxLabel: string,
-    country: string,
-    city: string,
+    country: number,
+    city: number,
     district: string,
     street: string,
   ): Promise<Array<any>> {
@@ -444,13 +444,13 @@ class BoxModel {
         id,
       ]);
 
-      const addressBoxSelectSql = `SELECT * FROM address WHERE id = $1`;
+      const addressBoxSelectSql = `SELECT * FROM address RIGHT JOIN Country ON address.country_id = Country.id WHERE address.id = $1`;
       const addressBoxResult = await connection.query(addressBoxSelectSql, [
         boxLabelResult.rows[0].address_id,
       ]);
 
       if (country || city || district || street) {
-        const addressUpdateSql = `UPDATE address SET country = $1, city = $2, district = $3, street = $4, updatedAt = $5 WHERE id = $6 RETURNING *`;
+        const addressUpdateSql = `UPDATE address SET country_id = $1, city_id = $2, district = $3, street = $4, updatedAt = $5 WHERE id = $6 RETURNING *`;
         const addressUpdateResult = await connection.query(addressUpdateSql, [
           country || addressBoxResult.rows[0].country,
           city || addressBoxResult.rows[0].city,

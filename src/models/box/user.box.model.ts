@@ -100,11 +100,15 @@ class UserBoxModel {
         a.floor,
         a.lat,
         a.lang,
-        b.current_tablet_id
+        b.current_tablet_id,
+        c.name AS country_name,
+        ci.name AS city_name
       FROM
         User_Box ub
         INNER JOIN Box b ON ub.box_id = b.id
         LEFT JOIN Address a ON b.address_id = a.id
+        LEFT JOIN Country c ON a.country_id = c.id
+        LEFT JOIN City ci ON a.city_id = ci.id
       WHERE
         ub.user_id = $1
     `;

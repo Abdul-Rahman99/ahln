@@ -11,7 +11,9 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import UserModel from '../../models/users/user.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBox = new UserBoxModel();
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -29,6 +31,17 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       const source = 'createPin';
       systemLog.createSystemLog(user, 'Box Id Invalid', source);
       return ResponseHandler.badRequest(res, i18n.__('BOX_ID_INVALID'));
+    }
+
+    const boxRelatedToUser = await userBox.checkUserBox(user, newPin.box_id);
+
+    if (!boxRelatedToUser) {
+      const source = 'createPin';
+      systemLog.createSystemLog(user, 'Box Id Invalid', source);
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('BOX_NOT_RELATED_TO_USER'),
+      );
     }
 
     const passcodeExist = await pinModel.getOnePinByPasscodeAndBox(

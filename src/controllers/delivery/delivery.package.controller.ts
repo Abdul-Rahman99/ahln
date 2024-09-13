@@ -314,6 +314,21 @@ export const transferDeliveryPackages = asyncHandler(
           toBoxId,
           user,
         );
+
+      notificationModel.createNotification(
+        'transferDeliveryPackages',
+        i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),
+        null,
+        user,
+        toBoxId,
+      );
+      const action = 'transferDeliveryPackages';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),
+        fromBoxId,
+      );
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),

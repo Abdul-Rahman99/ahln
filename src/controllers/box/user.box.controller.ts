@@ -423,6 +423,7 @@ export const transferBoxOwnership = asyncHandler(
         );
       }
 
+      // check if the user exists
       const userExist = await userModel.findByEmail(email);
       if (!userExist) {
         const source = 'transferBoxOwnership';
@@ -430,22 +431,56 @@ export const transferBoxOwnership = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
       }
 
+      // check if the user is already the owner of the box
       const updatedUserBox = await userBoxModel.transferBoxOwnership(
         userExist as unknown as string,
         boxId,
         newUserId?.id as string,
       );
+      const action = 'transferBoxOwnership';
+      auditTrail.createAuditTrail(
+        newUserId?.id as string,
+        action,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        boxId,
+      );
+
+      notificationModel.createNotification(
+        'transferBoxOwnership',
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        null,
+        newUserId?.id as string,
+        boxId,
+      );
+
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      const fcmTokenNewUser = await userDevicesModel.getFcmTokenDevicesByUser(
+        newUserId.id as string,
+      );
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        );
+        notificationModel.pushNotification(
+          fcmTokenNewUser,
+          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.success(
         res,
         i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
         updatedUserBox,
-      );
-      const action = 'transferBoxOwnership';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
-        boxId,
       );
     } catch (error: any) {
       const source = 'transferBoxOwnership';

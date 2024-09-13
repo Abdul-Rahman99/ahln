@@ -74,7 +74,7 @@ export const getOneCountry = asyncHandler(
   async (req: Request, res: Response) => {
     try {
       const countryId = parseInt(req.params.id, 10);
-      const country = await countryModel.getCountryById(Number(countryId));
+      const country = await countryModel.getCountryCites(Number(countryId));
       return ResponseHandler.success(
         res,
         i18n.__('COUNTRY_RETRIEVED_SUCCESSFULLY'),

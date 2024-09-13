@@ -41,16 +41,17 @@ class CountryModel {
   }
 
   // Get country by id
-  async getCountryById(id: number): Promise<Country> {
+  async getCountryCites(id: number): Promise<Country[]> {
     const connection = await db.connect();
     try {
       if (!id) {
         throw new Error('Please provide an ID');
       }
-      const sql = 'SELECT * FROM Country WHERE id=$1';
+      const sql =
+        'SELECT City.* FROM Country INNER JOIN City ON Country.id = City.country WHERE Country.id=$1';
       const result = await connection.query(sql, [id]);
 
-      return result.rows[0] as Country;
+      return result.rows;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

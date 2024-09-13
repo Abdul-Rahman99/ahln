@@ -457,6 +457,11 @@ export const transferBoxOwnership = asyncHandler(
       const fcmTokenNewUser = await userDevicesModel.getFcmTokenDevicesByUser(
         newUserId.id as string,
       );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        updatedUserBox,
+      );
       try {
         notificationModel.pushNotification(
           fcmToken,
@@ -477,11 +482,6 @@ export const transferBoxOwnership = asyncHandler(
           source,
         );
       }
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
     } catch (error: any) {
       const source = 'transferBoxOwnership';
       systemLog.createSystemLog(user, (error as Error).message, source);

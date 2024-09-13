@@ -17,8 +17,6 @@ class AddressModel {
       const sqlFields = [
         'createdAt',
         'updatedAt',
-        'country',
-        'city',
         'district',
         'street',
         'building_type',
@@ -28,12 +26,12 @@ class AddressModel {
         'user_id',
         'lat',
         'lang',
+        'country_id',
+        'city_id',
       ];
       const sqlParams = [
         createdAt,
         updatedAt,
-        address.country,
-        address.city,
         address.district,
         address.street,
         address.building_type,
@@ -43,11 +41,13 @@ class AddressModel {
         user,
         address.lat,
         address.lang,
+        address.country_id,
+        address.city_id,
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number, user_id, lat, lang`;
+                  RETURNING id, createdAt, updatedAt, district, street, building_type, building_number, floor, apartment_number, user_id, lat, lang, country_id, city_id`;
 
       const result = await connection.query(sql, sqlParams);
 

@@ -2,8 +2,7 @@ export interface Address {
   id: number;
   createdAt: Date;
   updatedAt: Date;
-  country: string;
-  city: string;
+
   district: string;
   street: string;
   building_type: string;
@@ -13,4 +12,6 @@ export interface Address {
   user_id?: string;
   lat?: number;
   lang?: number;
+  country_id: number;
+  city_id: number;
 }

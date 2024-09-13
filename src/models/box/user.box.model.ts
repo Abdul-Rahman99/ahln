@@ -92,7 +92,8 @@ class UserBoxModel {
         b.box_label AS name,
         b.box_model_id,
         a.district,
-        a.city,
+        a.city_id,
+        a.country_id,
         a.street,
         a.building_number,
         a.building_type,
@@ -329,7 +330,7 @@ class UserBoxModel {
       if (!user && !boxId) {
         throw new Error('Please provide a userId and boxId');
       }
-      const sql = 'SELECT id FROM User_Box WHERE user_id=$1 AND box_id=$2';
+      const sql = 'SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2';
       const result = await connection.query(sql, [user, boxId]);
 
       if (result.rows.length > 0) {
@@ -403,11 +404,6 @@ class UserBoxModel {
   ): Promise<UserBox> {
     const connection = await db.connect();
     try {
-      const checkUserBox = await this.checkUserBox(userId, boxId);
-
-      if (!checkUserBox) {
-        throw new Error(`You don't have enough permissions to do that`);
-      }
       const sql = `DELETE FROM User_Box WHERE user_id = $1 AND box_id = $2`;
       await connection.query(sql, [userId, boxId]);
 

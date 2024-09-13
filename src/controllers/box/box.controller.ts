@@ -9,7 +9,9 @@ import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import CountryModel from '../../models/adminstration/country.model';
 import CityModel from '../../models/adminstration/city.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBoxModel = new UserBoxModel();
 const countryModel = new CountryModel();
 const cityModel = new CityModel();
 const auditTrail = new AuditTrailModel();
@@ -245,7 +247,7 @@ export const updateBoxAndAddress = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('BOX_ID_REQUIRED'));
       }
 
-      const boxRelatedToUser = await boxModel.getOneByUser(boxId, user);
+      const boxRelatedToUser = await userBoxModel.checkUserBox(user, boxId);
 
       if (!boxRelatedToUser) {
         return ResponseHandler.badRequest(
@@ -264,7 +266,6 @@ export const updateBoxAndAddress = asyncHandler(
       if (!cityExist) {
         return ResponseHandler.badRequest(res, i18n.__('CITY_NOT_EXIST'));
       }
-
       const updatedBox = await boxModel.updateBoxAndAddress(
         boxId,
         boxLabel,

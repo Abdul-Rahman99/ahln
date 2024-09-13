@@ -194,6 +194,7 @@ class BoxModel {
     }
   }
 
+
   // Get specific box
   async boxExistsSerialNumber(id: string): Promise<Box> {
     const connection = await db.connect();
@@ -422,7 +423,7 @@ class BoxModel {
 
   // update some fields in the box and the address together
   async updateBoxAndAddress(
-    id: string,
+    boxId: string,
     boxLabel: string,
     country: number,
     city: number,
@@ -431,7 +432,8 @@ class BoxModel {
   ): Promise<Array<any>> {
     const connection = await db.connect();
     try {
-      if (!id) {
+      
+      if (!boxId) {
         throw new Error('Please provide a Box ID');
       }
 
@@ -441,8 +443,9 @@ class BoxModel {
       const boxLabelResult = await connection.query(boxLabelSql, [
         boxLabel,
         updatedAt,
-        id,
+        boxId,
       ]);
+      console.log(boxLabelResult.rows[0]);
 
       const addressBoxSelectSql = `SELECT * FROM address RIGHT JOIN Country ON address.country_id = Country.id WHERE address.id = $1`;
       const addressBoxResult = await connection.query(addressBoxSelectSql, [

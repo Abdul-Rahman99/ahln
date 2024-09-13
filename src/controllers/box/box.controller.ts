@@ -7,7 +7,6 @@ import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
-import { Address } from '../../types/address.type';
 
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
@@ -235,8 +234,8 @@ export const updateBoxAndAddress = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { boxId, boxLabel } = req.body;
-      const updatedAddress: Partial<Address> = req.body;
+      const boxId = req.params.id;
+      const { boxLabel, country, city, district, street } = req.body;
 
       if (!boxId) {
         return ResponseHandler.badRequest(res, i18n.__('BOX_ID_REQUIRED'));
@@ -254,20 +253,23 @@ export const updateBoxAndAddress = asyncHandler(
       const updatedBox = await boxModel.updateBoxAndAddress(
         boxId,
         boxLabel,
-        updatedAddress,
+        country,
+        city,
+        district,
+        street,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
-        updatedBox,
-      );
       const action = 'updateBoxAndAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+        updatedBox,
       );
     } catch (error) {
       const source = 'updateBoxAndAddress';

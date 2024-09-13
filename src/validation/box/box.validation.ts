@@ -81,7 +81,8 @@ export const updateBoxAndAddressValidation = [
       (req as any).token = token;
       return true;
     }),
-  body('box_label')
+  param('id').isString().withMessage(i18n.__('INVALID_BOX_ID')),
+  body('boxLabel')
     .optional()
     .notEmpty()
     .withMessage(i18n.__('BOX_LABEL_REQUIRED')),

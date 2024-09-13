@@ -3,7 +3,6 @@ import { Box } from '../../types/box.type';
 import db from '../../config/database';
 import pool from '../../config/database';
 import BoxLockerModel from '../../models/box/box.locker.model';
-import { Address } from '../../types/address.type';
 
 class BoxModel {
   private boxLockerModel = new BoxLockerModel();
@@ -425,7 +424,10 @@ class BoxModel {
   async updateBoxAndAddress(
     id: string,
     boxLabel: string,
-    addressData: Partial<Address>,
+    country: string,
+    city: string,
+    district: string,
+    street: string,
   ): Promise<Array<any>> {
     const connection = await db.connect();
     try {
@@ -442,21 +444,58 @@ class BoxModel {
         id,
       ]);
 
-      const addressSql = `UPDATE address SET ${Object.keys(addressData)
-        .map((key, index) => `${key}=$${index + 3}`)
-        .join(', ')} WHERE id = $1 RETURNING *`;
-      const addressResult = await connection.query(addressSql, [
-        id,
-        ...Object.values(addressData),
-        updatedAt,
+      const addressBoxSelectSql = `SELECT * FROM address WHERE id = $1`;
+      const addressBoxResult = await connection.query(addressBoxSelectSql, [
+        boxLabelResult.rows[0].address_id,
       ]);
 
-      const result = {
-        ...boxLabelResult.rows[0],
-        ...addressResult.rows[0],
-      };
+      if (country || city || district || street) {
+        const addressUpdateSql = `UPDATE address SET country = $1, city = $2, district = $3, street = $4, updatedAt = $5 WHERE id = $6 RETURNING *`;
+        const addressUpdateResult = await connection.query(addressUpdateSql, [
+          country || addressBoxResult.rows[0].country,
+          city || addressBoxResult.rows[0].city,
+          district || addressBoxResult.rows[0].district,
+          street || addressBoxResult.rows[0].street,
+          updatedAt,
+          boxLabelResult.rows[0].address_id,
+        ]);
 
-      return result.rows[0] as Array<any>;
+        const returnedBox = {
+          id: boxLabelResult.rows[0].id,
+          serial_number: boxLabelResult.rows[0].serial_number,
+          name: boxLabelResult.rows[0].box_label,
+          box_model_id: boxLabelResult.rows[0].box_model_id,
+          current_tablet_id: boxLabelResult.rows[0].current_tablet_id,
+
+          district: addressUpdateResult.rows[0].district,
+          city: addressUpdateResult.rows[0].city,
+          street: addressUpdateResult.rows[0].street,
+          building_number: addressUpdateResult.rows[0].building_number,
+          building_type: addressUpdateResult.rows[0].building_type,
+          floor: addressUpdateResult.rows[0].floor,
+          lat: addressUpdateResult.rows[0].lat,
+          lang: addressUpdateResult.rows[0].lang,
+        };
+        return [returnedBox];
+      }
+
+      return [
+        {
+          id: boxLabelResult.rows[0].id,
+          serial_number: boxLabelResult.rows[0].serial_number,
+          name: boxLabelResult.rows[0].box_label,
+          box_model_id: boxLabelResult.rows[0].box_model_id,
+          current_tablet_id: boxLabelResult.rows[0].current_tablet_id,
+          district: addressBoxResult.rows[0].district,
+          city: addressBoxResult.rows[0].city,
+          street: addressBoxResult.rows[0].street,
+          building_number: addressBoxResult.rows[0].building_number,
+          building_type: addressBoxResult.rows[0].building_type,
+          floor: addressBoxResult.rows[0].floor,
+          lat: addressBoxResult.rows[0].lat,
+          lang: addressBoxResult.rows[0].lang,
+        },
+      ];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

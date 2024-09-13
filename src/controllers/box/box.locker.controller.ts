@@ -21,17 +21,18 @@ export const createBoxLocker = asyncHandler(
       const newBoxLocker: BoxLocker = req.body;
       const createdBoxLocker =
         await boxLockerModel.createBoxLocker(newBoxLocker);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
-        createdBoxLocker,
-      );
+
       const action = 'createBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
         newBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
+        createdBoxLocker,
       );
     } catch (error: any) {
       const source = 'createBoxLocker';
@@ -93,17 +94,17 @@ export const updateBoxLocker = asyncHandler(
         boxLockerData,
         String(boxLockerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
-        updatedBoxLocker,
-      );
       const action = 'updateBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
         updatedBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
+        updatedBoxLocker,
       );
     } catch (error: any) {
       const source = 'updateBoxLocker';
@@ -123,17 +124,18 @@ export const deleteBoxLocker = asyncHandler(
       const deletedBoxLocker = await boxLockerModel.deleteOne(
         String(boxLockerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
-        deletedBoxLocker,
-      );
+
       const action = 'deleteBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
         deletedBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
+        deletedBoxLocker,
       );
     } catch (error: any) {
       const source = 'deleteBoxLocker';

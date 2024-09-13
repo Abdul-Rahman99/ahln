@@ -84,10 +84,9 @@ router.post(
   resetTabletId,
 );
 
-router.post(
-  '/update-box-label-and-address',
+router.put(
+  '/update-box-label-and-address/:id',
   verifyToken,
-  authorize(['update_box']),
   updateBoxAndAddressValidation,
   updateBoxAndAddress,
 );

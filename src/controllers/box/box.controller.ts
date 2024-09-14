@@ -241,7 +241,7 @@ export const updateBoxAndAddress = asyncHandler(
 
     try {
       const boxId = req.params.id;
-      const { boxLabel, country, city, district, street } = req.body;
+      const { boxLabel, country_id, city_id, district, street } = req.body;
 
       if (!boxId) {
         return ResponseHandler.badRequest(res, i18n.__('BOX_ID_REQUIRED'));
@@ -257,20 +257,20 @@ export const updateBoxAndAddress = asyncHandler(
       }
 
       // check if the city and country exist
-      const countryExist = await countryModel.getOne(country);
+      const countryExist = await countryModel.getOne(country_id);
       if (!countryExist) {
         return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_EXIST'));
       }
 
-      const cityExist = await cityModel.getCityById(city);
+      const cityExist = await cityModel.getCityById(city_id);
       if (!cityExist) {
         return ResponseHandler.badRequest(res, i18n.__('CITY_NOT_EXIST'));
       }
       const updatedBox = await boxModel.updateBoxAndAddress(
         boxId,
         boxLabel,
-        country,
-        city,
+        country_id,
+        city_id,
         district,
         street,
       );

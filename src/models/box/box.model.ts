@@ -194,7 +194,6 @@ class BoxModel {
     }
   }
 
-
   // Get specific box
   async boxExistsSerialNumber(id: string): Promise<Box> {
     const connection = await db.connect();
@@ -425,14 +424,13 @@ class BoxModel {
   async updateBoxAndAddress(
     boxId: string,
     boxLabel: string,
-    country: number,
-    city: number,
+    country_id: number,
+    city_id: number,
     district: string,
     street: string,
   ): Promise<Array<any>> {
     const connection = await db.connect();
     try {
-      
       if (!boxId) {
         throw new Error('Please provide a Box ID');
       }
@@ -445,18 +443,17 @@ class BoxModel {
         updatedAt,
         boxId,
       ]);
-      console.log(boxLabelResult.rows[0]);
 
       const addressBoxSelectSql = `SELECT * FROM address RIGHT JOIN Country ON address.country_id = Country.id WHERE address.id = $1`;
       const addressBoxResult = await connection.query(addressBoxSelectSql, [
         boxLabelResult.rows[0].address_id,
       ]);
 
-      if (country || city || district || street) {
+      if (country_id || city_id || district || street) {
         const addressUpdateSql = `UPDATE address SET country_id = $1, city_id = $2, district = $3, street = $4, updatedAt = $5 WHERE id = $6 RETURNING *`;
         const addressUpdateResult = await connection.query(addressUpdateSql, [
-          country || addressBoxResult.rows[0].country,
-          city || addressBoxResult.rows[0].city,
+          country_id || addressBoxResult.rows[0].country_id,
+          city_id || addressBoxResult.rows[0].city_id,
           district || addressBoxResult.rows[0].district,
           street || addressBoxResult.rows[0].street,
           updatedAt,
@@ -471,7 +468,8 @@ class BoxModel {
           current_tablet_id: boxLabelResult.rows[0].current_tablet_id,
 
           district: addressUpdateResult.rows[0].district,
-          city: addressUpdateResult.rows[0].city,
+          city_id: addressUpdateResult.rows[0].city_id,
+          country_id: addressUpdateResult.rows[0].country_id,
           street: addressUpdateResult.rows[0].street,
           building_number: addressUpdateResult.rows[0].building_number,
           building_type: addressUpdateResult.rows[0].building_type,
@@ -490,7 +488,8 @@ class BoxModel {
           box_model_id: boxLabelResult.rows[0].box_model_id,
           current_tablet_id: boxLabelResult.rows[0].current_tablet_id,
           district: addressBoxResult.rows[0].district,
-          city: addressBoxResult.rows[0].city,
+          city_id: addressBoxResult.rows[0].city_id,
+          country_id: addressBoxResult.rows[0].country_id,
           street: addressBoxResult.rows[0].street,
           building_number: addressBoxResult.rows[0].building_number,
           building_type: addressBoxResult.rows[0].building_type,

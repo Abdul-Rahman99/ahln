@@ -241,8 +241,8 @@ export const userAssignBoxToHimself = asyncHandler(
         assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
           user,
           serialNumber,
-          parseInt(country_id, 10),
-          parseInt(city_id, 10),
+          country_id,
+          city_id,
           district,
           street,
         );
@@ -455,7 +455,7 @@ export const transferBoxOwnership = asyncHandler(
 
       // check if the user is already the owner of the box
       const updatedUserBox = await userBoxModel.transferBoxOwnership(
-        userExist as unknown as string,
+        user,
         boxId,
         newUserId?.id as string,
       );

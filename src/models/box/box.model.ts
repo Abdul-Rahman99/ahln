@@ -180,7 +180,7 @@ class BoxModel {
         );
       }
       const sql =
-        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1 AND User_Box.user_id=$2';
+        'SELECT User_Box.user_id , User_Box.id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1 AND User_Box.user_id=$2';
       const result = await connection.query(sql, [userId, boxId]);
 
       if (!result) {

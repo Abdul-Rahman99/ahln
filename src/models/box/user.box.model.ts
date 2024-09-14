@@ -419,16 +419,27 @@ class UserBoxModel {
   ): Promise<UserBox> {
     const connection = await db.connect();
     try {
-      const sql = `DELETE FROM User_Box WHERE user_id = $1 AND box_id = $2`;
-      await connection.query(sql, [userId, boxId]);
+      try {
+        const selectId = `SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2`;
+        const result = await connection.query(selectId, [userId, boxId]);
+        const deletedId = await this.deleteOne(result.rows[0]?.id);
+        if (!deletedId) {
+          throw new Error('Failed to delete user box');
+        }
+      } catch (error) {
+        throw new Error((error as Error).message + ', You are not the owner!');
+      }
 
-      const clearNotificationSql = `DELETE FROM Notification WHERE user_id = $1 AND box_id = $2`;
-      await connection.query(clearNotificationSql, [userId, boxId]);
-
-      const newUserBoxData = { user_id: newUserId, box_id: boxId };
-      const result2 = await this.createUserBox(newUserBoxData);
-
-      return result2;
+      try {
+        const newUserBoxData = { user_id: newUserId, box_id: boxId };
+        const result2 = await this.createUserBox(newUserBoxData);
+        if (!result2) {
+          throw new Error('Failed to create user box');
+        }
+        return result2;
+      } catch (error) {
+        throw new Error((error as Error).message);
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

@@ -266,6 +266,8 @@ class UserBoxModel {
     district: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
+
     try {
       try {
         if (!userId || !serialNumber) {
@@ -327,9 +329,11 @@ class UserBoxModel {
         };
 
         await new AddressModel().createAddress(address, userId);
+        await connection.query('COMMIT');
 
         return result.rows[0] as UserBox;
       } catch (error) {
+        await connection.query('ROLLBACK');
         throw new Error((error as Error).message);
       }
     } catch (error) {
@@ -418,11 +422,13 @@ class UserBoxModel {
     newUserId: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
       try {
         const selectId = `SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2`;
         const result = await connection.query(selectId, [userId, boxId]);
         const deletedId = await this.deleteOne(result.rows[0]?.id);
+
         if (!deletedId) {
           throw new Error('Failed to delete user box');
         }
@@ -430,17 +436,20 @@ class UserBoxModel {
         throw new Error((error as Error).message + ', You are not the owner!');
       }
 
+      let result2;
       try {
         const newUserBoxData = { user_id: newUserId, box_id: boxId };
-        const result2 = await this.createUserBox(newUserBoxData);
+        result2 = await this.createUserBox(newUserBoxData);
         if (!result2) {
           throw new Error('Failed to create user box');
         }
-        return result2;
       } catch (error) {
         throw new Error((error as Error).message);
       }
+      await connection.query('COMMIT');
+      return result2;
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();

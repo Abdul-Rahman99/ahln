@@ -443,7 +443,12 @@ class BoxModel {
         updatedAt,
         boxId,
       ]);
-
+      if (
+        boxLabelResult.rows[0].address_id === null ||
+        !boxLabelResult.rows[0].address_id
+      ) {
+        throw new Error(`Box with ID ${boxId} has no address`);
+      }
       const addressBoxSelectSql = `SELECT * FROM address RIGHT JOIN Country ON address.country_id = Country.id WHERE address.id = $1`;
       const addressBoxResult = await connection.query(addressBoxSelectSql, [
         boxLabelResult.rows[0].address_id,

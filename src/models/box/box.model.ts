@@ -430,6 +430,7 @@ class BoxModel {
     street: string,
   ): Promise<Array<any>> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
       if (!boxId) {
         throw new Error('Please provide a Box ID');
@@ -482,8 +483,11 @@ class BoxModel {
           lat: addressUpdateResult.rows[0].lat,
           lang: addressUpdateResult.rows[0].lang,
         };
+        await connection.query('COMMIT');
+
         return [returnedBox];
       }
+      await connection.query('COMMIT');
 
       return [
         {
@@ -504,6 +508,7 @@ class BoxModel {
         },
       ];
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();

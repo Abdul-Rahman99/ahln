@@ -31,17 +31,18 @@ export const createBox = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const createdBox = await boxModel.createBox(newBox);
-    ResponseHandler.success(
-      res,
-      i18n.__('BOX_CREATED_SUCCESSFULLY'),
-      createdBox,
-    );
+
     const action = 'createBox';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('BOX_CREATED_SUCCESSFULLY'),
       createdBox.id,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_CREATED_SUCCESSFULLY'),
+      createdBox,
     );
   } catch (error) {
     const source = 'createBox';
@@ -89,17 +90,18 @@ export const updateBox = asyncHandler(async (req: Request, res: Response) => {
     const boxId = req.params.id;
     const boxData: Partial<Box> = req.body;
     const updatedBox = await boxModel.updateOne(boxData, boxId);
-    ResponseHandler.success(
-      res,
-      i18n.__('BOX_UPDATED_SUCCESSFULLY'),
-      updatedBox,
-    );
+
     const action = 'updateBox';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('BOX_UPDATED_SUCCESSFULLY'),
       updatedBox.id,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_UPDATED_SUCCESSFULLY'),
+      updatedBox,
     );
   } catch (error) {
     const source = 'updateBox';
@@ -115,17 +117,18 @@ export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
   try {
     const boxId = req.params.id;
     const deletedBox = await boxModel.deleteOne(boxId);
-    ResponseHandler.success(
-      res,
-      i18n.__('BOX_DELETED_SUCCESSFULLY'),
-      deletedBox,
-    );
+
     const action = 'deleteBox';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('BOX_DELETED_SUCCESSFULLY'),
       deletedBox.id,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('BOX_DELETED_SUCCESSFULLY'),
+      deletedBox,
     );
   } catch (error) {
     const source = 'deleteBox';
@@ -187,17 +190,18 @@ export const assignTabletToBox = asyncHandler(
         tabletId,
         boxId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
-        assignTabletToBox,
-      );
+
       const action = 'assignTabletToBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
         boxId,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_ASSIGNED_TO_BOX_SUCCESSFULLY'),
+        assignTabletToBox,
       );
     } catch (error) {
       const source = 'assignTabletToBox';
@@ -214,17 +218,18 @@ export const resetTabletId = asyncHandler(
     try {
       const { tabletId, boxId } = req.body;
       const resetedTablte = await boxModel.resetTabletId(tabletId, boxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
-        resetedTablte,
-      );
+
       const action = 'resetTabletId';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
         boxId,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_RESET_TO_BOX_SUCCESSFULLY'),
+        resetedTablte,
       );
     } catch (error) {
       const source = 'resetTabletId';

@@ -50,17 +50,17 @@ export const deleteDevice = async (req: Request, res: Response) => {
       parseInt(deviceId, 10),
     );
 
-    ResponseHandler.success(
-      res,
-      i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
-      deletedDevice,
-    );
     const action = 'deletedDevice';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_DELETED_SUCCESSFULLY'),
+      deletedDevice,
     );
   } catch (error: any) {
     const source = 'deleteDevice';
@@ -81,17 +81,17 @@ export const updateDevice = async (req: Request, res: Response) => {
       fcm_token,
     );
 
-    ResponseHandler.success(
-      res,
-      i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
-      updatedDevice,
-    );
     const action = 'updateDevice';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('DEVICE_UPDATED_SUCCESSFULLY'),
+      updatedDevice,
     );
   } catch (error: any) {
     const source = 'updateDevice';

@@ -42,17 +42,18 @@ export const createCard = asyncHandler(async (req: Request, res: Response) => {
     newCard.card_number = await bcrypt.hash(newCard.card_number, 10);
 
     const createdCard = await cardModel.createCard(newCard, user);
-    ResponseHandler.success(
-      res,
-      i18n.__('CARD_CREATED_SUCCESSFULLY'),
-      createdCard,
-    );
+
     const action = 'createCard';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('CARD_CREATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('CARD_CREATED_SUCCESSFULLY'),
+      createdCard,
     );
   } catch (error: any) {
     const source = 'createCard';
@@ -134,17 +135,18 @@ export const updateCard = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const updatedCard = await cardModel.updateCard(cardId, cardData, user);
-    ResponseHandler.success(
-      res,
-      i18n.__('CARD_UPDATED_SUCCESSFULLY'),
-      updatedCard,
-    );
+
     const action = 'updateCard';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('CARD_UPDATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('CARD_UPDATED_SUCCESSFULLY'),
+      updatedCard,
     );
   } catch (error: any) {
     const source = 'updateCard';
@@ -165,17 +167,18 @@ export const deleteCard = asyncHandler(async (req: Request, res: Response) => {
       return ResponseHandler.badRequest(res, i18n.__('INVALID_CARD_ID'));
     }
     const deletedCard = await cardModel.deleteCard(cardId);
-    ResponseHandler.success(
-      res,
-      i18n.__('CARD_DELETED_SUCCESSFULLY'),
-      deletedCard,
-    );
+
     const action = 'deleteCard';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('CARD_DELETED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('CARD_DELETED_SUCCESSFULLY'),
+      deletedCard,
     );
   } catch (error: any) {
     const source = 'deleteCard';

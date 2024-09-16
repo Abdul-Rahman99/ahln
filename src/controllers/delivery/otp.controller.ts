@@ -26,11 +26,6 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
     const newOTP: OTP = req.body;
     const delivery_package_id = req.body.delivery_package_id;
     const createdOTP = await otpModel.createOTP(newOTP, delivery_package_id);
-    ResponseHandler.success(
-      res,
-      i18n.__('OTP_CREATED_SUCCESSFULLY'),
-      createdOTP,
-    );
 
     notificationModel.createNotification(
       'createOTP',
@@ -45,6 +40,11 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       action,
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
       newOTP.box_id,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('OTP_CREATED_SUCCESSFULLY'),
+      createdOTP,
     );
   } catch (error: any) {
     const source = 'createOTP';
@@ -138,11 +138,7 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
   try {
     const otpId = req.params.id;
     const deletedOTP = await otpModel.deleteOne(Number(otpId));
-    ResponseHandler.success(
-      res,
-      i18n.__('OTP_DELETED_SUCCESSFULLY'),
-      deletedOTP,
-    );
+
     notificationModel.createNotification(
       'deleteOTP',
       i18n.__('OTP_DELTED_SUCCESSFULLY'),
@@ -173,6 +169,11 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
         source,
       );
     }
+    ResponseHandler.success(
+      res,
+      i18n.__('OTP_DELETED_SUCCESSFULLY'),
+      deletedOTP,
+    );
   } catch (error: any) {
     const source = 'deleteOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -214,10 +215,6 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     const user = await userModel.findUserByBoxId(req.body.boxId);
 
     if (verifiedOTP) {
-      ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
-        box_locker_string: verifiedOTP[0],
-        otp: verifiedOTP[1],
-      });
       notificationModel.createNotification(
         'checkOTP',
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
@@ -249,6 +246,10 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           source,
         );
       }
+      ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
+        box_locker_string: verifiedOTP[0],
+        otp: verifiedOTP[1],
+      });
     } else {
       const source = 'checkOTP';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
@@ -317,11 +318,6 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         boxId,
       );
       if (result) {
-        ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
-          box_locker_string: result[0],
-          pin: result[1],
-          otp: result[2],
-        });
         const action = 'checkTrackingNumberAndUpdateStatus';
         auditTrail.createAuditTrail(
           user,
@@ -353,6 +349,11 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             source,
           );
         }
+        ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
+          box_locker_string: result[0],
+          pin: result[1],
+          otp: result[2],
+        });
       } else {
         const source = 'checkTrackingNumberAndUpdateStatus';
         systemLog.createSystemLog(user, 'Invalid Otp', source);

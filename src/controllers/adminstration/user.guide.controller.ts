@@ -22,17 +22,17 @@ export const createUserGuide = asyncHandler(
     try {
       const userGuide = await userGuideModel.createUserGuide(pageData);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
-        userGuide,
-      );
       const action = 'createUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
+        userGuide,
       );
     } catch (error: any) {
       const source = 'createUserGuide';
@@ -104,17 +104,17 @@ export const updateUserGuide = asyncHandler(
         pageData,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
-        updatedAboutU,
-      );
       const action = 'updateUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
+        updatedAboutU,
       );
     } catch (error: any) {
       const source = 'updateUserGuide';
@@ -135,17 +135,17 @@ export const deleteUserGuide = asyncHandler(
         parseInt(id, 10),
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
-        deletedUserGuide,
-      );
       const action = 'deleteUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
+        deletedUserGuide,
       );
     } catch (error: any) {
       const source = 'deleteUserGuide';

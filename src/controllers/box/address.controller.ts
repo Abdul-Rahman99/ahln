@@ -18,17 +18,18 @@ export const createAddress = asyncHandler(
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress, user);
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
-        createdAddress,
-      );
+
       const action = 'createAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        createdAddress,
       );
     } catch (error) {
       const source = 'createAddress';
@@ -90,17 +91,17 @@ export const updateAddress = asyncHandler(
         user,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
-        updatedAddress,
-      );
       const action = 'updateAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
+        updatedAddress,
       );
     } catch (error) {
       const source = 'updateAddress';
@@ -118,17 +119,17 @@ export const deleteAddress = asyncHandler(
       const addressId = parseInt(req.params.id, 10);
       const deletedAddress = await addressModel.deleteOne(addressId, user);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
-        deletedAddress,
-      );
       const action = 'deleteAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
+        deletedAddress,
       );
     } catch (error) {
       const source = 'deleteAddress';

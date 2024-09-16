@@ -37,7 +37,6 @@ export const createCity = asyncHandler(async (req: Request, res: Response) => {
 
     const createdCity = await cityModel.createCity(newCity);
 
-    ResponseHandler.success(res, i18n.__('CITY_CREATED'), createdCity);
     const auditUser = await authHandler(req, res);
     const action = 'createCity';
     auditTrail.createAuditTrail(
@@ -46,6 +45,7 @@ export const createCity = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('CITY_CREATED'),
       null,
     );
+    ResponseHandler.success(res, i18n.__('CITY_CREATED'), createdCity);
   } catch (error: any) {
     const source = 'createCity';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -96,17 +96,17 @@ export const updateCity = asyncHandler(async (req: Request, res: Response) => {
     const cityData: Partial<City> = req.body;
     const updatedCity = await cityModel.updateCity(cityId, cityData);
 
-    ResponseHandler.success(
-      res,
-      i18n.__('CITY_UPDATED_SUCCESSFULLY'),
-      updatedCity,
-    );
     const action = 'updateCity';
     auditTrail.createAuditTrail(
       auditUser,
       action,
       i18n.__('CITY_UPDATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('CITY_UPDATED_SUCCESSFULLY'),
+      updatedCity,
     );
   } catch (error) {
     const user = await authHandler(req, res);
@@ -124,17 +124,17 @@ export const deleteCity = asyncHandler(async (req: Request, res: Response) => {
     const cityId = parseInt(req.params.id, 10);
     const deletedCity = await cityModel.deleteCity(cityId);
 
-    ResponseHandler.success(
-      res,
-      i18n.__('CITY_DELETED_SUCCESSFULLY'),
-      deletedCity,
-    );
     const action = 'deleteCity';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('CITY_UPDATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('CITY_DELETED_SUCCESSFULLY'),
+      deletedCity,
     );
   } catch (error) {
     const source = 'deleteCity';

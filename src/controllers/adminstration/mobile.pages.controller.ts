@@ -22,17 +22,17 @@ export const createMobilePage = asyncHandler(
     try {
       const mobilePage = await mobilePagesModel.createMobilePage(pageData);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
-        mobilePage,
-      );
       const action = 'createMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
+        mobilePage,
       );
     } catch (error: any) {
       const source = 'createMobilePage';
@@ -107,17 +107,17 @@ export const updateMobilePage = asyncHandler(
         pageData,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
-        updatedMobilePage,
-      );
       const action = 'updateMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
+        updatedMobilePage,
       );
     } catch (error: any) {
       const source = 'updateMobilePage';
@@ -138,17 +138,17 @@ export const deleteMobilePage = asyncHandler(
         parseInt(id, 10),
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
-        deletedMobilePage,
-      );
       const action = 'deleteMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
+        deletedMobilePage,
       );
     } catch (error: any) {
       const source = 'deleteMobilePage';

@@ -106,7 +106,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Update user token in the database
   await userModel.updateUserToken(user.id, token);
 
-  ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
   const action = 'register';
   auditTrail.createAuditTrail(
     user.id,
@@ -114,6 +113,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     i18n.__('REGISTER_SUCCESS'),
     null,
   );
+  ResponseHandler.logInSuccess(res, i18n.__('REGISTER_SUCCESS'), null, token);
 });
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
@@ -170,20 +170,6 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     await userDevicesModel.saveUserDevice(currentUser.id, fcmToken);
   }
 
-  ResponseHandler.logInSuccess(
-    res,
-    i18n.__('EMAIL_VERIFIED_SUCCESS'),
-    {
-      id: currentUser.id,
-      user_name: currentUser.user_name,
-      role_id: currentUser.role_id,
-      is_active: currentUser.is_active,
-      phone_number: currentUser.phone_number,
-      email: currentUser.email,
-      preferred_language: currentUser.preferred_language,
-    },
-    token,
-  );
   notificationModel.createNotification(
     'verifyEmail',
     i18n.__('EMAIL_VERIFIED_SUCCESS'),
@@ -207,6 +193,20 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
       source,
     );
   }
+  ResponseHandler.logInSuccess(
+    res,
+    i18n.__('EMAIL_VERIFIED_SUCCESS'),
+    {
+      id: currentUser.id,
+      user_name: currentUser.user_name,
+      role_id: currentUser.role_id,
+      is_active: currentUser.is_active,
+      phone_number: currentUser.phone_number,
+      email: currentUser.email,
+      preferred_language: currentUser.preferred_language,
+    },
+    token,
+  );
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
@@ -260,6 +260,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   } else {
     userAvatar = null;
   }
+
+  const action = 'login';
+  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'), null);
   ResponseHandler.logInSuccess(
     res,
     i18n.__('LOGIN_SUCCESS'),
@@ -278,9 +281,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     },
     token,
   );
-
-  const action = 'login';
-  auditTrail.createAuditTrail(user.id, action, i18n.__('LOGIN_SUCCESS'), null);
 });
 
 export const currentUser = asyncHandler(async (req: Request, res: Response) => {
@@ -313,7 +313,6 @@ export const resendOtpAndUpdateDB = asyncHandler(
 
     sendVerificationEmail(email, otp, req, res);
 
-    ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
     const user = await authHandler(req, res);
 
     notificationModel.createNotification(
@@ -323,6 +322,7 @@ export const resendOtpAndUpdateDB = asyncHandler(
       user,
       null,
     );
+    ResponseHandler.success(res, i18n.__('OTP_SENT_SUCCESSFULLY'));
   },
 );
 
@@ -343,7 +343,6 @@ export const updatePasswordWithOTP = asyncHandler(
     await userModel.updateUserPassword(email, hashedPassword);
     await userModel.updateResetPasswordOTP(email, null);
 
-    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
     const user = await authHandler(req, res);
 
     notificationModel.createNotification(
@@ -353,6 +352,7 @@ export const updatePasswordWithOTP = asyncHandler(
       user,
       null,
     );
+    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
   },
 );
 
@@ -379,8 +379,6 @@ export const updatePassword = asyncHandler(
     const hashedPassword = bcrypt.hashSync(newPassword, 10);
     await userModel.updateUserPassword(result.email, hashedPassword);
 
-    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
-
     notificationModel.createNotification(
       'updatePassword',
       i18n.__('PASSWORD_RESET_SUCCESS'),
@@ -388,5 +386,6 @@ export const updatePassword = asyncHandler(
       user,
       null,
     );
+    ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
   },
 );

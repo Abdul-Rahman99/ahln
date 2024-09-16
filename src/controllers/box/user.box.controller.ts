@@ -346,11 +346,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         };
         relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
       }
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-        assignedUserBox,
-      );
+
       notificationModel.createNotification(
         'userAssignBoxToRelativeUser',
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
@@ -382,6 +378,11 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        assignedUserBox,
+      );
     } catch (error: any) {
       const source = 'userAssignBoxToRelativeUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -402,17 +403,18 @@ export const updateUserBoxStatus = asyncHandler(
         is_active,
         id,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
+
       const action = 'updateUserBoxStatus';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedUserBox,
       );
     } catch (error: any) {
       const source = 'updateUserBoxStatus';
@@ -479,11 +481,7 @@ export const transferBoxOwnership = asyncHandler(
       const fcmTokenNewUser = await userDevicesModel.getFcmTokenDevicesByUser(
         newUserId.id as string,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
+
       try {
         notificationModel.pushNotification(
           fcmToken,
@@ -504,6 +502,11 @@ export const transferBoxOwnership = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        updatedUserBox,
+      );
     } catch (error: any) {
       const source = 'transferBoxOwnership';
       systemLog.createSystemLog(user, (error as Error).message, source);

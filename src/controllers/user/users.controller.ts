@@ -145,17 +145,17 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
         updatedUser = await userModel.updateOne(userData, user);
       }
 
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_UPDATED_SUCCESSFULLY'),
-        updatedUser,
-      );
       const action = 'updateUser';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_UPDATED_SUCCESSFULLY'),
+        updatedUser,
       );
     } catch (error: any) {
       const source = 'updateUser';
@@ -170,11 +170,7 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.userId;
   try {
     const deletedUser = await userModel.deleteOne(userId);
-    ResponseHandler.success(
-      res,
-      i18n.__('USER_DELETED_SUCCESSFULLY'),
-      deletedUser,
-    );
+
     const auditUser = await authHandler(req, res);
     const action = 'deleteUser';
     auditTrail.createAuditTrail(
@@ -182,6 +178,11 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
       action,
       i18n.__('USER_DELETED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('USER_DELETED_SUCCESSFULLY'),
+      deletedUser,
     );
   } catch (error: any) {
     const user = await authHandler(req, res);
@@ -199,17 +200,18 @@ export const updateUserStatus = asyncHandler(
 
     try {
       const updatedUser = await userModel.updateUserStatus(userId, status);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
-        updatedUser,
-      );
+
       const action = 'updateUserStatus';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedUser,
       );
     } catch (error: any) {
       const source = 'updateUserStatus';

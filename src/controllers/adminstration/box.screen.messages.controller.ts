@@ -42,11 +42,6 @@ export const createBoxScreenMessage = asyncHandler(
           message,
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
-        boxScreenMessage,
-      );
       const auditUser = await authHandler(req, res);
       const action = 'createBoxScreenMessage';
       auditTrail.createAuditTrail(
@@ -54,6 +49,11 @@ export const createBoxScreenMessage = asyncHandler(
         action,
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
         box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
+        boxScreenMessage,
       );
     } catch (error: any) {
       const source = 'boxScreenMessage';
@@ -138,11 +138,6 @@ export const updateBoxScreenMessage = asyncHandler(
           },
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
-        updatedBoxScreenMessage,
-      );
       const auditUser = await authHandler(req, res);
       const action = 'updateBoxScreenMessage';
       auditTrail.createAuditTrail(
@@ -150,6 +145,11 @@ export const updateBoxScreenMessage = asyncHandler(
         action,
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
         box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
+        updatedBoxScreenMessage,
       );
     } catch (error: any) {
       const source = 'updateBoxScreenMessage';
@@ -172,17 +172,17 @@ export const deleteBoxScreenMessage = asyncHandler(
           user,
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
-        deletedBoxScreenMessage,
-      );
       const action = 'deleteBoxScreenMessage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
         deletedBoxScreenMessage.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
+        deletedBoxScreenMessage,
       );
     } catch (error: any) {
       const source = 'deleteBoxScreenMessage';

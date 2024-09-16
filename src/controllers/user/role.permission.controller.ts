@@ -36,7 +36,6 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
       role_id,
       permission_id,
     );
-    ResponseHandler.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'), result);
     const action = 'assignPermissionToRole';
     auditTrail.createAuditTrail(
       user,
@@ -44,6 +43,7 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
       i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'),
       null,
     );
+    ResponseHandler.success(res, i18n.__('ROLE_ASSIGNED_SUCCESSFULLY'), result);
   } catch (error: any) {
     const source = 'assignPermissionToRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -81,17 +81,18 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
       role_id,
       permission_id,
     );
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
-      result,
-    );
+
     const action = 'removePermissionFromRole';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      result,
     );
   } catch (error: any) {
     const source = 'removePermissionFromRole';

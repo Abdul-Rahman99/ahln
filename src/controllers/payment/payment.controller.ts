@@ -49,11 +49,7 @@ export const createPayment = asyncHandler(
         throw new Error(`No Card Found, please add a card`);
       }
       const createdPayment = await paymentModel.createPayment(newPayment, user);
-      ResponseHandler.success(
-        res,
-        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
-        createdPayment,
-      );
+
       notificationModel.createNotification(
         'checkOTP',
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
@@ -67,6 +63,11 @@ export const createPayment = asyncHandler(
         action,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
+        createdPayment,
       );
     } catch (error: any) {
       const source = 'createPayment';
@@ -162,11 +163,6 @@ export const updatePayment = asyncHandler(
         paymentData,
       );
       if (updatedPayment) {
-        ResponseHandler.success(
-          res,
-          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
-          updatedPayment,
-        );
         notificationModel.createNotification(
           'updatePayment',
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
@@ -197,6 +193,11 @@ export const updatePayment = asyncHandler(
             source,
           );
         }
+        ResponseHandler.success(
+          res,
+          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
+          updatedPayment,
+        );
       }
     } catch (error: any) {
       const source = 'updatePayment';
@@ -234,17 +235,18 @@ export const deletePayment = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('INVALID_PAYMENT_ID'));
       }
       const deletedPayment = await paymentModel.deletePayment(paymentId);
-      ResponseHandler.success(
-        res,
-        i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
-        deletedPayment,
-      );
+
       const action = 'deletePayment';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
+        deletedPayment,
       );
     } catch (error: any) {
       const source = 'deletePayment';

@@ -31,17 +31,18 @@ export const createBoxGeneration = asyncHandler(
 
       const createdBoxGeneration =
         await boxGenerationModel.createBoxGeneration(newBoxGeneration);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
-        createdBoxGeneration,
-      );
+
       const action = 'createBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
+        createdBoxGeneration,
       );
     } catch (error: any) {
       const source = 'createBoxGeneration';
@@ -120,17 +121,18 @@ export const updateBoxGeneration = asyncHandler(
         boxGenerationData,
         boxGenerationId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-        updatedBoxGeneration,
-      );
+
       const action = 'updateBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        updatedBoxGeneration,
       );
     } catch (error: any) {
       const source = 'updateBoxGeneration';
@@ -149,17 +151,18 @@ export const deleteBoxGeneration = asyncHandler(
       const boxGenerationId = req.params.id;
       const deletedBoxGeneration =
         await boxGenerationModel.deleteOne(boxGenerationId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
-        deletedBoxGeneration,
-      );
+
       const action = 'deleteBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
+        deletedBoxGeneration,
       );
     } catch (error: any) {
       const source = 'deleteBoxGeneration';

@@ -49,17 +49,18 @@ export const createDPFavList = async (req: Request, res: Response) => {
       dpFavListData,
       user,
     );
-    ResponseHandler.success(
-      res,
-      i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
-      newDPFavList,
-    );
+
     const action = 'createDPFavList';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('FAV_LIST_CREATED_SUCCESSFULLY'),
+      newDPFavList,
     );
   } catch (error: any) {
     const source = 'createDPFavList';
@@ -119,17 +120,18 @@ export const deleteDPFavList = asyncHandler(
     try {
       const { id } = req.params;
       const deletedDPFavList = await dpFavListModel.deleteDPFavList(id);
-      ResponseHandler.success(
-        res,
-        i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
-        deletedDPFavList,
-      );
+
       const action = 'deleteDPFavList';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('FAV_LIST_DELETED_SUCCESSFULLY'),
+        deletedDPFavList,
       );
     } catch (error: any) {
       const source = 'deleteDPFavList';

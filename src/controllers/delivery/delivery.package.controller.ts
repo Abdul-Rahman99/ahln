@@ -51,11 +51,7 @@ export const createDeliveryPackage = asyncHandler(
           user,
           newDeliveryPackage,
         );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
-        createdDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'createDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
@@ -86,6 +82,11 @@ export const createDeliveryPackage = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        createdDeliveryPackage,
+      );
     } catch (error: any) {
       const source = 'createDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -168,11 +169,7 @@ export const updateDeliveryPackage = asyncHandler(
         deliveryPackageId,
         user,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
-        updatedDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'updateDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
@@ -186,6 +183,11 @@ export const updateDeliveryPackage = asyncHandler(
         action,
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         deliveryPackageData.box_id as string,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+        updatedDeliveryPackage,
       );
     } catch (error: any) {
       const source = 'updateDeliveryPackage';
@@ -206,11 +208,7 @@ export const deleteDeliveryPackage = asyncHandler(
         deliveryPackageId,
         user,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
-        deletedDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'deleteDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
@@ -241,6 +239,11 @@ export const deleteDeliveryPackage = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        deletedDeliveryPackage,
+      );
     } catch (error: any) {
       const source = 'deleteDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);

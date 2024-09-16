@@ -33,7 +33,6 @@ export const createCountry = asyncHandler(
 
       const createdCountry = await countryModel.createCountry(newCountry);
 
-      ResponseHandler.success(res, i18n.__('COUNTRY_CREATED'), createdCountry);
       const auditUser = await authHandler(req, res);
       const action = 'createCountry';
       auditTrail.createAuditTrail(
@@ -42,6 +41,7 @@ export const createCountry = asyncHandler(
         i18n.__('COUNTRY_CREATED'),
         null,
       );
+      ResponseHandler.success(res, i18n.__('COUNTRY_CREATED'), createdCountry);
     } catch (error: any) {
       const source = 'createCountry';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -101,17 +101,17 @@ export const updateCountry = asyncHandler(
         countryData,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
-        updatedCountry,
-      );
       const action = 'updateCountry';
       auditTrail.createAuditTrail(
         auditUser,
         action,
         i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
+        updatedCountry,
       );
     } catch (error) {
       const user = await authHandler(req, res);
@@ -131,17 +131,17 @@ export const deleteCountry = asyncHandler(
       const countryId = parseInt(req.params.id, 10);
       const deletedCountry = await countryModel.deleteCountry(countryId);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('COUNTRY_DELETED_SUCCESSFULLY'),
-        deletedCountry,
-      );
       const action = 'deleteCountry';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('COUNTRY_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('COUNTRY_DELETED_SUCCESSFULLY'),
+        deletedCountry,
       );
     } catch (error) {
       const source = 'deleteCountry';

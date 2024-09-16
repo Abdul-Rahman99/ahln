@@ -19,17 +19,18 @@ export const createTablet = asyncHandler(
     try {
       const newTablet: Tablet = req.body;
       const createdTablet = await tabletModel.createTablet(newTablet);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
-        createdTablet,
-      );
+
       const action = 'createTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
+        createdTablet,
       );
     } catch (error) {
       const source = 'createTablet';
@@ -89,17 +90,18 @@ export const updateTablet = asyncHandler(
       const tabletId = req.params.id;
       const tabletData: Partial<Tablet> = req.body;
       const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
-        updatedTablet,
-      );
+
       const action = 'updateTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
+        updatedTablet,
       );
     } catch (error) {
       const source = 'updateTablet';
@@ -117,17 +119,18 @@ export const deleteTablet = asyncHandler(
     try {
       const tabletId = req.params.id;
       const deletedTablet = await tabletModel.deleteOne(tabletId);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
-        deletedTablet,
-      );
+
       const action = 'deleteTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
+        deletedTablet,
       );
     } catch (error) {
       const source = 'deleteTablet';

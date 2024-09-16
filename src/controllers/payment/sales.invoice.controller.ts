@@ -73,11 +73,6 @@ export const createSalesInvoice = asyncHandler(
         user,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
-        createdSalesInvoice,
-      );
       notificationModel.createNotification(
         'createSalesInvoice',
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
@@ -108,6 +103,11 @@ export const createSalesInvoice = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
+        createdSalesInvoice,
+      );
     } catch (error: any) {
       const user = await authHandler(req, res);
       const source = 'createSalesInvoice';
@@ -183,17 +183,18 @@ export const updateSalesInvoice = asyncHandler(
         newSalesInvoice,
         salesInvoiceId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
-        updatedSalesInvoice,
-      );
+
       const action = 'updateSalesInvoice';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
+        updatedSalesInvoice,
       );
     } catch (error: any) {
       const source = 'updateSalesInvoice';
@@ -211,17 +212,18 @@ export const deleteSalesInvoice = asyncHandler(
       const salesInvoiceId = req.params.id;
       const deletedSalesInvoice =
         await salesInvoiceModel.deleteOne(salesInvoiceId);
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
-        deletedSalesInvoice,
-      );
+
       const action = 'deleteSalesInvoice';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
         deletedSalesInvoice.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
+        deletedSalesInvoice,
       );
     } catch (error: any) {
       const source = 'deleteSalesInvoice';

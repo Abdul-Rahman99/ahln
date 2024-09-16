@@ -23,11 +23,6 @@ export const createContactUs = asyncHandler(
         user,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('CONTACT_US_CREATED'),
-        createdContactUs,
-      );
       const auditUser = await authHandler(req, res);
       const action = 'createContactUs';
       auditTrail.createAuditTrail(
@@ -35,6 +30,11 @@ export const createContactUs = asyncHandler(
         action,
         i18n.__('CONTACT_US_CREATED'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('CONTACT_US_CREATED'),
+        createdContactUs,
       );
     } catch (error: any) {
       const source = 'createContactUs';
@@ -127,17 +127,17 @@ export const deleteContactUs = asyncHandler(
       const deletedContactUs =
         await contactUsModel.deleteContactUs(contactUsId);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('CONTACT_US_DELETED_SUCCESSFULLY'),
-        deletedContactUs,
-      );
       const action = 'deleteContactUs';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('CONTACT_US_DELETED_SUCCESSFULLY'),
+        deletedContactUs,
       );
     } catch (error) {
       const source = 'deleteContactUs';

@@ -55,11 +55,7 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const createdPin = await pinModel.createPIN(newPin, user);
-    ResponseHandler.success(
-      res,
-      i18n.__('PIN_CREATED_SUCCESSFULLY'),
-      createdPin,
-    );
+
     notificationModel.createNotification(
       'createPin',
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
@@ -90,6 +86,11 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
         source,
       );
     }
+    ResponseHandler.success(
+      res,
+      i18n.__('PIN_CREATED_SUCCESSFULLY'),
+      createdPin,
+    );
   } catch (error) {
     const source = 'createPin';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -156,7 +157,6 @@ export const deleteOnePinByUser = asyncHandler(
     try {
       const pinId = parseInt(req.params.id, 10);
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
-      ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
       notificationModel.createNotification(
         'deleteOnePinByUser',
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
@@ -171,6 +171,7 @@ export const deleteOnePinByUser = asyncHandler(
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
         pin.box_id,
       );
+      ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
     } catch (error) {
       const source = 'deleteOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -188,7 +189,6 @@ export const updateOnePinByUser = asyncHandler(
       const pinId = parseInt(req.params.id, 10);
       const pinData: Partial<PIN> = req.body;
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
-      ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
       notificationModel.createNotification(
         'updateOnePinByUser',
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
@@ -219,6 +219,7 @@ export const updateOnePinByUser = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
     } catch (error) {
       const source = 'updateOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -237,11 +238,6 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
 
     if (checkPinResult) {
-      ResponseHandler.success(
-        res,
-        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
-        checkPinResult,
-      );
       notificationModel.createNotification(
         'checkPIN',
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
@@ -298,6 +294,11 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
       );
     }
+    ResponseHandler.success(
+      res,
+      i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+      checkPinResult,
+    );
   } catch (error) {
     const user = await userModel.findUserByBoxId(req.body.box_id);
 

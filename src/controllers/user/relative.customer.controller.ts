@@ -45,17 +45,18 @@ export const createRelativeCustomer = asyncHandler(
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
         );
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
-        createdRelativeCustomer,
-      );
+
       const action = 'createRelativeCustomer';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
         newRelaticeCustomerData.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
+        createdRelativeCustomer,
       );
     } catch (error: any) {
       const source = 'createRelativeCustomer';
@@ -196,11 +197,6 @@ export const deleteRelativeCustomer = asyncHandler(
       const deletedRelativeCustomer = await relativeCustomerModel.deleteOne(
         Number(relativeCustomerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
-        deletedRelativeCustomer,
-      );
 
       notificationModel.createNotification(
         'deleteRelativeCustomer',
@@ -215,6 +211,11 @@ export const deleteRelativeCustomer = asyncHandler(
         action,
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
+        deletedRelativeCustomer,
       );
     } catch (error: any) {
       const source = 'deleteRelativeCustomer';

@@ -101,7 +101,7 @@ class AddressModel {
   async updateOne(
     address: Partial<Address>,
     id: number,
-    // user: string,
+    user: string,
   ): Promise<Address> {
     const connection = await db.connect();
     try {
@@ -132,7 +132,9 @@ class AddressModel {
         .filter((field) => field !== null);
 
       queryParams.push(updatedAt); // Add the updatedAt timestamp
+      queryParams.push(user);
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
+      updateFields.push(`user_id=$${paramIndex++}`);
 
       queryParams.push(id); // Add the address ID to the query parameters
 

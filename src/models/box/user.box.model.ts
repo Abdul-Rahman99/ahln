@@ -280,6 +280,7 @@ class UserBoxModel {
     city_id: number,
     street: string,
     district: string,
+    boxLabel: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
     await connection.query('BEGIN');
@@ -365,11 +366,27 @@ class UserBoxModel {
           if (updatedBoxAddressId.rowCount === 0) {
             throw new Error('Failed to update box address');
           }
+          // If there is a boxLabel, update it
+          if (boxLabel) {
+            await connection.query('UPDATE Box SET box_label=$1 WHERE id=$2', [
+              boxLabel,
+              boxCheckResult.rows[0].id,
+            ]);
+          }
         } else {
           await new AddressModel().updateOne(
             address,
             boxHasAddressResult.rows[0].address_id,
+            userId,
           );
+
+          // If there is a boxLabel, update it
+          if (boxLabel) {
+            await connection.query('UPDATE Box SET box_label=$1 WHERE id=$2', [
+              boxLabel,
+              boxCheckResult.rows[0].id,
+            ]);
+          }
         }
 
         await connection.query('COMMIT');

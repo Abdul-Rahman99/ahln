@@ -221,7 +221,11 @@ export const assignBoxToUser = asyncHandler(
           i18n.__('BOX_ALREADY_ASSIGNED_TO_USER'),
         );
       }
-      const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId , addressId);
+      const assignedUserBox = await userBoxModel.assignBoxToUser(
+        userId,
+        boxId,
+        addressId,
+      );
 
       notificationModel.createNotification(
         'assignBoxToUser',
@@ -256,7 +260,8 @@ export const userAssignBoxToHimself = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { serialNumber, country_id, city_id, district, street } = req.body;
+      const { serialNumber, country_id, city_id, district, street, boxLabel } =
+        req.body;
       let assignedUserBox;
       // check if the city and country exist
       const countryExist = await countryModel.getOne(country_id);
@@ -277,6 +282,7 @@ export const userAssignBoxToHimself = asyncHandler(
           city_id,
           district,
           street,
+          boxLabel,
         );
       } catch (error: any) {
         const source = 'userAssignBoxToHimself';

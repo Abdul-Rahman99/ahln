@@ -209,7 +209,6 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     const verifiedOTP = await otpModel.checkOTP(
       otp,
       delivery_package_id,
-
       boxId,
     );
     const user = await userModel.findUserByBoxId(req.body.boxId);

@@ -150,12 +150,13 @@ class UserBoxModel {
       }
 
       //update the address id in the box
-      const updateBoxSql = 'UPDATE box SET address_id = $1 WHERE id = $2 RETURNING *';
+      const updateBoxSql =
+        'UPDATE box SET address_id = $1 WHERE id = $2 RETURNING *';
       const updateBoxResult = await connection.query(updateBoxSql, [
         addressId,
         boxId,
       ]);
-      
+
       if (updateBoxResult.rows.length === 0) {
         throw new Error(`Box with ID ${boxId} does not exist`);
       }
@@ -348,15 +349,12 @@ class UserBoxModel {
           country_id,
           city_id,
         };
-        console.log(boxHasAddressResult.rows[0].address_id === null);
 
         if (boxHasAddressResult.rows[0].address_id === null) {
           const createdAddress = await new AddressModel().createAddress(
             address,
             userId,
           );
-          console.log(createdAddress);
-          console.log(boxCheckResult.rows[0].id);
 
           //update the box record with the new address id
           const updatedBoxAddressId = await connection.query(
@@ -371,7 +369,6 @@ class UserBoxModel {
           await new AddressModel().updateOne(
             address,
             boxHasAddressResult.rows[0].address_id,
-            userId,
           );
         }
 

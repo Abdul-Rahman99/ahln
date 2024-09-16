@@ -88,7 +88,6 @@ export const updateAddress = asyncHandler(
       const updatedAddress = await addressModel.updateOne(
         addressData,
         addressId,
-        user,
       );
 
       const action = 'updateAddress';

@@ -101,13 +101,13 @@ class AddressModel {
   async updateOne(
     address: Partial<Address>,
     id: number,
-    user: string,
+    // user: string,
   ): Promise<Address> {
     const connection = await db.connect();
     try {
       // Check if the address exists
-      const checkSql = 'SELECT * FROM address WHERE id=$1 AND user_id=$2';
-      const checkResult = await connection.query(checkSql, [id, user]);
+      const checkSql = 'SELECT * FROM address WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
         throw new Error(`Address with ID ${id} does not exist`);

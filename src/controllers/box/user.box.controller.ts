@@ -13,6 +13,8 @@ import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import NotificationModel from '../../models/logs/notification.model';
+import CityModel from '../../models/adminstration/city.model';
+import CountryModel from '../../models/adminstration/country.model';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -22,6 +24,8 @@ const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
 const systemLog = new SystemLogModel();
 const auditTrail = new AuditTrailModel();
+const cityModel = new CityModel();
+const countryModel = new CountryModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response) => {
@@ -30,17 +34,18 @@ export const createUserBox = asyncHandler(
     try {
       const newUserBox: UserBox = req.body;
       const createdUserBox = await userBoxModel.createUserBox(newUserBox);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
-        createdUserBox,
-      );
+
       const action = 'createUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
         createdUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
+        createdUserBox,
       );
     } catch (error: any) {
       const source = 'createUserBox';
@@ -103,17 +108,18 @@ export const updateUserBox = asyncHandler(
         userBoxData,
         userBoxId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
+
       const action = 'updateUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
         updatedUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
+        updatedUserBox,
       );
     } catch (error: any) {
       const source = 'updateUserBox';
@@ -131,17 +137,18 @@ export const deleteUserBox = asyncHandler(
     try {
       const userBoxId = req.params.id;
       const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
-        deletedUserBox,
-      );
+
       const action = 'deleteUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
         deletedUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
+        deletedUserBox,
       );
     } catch (error: any) {
       const source = 'deleteUserBox';
@@ -198,14 +205,23 @@ export const assignBoxToUser = asyncHandler(
     const user = await authHandler(req, res);
 
     try {
-      const { userId, boxId } = req.body;
+      const { userId, boxId, addressId } = req.body;
 
-      const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        assignedUserBox,
-      );
+      const checkBoxExists = await boxModel.getOne(boxId);
+      if (!checkBoxExists) {
+        throw new Error('Box ID cannot be Not Found!');
+      }
+      // check if the user already assigned to box
+
+      const checkUserBoxExists = await userBoxModel.getUserBoxesByBoxId(boxId);
+
+      if (checkUserBoxExists.length > 0) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_ALREADY_ASSIGNED_TO_USER'),
+        );
+      }
+      const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId , addressId);
 
       notificationModel.createNotification(
         'assignBoxToUser',
@@ -220,6 +236,11 @@ export const assignBoxToUser = asyncHandler(
         action,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         boxId,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        assignedUserBox,
       );
     } catch (error: any) {
       const source = 'assignBoxToUser';
@@ -237,6 +258,17 @@ export const userAssignBoxToHimself = asyncHandler(
     try {
       const { serialNumber, country_id, city_id, district, street } = req.body;
       let assignedUserBox;
+      // check if the city and country exist
+      const countryExist = await countryModel.getOne(country_id);
+      if (!countryExist) {
+        return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_EXIST'));
+      }
+
+      const cityExist = await cityModel.getCityById(city_id);
+      if (!cityExist) {
+        return ResponseHandler.badRequest(res, i18n.__('CITY_NOT_EXIST'));
+      }
+
       try {
         assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
           user,

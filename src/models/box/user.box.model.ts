@@ -124,7 +124,11 @@ class UserBoxModel {
   }
 
   // Assign a box to a user
-  async assignBoxToUser(userId: string, boxId: string): Promise<UserBox> {
+  async assignBoxToUser(
+    userId: string,
+    boxId: string,
+    addressId: number,
+  ): Promise<UserBox> {
     const connection = await db.connect();
     try {
       if (!userId || !boxId) {
@@ -142,6 +146,17 @@ class UserBoxModel {
       const boxCheckSql = 'SELECT id FROM box WHERE id=$1';
       const boxCheckResult = await connection.query(boxCheckSql, [boxId]);
       if (boxCheckResult.rows.length === 0) {
+        throw new Error(`Box with ID ${boxId} does not exist`);
+      }
+
+      //update the address id in the box
+      const updateBoxSql = 'UPDATE box SET address_id = $1 WHERE id = $2 RETURNING *';
+      const updateBoxResult = await connection.query(updateBoxSql, [
+        addressId,
+        boxId,
+      ]);
+      
+      if (updateBoxResult.rows.length === 0) {
         throw new Error(`Box with ID ${boxId} does not exist`);
       }
 
@@ -320,15 +335,46 @@ class UserBoxModel {
 
         const result = await connection.query(sql, sqlParams);
 
-        // Create new address for the user
+        // check if the box has address or not
+        const boxHasAddressSql = 'SELECT address_id FROM Box WHERE id=$1';
+        const boxHasAddressResult = await connection.query(boxHasAddressSql, [
+          boxCheckResult.rows[0].id,
+        ]);
+
+        // If the box has no address, Create new address for the user
         const address = {
           district,
           street,
           country_id,
           city_id,
         };
+        console.log(boxHasAddressResult.rows[0].address_id === null);
 
-        await new AddressModel().createAddress(address, userId);
+        if (boxHasAddressResult.rows[0].address_id === null) {
+          const createdAddress = await new AddressModel().createAddress(
+            address,
+            userId,
+          );
+          console.log(createdAddress);
+          console.log(boxCheckResult.rows[0].id);
+
+          //update the box record with the new address id
+          const updatedBoxAddressId = await connection.query(
+            'UPDATE Box SET address_id=$1 WHERE id=$2',
+            [createdAddress.id, boxCheckResult.rows[0].id],
+          );
+
+          if (updatedBoxAddressId.rowCount === 0) {
+            throw new Error('Failed to update box address');
+          }
+        } else {
+          await new AddressModel().updateOne(
+            address,
+            boxHasAddressResult.rows[0].address_id,
+            userId,
+          );
+        }
+
         await connection.query('COMMIT');
 
         return result.rows[0] as UserBox;

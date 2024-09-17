@@ -84,7 +84,7 @@ class OTPModel {
 
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
-        'SELECT Delivery_Package.otp AS delivery_package_otp, OTP.box_locker_id, delivery_package_id FROM OTP INNER JOIN Delivery_Package ON OTP.delivery_package_id = Delivery_Package.id WHERE OTP.otp = $1 AND OTP.is_used = FALSE AND OTP.box_id = $2',
+        'SELECT Delivery_Package.otp AS delivery_package_otp, OTP.box_locker_id, OTP.delivery_package_id FROM OTP LEFT JOIN Delivery_Package ON OTP.delivery_package_id = Delivery_Package.id WHERE OTP.otp = $1 AND OTP.is_used = FALSE AND OTP.box_id = $2',
         [otp, boxId],
       );
 
@@ -131,7 +131,7 @@ class OTPModel {
         [box_locker_id],
       );
 
-      if (boxLockerResult.rows.length == 0) {
+      if (boxLockerResult.rows.length === 0) {
         throw new Error(
           `Box locker not found for the given box id: ${box_locker_id}`,
         );

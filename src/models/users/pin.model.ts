@@ -26,6 +26,7 @@ class PINModel {
         'user_id',
         'type',
         'passcode',
+        'end_date',
       ];
 
       // Ensure time_range and day_range are arrays
@@ -48,6 +49,7 @@ class PINModel {
         user,
         pinData.type,
         pinData.passcode,
+        pinData.end_date,
       ];
 
       const sql = `INSERT INTO PIN (${sqlFields.join(', ')}) 
@@ -220,22 +222,22 @@ class PINModel {
       }
 
       const pinResult = await connection.query(
-        'SELECT time_range, day_range FROM PIN WHERE passcode = $1 AND is_active = TRUE AND box_id = $2',
+        'SELECT time_range, day_range, end_date, type, id FROM PIN WHERE passcode = $1 AND is_active = TRUE AND box_id = $2',
         [passcode, box_id],
       );
 
       if (pinResult.rows.length === 0) {
-        const action = 'checkOTP';
+        const action = 'checkPIN';
         auditTrail.createAuditTrail(
           user_id,
           action,
-          i18n.__('OTP_NOT_FOUND_OR_ALREADY_USED'),
+          i18n.__('PIN_NOT_FOUND_OR_ALREADY_USED'),
           box_id,
         );
         throw new Error('PIN not found or PIN is not activated');
       }
 
-      const { time_range, day_range } = pinResult.rows[0];
+      const { time_range, day_range, end_date, type, id } = pinResult.rows[0];
 
       const parsedTimeRange = time_range
         .split(',')
@@ -246,6 +248,50 @@ class PINModel {
 
       const currentTime = moment().tz('Asia/Dubai');
       const currentDay = currentTime.day().toString();
+
+      if (type === 'Timed') {
+        const parsedEndDate = moment(end_date, 'DD-MM-YYYY')
+          .tz('Asia/Dubai')
+          .format('DD-MM-YYYY')
+          .toString();
+
+        const parsedCurrentDay = currentTime
+          .tz('Asia/Dubai')
+          .format('DD-MM-YYYY')
+          .toString();
+        if (parsedEndDate >= parsedCurrentDay) {
+          const action = 'checkPIN';
+          auditTrail.createAuditTrail(
+            user_id,
+            action,
+            i18n.__('PIN_CHEKED_SUCCESSFULLY'),
+            box_id,
+          );
+        } else {
+          const action = 'checkPIN';
+          auditTrail.createAuditTrail(
+            user_id,
+            action,
+            i18n.__('PIN_EXPIRED'),
+            box_id,
+          );
+          throw new Error('PIN expired');
+        }
+      } else if (type === 'One-Time') {
+        const action = 'checkPIN';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('PIN_ALREADY_USED'),
+          box_id,
+        );
+        const deletePIN = await this.deleteOnePinByUser(id, user_id);
+
+        if (!deletePIN) {
+          throw new Error('Failed to delete PIN');
+        }
+        return true;
+      }
 
       if (!parsedDayRange.includes(currentDay)) {
         return false;

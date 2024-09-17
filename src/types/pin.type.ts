@@ -11,4 +11,5 @@ export interface PIN {
   user_id: string;
   type: string;
   passcode: string;
+  end_date?: Date;
 }

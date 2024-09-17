@@ -16,8 +16,8 @@ export const createPinValidation = [
       return true;
     }),
   body('title').notEmpty().withMessage(i18n.__('TITLE_REQUIRED')),
-  body('time_range').notEmpty().withMessage(i18n.__('TIME_RANGE_REQUIRED')),
-  body('day_range').notEmpty().withMessage(i18n.__('DAY_RANGE_REQUIRED')),
+  // body('time_range').notEmpty().withMessage(i18n.__('TIME_RANGE_REQUIRED')),
+  // body('day_range').notEmpty().withMessage(i18n.__('DAY_RANGE_REQUIRED')),
   body('box_id').notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
   body('type').notEmpty().withMessage(i18n.__('TYPE_REQUIRED')),
   body('passcode').notEmpty().withMessage(i18n.__('PASSCODE_REQUIRED')),

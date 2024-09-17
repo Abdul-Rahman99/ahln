@@ -40,7 +40,7 @@ class HistoryModel {
             !table.table_fullname.includes('user_permission') &&
             !table.table_fullname.includes('permission'),
         )
-        .map((table) => table.table_fullname.replace('public.', ''));
+        .map((table) => table.table_fullname.replace('public.', 'table_name: "'));
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

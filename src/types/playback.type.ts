@@ -4,4 +4,5 @@ export interface Playback {
   updatedAt: Date;
   video_link: string;
   box_id: string;
+  tag: string;
 }

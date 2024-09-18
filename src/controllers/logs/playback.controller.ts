@@ -4,22 +4,22 @@ import i18n from '../../config/i18n';
 import ResponseHandler from '../../utils/responsesHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
-import { Playback } from '../../types/playback.type';
+// import { Playback } from '../../types/playback.type';
 import PlaybackModel from '../../models/logs/playback.model';
 
 const systemLog = new SystemLogModel();
 const playbackModel = new PlaybackModel();
 
-export function createPlayback(
-  box_id: string,
-  video_link: string,
-): Promise<Playback> {
-  try {
-    return playbackModel.createPlayback(video_link, box_id);
-  } catch (error) {
-    throw new Error((error as Error).message);
-  }
-}
+// export function createPlayback(
+//   box_id: string,
+//   video_link: string,
+// ): Promise<Playback> {
+//   try {
+//     return playbackModel.createPlayback(video_link, box_id);
+//   } catch (error) {
+//     throw new Error((error as Error).message);
+//   }
+// }
 
 export const getAllPlaybackByBox = asyncHandler(
   async (req: Request, res: Response) => {

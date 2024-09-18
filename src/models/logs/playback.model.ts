@@ -2,19 +2,30 @@ import db from '../../config/database';
 import { Playback } from '../../types/playback.type';
 
 export default class PlaybackModel {
-  async createPlayback(video_link: string, box_id: string): Promise<Playback> {
+  async createPlayback(
+    video_link: string,
+    box_id: string,
+    tag: string,
+  ): Promise<Playback> {
     const connection = await db.connect();
 
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
 
-      const sqlFields = ['createdAt', 'updatedAt', 'video_link', 'box_id'];
+      const sqlFields = [
+        'createdAt',
+        'updatedAt',
+        'video_link',
+        'box_id',
+        'tag',
+      ];
       const sqlParams = [
         createdAt, // createdAt
         updatedAt, // updatedAt
         video_link, // video_link
         box_id, // box_id
+        tag, // tag
       ];
       const sql = `INSERT INTO Playback (${sqlFields.join(', ')}) 
                         VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 

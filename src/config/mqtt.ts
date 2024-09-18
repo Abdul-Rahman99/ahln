@@ -8,9 +8,10 @@ import fs from 'fs';
 import { exec } from 'child_process';
 import PlaybackModel from '../models/logs/playback.model';
 import db from '../config/database';
+import { liveStream } from 'src/controllers/delivery/image.controller';
 
 const playbackModel = new PlaybackModel();
-
+let tag = '';
 const options: IClientOptions = {
   host: config.MQTT_HOST,
   port: config.MQTT_PORT as any,
@@ -76,6 +77,8 @@ async function connect() {
     const messageString = message.toString();
     const parsedTopic = topic.split('/');
     const boxId = parsedTopic[1].replace(/ahlanBox_/g, '');
+
+    tag = parsedTopic[2];
 
     const boxPlaybackFolder = path.join(
       __dirname,
@@ -202,7 +205,7 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
 
     // create record in the playback
     const finalPath = outputFilePath.replace('D:\\ahln\\', '');
-    await playbackModel.createPlayback(finalPath, boxId);
+    await playbackModel.createPlayback(finalPath, boxId, tag);
 
     // Delete the images from the folder
     const files = await fs.promises.readdir(imageFolder);

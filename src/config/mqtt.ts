@@ -125,7 +125,7 @@ async function uploadImage(
     }
 
     imageCount++;
-    console.log(`Image saved: ${imagePath}`);
+    // console.log(`Image saved: ${imagePath}`);
 
     resetVideoTimer(boxId, folderPath); // Reset the video creation timer
   } catch (err) {

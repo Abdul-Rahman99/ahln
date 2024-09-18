@@ -2,6 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mqtt, { MqttClient, IClientOptions } from 'mqtt';
 import config from '../../config';
+import moment from 'moment';
+import path from 'path';
+import fs from 'fs';
+import { exec } from 'child_process';
+import PlaybackModel from '../models/logs/playback.model';
+import db from '../config/database';
+
+const playbackModel = new PlaybackModel();
 
 const options: IClientOptions = {
   host: config.MQTT_HOST,
@@ -11,64 +19,197 @@ const options: IClientOptions = {
   password: config.MQTT_PASSWORD,
 };
 
+let lastVideoCreationTime = moment();
+const videoInterval = 60 * 60 * 1000; // 1 hour in milliseconds
+
 export let client: MqttClient;
+let imageCount = 0;
+let videoTimer: NodeJS.Timeout | null = null; // Timer to control video creation delay
+const imagesPerVideo = 1000000000000000;
+const videoDelay = 10000; // 10 seconds delay after last image before creating video
 
-function connect() {
+async function get_box_ids() {
+  const connection = db.connect();
+  try {
+    const sql = `SELECT id FROM box`;
+    const result = db.query(sql);
+    return result;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+}
+
+async function connect() {
   client = mqtt.connect(options);
-
-  client.on('connect', () => {
+  const mainTopic = 'ahlanBox';
+  const topics: string[] = [];
+  client.on('connect', async () => {
     console.log('MQTT Connected');
 
-    const wildcardTopic = '#';
-    client.subscribe(wildcardTopic, { qos: 1 }, (err, granted) => {
+    await get_box_ids()
+      .then((result: any) => {
+        // console.log(result.rows);
+        // console.log(result)
+        result.rows.forEach((row: { id: any }) => {
+          topics.push(`${mainTopic}/ahlanBox_${row.id}/liveStream`);
+        });
+        result.rows.forEach((row: { id: any }) => {
+          topics.push(`${mainTopic}/ahlanBox_${row.id}/deliveryStream`);
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    // console.log(topics);
+    // const selectedTopic = `ahlanBox/ahlanBox_${}`;
+
+    client.subscribe(topics, { qos: 1 }, (err, granted: any) => {
       if (err) {
         console.error('Subscription error:', err);
       } else {
-        // console.log('Subscribed to wildcard topic:', granted);
+        console.log('Subscribed to topic:', granted[0].topic);
       }
     });
   });
 
   client.on('message', (topic, message) => {
-    // console.log(`Received message on topic ${topic}: ${message.toString()}`);
-    try {
-      const parsedMessage = JSON.parse(message.toString());
-      // console.log('Parsed message:', parsedMessage);
-    } catch (err) {
-      // console.log('Received non-JSON message:', message.toString());
+    const messageString = message.toString();
+    const parsedTopic = topic.split('/');
+    const boxId = parsedTopic[1].replace(/ahlanBox_/g, '');
+
+    const boxPlaybackFolder = path.join(
+      __dirname,
+      `../../uploads/playback/${boxId}`,
+    );
+    if (!fs.existsSync(boxPlaybackFolder)) {
+      fs.mkdirSync(boxPlaybackFolder, { recursive: true });
     }
 
-    if (shouldSubscribeToTopic(topic)) {
-      client.subscribe(topic, { qos: 1 }, (err, granted) => {
-        if (err) {
-          console.error(`Subscription error for topic ${topic}:`, err);
-        } else {
-          // console.log(`Subscribed to new topic: ${topic}`, granted);
-        }
-      });
-    }
+    uploadImage(messageString, boxPlaybackFolder, boxId);
   });
 
   client.on('error', (error) => {
-    console.error('MQTT connection error:', error);
     client.end();
-    setTimeout(connect, 10000); // try to reconnect after 10 seconds
+    setTimeout(connect, 10000);
   });
 
-  client.on('reconnect', () => {
-    console.log('Reconnecting to MQTT broker');
-  });
+  client.on('reconnect', () => {});
 
   client.on('end', () => {
-    console.log('Connection to MQTT broker ended');
-    setTimeout(connect, 10000); // try to reconnect after 10 seconds
+    setTimeout(connect, 10000);
   });
 }
 
 connect();
 
-const shouldSubscribeToTopic = (topic: string): boolean => {
-  // add logic to determine if a specific topic should be subscribed to
-  // for example, subscribe to certain patterns or newly discovered topics
-  return true; // for demonstration, subscribe to all
-};
+async function uploadImage(
+  base64Image: string,
+  folderPath: string,
+  boxId: string,
+) {
+  try {
+    const buffer = Buffer.from(
+      base64Image.replace(/^data:image\/\w+;base64,/, ''),
+      'base64',
+    );
+    const imageIndex = await getNextImageIndex(folderPath);
+    const imageName = `image-${String(imageIndex).padStart(3, '0')}.jpg`;
+    const imagePath = path.join(folderPath, imageName);
+
+    await fs.promises.writeFile(imagePath, buffer);
+
+    const fileStats = await fs.promises.stat(imagePath);
+    if (fileStats.size === 0) {
+      console.error(`File ${imagePath} is empty or corrupt.`);
+      return;
+    }
+
+    imageCount++;
+    console.log(`Image saved: ${imagePath}`);
+
+    resetVideoTimer(boxId, folderPath); // Reset the video creation timer
+  } catch (err) {
+    console.error('Error saving the image file:', err);
+  }
+}
+
+function resetVideoTimer(boxId: string, folderPath: string) {
+  if (videoTimer) {
+    clearTimeout(videoTimer); // Reset the timer if images keep coming
+  }
+
+  videoTimer = setTimeout(async () => {
+    console.log('No images received for a while, creating video...');
+    const outputFilePath = path.join(
+      folderPath,
+      `video-${lastVideoCreationTime.format('YYYYMMDD_HHmmss')}.mp4`,
+    );
+
+    try {
+      await createVideoFromImages(boxId, outputFilePath);
+      lastVideoCreationTime = moment(); // Update the last video creation time
+      imageCount = 0; // Reset image count after video is created
+    } catch (error: any) {
+      console.error('Error creating video:', error.message);
+    }
+  }, videoDelay); // Wait for 10 seconds after the last image
+}
+
+async function getNextImageIndex(folderPath: string): Promise<number> {
+  const files = await fs.promises.readdir(folderPath);
+  const imageFiles = files.filter(
+    (file) => file.startsWith('image-') && file.endsWith('.jpg'),
+  );
+  const lastImage = imageFiles.sort().pop();
+  if (!lastImage) return 1;
+  const lastIndex = parseInt(
+    lastImage.replace('image-', '').replace('.jpg', ''),
+    10,
+  );
+  return lastIndex + 1;
+}
+
+async function cleanUpInvalidFiles(imageFolder: string) {
+  const files = await fs.promises.readdir(imageFolder);
+  for (const file of files) {
+    const filePath = path.join(imageFolder, file);
+    const fileStats = await fs.promises.stat(filePath);
+    if (fileStats.size === 0) {
+      console.log(`Removing invalid file: ${filePath}`);
+      await fs.promises.unlink(filePath);
+    }
+  }
+}
+
+async function createVideoFromImages(boxId: string, outputFilePath: string) {
+  const imageFolder = path.join(__dirname, `../../uploads/playback/${boxId}`);
+  console.log('Creating video from images in folder:', imageFolder);
+
+  // Clean up invalid files before creating the video
+  await cleanUpInvalidFiles(imageFolder);
+
+  const imagePattern = `${imageFolder}/image-%03d.jpg`;
+  const fps = 30;
+
+  const ffmpegCommand = `ffmpeg -framerate ${fps} -i ${imagePattern} -c:v libx264 -pix_fmt yuv420p ${outputFilePath}`;
+  exec(ffmpegCommand, async (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error creating video: ${error.message}`);
+      return;
+    }
+    console.log('Video created successfully:', outputFilePath);
+    // Delete the images from the folder after video created with extension jpg
+
+    // create record in the playback
+    const finalPath = outputFilePath.replace('D:\\ahln\\', '');
+    await playbackModel.createPlayback(finalPath, boxId);
+
+    // Delete the images from the folder
+    const files = await fs.promises.readdir(imageFolder);
+    const images = files.filter((file) => file.endsWith('.jpg'));
+    for (const image of images) {
+      const filePath = path.join(imageFolder, image);
+      await fs.promises.unlink(filePath);
+    }
+  });
+}

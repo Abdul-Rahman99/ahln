@@ -30,7 +30,7 @@ connectDatabase();
 // );
 
 // Connect to MQTT client
-// client;
+client;
 
 // Middlewares
 app.use(localizationMiddleware); // Use localization middleware

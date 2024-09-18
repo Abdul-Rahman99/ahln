@@ -64,11 +64,13 @@ async function connect() {
     // console.log(topics);
     // const selectedTopic = `ahlanBox/ahlanBox_${}`;
 
-    client.subscribe(topics, { qos: 1 }, (err, granted: any) => {
+    client.subscribe(topics, function(err) {
       if (err) {
         console.error('Subscription error:', err);
+      } else if (topics) {
+        console.log('Subscribed to topic:', topics);
       } else {
-        console.log('Subscribed to topic:', granted[0].topic);
+        console.log('Unable to Subscribe to topic:');
       }
     });
   });

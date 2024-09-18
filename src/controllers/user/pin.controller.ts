@@ -269,6 +269,11 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         box_id,
       );
+      ResponseHandler.success(
+        res,
+        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+        checkPinResult,
+      );
     } else {
       notificationModel.createNotification(
         'checkPIN',
@@ -294,11 +299,6 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
       );
     }
-    ResponseHandler.success(
-      res,
-      i18n.__('PIN_CHECKED_SUCCESSFULLY'),
-      checkPinResult,
-    );
   } catch (error) {
     const user = await userModel.findUserByBoxId(req.body.box_id);
 

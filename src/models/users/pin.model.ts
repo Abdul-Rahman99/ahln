@@ -238,17 +238,20 @@ class PINModel {
       }
 
       const { time_range, day_range, end_date, type, id } = pinResult.rows[0];
-
-      const parsedTimeRange = time_range
-        .split(',')
-        .map((item: string) => item.trim());
-      const parsedDayRange = day_range
-        .split(',')
-        .map((item: string) => item.trim());
+      let parsedTimeRange, parsedDayRange;
+      try {
+        parsedTimeRange = time_range
+          .split(',')
+          .map((item: string) => item.trim());
+        parsedDayRange = day_range
+          .split(',')
+          .map((item: string) => item.trim());
+      } catch (error) {
+        throw new Error('Update your pin time and day range');
+      }
 
       const currentTime = moment().tz('Asia/Dubai');
       const currentDay = currentTime.day().toString();
-
       if (type === 'Timed') {
         const parsedEndDate = moment(end_date, 'DD-MM-YYYY')
           .tz('Asia/Dubai')
@@ -302,10 +305,15 @@ class PINModel {
       for (let i = 0; i < parsedTimeRange.length; i += 2) {
         const startTimeStr = parsedTimeRange[i];
         const endTimeStr = parsedTimeRange[i + 1];
+        let [startHour, startMin] = [0, 0];
+        let [endHour, endMin] = [0, 0];
+        try {
+          [startHour, startMin] = startTimeStr.split(':').map(Number);
 
-        const [startHour, startMin] = startTimeStr.split(':').map(Number);
-        const [endHour, endMin] = endTimeStr.split(':').map(Number);
-
+          [endHour, endMin] = endTimeStr.split(':').map(Number);
+        } catch (error) {
+          throw new Error('Update your PIN to add a time range');
+        }
         if (
           isNaN(startHour) ||
           isNaN(startMin) ||

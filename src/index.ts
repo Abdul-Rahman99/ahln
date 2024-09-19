@@ -67,6 +67,7 @@ const limiter = rateLimit({
 
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(config.UPLOADS)));
+app.use('/uploads/playback', express.static(path.join(config.UPLOADS)));
 
 // Mount routes
 mountRoutes(app);

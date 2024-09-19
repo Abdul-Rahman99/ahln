@@ -64,7 +64,7 @@ async function connect() {
     // console.log(topics);
     // const selectedTopic = `ahlanBox/ahlanBox_${}`;
 
-    client.subscribe(topics, function(err) {
+    client.subscribe(topics, function (err) {
       if (err) {
         console.error('Subscription error:', err);
       } else if (topics) {
@@ -206,7 +206,7 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
     // Delete the images from the folder after video created with extension jpg
 
     // create record in the playback
-    const finalPath = outputFilePath.replace('D:\\ahln\\', '');
+    const finalPath = outputFilePath.replace('home/db/ahln', '');
     await playbackModel.createPlayback(finalPath, boxId, tag);
 
     // Delete the images from the folder

@@ -206,7 +206,7 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
     // Delete the images from the folder after video created with extension jpg
 
     // create record in the playback
-    const finalPath = outputFilePath.replace('home/db/ahln', '');
+    const finalPath = outputFilePath.replace(`${process.env.UPLOADS}`, '');
     await playbackModel.createPlayback(finalPath, boxId, tag);
 
     // Delete the images from the folder

@@ -83,7 +83,7 @@ export default class NotificationModel {
         return {
           ...row,
           image: row.image
-            ? `${process.env.BASE_URL}/uploads/${row.image}`
+            ? `${process.env.BASE_URL}/${row.image}`
             : null,
         };
       });

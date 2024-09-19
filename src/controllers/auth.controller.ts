@@ -256,7 +256,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
   let userAvatar: string | null = null;
   if (user.avatar) {
-    userAvatar = `${process.env.BASE_URL}/uploads/${user.avatar}`;
+    userAvatar = `${process.env.BASE_URL}/${user.avatar}`;
   } else {
     userAvatar = null;
   }

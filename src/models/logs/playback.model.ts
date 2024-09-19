@@ -49,17 +49,20 @@ export default class PlaybackModel {
     console.log(box_id, fromDate, toDate);
 
     try {
-      let sql = `SELECT * FROM Playback WHERE box_id = $1 ORDER BY createdat DESC`;
+      let sql = `SELECT * FROM Playback WHERE box_id = $1 `;
       const sqlParams = [box_id];
 
       if (fromDate) {
         sql += ` AND createdat >= $2`;
         sqlParams.push(fromDate);
       }
-      if (toDate) {
+      if (toDate) { 
         sql += ` AND createdat <= $3`;
         sqlParams.push(toDate);
       }
+
+      sql += ` ORDER BY createdat DESC`;
+      
       const result = await connection.query(sql, sqlParams);
 
       const rows = result.rows.map((row) => {

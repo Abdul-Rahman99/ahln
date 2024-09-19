@@ -49,7 +49,7 @@ export default class PlaybackModel {
     console.log(box_id, fromDate, toDate);
 
     try {
-      let sql = `SELECT * FROM Playback WHERE box_id = $1`;
+      let sql = `SELECT * FROM Playback WHERE box_id = $1 ORDER BY createdat DESC`;
       const sqlParams = [box_id];
 
       if (fromDate) {

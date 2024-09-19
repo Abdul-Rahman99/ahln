@@ -68,7 +68,7 @@ async function connect() {
       if (err) {
         console.error('Subscription error:', err);
       } else if (topics) {
-        console.log('Subscribed to topic:', topics);
+        // console.log('Subscribed to topic:', topics);
       } else {
         console.log('Unable to Subscribe to topic:');
       }

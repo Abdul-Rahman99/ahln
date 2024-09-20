@@ -84,7 +84,7 @@ async function connect() {
 
     const boxPlaybackFolder = path.join(
       __dirname,
-      `../../uploads/playback/${boxId}`,
+      `${process.env.UPLOADS}/playback/${boxId}`,
     );
     if (!fs.existsSync(boxPlaybackFolder)) {
       fs.mkdirSync(boxPlaybackFolder, { recursive: true });
@@ -95,13 +95,13 @@ async function connect() {
 
   client.on('error', (error) => {
     client.end();
-    setTimeout(connect, 10000);
+    setTimeout(connect, 5000);
   });
 
   client.on('reconnect', () => {});
 
   client.on('end', () => {
-    setTimeout(connect, 10000);
+    setTimeout(connect, 5000);
   });
 }
 

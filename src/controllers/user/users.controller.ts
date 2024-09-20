@@ -20,17 +20,18 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 
   try {
     const createdUser = await userModel.createUser(newUser);
-    ResponseHandler.success(
-      res,
-      i18n.__('USER_CREATED_SUCCESSFULLY'),
-      createdUser,
-    );
+
     const action = 'createUser';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('USER_CREATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('USER_CREATED_SUCCESSFULLY'),
+      createdUser,
     );
   } catch (error: any) {
     const source = 'createUser';

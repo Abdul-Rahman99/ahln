@@ -68,7 +68,7 @@ export default class PlaybackModel {
       const rows = result.rows.map((row) => {
         return {
           ...row,
-          video_link: `${process.env.BASE_URL}/uploads/${row.video_link}`,
+          video_link: `${process.env.BASE_URL}/${row.video_link}`,
         };
       });
 

@@ -35,7 +35,7 @@ export default class BoxImageModel {
       const result = await connection.query(sql, sqlParams);
 
       const createdImage = result.rows[0] as BoxImage;
-      createdImage.image = `${process.env.BASE_URL}/${createdImage.image}`;
+      createdImage.image = `${process.env.BASE_URL}/uploads/${createdImage.image}`;
 
       return createdImage;
     } catch (error) {
@@ -66,7 +66,7 @@ export default class BoxImageModel {
       const sql = `SELECT * FROM Box_IMAGE`;
       const result = await connection.query(sql);
       result.rows.forEach((row) => {
-        row.image = `${process.env.BASE_URL}/${row.image}`;
+        row.image = `${process.env.BASE_URL}/uploads/${row.image}`;
       });
       return result.rows as BoxImage[];
     } catch (error) {
@@ -174,7 +174,7 @@ export default class BoxImageModel {
       const boxImages = result.rows as BoxImage[];
       return boxImages.map((image) => ({
         ...image,
-        image: `${process.env.BASE_URL}/${image.image}`,
+        image: `${process.env.BASE_URL}/uploads/${image.image}`,
       }));
     } catch (error) {
       throw new Error((error as Error).message);
@@ -193,7 +193,7 @@ export default class BoxImageModel {
       const boxImages = result.rows as BoxImage[];
       return boxImages.map((image) => ({
         ...image,
-        image: `${process.env.BASE_URL}/${image.image}`,
+        image: `${process.env.BASE_URL}/uploads/${image.image}`,
       }));
     } catch (error) {
       throw new Error((error as Error).message);

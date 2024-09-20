@@ -217,7 +217,7 @@ class UserModel {
       const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING id, user_name, role_id, createdAt, updatedAt, is_active, phone_number, email, preferred_language, email_verified, country, city, avatar`;
 
       const result = await connection.query(sql, queryParams);
-      result.rows[0].avatar = `${process.env.BASE_URL}/${result.rows[0].avatar}`;
+      result.rows[0].avatar = `${process.env.BASE_URL}/uploads/${result.rows[0].avatar}`;
 
       const userRoleSql =
         'SELECT role.title FROM users INNER JOIN role ON users.role_id = role.id WHERE users.id = $1';
@@ -459,7 +459,6 @@ class UserModel {
   async findUserByBoxId(boxId: string): Promise<string> {
     const connection = await db.connect();
     try {
-
       const userResult = await connection.query(
         'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
         [boxId],

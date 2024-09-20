@@ -85,7 +85,7 @@ class HistoryModel {
             result.push(...boxResult.rows);
           }
           result.forEach((row) => {
-            row.image = `${process.env.BASE_URL}/${row.image}`;
+            row.image = `${process.env.BASE_URL}/uploads/${row.image}`;
           });
           return result;
         } catch (error: any) {

@@ -70,7 +70,7 @@ export const uploadBoxImage = asyncHandler(
         auditTrail.createAuditTrail(
           userId,
           action,
-          `${process.env.BASE_URL}/${imageName}`,
+          `${process.env.BASE_URL}/uploads/${imageName}`,
           boxId,
         );
 

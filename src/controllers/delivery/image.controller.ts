@@ -73,7 +73,7 @@ export const getLiveStreamImage = asyncHandler(
 
     try {
       const image =
-        process.env.BASE_URL + '/liveImage-' + req.params.id + '.png';
+        process.env.BASE_URL + '/uploads/liveImage-' + req.params.id + '.png';
       ResponseHandler.success(
         res,
         i18n.__('LIVE_IMAGE_RETRIVED_SUCCESSFULLY'),

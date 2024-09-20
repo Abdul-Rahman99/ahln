@@ -56,19 +56,19 @@ export default class PlaybackModel {
         sql += ` AND createdat >= $2`;
         sqlParams.push(fromDate);
       }
-      if (toDate) { 
+      if (toDate) {
         sql += ` AND createdat <= $3`;
         sqlParams.push(toDate);
       }
 
       sql += ` ORDER BY createdat DESC`;
-      
+
       const result = await connection.query(sql, sqlParams);
 
       const rows = result.rows.map((row) => {
         return {
           ...row,
-          video_link: `${process.env.BASE_URL}/${row.video_link}`,
+          video_link: `${process.env.BASE_URL}/uploads/${row.video_link}`,
         };
       });
 

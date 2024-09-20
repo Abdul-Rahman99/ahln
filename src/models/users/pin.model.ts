@@ -72,8 +72,15 @@ class PINModel {
       const sql =
         'SELECT b.box_label, PIN.* FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1 ORDER BY createdat DESC';
       const result = await connection.query(sql, [user]);
+      const results = result.rows.map((row) => {
+        const endDate = moment(row.end_date).add(1, 'day');
+        return {
+          ...row,
+          end_date: endDate.toDate(),
+        };
+      });
 
-      return result.rows as PIN[];
+      return results as PIN[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

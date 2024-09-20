@@ -514,6 +514,20 @@ class BoxModel {
       connection.release();
     }
   }
+
+  // find box by boxGeneration
+  async findBoxByBoxGeneration(boxGenerationId: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT * FROM box WHERE box_model_id = $1`;
+      const result = await connection.query(sql, [boxGenerationId]);
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default BoxModel;

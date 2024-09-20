@@ -8,7 +8,9 @@ import ResponseHandler from '../../utils/responsesHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import authHandler from '../../utils/authHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
+import BoxModel from '../../models/box/box.model';
 
+const boxModel = new BoxModel();
 const systemLog = new SystemLogModel();
 const boxGenerationModel = new BoxGenerationModel();
 const auditTrail = new AuditTrailModel();
@@ -149,6 +151,16 @@ export const deleteBoxGeneration = asyncHandler(
 
     try {
       const boxGenerationId = req.params.id;
+
+      // check if the boxGenration associated with any box
+      const boxExists = await boxModel.findBoxByBoxGeneration(boxGenerationId);
+      if (boxExists) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_GENERATION_CANNOT_BE_DELETED'),
+        );
+      }
+
       const deletedBoxGeneration =
         await boxGenerationModel.deleteOne(boxGenerationId);
 

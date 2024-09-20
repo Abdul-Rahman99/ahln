@@ -87,7 +87,7 @@ class CityModel {
     }
   }
 
-  // Delete Mobile Page
+  // Delete City
   async deleteCity(id: number): Promise<City> {
     const connection = await db.connect();
 
@@ -132,7 +132,6 @@ class CityModel {
       connection.release();
     }
   }
-  
 }
 
 export default CityModel;

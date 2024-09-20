@@ -63,7 +63,7 @@ class AddressModel {
     const connection = await db.connect();
     try {
       const sql =
-        'SELECT Box.id as box_id, Users.email, Address.* FROM Address LEFT JOIN Box ON Box.address_id=Address.id LEFT JOIN Users ON Address.user_id=Users.id';
+        'SELECT Box.id as box_id, Country.name as country_name, City.name as city_name, Users.email, Address.* FROM Address LEFT JOIN Box ON Box.address_id=Address.id LEFT JOIN Users ON Address.user_id=Users.id LEFT JOIN Country ON Address.country_id=Country.id LEFT JOIN City ON Address.city_id=City.id';
       const result = await connection.query(sql);
 
       return result.rows as Address[];

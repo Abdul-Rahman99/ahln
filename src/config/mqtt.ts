@@ -98,7 +98,7 @@ async function connect() {
     setTimeout(connect, 10000);
   });
 
-  client.on('reconnect', () => {});
+  // client.on('reconnect', () => {});
 
   client.on('end', () => {
     setTimeout(connect, 10000);

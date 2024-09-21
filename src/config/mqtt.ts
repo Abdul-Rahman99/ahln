@@ -27,7 +27,7 @@ export let client: MqttClient;
 let imageCount = 0;
 let videoTimer: NodeJS.Timeout | null = null; // Timer to control video creation delay
 const imagesPerVideo = 1000000000000000;
-const videoDelay = 10000; // 10 seconds delay after last image before creating video
+const videoDelay = 4 * 1000; // 10 seconds delay after last image before creating video
 
 async function get_box_ids() {
   const connection = db.connect();
@@ -118,7 +118,7 @@ async function uploadImage(
       'base64',
     );
     const imageIndex = await getNextImageIndex(folderPath);
-    const imageName = `image-${String(imageIndex).padStart(3, '0')}.jpg`;
+    const imageName = `image-${String(imageIndex).padStart(9, '0')}.jpg`;
     const imagePath = path.join(folderPath, imageName);
 
     await fs.promises.writeFile(imagePath, buffer);
@@ -193,11 +193,12 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
   // Clean up invalid files before creating the video
   await cleanUpInvalidFiles(imageFolder);
 
-  const imagePattern = `${imageFolder}/image-%03d.jpg`;
+  const imagePattern = `${imageFolder}/image-%09d.jpg`;
   const fps = 30;
 
-  const ffmpegCommand = `ffmpeg -framerate ${fps} -i ${imagePattern} -c:v libx264 -pix_fmt yuv420p ${outputFilePath}`;
-  exec(ffmpegCommand, async (error, stdout, stderr) => {
+  try{
+    const ffmpegCommand = `ffmpeg -framerate ${fps} -i ${imagePattern} -c:v libx264 -pix_fmt yuv420p ${outputFilePath}`;
+    exec(ffmpegCommand, async (error, stdout, stderr) => {
     if (error) {
       console.error(`Error creating video: ${error.message}`);
       return;
@@ -217,4 +218,7 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
       await fs.promises.unlink(filePath);
     }
   });
+  } catch (error: any) {
+    console.error(`Error creating video: ${error.message}`);
+  }
 }

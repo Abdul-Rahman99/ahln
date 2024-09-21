@@ -7,10 +7,12 @@ import AddressModel from '../../models/box/address.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const addressModel = new AddressModel();
+const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createAddress = asyncHandler(
   async (req: Request, res: Response) => {
@@ -117,6 +119,17 @@ export const deleteAddress = asyncHandler(
     const user = await authHandler(req, res);
     try {
       const addressId = parseInt(req.params.id, 10);
+
+      // check if the user has delivery packages
+      const checkDeliveryPackages =
+        await deliveryPackageModel.getDeliveryPackagesByAddressId(addressId);
+
+      if (checkDeliveryPackages.length > 0) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('DELETE_DELIVERY_PACKAGES_RELATED_TO_ADDRESS_ID'),
+        );
+      }
       const deletedAddress = await addressModel.deleteOne(addressId, user);
 
       const action = 'deleteAddress';

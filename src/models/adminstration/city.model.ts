@@ -41,6 +41,24 @@ class CityModel {
     }
   }
 
+  // get all cities by country id
+  async getCitiesByCountryId(id: number): Promise<City[]> {
+    const connection = await db.connect();
+    try {
+      if (!id) {
+        throw new Error('Please provide an ID');
+      }
+      const sql =
+        'SELECT city.id, Country.name as country_name, city.name, city.createdat , city.updatedat FROM City INNER JOIN Country ON City.country = Country.id WHERE City.country = $1';
+      const result = await connection.query(sql, [id]);
+      return result.rows as City[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   // Get city by id
   async getCityById(id: number): Promise<City> {
     const connection = await db.connect();

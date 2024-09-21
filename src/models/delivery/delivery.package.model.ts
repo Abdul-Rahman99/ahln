@@ -353,6 +353,25 @@ class DeliveryPackageModel {
       connection.release();
     }
   }
+
+  // get delivery packages with address id
+  async getDeliveryPackagesByAddressId(
+    addressId: number,
+  ): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT * FROM Delivery_Package WHERE address_id = $1`;
+      const params = [addressId];
+
+      const result = await connection.query(sql, params);
+      return result.rows as DeliveryPackage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default DeliveryPackageModel;

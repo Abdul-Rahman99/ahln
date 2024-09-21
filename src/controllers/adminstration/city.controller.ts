@@ -143,3 +143,30 @@ export const deleteCity = asyncHandler(async (req: Request, res: Response) => {
     // next(error);
   }
 });
+
+export const getCityByCountry = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    try {
+      const countryId = parseInt(req.params.id, 10);
+      const countryExists = await countryModel.getOne(countryId);
+      if (!countryExists) {
+        const source = 'createCity';
+        systemLog.createSystemLog(user, 'Country Not Found', source);
+        return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_FOUND'));
+      }
+      const city = await cityModel.getCitiesByCountryId(countryId);
+      return ResponseHandler.success(
+        res,
+        i18n.__('CITY_RETRIEVED_SUCCESSFULLY'),
+        city,
+      );
+    } catch (error: any) {
+      const user = await authHandler(req, res);
+      const source = 'getCityByCountry';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, error.message);
+      // next(error);
+    }
+  },
+);

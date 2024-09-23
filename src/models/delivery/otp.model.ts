@@ -383,8 +383,9 @@ class OTPModel {
         'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4',
         ['delivered', true, updatedAt, trackingNumber],
       );
+      // console.log(deliveryPackage, 'deliveryPackage');
 
-      return [parsedSerialPort, pin_result, otp_result];
+      return [parsedSerialPort, pin_result, otp_result, deliveryPackage.title];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

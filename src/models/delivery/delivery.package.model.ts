@@ -52,7 +52,9 @@ class DeliveryPackageModel {
       const address_id = (
         await connection.query(sqlBox, [deliveryPackage.box_id])
       ).rows[0].address_id;
-
+      if (!address_id) {
+        throw new Error('Box does not have a valid address_id');
+      }
       const sqlFields = [
         'id',
         'createdAt',
@@ -98,8 +100,8 @@ class DeliveryPackageModel {
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp,
-                createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string, address_id`;
+                RETURNING id, tracking_number, address_id, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp,
+                createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string`;
 
       const result = await connection.query(sql, sqlParams);
 

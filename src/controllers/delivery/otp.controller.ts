@@ -336,7 +336,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('CHECK_TRACKING_NUMBER'),
+            result[3] as string,
             i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

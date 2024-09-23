@@ -14,10 +14,6 @@ export const createBoxValidation = [
     .optional()
     .notEmpty()
     .withMessage(i18n.__('CURRENT_TABLET_ID_REQUIRED')),
-  body('previous_tablet_id')
-    .optional()
-    .notEmpty()
-    .withMessage(i18n.__('PREVIOUS_TABLET_ID_REQUIRED')),
   body('box_model_id').isString().withMessage(i18n.__('BOX_MODEL_ID_REQUIRED')),
   validatorMiddleware,
 ];
@@ -45,7 +41,7 @@ export const updateBoxValidation = [
     .withMessage(i18n.__('BOX_MODEL_ID_REQUIRED')),
   body('address_id')
     .optional()
-    .isString()
+    .notEmpty()
     .withMessage(i18n.__('ADDRESS_ID_REQUIRED')),
   validatorMiddleware,
 ];

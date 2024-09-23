@@ -184,6 +184,20 @@ class TabletModel {
       connection.release();
     }
   }
+
+  // Check if a tablet is assigned to a box
+  async tabletIsAssignedToBox(tabletId: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = 'SELECT id FROM box WHERE current_tablet_id = $1';
+      const result = await connection.query(sql, [tabletId]);
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export default TabletModel;

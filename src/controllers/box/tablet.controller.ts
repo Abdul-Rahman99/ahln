@@ -118,6 +118,15 @@ export const deleteTablet = asyncHandler(
 
     try {
       const tabletId = req.params.id;
+      // check if the tablet alraedy has a box
+      const tablet = await tabletModel.tabletIsAssignedToBox(tabletId);
+      if (tablet) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('REMOVE_TABLET_FROM_BOX_FIRST'),
+        );
+      }
+
       const deletedTablet = await tabletModel.deleteOne(tabletId);
 
       const action = 'deleteTablet';

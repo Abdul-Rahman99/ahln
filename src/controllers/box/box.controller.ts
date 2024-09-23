@@ -10,6 +10,7 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import CountryModel from '../../models/adminstration/country.model';
 import CityModel from '../../models/adminstration/city.model';
 import UserBoxModel from '../../models/box/user.box.model';
+import TabletModel from '../../models/box/tablet.model';
 
 const userBoxModel = new UserBoxModel();
 const countryModel = new CountryModel();
@@ -17,6 +18,7 @@ const cityModel = new CityModel();
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const boxModel = new BoxModel();
+const tabletModel = new TabletModel();
 
 export const createBox = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
@@ -217,6 +219,15 @@ export const resetTabletId = asyncHandler(
     const user = await authHandler(req, res);
     try {
       const { tabletId, boxId } = req.body;
+
+      // check if the tablet alraedy has a box
+      const tablet = await tabletModel.tabletIsAssignedToBox(tabletId);
+      if (tablet) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('TABLET_ALREADY_ASSIGNED_TO_BOX'),
+        );
+      }
       const resetedTablte = await boxModel.resetTabletId(tabletId, boxId);
 
       const action = 'resetTabletId';

@@ -149,24 +149,27 @@ export default class NotificationModel {
           body: body,
         },
       };
-
-      if (fcmToken.length > 0) {
-        getMessaging()
-          .sendEachForMulticast(message)
-          .then((response) => {
-            if (response.failureCount > 0) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const failedTokens: string | any[] = [];
-              response.responses.forEach((resp, idx) => {
-                if (!resp.success) {
-                  failedTokens.push(registrationTokens[idx]);
-                }
-              });
-              console.log('List of tokens that caused failures: ' + response);
-            } else {
-              console.log('Success Send Notification');
-            }
-          });
+      try {
+        if (fcmToken.length > 0) {
+          getMessaging()
+            .sendEachForMulticast(message)
+            .then((response) => {
+              if (response.failureCount > 0) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const failedTokens: string | any[] = [];
+                response.responses.forEach((resp, idx) => {
+                  if (!resp.success) {
+                    failedTokens.push(registrationTokens[idx]);
+                  }
+                });
+                console.log('List of tokens that caused failures: ' + response);
+              } else {
+                console.log('Success Send Notification');
+              }
+            });
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
     } catch (error) {
       throw new Error((error as Error).message);

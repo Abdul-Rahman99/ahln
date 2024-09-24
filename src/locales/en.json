@@ -120,7 +120,7 @@
   "PACKAGE_UPDATED_SUCCESSFULLY": "Your package details have been updated successfully.",
   "DUBLICATED_PASSCODE": "Oops! That passcode is already in use. Could you choose a different one?",
   "CHECK_PIN": "Please enter your PIN for verification.",
-  "DELIVERY_CHECK_PIN": "Please enter the delivery PIN for verification.",
+  "DELIVERY_CHECK_PIN": "The delivery PIN checked successfully.",
   "BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY": "The box has been successfully assigned to your relative.",
   "ASSIGN_BOX_TO_RELATIVE_USER": "You're about to assign a box to a relative. Please confirm the details.",
   "USER_BOX_DELETED_SUCCESSFULLY": "The box has been removed from your account successfully.",
@@ -162,7 +162,7 @@
   "BOX_UPDATED_SUCCESSFULLY": "Your box information has been updated successfully.",
   "ADDRESSES_RETRIEVED_SUCCESSFULLY": "We've successfully retrieved your address information.",
   "USER_UPDATED_SUCCESSFULLY": "Your user information has been updated successfully.",
-  
+
   "USERS_RETRIEVED_SUCCESSFULLY": "USERS_RETRIEVED_SUCCESSFULLY",
   "STATUS_REQUIRED": "STATUS_REQUIRED",
   "EMAIL_IN_USE": "EMAIL_IN_USE",

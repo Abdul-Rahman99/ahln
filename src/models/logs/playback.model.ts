@@ -46,8 +46,6 @@ export default class PlaybackModel {
     toDate: string,
   ): Promise<Playback[]> {
     const connection = await db.connect();
-    console.log(box_id, fromDate, toDate);
-
     try {
       let sql = `SELECT * FROM Playback WHERE box_id = $1 `;
       const sqlParams = [box_id];

@@ -192,7 +192,7 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
   await cleanUpInvalidFiles(imageFolder);
 
   const imagePattern = `${imageFolder}/image-%09d.jpg`;
-  const fps = 30;
+  const fps = 15;
 
   try {
     const ffmpegCommand = `ffmpeg -framerate ${fps} -i ${imagePattern} -c:v libx264 -pix_fmt yuv420p ${outputFilePath}`;

@@ -218,8 +218,12 @@ async function createVideoFromImages(boxId: string, outputFilePath: string) {
     });
   } catch (error: any) {
     console.error(`Error creating video: ${error.message}`);
-    exec(
-      `find . -type f -iname /home/pc/ahln/uploads/playback/${boxId}*.jpg -delete`,
-    );
+    try {
+      exec(
+        `find . -type f -iname /home/pc/ahln/uploads/playback/${boxId}*.jpg -delete`,
+      );
+    } catch (error: any) {
+      console.error(`Error deleting images: ${error.message}`);
+    }
   }
 }

@@ -34,6 +34,9 @@ const userDevicesModel = new UserDevicesModel();
 //     );
 //   } catch (error: any) {
 //     const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 //     const source = 'registerDevice';
 //     systemLog.createSystemLog(user, (error as Error).message, source);
 //     ResponseHandler.badRequest(res, error.message);
@@ -44,6 +47,9 @@ const userDevicesModel = new UserDevicesModel();
 export const deleteDevice = async (req: Request, res: Response) => {
   const { deviceId } = req.params;
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const deletedDevice = await userDevicesModel.deleteUserDevice(
@@ -74,6 +80,9 @@ export const updateDevice = async (req: Request, res: Response) => {
   const { deviceId } = req.params;
   const { fcm_token }: { fcm_token: string } = req.body;
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const updatedDevice = await userDevicesModel.updateUserDevice(
@@ -103,6 +112,9 @@ export const updateDevice = async (req: Request, res: Response) => {
 
 export const getDevicesByUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const devices = await userDevicesModel.getAllUserDevices(user);
@@ -122,6 +134,9 @@ export const getDevicesByUser = async (req: Request, res: Response) => {
 
 export const getUserDeviceById = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { deviceId } = req.params;

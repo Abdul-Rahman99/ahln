@@ -28,6 +28,9 @@ const parseBillingDate = (dateString: string): Date | null => {
 export const createPayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newPayment: Payment = req.body;
@@ -81,6 +84,9 @@ export const createPayment = asyncHandler(
 export const getAllPayments = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const payments = await paymentModel.getAllPayments();
@@ -101,6 +107,9 @@ export const getAllPayments = asyncHandler(
 export const getPaymentById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -126,6 +135,9 @@ export const getPaymentById = asyncHandler(
 export const updatePayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const paymentId = parseInt(req.params.id, 10);
@@ -227,6 +239,9 @@ export const updatePayment = asyncHandler(
 export const deletePayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -260,6 +275,9 @@ export const deletePayment = asyncHandler(
 export const getPaymentsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const payments = await paymentModel.getPaymentsByUser(user);

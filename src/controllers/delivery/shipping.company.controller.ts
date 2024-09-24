@@ -16,6 +16,9 @@ const auditTrail = new AuditTrailModel();
 export const createShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { tracking_system, title, logo } = req.body;
 
     try {
@@ -49,6 +52,9 @@ export const createShippingCompany = asyncHandler(
 export const getAllShippingCompanies = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const shippingCompanies =
         await shippingCompanyModel.getAllShippingCompanies();
@@ -71,6 +77,9 @@ export const getShippingCompanyById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const shippingCompany = await shippingCompanyModel.getShippingCompanyById(
@@ -103,6 +112,9 @@ export const getShippingCompanyById = asyncHandler(
 export const updateShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     const { id } = req.params;
     const shippingCompanyData: Partial<ShippingCompany> = req.body;
@@ -138,6 +150,9 @@ export const deleteShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));

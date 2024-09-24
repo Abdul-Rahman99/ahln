@@ -30,6 +30,9 @@ const countryModel = new CountryModel();
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newUserBox: UserBox = req.body;
@@ -59,6 +62,9 @@ export const createUserBox = asyncHandler(
 export const getAllUserBoxes = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxes = await userBoxModel.getAllUserBoxes();
@@ -79,6 +85,9 @@ export const getAllUserBoxes = asyncHandler(
 export const getUserBoxById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
@@ -100,6 +109,9 @@ export const getUserBoxById = asyncHandler(
 export const updateUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
@@ -133,6 +145,9 @@ export const updateUserBox = asyncHandler(
 export const deleteUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
@@ -162,6 +177,9 @@ export const deleteUserBox = asyncHandler(
 export const getUserBoxesByUserId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       // Fetch user boxes by user ID
       const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
@@ -182,6 +200,9 @@ export const getUserBoxesByUserId = asyncHandler(
 export const getUserBoxesByBoxId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxId = req.params.boxId;
@@ -203,6 +224,9 @@ export const getUserBoxesByBoxId = asyncHandler(
 export const assignBoxToUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { userId, boxId, addressId } = req.body;
@@ -258,6 +282,9 @@ export const assignBoxToUser = asyncHandler(
 export const userAssignBoxToHimself = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { serialNumber, country_id, city_id, district, street, boxLabel } =
@@ -357,6 +384,9 @@ export const userAssignBoxToHimself = asyncHandler(
 export const userAssignBoxToRelativeUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const { boxId, email, relation } = req.body;
       const boxExist = await boxModel.getOne(boxId);
@@ -433,6 +463,9 @@ export const userAssignBoxToRelativeUser = asyncHandler(
 export const updateUserBoxStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { id } = req.params;
     const { is_active } = req.body;
 
@@ -466,6 +499,9 @@ export const updateUserBoxStatus = asyncHandler(
 export const transferBoxOwnership = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { boxId, email } = req.body;
     try {
       const newUserId = await userModel.findByEmail(email);

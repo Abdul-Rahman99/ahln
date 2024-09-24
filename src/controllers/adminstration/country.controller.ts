@@ -15,6 +15,9 @@ const auditTrail = new AuditTrailModel();
 export const createCountry = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newCountry: Country = req.body;
@@ -62,6 +65,9 @@ export const getAllCountry = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllCountry';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -82,6 +88,9 @@ export const getOneCountry = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getOneCountry';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -115,6 +124,9 @@ export const updateCountry = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'updateCountry';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -126,6 +138,9 @@ export const updateCountry = asyncHandler(
 export const deleteCountry = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const countryId = parseInt(req.params.id, 10);

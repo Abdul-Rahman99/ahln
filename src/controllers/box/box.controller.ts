@@ -22,6 +22,9 @@ const tabletModel = new TabletModel();
 
 export const createBox = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const newBox: Box = req.body;
@@ -64,6 +67,9 @@ export const getAllBoxes = asyncHandler(async (req: Request, res: Response) => {
     );
   } catch (error) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'getAllBoxes';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, (error as Error).message);
@@ -73,6 +79,9 @@ export const getAllBoxes = asyncHandler(async (req: Request, res: Response) => {
 
 export const getBoxById = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const boxId = req.params.id;
     const box = await boxModel.getOne(boxId);
@@ -87,6 +96,9 @@ export const getBoxById = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateBox = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const boxId = req.params.id;
@@ -115,6 +127,9 @@ export const updateBox = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const boxId = req.params.id;
@@ -143,6 +158,9 @@ export const deleteBox = asyncHandler(async (req: Request, res: Response) => {
 export const getBoxesByGenerationId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerationId = req.params.generationId;
@@ -165,6 +183,9 @@ export const getBoxesByGenerationId = asyncHandler(
 export const getBoxByTabletInfo = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { androidTabletId, tabletSerialNumber } = req.body;
@@ -185,6 +206,9 @@ export const getBoxByTabletInfo = asyncHandler(
 export const assignTabletToBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { tabletId, boxId } = req.body;
@@ -217,6 +241,9 @@ export const assignTabletToBox = asyncHandler(
 export const resetTabletId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const { tabletId, boxId } = req.body;
 
@@ -254,6 +281,9 @@ export const resetTabletId = asyncHandler(
 export const updateBoxAndAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxId = req.params.id;

@@ -42,6 +42,9 @@ export const createSalesInvoice = asyncHandler(
       const userExist = await userModel.getOne(user);
       if (!userExist) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'createSalesInvoice';
         systemLog.createSystemLog(user, 'User Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
@@ -110,6 +113,9 @@ export const createSalesInvoice = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'createSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -121,6 +127,9 @@ export const createSalesInvoice = asyncHandler(
 export const getAllSalesInvoices = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const salesInvoices = await salesInvoiceModel.getAllSalesInvoices();
       ResponseHandler.success(
@@ -140,6 +149,9 @@ export const getAllSalesInvoices = asyncHandler(
 export const getSalesInvoiceById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const salesInvoiceId = req.params.id;
@@ -161,6 +173,9 @@ export const getSalesInvoiceById = asyncHandler(
 export const updateSalesInvoice = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const salesInvoiceId = req.params.id;
@@ -208,6 +223,9 @@ export const updateSalesInvoice = asyncHandler(
 export const deleteSalesInvoice = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const salesInvoiceId = req.params.id;
       const deletedSalesInvoice =
@@ -251,6 +269,9 @@ export const getSalesInvoicesByUserId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoiceByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -276,6 +297,9 @@ export const getSalesInvoicesBySalesId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoicesBySalesId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -297,6 +321,9 @@ export const getSalesInvoicesByBoxId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoicesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

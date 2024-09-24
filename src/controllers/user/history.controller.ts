@@ -14,6 +14,9 @@ const systemLog = new SystemLogModel();
 
 export const getAllTables = asyncHandler(async (req, res) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const tables = await historyModel.getAllTables();
@@ -31,6 +34,9 @@ export const getAllTables = asyncHandler(async (req, res) => {
 
 export const getTableHistory = asyncHandler(async (req, res) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   const { tableName } = req.body;
 
   try {
@@ -49,6 +55,9 @@ export const getTableHistory = asyncHandler(async (req, res) => {
 
 export const getBoxHistory = asyncHandler(async (req, res) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   const { boxId } = req.body;
 
   try {

@@ -17,6 +17,9 @@ const countryModel = new CountryModel();
 
 export const createCity = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const newCity: City = req.body;
@@ -64,6 +67,9 @@ export const getAllCity = asyncHandler(async (req: Request, res: Response) => {
     );
   } catch (error: any) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'getAllCity';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -82,6 +88,9 @@ export const getOneCity = asyncHandler(async (req: Request, res: Response) => {
     );
   } catch (error: any) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'getOneCity';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, error.message);
@@ -110,6 +119,9 @@ export const updateCity = asyncHandler(async (req: Request, res: Response) => {
     );
   } catch (error) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'updateCity';
     systemLog.createSystemLog(user, (error as Error).message, source);
     ResponseHandler.badRequest(res, (error as Error).message);
@@ -119,6 +131,9 @@ export const updateCity = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteCity = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const cityId = parseInt(req.params.id, 10);
@@ -147,6 +162,9 @@ export const deleteCity = asyncHandler(async (req: Request, res: Response) => {
 export const getCityByCountry = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const countryId = parseInt(req.params.id, 10);
       const countryExists = await countryModel.getOne(countryId);
@@ -163,6 +181,9 @@ export const getCityByCountry = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getCityByCountry';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

@@ -22,6 +22,9 @@ const relativeCustomerModel = new RelativeCustomerModel();
 export const createRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newRelaticeCustomerData: RelativeCustomer = req.body;
 
@@ -70,6 +73,9 @@ export const createRelativeCustomer = asyncHandler(
 export const getAllRelativeCustomersByUserId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomers = await relativeCustomerModel.getMany(user);
       ResponseHandler.success(
@@ -88,6 +94,9 @@ export const getAllRelativeCustomersByUserId = asyncHandler(
 export const getAllRelativeCustomersForAdmin = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomers = await relativeCustomerModel.getAllForAdmin();
       ResponseHandler.success(
@@ -107,6 +116,9 @@ export const getAllRelativeCustomersForAdmin = asyncHandler(
 export const getRelativeCustomerById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const relativeCustomerId = parseInt(req.params.id, 10);
@@ -134,6 +146,9 @@ export const getRelativeCustomerById = asyncHandler(
 export const updateRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomerId = req.params.id;
       const newRelaticeCustomerData: RelativeCustomer = req.body;
@@ -191,6 +206,9 @@ export const updateRelativeCustomer = asyncHandler(
 export const deleteRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const relativeCustomerId = req.params.id;
@@ -230,6 +248,9 @@ export const deleteRelativeCustomer = asyncHandler(
 export const updateRelativeCustomerStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { id, status } = req.body;

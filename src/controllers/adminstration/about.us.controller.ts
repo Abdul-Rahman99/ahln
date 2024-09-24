@@ -18,6 +18,9 @@ export const createAboutUs = asyncHandler(
   async (req: Request, res: Response) => {
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const aboutUs = await aboutUsModel.createAboutUs(pageData);
@@ -46,6 +49,9 @@ export const createAboutUs = asyncHandler(
 export const getAllAboutUs = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const aboutUs = await aboutUsModel.getAllAboutUs();
 
@@ -67,12 +73,18 @@ export const getAboutUsById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const aboutUs = await aboutUsModel.getAboutUsById(parseInt(id, 10));
 
       if (!aboutUs) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'getAboutUsById';
         systemLog.createSystemLog(user, 'About Us Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('ABOUT_US_NOT_FOUND'));
@@ -97,6 +109,9 @@ export const updateAboutUs = asyncHandler(
     const { id } = req.params;
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const updatedAboutU = await aboutUsModel.updateAboutUs(
@@ -129,6 +144,9 @@ export const deleteAboutUs = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedAboutUs = await aboutUsModel.deleteAboutUs(parseInt(id, 10));

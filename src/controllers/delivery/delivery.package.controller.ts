@@ -24,6 +24,9 @@ const deliveryPackageModel = new DeliveryPackageModel();
 export const createDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       if (req.body.tracking_number) {
@@ -99,6 +102,9 @@ export const createDeliveryPackage = asyncHandler(
 export const getAllDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackages = await deliveryPackageModel.getMany();
@@ -119,6 +125,9 @@ export const getAllDeliveryPackages = asyncHandler(
 export const getDeliveryPackageById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -141,6 +150,9 @@ export const getDeliveryPackageById = asyncHandler(
 export const updateDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -201,6 +213,9 @@ export const updateDeliveryPackage = asyncHandler(
 export const deleteDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -257,6 +272,9 @@ export const deleteDeliveryPackage = asyncHandler(
 export const getUserDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { boxId, status } = req.query;
@@ -294,6 +312,9 @@ export const getUserDeliveryPackages = asyncHandler(
 export const transferDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const { fromBoxId, toBoxId } = req.body;
       const fromBoxRelatedToUser = await boxModel.getOneByUser(user, fromBoxId);

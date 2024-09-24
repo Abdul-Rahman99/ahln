@@ -21,6 +21,9 @@ const otpModel = new OTPModel();
 
 export const createOTP = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const newOTP: OTP = req.body;
@@ -56,6 +59,9 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const otps = await otpModel.getMany();
@@ -70,6 +76,9 @@ export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
 
 export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const otpId = req.params.id;
@@ -86,6 +95,9 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 // export const updateOTP = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
 // const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 //     try {
 //       const otpId = req.params.id;
 //       const otpData: Partial<OTP> = req.body;
@@ -135,6 +147,9 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const otpId = req.params.id;
     const deletedOTP = await otpModel.deleteOne(Number(otpId));
@@ -185,6 +200,9 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
 export const getOTPsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const otps = await otpModel.getOTPsByUser(user);

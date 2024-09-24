@@ -16,6 +16,9 @@ const boxLockerModel = new BoxLockerModel();
 export const createBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newBoxLocker: BoxLocker = req.body;
@@ -46,6 +49,9 @@ export const createBoxLocker = asyncHandler(
 export const getAllBoxLockers = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockers = await boxLockerModel.getMany();
@@ -75,6 +81,9 @@ export const getBoxLockerById = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getBoxLockerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -86,6 +95,9 @@ export const getBoxLockerById = asyncHandler(
 export const updateBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockerId = req.params.id;
@@ -118,6 +130,9 @@ export const updateBoxLocker = asyncHandler(
 export const deleteBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockerId = req.params.id;
@@ -149,6 +164,9 @@ export const deleteBoxLocker = asyncHandler(
 export const getAllLockersById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxId = req.body.boxId;

@@ -17,6 +17,9 @@ const deliveryPackageModel = new DeliveryPackageModel();
 export const createAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress, user);
@@ -53,6 +56,9 @@ export const getAllAddresses = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllAddresses';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -64,6 +70,9 @@ export const getAllAddresses = asyncHandler(
 export const getAddressById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
       const address = await addressModel.getOne(addressId, user);
@@ -84,6 +93,9 @@ export const getAddressById = asyncHandler(
 export const updateAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
       const addressData: Partial<Address> = req.body;
@@ -117,6 +129,9 @@ export const updateAddress = asyncHandler(
 export const deleteAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
 

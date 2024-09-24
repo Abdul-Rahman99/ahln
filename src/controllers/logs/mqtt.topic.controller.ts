@@ -13,6 +13,9 @@ const mqttTopicModel = new MqttTopicModel();
 export const createMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newMqttTopic: MqttTopic = req.body;
@@ -35,6 +38,9 @@ export const createMqttTopic = asyncHandler(
 export const getAllMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const createdMqttTopic = await mqttTopicModel.getAllMqttTopics();
@@ -55,6 +61,9 @@ export const getAllMqttTopic = asyncHandler(
 export const getOneMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mqttTopicId = req.params.id;
@@ -78,6 +87,9 @@ export const getOneMqttTopic = asyncHandler(
 export const deleteOneMqttTopic = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mqttTopicId = req.params.id;

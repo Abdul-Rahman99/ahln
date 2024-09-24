@@ -46,6 +46,9 @@ const sendVerificationEmail = async (
 
   transporter.sendMail(mailOptions);
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   notificationModel.createNotification(
     'sendVerificationEmail',
     i18n.__('VERFICATION_SENT_SUCCESSFULLY'),
@@ -62,6 +65,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const emailExists = await userModel.emailExists(email);
   if (emailExists) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'register';
     systemLog.createSystemLog(user, 'Email already Registerd', source);
     return ResponseHandler.badRequest(res, i18n.__('EMAIL_ALREADY_REGISTERED'));
@@ -70,6 +76,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const phoneExists = await userModel.phoneExists(phone_number);
   if (phoneExists) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'phoneExists';
     systemLog.createSystemLog(user, 'Phone Already Exists', source);
     return ResponseHandler.badRequest(res, i18n.__('PHONE_ALREADY_REGISTERED'));
@@ -123,6 +132,9 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
 
   if (!currentUser) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'verifyEmail';
     systemLog.createSystemLog(user, 'User Not Found', source);
     return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
@@ -131,6 +143,9 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   // Verify the token from the request matches the one in the database
   if (currentUser.token !== currentUser.token) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'verifyEmail';
     systemLog.createSystemLog(user, 'Invalid Token', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_TOKEN'));
@@ -139,6 +154,9 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   // Check if the provided email matches the current user's email
   if (currentUser.email.toLowerCase() !== emailLower) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'verifyEmail';
     systemLog.createSystemLog(user, 'Unauthorized email verification', source);
     return ResponseHandler.badRequest(
@@ -147,6 +165,9 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     );
   }
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   // Check if the provided OTP matches the user's OTP
   const isOtpValid = await userModel.verifyOtp(emailLower, otp);
@@ -216,6 +237,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   if (!user) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'login';
     systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
@@ -224,6 +248,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const isPasswordValid = bcrypt.compareSync(password, user.password);
   if (!isPasswordValid) {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const source = 'login';
     systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
@@ -290,6 +317,9 @@ export const currentUser = asyncHandler(async (req: Request, res: Response) => {
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   await userModel.updateUserToken(user, null);
   return ResponseHandler.success(res, i18n.__('LOGOUT_SUCCESS'));
@@ -302,6 +332,9 @@ export const resendOtpAndUpdateDB = asyncHandler(
     const emailExists = await userModel.emailExists(email);
     if (!emailExists) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'resendOtpAndUpdateDB';
       systemLog.createSystemLog(user, 'Invalid Email', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_EMAIL'));
@@ -314,6 +347,9 @@ export const resendOtpAndUpdateDB = asyncHandler(
     sendVerificationEmail(email, otp, req, res);
 
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     notificationModel.createNotification(
       'resendOtpAndUpdateDB',
@@ -334,6 +370,9 @@ export const updatePasswordWithOTP = asyncHandler(
 
     if (!isValidOTP) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'updatePasswordWithOTP';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
       return ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'));
@@ -344,6 +383,9 @@ export const updatePasswordWithOTP = asyncHandler(
     await userModel.updateResetPasswordOTP(email, null);
 
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     notificationModel.createNotification(
       'updatePasswordWithOTP',
@@ -360,6 +402,9 @@ export const updatePassword = asyncHandler(
   async (req: Request, res: Response) => {
     const { password, newPassword } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     const result = await userModel.getOne(user);
 

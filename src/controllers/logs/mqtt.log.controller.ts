@@ -15,6 +15,9 @@ const mqttTopic = new MqttTopicModel();
 export const createMqttLog = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newMqttLog: MqttLog = req.body;
       const mqttTopicExist = await mqttTopic.getMqttTopic(
@@ -45,6 +48,9 @@ export const createMqttLog = asyncHandler(
 export const getAllMqttLogs = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mqttLogs = await mqttLogModel.getAllMqttLogs();
@@ -64,6 +70,9 @@ export const getAllMqttLogs = asyncHandler(
 
 export const getMqttLog = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const mqttLogId = req.params.id;
     const mqttLog = await mqttLogModel.getMqttLog(parseInt(mqttLogId));
@@ -83,6 +92,9 @@ export const getMqttLog = asyncHandler(async (req: Request, res: Response) => {
 export const deleteMqttLog = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mqttLogId = req.params.id;

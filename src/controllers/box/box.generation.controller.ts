@@ -18,6 +18,9 @@ const auditTrail = new AuditTrailModel();
 export const createBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newBoxGeneration: BoxGeneration = req.body;
 
@@ -58,6 +61,9 @@ export const createBoxGeneration = asyncHandler(
 export const getAllBoxGenerations = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerations = await boxGenerationModel.getMany();
@@ -78,6 +84,9 @@ export const getAllBoxGenerations = asyncHandler(
 export const getBoxGenerationById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const boxGenerationId = req.params.id;
       const boxGeneration = await boxGenerationModel.getOne(boxGenerationId);
@@ -98,6 +107,9 @@ export const getBoxGenerationById = asyncHandler(
 export const updateBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerationId = req.params.id;
@@ -148,6 +160,9 @@ export const updateBoxGeneration = asyncHandler(
 export const deleteBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerationId = req.params.id;

@@ -12,6 +12,9 @@ const notificationModel = new NotificationModel();
 export const createNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { title, message, image, user, boxId } = req.body;
@@ -39,6 +42,9 @@ export const createNotification = asyncHandler(
 export const getAllNotifications = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const notifications = await notificationModel.getAllNotifications();
       ResponseHandler.success(
@@ -58,6 +64,9 @@ export const getAllNotifications = asyncHandler(
 export const getAllNotificationsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const notifications =
         await notificationModel.getAllNotificationsByUser(user);
@@ -78,6 +87,9 @@ export const getAllNotificationsByUser = asyncHandler(
 export const getNotificationById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const notificationId = parseInt(req.params.id, 10);
@@ -100,6 +112,9 @@ export const getNotificationById = asyncHandler(
 export const deleteNotificationById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const notificationId = parseInt(req.params.id, 10);
@@ -122,6 +137,9 @@ export const deleteNotificationById = asyncHandler(
 export const updateNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const notificationId = parseInt(req.params.id, 10);
@@ -160,6 +178,9 @@ export const updateNotification = asyncHandler(
 //       await notificationModel.pushNotification(fcmTokens, title, body);
 //     } catch (error) {
 //       const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 //       const source = 'pushNotification';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, (error as Error).message);

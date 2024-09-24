@@ -13,6 +13,9 @@ const userPermissionModel = new UserPermissionModel();
 
 export const assignPermissionToUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { user_id, permission_id } = req.body;
@@ -58,6 +61,9 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
 
 export const removePermissionFromUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { user_id, permission_id } = req.body;
@@ -107,6 +113,9 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
 
 export const getPermissionsByUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { userId } = req.params;
@@ -139,6 +148,9 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
 
 export const getAllPermissions = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const permissions = await userPermissionModel.getAllUserPermissions();
     ResponseHandler.success(

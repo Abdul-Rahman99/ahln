@@ -39,6 +39,9 @@ export const getAllPlaybackByBox = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllPlaybackByBox';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

@@ -24,6 +24,9 @@ const systemLog = new SystemLogModel();
 
 export const createPin = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const newPin: PIN = req.body;
     const boxExist = await boxModel.getOne(newPin.box_id);
@@ -118,6 +121,9 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
 export const getAllPinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const pins = await pinModel.getAllPinByUser(user);
       ResponseHandler.success(
@@ -137,6 +143,9 @@ export const getAllPinByUser = asyncHandler(
 export const getOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const pinId = parseInt(req.params.id, 10);
       const pin = await pinModel.getOnePinByUser(pinId, user);
@@ -153,6 +162,9 @@ export const getOnePinByUser = asyncHandler(
 export const deleteOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const pinId = parseInt(req.params.id, 10);
@@ -184,6 +196,9 @@ export const deleteOnePinByUser = asyncHandler(
 export const updateOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const pinId = parseInt(req.params.id, 10);

@@ -15,6 +15,9 @@ const tabletModel = new TabletModel();
 export const createTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newTablet: Tablet = req.body;
@@ -44,6 +47,9 @@ export const createTablet = asyncHandler(
 export const getAllTablets = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tablets = await tabletModel.getMany();
@@ -64,6 +70,9 @@ export const getAllTablets = asyncHandler(
 export const getTabletById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;
@@ -85,6 +94,9 @@ export const getTabletById = asyncHandler(
 export const updateTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;
@@ -115,6 +127,9 @@ export const updateTablet = asyncHandler(
 export const deleteTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;

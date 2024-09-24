@@ -18,6 +18,9 @@ export const createMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mobilePage = await mobilePagesModel.createMobilePage(pageData);
@@ -46,6 +49,9 @@ export const createMobilePage = asyncHandler(
 export const getAllMobilePages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const mobilePages = await mobilePagesModel.getAllMobilePages();
 
@@ -67,12 +73,18 @@ export const getMobilePageByTitle = asyncHandler(
   async (req: Request, res: Response) => {
     const { title } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mobilePage = await mobilePagesModel.getMobilePageByTitle(title);
 
       if (!mobilePage) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'getMobilePageByTitle';
         systemLog.createSystemLog(user, 'Mobile Page Not Found', source);
         return ResponseHandler.badRequest(
@@ -100,6 +112,9 @@ export const updateMobilePage = asyncHandler(
     const { id } = req.params;
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const updatedMobilePage = await mobilePagesModel.updateMobilePage(
@@ -132,6 +147,9 @@ export const deleteMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedMobilePage = await mobilePagesModel.deleteMobilePage(

@@ -22,6 +22,9 @@ const parseExpireDate = (dateString: string): Date | null => {
 
 export const createCard = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const newCard: Card = req.body;
@@ -65,6 +68,9 @@ export const createCard = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllCards = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const cards = await cardModel.getAllCards();
@@ -83,6 +89,9 @@ export const getAllCards = asyncHandler(async (req: Request, res: Response) => {
 
 export const getCardById = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const cardId = parseInt(req.params.id, 10);
@@ -103,6 +112,9 @@ export const getCardById = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateCard = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const cardId = parseInt(req.params.id, 10);
@@ -158,6 +170,9 @@ export const updateCard = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteCard = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const cardId = parseInt(req.params.id, 10);

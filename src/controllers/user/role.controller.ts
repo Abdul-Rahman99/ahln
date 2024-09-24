@@ -14,6 +14,9 @@ const roleModel = new RoleModel();
 
 export const createRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { title, description } = req.body;
     const role = await roleModel.create(title, description);
@@ -35,6 +38,9 @@ export const createRole = async (req: Request, res: Response) => {
 
 export const getAllRoles = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const roles = await roleModel.getAll();
     ResponseHandler.success(
@@ -52,6 +58,9 @@ export const getAllRoles = async (req: Request, res: Response) => {
 
 export const getRoleById = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const role = await roleModel.getById(Number(id));
@@ -66,6 +75,9 @@ export const getRoleById = async (req: Request, res: Response) => {
 
 export const updateRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -88,6 +100,9 @@ export const updateRole = async (req: Request, res: Response) => {
 
 export const deleteRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { id } = req.params;

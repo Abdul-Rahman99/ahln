@@ -15,6 +15,9 @@ const auditTrail = new AuditTrailModel();
 export const createContactUs = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newContactUs: ContactUs = req.body;
@@ -56,6 +59,9 @@ export const getAllContactUs = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -78,6 +84,9 @@ export const getOneContactUs = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getOneContactUs';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -110,6 +119,9 @@ export const getOneContactUs = asyncHandler(
 //       );
 //     } catch (error) {
 //       const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 //       const source = 'updateContactUs';
 //       systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, (error as Error).message);
@@ -121,6 +133,9 @@ export const getOneContactUs = asyncHandler(
 export const deleteContactUs = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const contactUsId = parseInt(req.params.id, 10);

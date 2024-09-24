@@ -16,6 +16,9 @@ const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createDPFavList = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const dpFavListData = req.body;
@@ -81,6 +84,9 @@ export const createDPFavList = async (req: Request, res: Response) => {
 //       );
 //     } catch (error: any) {  // next(error);
 // const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 // const source = 'getAllDPFavLists';
 // systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
@@ -105,6 +111,9 @@ export const createDPFavList = async (req: Request, res: Response) => {
 //       );
 //     } catch (error: any) {// next(error);
 // const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 // const source = 'updateDPFavList';
 // systemLog.createSystemLog(user, (error as Error).message, source);
 //       ResponseHandler.badRequest(res, error.message);
@@ -116,6 +125,9 @@ export const createDPFavList = async (req: Request, res: Response) => {
 export const deleteDPFavList = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { id } = req.params;
@@ -145,6 +157,9 @@ export const deleteDPFavList = asyncHandler(
 export const getDPFavListsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const dpFavLists = await dpFavListModel.getDPFavListsByUser(user);

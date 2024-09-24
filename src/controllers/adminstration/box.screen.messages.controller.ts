@@ -19,6 +19,9 @@ export const createBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { box_id, title, message } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxUserExist = await boxModel.getOneByUser(user, box_id);
@@ -67,6 +70,9 @@ export const createBoxScreenMessage = asyncHandler(
 export const getAllBoxScreenMessages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const boxScreenMessages =
         await boxScreenMessagesModel.getAllBoxScreenMessages(user);
@@ -88,6 +94,9 @@ export const getBoxScreenMessageById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxScreenMessage =
@@ -124,6 +133,9 @@ export const updateBoxScreenMessage = asyncHandler(
     const { id } = req.params;
     const { box_id, tablet_id, title, message } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const updatedBoxScreenMessage =
         await boxScreenMessagesModel.updateBoxScreenMessage(
@@ -164,6 +176,9 @@ export const deleteBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedBoxScreenMessage =

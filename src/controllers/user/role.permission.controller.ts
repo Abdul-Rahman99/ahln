@@ -13,6 +13,9 @@ const rolePermissionModel = new RolePermissionModel();
 
 export const assignPermissionToRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { role_id, permission_id } = req.body;
@@ -54,6 +57,9 @@ export const assignPermissionToRole = async (req: Request, res: Response) => {
 
 export const removePermissionFromRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { role_id, permission_id } = req.body;
@@ -104,6 +110,9 @@ export const removePermissionFromRole = async (req: Request, res: Response) => {
 
 export const getPermissionsByRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { roleId } = req.params;
@@ -139,6 +148,9 @@ export const getPermissionsByRole = async (req: Request, res: Response) => {
 
 export const getAllRolePermissions = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const permissions = await rolePermissionModel.getAllRolePermissions();
     ResponseHandler.success(

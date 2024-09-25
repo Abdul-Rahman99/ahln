@@ -235,8 +235,8 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, fcmToken } = req.body;
-
-  const user = await userModel.findByEmail(email);
+  const emailLower = await email.toLowerCase();
+  const user = await userModel.findByEmail(emailLower);
 
   if (!user) {
     const user = await authHandler(req, res);
@@ -258,7 +258,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
   }
-  await email.toLowerCase();
   const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
   await userModel.updateUserToken(user.id, token);
 

@@ -369,7 +369,6 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
           box_locker_string: result[0],
           pin: result[1],
-          otp: result[2],
         });
       } else {
         const source = 'checkTrackingNumberAndUpdateStatus';

@@ -363,7 +363,6 @@ class OTPModel {
         throw new Error('The package has already been delivered');
       }
       const pin_result = deliveryPackage.delivery_pin;
-      const otp_result = deliveryPackage.otp;
       const boxLockerResult = await connection.query(
         'SELECT serial_port FROM box_locker WHERE id = $1',
         [deliveryPackage.box_locker_id],
@@ -385,7 +384,7 @@ class OTPModel {
       );
       // console.log(deliveryPackage, 'deliveryPackage');
 
-      return [parsedSerialPort, pin_result, otp_result, deliveryPackage.title];
+      return [parsedSerialPort, pin_result, deliveryPackage.title];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

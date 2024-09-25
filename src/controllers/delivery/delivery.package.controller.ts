@@ -12,7 +12,9 @@ import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import BoxModel from '../../models/box/box.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBoxModel = new UserBoxModel();
 const boxModel = new BoxModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -29,9 +31,22 @@ export const createDeliveryPackage = asyncHandler(
     }
 
     try {
+      // check if the user related to box
+      const userRelatedToBox = await userBoxModel.checkUserBox(
+        user,
+        req.body.box_id,
+      );
+      if (!userRelatedToBox) {
+        const source = 'createDeliveryPackage';
+        const message = i18n.__('USER_NOT_RELATED_TO_BOX');
+        systemLog.createSystemLog(user, message, source);
+        return ResponseHandler.badRequest(res, message);
+      }
+
       if (req.body.tracking_number) {
         await deliveryPackageModel.checkTrackingNumber(
           req.body.tracking_number.toLowerCase(),
+          req.body.box_id,
         );
       }
 

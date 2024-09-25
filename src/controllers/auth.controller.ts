@@ -86,6 +86,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   // Hash the password
   const hashedPassword = bcrypt.hashSync(password, 10);
 
+  // make the email lowercase
+  await email.toLowerCase();
+
   // Create the user
   const user = await userModel.createUser({
     email,
@@ -255,7 +258,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
   }
-
+  await email.toLowerCase();
   const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
   await userModel.updateUserToken(user.id, token);
 

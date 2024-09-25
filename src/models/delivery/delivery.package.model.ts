@@ -41,6 +41,7 @@ class DeliveryPackageModel {
     deliveryPackage: Partial<DeliveryPackage>,
   ): Promise<DeliveryPackage> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
@@ -102,9 +103,10 @@ class DeliveryPackageModel {
                 createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string`;
 
       const result = await connection.query(sql, sqlParams);
-
+      await connection.query('COMMIT');
       return result.rows[0];
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();
@@ -145,17 +147,20 @@ class DeliveryPackageModel {
     }
   }
 
-  async checkTrackingNumber(tracking_number: string): Promise<any> {
+  async checkTrackingNumber(
+    tracking_number: string,
+    box_id: string,
+  ): Promise<any> {
     const connection = await db.connect();
 
     try {
-      if (!tracking_number) {
-        throw new Error('Please provide a tracking number');
+      if (!tracking_number && !box_id) {
+        throw new Error('Please provide a tracking number and box ID');
       }
 
       const deliveryPackageResult = await connection.query(
-        'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1',
-        [tracking_number],
+        'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2',
+        [tracking_number, box_id],
       );
 
       if (deliveryPackageResult.rows.length > 0) {
@@ -366,6 +371,26 @@ class DeliveryPackageModel {
 
       const result = await connection.query(sql, params);
       return result.rows as DeliveryPackage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // check if the tracking number exists in the box
+  async checkTrackingNumberExistsInBox(
+    trackingNumber: string,
+    boxId: string,
+  ): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT * FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2`;
+      const params = [trackingNumber, boxId];
+      const result = await connection.query(sql, params);
+      console.log(result.rows);
+
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

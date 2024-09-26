@@ -146,7 +146,7 @@ export const deleteContactUs = asyncHandler(
       auditTrail.createAuditTrail(
         user,
         action,
-        i18n.__('CONTACT_US_UPDATED_SUCCESSFULLY'),
+        i18n.__('CONTACT_US_DELETED_SUCCESSFULLY'),
         null,
       );
       ResponseHandler.success(

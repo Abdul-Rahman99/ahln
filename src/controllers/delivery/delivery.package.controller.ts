@@ -339,7 +339,7 @@ export const transferDeliveryPackages = asyncHandler(
         const source = 'transferDeliveryPackages';
         systemLog.createSystemLog(
           user,
-          'fromBox Does Not Belong To User',
+          'from Box Does Not Belong To User',
           source,
         );
         return ResponseHandler.badRequest(

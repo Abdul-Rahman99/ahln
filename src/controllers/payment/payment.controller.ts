@@ -54,8 +54,8 @@ export const createPayment = asyncHandler(
       const createdPayment = await paymentModel.createPayment(newPayment, user);
 
       notificationModel.createNotification(
-        'checkOTP',
-        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+        'createPayment',
+        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         null,
         user,
         null,
@@ -220,7 +220,7 @@ export const updatePayment = asyncHandler(
         notificationModel.pushNotification(
           fcmToken,
           i18n.__('UPDATE_PAYMENT'),
-          i18n.__('PAYMENT_UNSUCCESSFULL'),
+          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {

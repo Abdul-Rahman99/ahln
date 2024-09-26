@@ -37,6 +37,7 @@ import historyRoute from './user/history.route';
 import countryRoute from './adminstration/country.route';
 import cityRoute from './adminstration/city.route';
 import playbackRoute from './logs/playback.route';
+import offlineOTPsRoute from './delivery/offline.otps.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/api/users', usersRoutes);
@@ -88,6 +89,8 @@ const mountRoutes = (app: Express) => {
   app.use('/api/city', cityRoute);
 
   app.use('/api/playback', playbackRoute);
+
+  app.use('/api/offline-otps', offlineOTPsRoute);
 };
 
 export default mountRoutes;

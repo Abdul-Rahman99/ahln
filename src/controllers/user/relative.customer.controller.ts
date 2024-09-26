@@ -41,8 +41,8 @@ export const createRelativeCustomer = asyncHandler(
       );
       if (!boxRelatedToUSer) {
         const source = 'createRelativeCustomer';
-        systemLog.createSystemLog(user, 'Invalid Box Id', source);
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_BOX_ID'));
+        systemLog.createSystemLog(user, 'Box Not Related To User', source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_NOT_RELATED_TO_USER'));
       }
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(

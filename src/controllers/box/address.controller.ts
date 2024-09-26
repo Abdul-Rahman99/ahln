@@ -109,7 +109,7 @@ export const updateAddress = asyncHandler(
       auditTrail.createAuditTrail(
         user,
         action,
-        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
         null,
       );
       ResponseHandler.success(

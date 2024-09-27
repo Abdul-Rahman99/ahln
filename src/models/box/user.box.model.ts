@@ -103,15 +103,32 @@ class UserBoxModel {
         a.lang,
         b.current_tablet_id,
         c.name AS country_name,
-        ci.name AS city_name
+        ci.name AS city_name,
+        COALESCE(json_agg(box_locker.*), '[]'::json) AS lockers
       FROM
         User_Box ub
+        INNER JOIN box_locker ON ub.box_id = box_locker.box_id
         INNER JOIN Box b ON ub.box_id = b.id
         LEFT JOIN Address a ON b.address_id = a.id
         LEFT JOIN Country c ON a.country_id = c.id
         LEFT JOIN City ci ON a.city_id = ci.id
       WHERE
         ub.user_id = $1
+      GROUP BY
+        ub.id,
+        b.id,
+        a.district,
+        a.city_id,
+        a.country_id,
+        a.street,
+        a.building_number,
+        a.building_type,
+        a.floor,
+        a.lat,
+        a.lang,
+        b.current_tablet_id,
+        c.name,
+        ci.name
     `;
       const result = await connection.query(sql, [userId]);
 

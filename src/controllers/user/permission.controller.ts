@@ -13,20 +13,24 @@ const permissionModel = new PermissionModel();
 
 export const createPermission = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { title, description } = req.body;
     const permission = await permissionModel.create(title, description);
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
-      permission,
-    );
+
     const action = 'createPermission';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_CREATED_SUCCESSFULLY'),
+      permission,
     );
   } catch (error: any) {
     const source = 'createPermission';
@@ -38,6 +42,9 @@ export const createPermission = async (req: Request, res: Response) => {
 
 export const getAllPermissions = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const permissions = await permissionModel.getAll();
@@ -56,6 +63,9 @@ export const getAllPermissions = async (req: Request, res: Response) => {
 
 export const getPermissionById = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const permission = await permissionModel.getById(Number(id));
@@ -74,6 +84,9 @@ export const getPermissionById = async (req: Request, res: Response) => {
 
 export const updatePermission = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -82,17 +95,18 @@ export const updatePermission = async (req: Request, res: Response) => {
       title,
       description,
     );
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
-      permission,
-    );
+
     const action = 'updatePermission';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_UPDATED_SUCCESSFULLY'),
+      permission,
     );
   } catch (error: any) {
     const source = 'updatePermission';
@@ -104,21 +118,24 @@ export const updatePermission = async (req: Request, res: Response) => {
 
 export const deletePermission = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const permission = await permissionModel.delete(Number(id));
 
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
-      permission,
-    );
     const action = 'deletePermission';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_DELETED_SUCCESSFULLY'),
+      permission,
     );
   } catch (error: any) {
     const source = 'deletePermission';

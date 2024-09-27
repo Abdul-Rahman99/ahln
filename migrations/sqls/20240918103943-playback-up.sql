@@ -1,0 +1,9 @@
+/* Replace with your SQL commands */
+
+CREATE TABLE IF NOT EXISTS Playback (
+    id SERIAL PRIMARY KEY,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    video_link TEXT NOT NULL,
+    box_id VARCHAR(20) REFERENCES Box(id)
+);

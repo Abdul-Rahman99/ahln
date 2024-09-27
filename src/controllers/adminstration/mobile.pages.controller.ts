@@ -18,21 +18,24 @@ export const createMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mobilePage = await mobilePagesModel.createMobilePage(pageData);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
-        mobilePage,
-      );
       const action = 'createMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_CREATED_SUCCESSFULLY'),
+        mobilePage,
       );
     } catch (error: any) {
       const source = 'createMobilePage';
@@ -46,6 +49,9 @@ export const createMobilePage = asyncHandler(
 export const getAllMobilePages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const mobilePages = await mobilePagesModel.getAllMobilePages();
 
@@ -67,12 +73,18 @@ export const getMobilePageByTitle = asyncHandler(
   async (req: Request, res: Response) => {
     const { title } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const mobilePage = await mobilePagesModel.getMobilePageByTitle(title);
 
       if (!mobilePage) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'getMobilePageByTitle';
         systemLog.createSystemLog(user, 'Mobile Page Not Found', source);
         return ResponseHandler.badRequest(
@@ -100,6 +112,9 @@ export const updateMobilePage = asyncHandler(
     const { id } = req.params;
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const updatedMobilePage = await mobilePagesModel.updateMobilePage(
@@ -107,17 +122,17 @@ export const updateMobilePage = asyncHandler(
         pageData,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
-        updatedMobilePage,
-      );
       const action = 'updateMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_UPDATED_SUCCESSFULLY'),
+        updatedMobilePage,
       );
     } catch (error: any) {
       const source = 'updateMobilePage';
@@ -132,23 +147,26 @@ export const deleteMobilePage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedMobilePage = await mobilePagesModel.deleteMobilePage(
         parseInt(id, 10),
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
-        deletedMobilePage,
-      );
       const action = 'deleteMobilePage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('MOBILE_PAGE_DELETED_SUCCESSFULLY'),
+        deletedMobilePage,
       );
     } catch (error: any) {
       const source = 'deleteMobilePage';

@@ -13,6 +13,9 @@ const userPermissionModel = new UserPermissionModel();
 
 export const assignPermissionToUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { user_id, permission_id } = req.body;
@@ -35,17 +38,18 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
       user_id,
       permission_id,
     );
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
-      result,
-    );
+
     const action = 'assignPermissionToUser';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_ASSIGNED_TO_USER_SUCCESSFULLY'),
+      result,
     );
   } catch (error: any) {
     const source = 'assignPermissionToUser';
@@ -57,6 +61,9 @@ export const assignPermissionToUser = async (req: Request, res: Response) => {
 
 export const removePermissionFromUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { user_id, permission_id } = req.body;
@@ -83,17 +90,18 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
       user_id,
       permission_id,
     );
-    ResponseHandler.success(
-      res,
-      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
-      result,
-    );
+
     const action = 'removePermissionFromUser';
     auditTrail.createAuditTrail(
       user,
       action,
       i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
       null,
+    );
+    ResponseHandler.success(
+      res,
+      i18n.__('PERMISSION_REMOVED_FROM_USER_SUCCESSFULLY'),
+      result,
     );
   } catch (error: any) {
     const source = 'removePermissionFromUser';
@@ -105,6 +113,9 @@ export const removePermissionFromUser = async (req: Request, res: Response) => {
 
 export const getPermissionsByUser = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { userId } = req.params;
@@ -137,6 +148,9 @@ export const getPermissionsByUser = async (req: Request, res: Response) => {
 
 export const getAllPermissions = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const permissions = await userPermissionModel.getAllUserPermissions();
     ResponseHandler.success(

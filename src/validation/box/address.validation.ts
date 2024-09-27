@@ -3,8 +3,8 @@ import i18n from '../../config/i18n';
 import validatorMiddleware from '../../middlewares/validatorMiddleware';
 
 export const createAddressValidation = [
-  body('country').notEmpty().withMessage(i18n.__('COUNTRY_REQUIRED')),
-  body('city').notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
+  body('country_id').notEmpty().withMessage(i18n.__('COUNTRY_REQUIRED')),
+  body('city_id').notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
   body('district').notEmpty().withMessage(i18n.__('DISTRICT_REQUIRED')),
   body('street').notEmpty().withMessage(i18n.__('STREET_REQUIRED')),
   body('building_type')
@@ -23,11 +23,11 @@ export const getAddressByIdValidation = [
 
 export const updateAddressValidation = [
   param('id').isInt().withMessage(i18n.__('INVALID_ADDRESS_ID')),
-  body('country')
+  body('country_id')
     .optional()
     .notEmpty()
     .withMessage(i18n.__('COUNTRY_REQUIRED')),
-  body('city').optional().notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
+  body('city_id').optional().notEmpty().withMessage(i18n.__('CITY_REQUIRED')),
   body('district')
     .optional()
     .notEmpty()

@@ -4,6 +4,7 @@ import db from '../../config/database';
 import { UserBox } from '../../types/user.box.type';
 import { Address } from '../../types/address.type';
 import UserModel from '../users/user.model';
+import AddressModel from './address.model';
 const user = new UserModel();
 
 class UserBoxModel {
@@ -92,15 +93,42 @@ class UserBoxModel {
         b.box_label AS name,
         b.box_model_id,
         a.district,
-        a.city,
+        a.city_id,
+        a.country_id,
+        a.street,
         a.building_number,
-        b.current_tablet_id
+        a.building_type,
+        a.floor,
+        a.lat,
+        a.lang,
+        b.current_tablet_id,
+        c.name AS country_name,
+        ci.name AS city_name,
+        COALESCE(json_agg(box_locker.*), '[]'::json) AS lockers
       FROM
         User_Box ub
+        INNER JOIN box_locker ON ub.box_id = box_locker.box_id
         INNER JOIN Box b ON ub.box_id = b.id
         LEFT JOIN Address a ON b.address_id = a.id
+        LEFT JOIN Country c ON a.country_id = c.id
+        LEFT JOIN City ci ON a.city_id = ci.id
       WHERE
         ub.user_id = $1
+      GROUP BY
+        ub.id,
+        b.id,
+        a.district,
+        a.city_id,
+        a.country_id,
+        a.street,
+        a.building_number,
+        a.building_type,
+        a.floor,
+        a.lat,
+        a.lang,
+        b.current_tablet_id,
+        c.name,
+        ci.name
     `;
       const result = await connection.query(sql, [userId]);
 
@@ -113,7 +141,11 @@ class UserBoxModel {
   }
 
   // Assign a box to a user
-  async assignBoxToUser(userId: string, boxId: string): Promise<UserBox> {
+  async assignBoxToUser(
+    userId: string,
+    boxId: string,
+    addressId: number,
+  ): Promise<UserBox> {
     const connection = await db.connect();
     try {
       if (!userId || !boxId) {
@@ -131,6 +163,18 @@ class UserBoxModel {
       const boxCheckSql = 'SELECT id FROM box WHERE id=$1';
       const boxCheckResult = await connection.query(boxCheckSql, [boxId]);
       if (boxCheckResult.rows.length === 0) {
+        throw new Error(`Box with ID ${boxId} does not exist`);
+      }
+
+      //update the address id in the box
+      const updateBoxSql =
+        'UPDATE box SET address_id = $1 WHERE id = $2 RETURNING *';
+      const updateBoxResult = await connection.query(updateBoxSql, [
+        addressId,
+        boxId,
+      ]);
+
+      if (updateBoxResult.rows.length === 0) {
         throw new Error(`Box with ID ${boxId} does not exist`);
       }
 
@@ -249,68 +293,126 @@ class UserBoxModel {
   async userAssignBoxToHimslef(
     userId: string,
     serialNumber: string,
-    addressId: number,
+    country_id: number,
+    city_id: number,
+    street: string,
+    district: string,
+    boxLabel: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
+
     try {
-      if (!userId || !serialNumber) {
-        throw new Error('Please provide a userId or serialNumber');
-      }
-      // Check if the user exists
-      const userCheckSql = 'SELECT id FROM users WHERE id=$1';
-      const userCheckResult = await connection.query(userCheckSql, [userId]);
-      if (userCheckResult.rows.length === 0) {
-        throw new Error(`User with ID ${userId} does not exist`);
-      }
-
-      // Check if the box exists
-      const boxCheckSql = 'SELECT id FROM box WHERE serial_number=$1';
-      const boxCheckResult = await connection.query(boxCheckSql, [
-        serialNumber,
-      ]);
-      if (boxCheckResult.rows.length === 0) {
-        throw new Error(
-          `Box with Serial Number ${serialNumber} does not exist`,
-        );
+      try {
+        if (!userId || !serialNumber) {
+          throw new Error('Please provide a userId or serialNumber');
+        }
+        // Check if the user exists
+        const userCheckSql = 'SELECT id FROM users WHERE id=$1';
+        const userCheckResult = await connection.query(userCheckSql, [userId]);
+        if (userCheckResult.rows.length === 0) {
+          throw new Error(`User with ID ${userId} does not exist`);
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
 
-      // check if the user already assigned to the box
-      const userBoxCheckSql = 'SELECT box_id FROM User_Box WHERE box_id=$1';
-      const userBoxCheckResult = await connection.query(userBoxCheckSql, [
-        boxCheckResult.rows[0].id,
-      ]);
+      try {
+        // Check if the box exists
+        const boxCheckSql = 'SELECT id FROM box WHERE serial_number=$1';
+        const boxCheckResult = await connection.query(boxCheckSql, [
+          serialNumber,
+        ]);
+        if (boxCheckResult.rows.length === 0) {
+          throw new Error(
+            `Box with Serial Number ${serialNumber} does not exist`,
+          );
+        }
+        // check if the user already assigned to the box
+        const userBoxCheckSql = 'SELECT box_id FROM User_Box WHERE box_id=$1';
+        const userBoxCheckResult = await connection.query(userBoxCheckSql, [
+          boxCheckResult.rows[0].id,
+        ]);
+        if (userBoxCheckResult.rows.length > 0) {
+          throw new Error(`Box ${serialNumber} Already assigned to a user`);
+        }
+        const createdAt = new Date();
+        const updatedAt = new Date();
+        const userBoxId = `${userId}_${boxCheckResult.rows[0].id}`; // Custom user_box id
 
-      if (userBoxCheckResult.rows.length > 0) {
-        throw new Error(`Box ${serialNumber} Already assigned to a user`);
-      }
-
-      const createdAt = new Date();
-      const updatedAt = new Date();
-      const userBoxId = `${userId}_${boxCheckResult.rows[0].id}`; // Custom user_box id
-
-      const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
-      const sqlParams = [
-        userBoxId,
-        userId,
-        boxCheckResult.rows[0].id,
-        createdAt,
-        updatedAt,
-      ];
-
-      const sql = `INSERT INTO User_Box (${sqlFields.join(', ')}) 
+        const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
+        const sqlParams = [
+          userBoxId,
+          userId,
+          boxCheckResult.rows[0].id,
+          createdAt,
+          updatedAt,
+        ];
+        const sql = `INSERT INTO User_Box (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
                  RETURNING *`;
 
-      const result = await connection.query(sql, sqlParams);
+        const result = await connection.query(sql, sqlParams);
 
-      // Add address to the box
-      const addressSql = `UPDATE Box SET address_id=$1 WHERE id=$2`;
-      await connection.query(addressSql, [
-        addressId,
-        boxCheckResult.rows[0].id,
-      ]);
+        // check if the box has address or not
+        const boxHasAddressSql = 'SELECT address_id FROM Box WHERE id=$1';
+        const boxHasAddressResult = await connection.query(boxHasAddressSql, [
+          boxCheckResult.rows[0].id,
+        ]);
 
-      return result.rows[0] as UserBox;
+        // If the box has no address, Create new address for the user
+        const address = {
+          district,
+          street,
+          country_id,
+          city_id,
+        };
+
+        if (boxHasAddressResult.rows[0].address_id === null) {
+          const createdAddress = await new AddressModel().createAddress(
+            address,
+            userId,
+          );
+
+          //update the box record with the new address id
+          const updatedBoxAddressId = await connection.query(
+            'UPDATE Box SET address_id=$1 WHERE id=$2',
+            [createdAddress.id, boxCheckResult.rows[0].id],
+          );
+
+          if (updatedBoxAddressId.rowCount === 0) {
+            throw new Error('Failed to update box address');
+          }
+          // If there is a boxLabel, update it
+          if (boxLabel) {
+            await connection.query('UPDATE Box SET box_label=$1 WHERE id=$2', [
+              boxLabel,
+              boxCheckResult.rows[0].id,
+            ]);
+          }
+        } else {
+          await new AddressModel().updateOne(
+            address,
+            boxHasAddressResult.rows[0].address_id,
+            userId,
+          );
+
+          // If there is a boxLabel, update it
+          if (boxLabel) {
+            await connection.query('UPDATE Box SET box_label=$1 WHERE id=$2', [
+              boxLabel,
+              boxCheckResult.rows[0].id,
+            ]);
+          }
+        }
+
+        await connection.query('COMMIT');
+
+        return result.rows[0] as UserBox;
+      } catch (error) {
+        await connection.query('ROLLBACK');
+        throw new Error((error as Error).message);
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -321,10 +423,10 @@ class UserBoxModel {
   async checkUserBox(user: string, boxId: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-      if (!user) {
-        throw new Error('Please provide a userId');
+      if (!user && !boxId) {
+        throw new Error('Please provide a userId and boxId');
       }
-      const sql = 'SELECT id FROM User_Box WHERE user_id=$1 AND box_id=$2';
+      const sql = 'SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2';
       const result = await connection.query(sql, [user, boxId]);
 
       if (result.rows.length > 0) {
@@ -397,19 +499,50 @@ class UserBoxModel {
     newUserId: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
-      const checkUserBox = await this.checkUserBox(userId, boxId);
+      try {
+        const selectId = `SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2`;
+        const result = await connection.query(selectId, [userId, boxId]);
+        const deletedId = await this.deleteOne(result.rows[0]?.id);
 
-      if (!checkUserBox) {
-        throw new Error(`You don't have enough permissions to do that`);
+        if (!deletedId) {
+          throw new Error('Failed to delete user box');
+        }
+      } catch (error) {
+        throw new Error((error as Error).message + ', You are not the owner!');
       }
-      const sql = `DELETE FROM User_Box WHERE user_id = $1 AND box_id = $2`;
-      await connection.query(sql, [userId, boxId]);
 
-      const newUserBoxData = { user_id: newUserId, box_id: boxId };
-      const result2 = await this.createUserBox(newUserBoxData);
-
+      let result2;
+      try {
+        const newUserBoxData = { user_id: newUserId, box_id: boxId };
+        result2 = await this.createUserBox(newUserBoxData);
+        if (!result2) {
+          throw new Error('Failed to create user box');
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
+      }
+      await connection.query('COMMIT');
       return result2;
+    } catch (error) {
+      await connection.query('ROLLBACK');
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async getUserIdByBoxId(boxId: string): Promise<string> {
+    const connection = await db.connect();
+
+    try {
+      const userResult = await connection.query(
+        'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
+        [boxId],
+      );
+
+      return userResult.rows[0].user_id;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

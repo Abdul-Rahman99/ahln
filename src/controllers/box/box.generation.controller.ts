@@ -8,7 +8,9 @@ import ResponseHandler from '../../utils/responsesHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import authHandler from '../../utils/authHandler';
 import SystemLogModel from '../../models/logs/system.log.model';
+import BoxModel from '../../models/box/box.model';
 
+const boxModel = new BoxModel();
 const systemLog = new SystemLogModel();
 const boxGenerationModel = new BoxGenerationModel();
 const auditTrail = new AuditTrailModel();
@@ -16,6 +18,9 @@ const auditTrail = new AuditTrailModel();
 export const createBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newBoxGeneration: BoxGeneration = req.body;
 
@@ -31,17 +36,18 @@ export const createBoxGeneration = asyncHandler(
 
       const createdBoxGeneration =
         await boxGenerationModel.createBoxGeneration(newBoxGeneration);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
-        createdBoxGeneration,
-      );
+
       const action = 'createBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_CREATED_SUCCESSFULLY'),
+        createdBoxGeneration,
       );
     } catch (error: any) {
       const source = 'createBoxGeneration';
@@ -55,6 +61,9 @@ export const createBoxGeneration = asyncHandler(
 export const getAllBoxGenerations = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerations = await boxGenerationModel.getMany();
@@ -75,6 +84,9 @@ export const getAllBoxGenerations = asyncHandler(
 export const getBoxGenerationById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const boxGenerationId = req.params.id;
       const boxGeneration = await boxGenerationModel.getOne(boxGenerationId);
@@ -95,6 +107,9 @@ export const getBoxGenerationById = asyncHandler(
 export const updateBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerationId = req.params.id;
@@ -120,17 +135,18 @@ export const updateBoxGeneration = asyncHandler(
         boxGenerationData,
         boxGenerationId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
-        updatedBoxGeneration,
-      );
+
       const action = 'updateBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_UPDATED_SUCCESSFULLY'),
+        updatedBoxGeneration,
       );
     } catch (error: any) {
       const source = 'updateBoxGeneration';
@@ -144,22 +160,36 @@ export const updateBoxGeneration = asyncHandler(
 export const deleteBoxGeneration = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxGenerationId = req.params.id;
+
+      // check if the boxGenration associated with any box
+      const boxExists = await boxModel.findBoxByBoxGeneration(boxGenerationId);
+      if (boxExists) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_GENERATION_CANNOT_BE_DELETED'),
+        );
+      }
+
       const deletedBoxGeneration =
         await boxGenerationModel.deleteOne(boxGenerationId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
-        deletedBoxGeneration,
-      );
+
       const action = 'deleteBoxGeneration';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_GENERATION_DELETED_SUCCESSFULLY'),
+        deletedBoxGeneration,
       );
     } catch (error: any) {
       const source = 'deleteBoxGeneration';

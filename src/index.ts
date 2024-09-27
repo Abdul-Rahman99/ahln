@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Express, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -15,6 +16,7 @@ import connectDatabase from './models';
 import localizationMiddleware from './middlewares/localization.middleware'; // Adjust import path as needed
 import path from 'path';
 import ResponseHandler from './utils/responsesHandler';
+// import db from './config/database';
 
 // import patchDatabase from './config/patch';
 dotenv.config({ path: '../.env' });
@@ -30,7 +32,7 @@ connectDatabase();
 // );
 
 // Connect to MQTT client
-// client;
+client;
 
 // Middlewares
 app.use(localizationMiddleware); // Use localization middleware
@@ -59,14 +61,39 @@ app.use(mongoSanitize()); // Prevent NoSQL injection
 // Rate Limiting Middleware
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per window
+  limit: 1000, // Limit each IP to 100 requests per window
   message: 'Too many requests from this IP, please try again later.',
 });
 
-// app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
+app.use('/api', limiter); // Apply the rate limiting middleware to all API routes for suspecious operations
 
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(config.UPLOADS)));
+
+// async function get_box_ids() {
+//   // const connection = db.connect();
+//   try {
+//     const sql = `SELECT id FROM box`;
+//     const result = db.query(sql);
+//     return result;
+//   } catch (error) {
+//     throw new Error((error as Error).message);
+//   }
+// }
+
+// get_box_ids()
+//   .then((result: any) => {
+//     // console.log(result.rows);
+//     // console.log(result)
+//     result.rows.forEach((row: { id: string }) => {
+//       app.use(
+//         express.static(path.join(__dirname, `../uploads/playback/${row.id}`)),
+//       );
+//     });
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error);
+//   });
 
 // Mount routes
 mountRoutes(app);

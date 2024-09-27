@@ -76,10 +76,19 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM Notification WHERE user_id=$1`;
+      const sql = `SELECT * FROM Notification WHERE user_id=$1 ORDER BY createdat DESC`;
       const result = await connection.query(sql, [user]);
 
-      return result.rows as Notification[];
+      const resultRows = result.rows.map((row) => {
+        return {
+          ...row,
+          image: row.image
+            ? `${process.env.BASE_URL}/uploads/${row.image}`
+            : null,
+        };
+      });
+
+      return resultRows as Notification[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -140,24 +149,27 @@ export default class NotificationModel {
           body: body,
         },
       };
-
-      if (fcmToken.length > 0) {
-        getMessaging()
-          .sendEachForMulticast(message)
-          .then((response) => {
-            if (response.failureCount > 0) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const failedTokens: string | any[] = [];
-              response.responses.forEach((resp, idx) => {
-                if (!resp.success) {
-                  failedTokens.push(registrationTokens[idx]);
-                }
-              });
-              console.log('List of tokens that caused failures: ' + response);
-            } else {
-              console.log('Success Send Notification');
-            }
-          });
+      try {
+        if (fcmToken.length > 0) {
+          getMessaging()
+            .sendEachForMulticast(message)
+            .then((response) => {
+              if (response.failureCount > 0) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const failedTokens: string | any[] = [];
+                response.responses.forEach((resp, idx) => {
+                  if (!resp.success) {
+                    failedTokens.push(registrationTokens[idx]);
+                  }
+                });
+                console.log('List of tokens that caused failures: ' + response);
+              } else {
+                console.log('Success Send Notification');
+              }
+            });
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
     } catch (error) {
       throw new Error((error as Error).message);

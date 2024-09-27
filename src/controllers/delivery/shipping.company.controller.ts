@@ -16,6 +16,9 @@ const auditTrail = new AuditTrailModel();
 export const createShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { tracking_system, title, logo } = req.body;
 
     try {
@@ -25,17 +28,17 @@ export const createShippingCompany = asyncHandler(
         logo,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
-        shippingCompany,
-      );
       const action = 'createShippingCompany';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SHIPPING_COMPANY_CREATED_SUCCESSFULLY'),
+        shippingCompany,
       );
     } catch (error: any) {
       const source = 'createShippingCompany';
@@ -49,11 +52,14 @@ export const createShippingCompany = asyncHandler(
 export const getAllShippingCompanies = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const shippingCompanies =
         await shippingCompanyModel.getAllShippingCompanies();
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('SHIPPING_COMPANIES_FETCHED_SUCCESSFULLY'),
         shippingCompanies,
@@ -71,6 +77,9 @@ export const getShippingCompanyById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const shippingCompany = await shippingCompanyModel.getShippingCompanyById(
@@ -86,7 +95,7 @@ export const getShippingCompanyById = asyncHandler(
         );
       }
 
-      return ResponseHandler.success(
+      ResponseHandler.success(
         res,
         i18n.__('SHIPPING_COMPANY_FETCHED_SUCCESSFULLY'),
         shippingCompany,
@@ -103,6 +112,9 @@ export const getShippingCompanyById = asyncHandler(
 export const updateShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     const { id } = req.params;
     const shippingCompanyData: Partial<ShippingCompany> = req.body;
@@ -113,17 +125,17 @@ export const updateShippingCompany = asyncHandler(
           parseInt(id),
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
-        updatedShippingCompany,
-      );
       const action = 'updateShippingCompany';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SHIPPING_COMPANY_UPDATED_SUCCESSFULLY'),
+        updatedShippingCompany,
       );
     } catch (error: any) {
       const source = 'updateShippingCompany';
@@ -138,20 +150,23 @@ export const deleteShippingCompany = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       await shippingCompanyModel.deleteShippingCompany(parseInt(id, 10));
 
-      ResponseHandler.success(
-        res,
-        i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
-      );
       const action = 'deleteShippingCompany';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SHIPPING_COMPANY_DELETED_SUCCESSFULLY'),
       );
     } catch (error: any) {
       const source = 'deleteShippingCompany';

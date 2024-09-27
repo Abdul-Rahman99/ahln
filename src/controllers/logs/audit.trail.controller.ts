@@ -12,6 +12,9 @@ const auditTrailModel = new AuditTrailModel();
 export const getAllAuditTrail = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const auditTrails = await auditTrailModel.getAllAuditTrail();
       ResponseHandler.success(
@@ -31,6 +34,9 @@ export const getAllAuditTrail = asyncHandler(
 export const getAuditTrailById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const auditTrailId = parseInt(req.params.id, 10);
@@ -52,6 +58,9 @@ export const getAuditTrailById = asyncHandler(
 export const deleteAuditTrailById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const auditTrailId = parseInt(req.params.id, 10);
       const auditTrail = await auditTrailModel.deleteAuditTrail(auditTrailId);

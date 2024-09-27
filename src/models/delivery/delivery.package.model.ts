@@ -41,6 +41,7 @@ class DeliveryPackageModel {
     deliveryPackage: Partial<DeliveryPackage>,
   ): Promise<DeliveryPackage> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
@@ -52,7 +53,9 @@ class DeliveryPackageModel {
       const address_id = (
         await connection.query(sqlBox, [deliveryPackage.box_id])
       ).rows[0].address_id;
-
+      if (!address_id) {
+        throw new Error('Box does not have a valid address_id');
+      }
       const sqlFields = [
         'id',
         'createdAt',
@@ -72,7 +75,6 @@ class DeliveryPackageModel {
         'delivery_pin',
         'description',
         'other_shipping_company',
-        'otp',
       ];
       const sqlParams = [
         customId,
@@ -93,18 +95,18 @@ class DeliveryPackageModel {
         deliveryPackage.delivery_pin || null,
         deliveryPackage.description || null,
         deliveryPackage.other_shipping_company || null,
-        deliveryPackage.otp || null,
       ];
 
       const sql = `INSERT INTO Delivery_Package (${sqlFields.join(', ')}) 
                 VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                RETURNING id, tracking_number, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, otp,
-                createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string, address_id`;
+                RETURNING id, tracking_number, address_id, box_id, box_locker_id, shipping_company_id, shipment_status, title AS name, delivery_pin, description, other_shipping_company, 
+                createdAt, updatedAt, customer_id, vendor_id, delivery_id, is_delivered, box_locker_string`;
 
       const result = await connection.query(sql, sqlParams);
-
+      await connection.query('COMMIT');
       return result.rows[0];
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();
@@ -145,17 +147,20 @@ class DeliveryPackageModel {
     }
   }
 
-  async checkTrackingNumber(tracking_number: string): Promise<any> {
+  async checkTrackingNumber(
+    tracking_number: string,
+    box_id: string,
+  ): Promise<any> {
     const connection = await db.connect();
 
     try {
-      if (!tracking_number) {
-        throw new Error('Please provide a tracking number');
+      if (!tracking_number && !box_id) {
+        throw new Error('Please provide a tracking number and box ID');
       }
 
       const deliveryPackageResult = await connection.query(
-        'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1',
-        [tracking_number],
+        'SELECT tracking_number FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2',
+        [tracking_number, box_id],
       );
 
       if (deliveryPackageResult.rows.length > 0) {
@@ -323,6 +328,18 @@ class DeliveryPackageModel {
   ): Promise<DeliveryPackage[]> {
     const connection = await db.connect();
     try {
+      if (!fromBoxId || !toBoxId) {
+        throw new Error(
+          'Box ID cannot be null. Please provide a valid Box ID.',
+        );
+      }
+
+      if (fromBoxId === toBoxId) {
+        throw new Error(
+          'Box ID cannot be the same. Please provide a valid Box ID.',
+        );
+      }
+
       const result = [];
       const sql = `SELECT * FROM Delivery_Package WHERE box_id = $1 AND customer_id = $2`;
       const params = [fromBoxId, userId];
@@ -335,6 +352,45 @@ class DeliveryPackageModel {
         result.push(updateResult);
       }
       return result as DeliveryPackage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // get delivery packages with address id
+  async getDeliveryPackagesByAddressId(
+    addressId: number,
+  ): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT * FROM Delivery_Package WHERE address_id = $1`;
+      const params = [addressId];
+
+      const result = await connection.query(sql, params);
+      return result.rows as DeliveryPackage[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // check if the tracking number exists in the box
+  async checkTrackingNumberExistsInBox(
+    trackingNumber: string,
+    boxId: string,
+  ): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT * FROM Delivery_Package WHERE tracking_number = $1 AND box_id = $2`;
+      const params = [trackingNumber, boxId];
+      const result = await connection.query(sql, params);
+      console.log(result.rows);
+
+      return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

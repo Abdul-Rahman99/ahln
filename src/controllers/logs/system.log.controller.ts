@@ -13,6 +13,9 @@ export const createSystemLog = asyncHandler(
     try {
       const { error, source } = req.body;
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const createdSystemLog = await systemLogModel.createSystemLog(
         user,
         error,
@@ -41,6 +44,9 @@ export const getAllSystemLogs = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllSystemLog';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -63,6 +69,9 @@ export const getSystemLogById = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSystemLogById';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -87,6 +96,9 @@ export const updateSystemLog = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'updateSystemLog';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -109,6 +121,9 @@ export const deleteSystemLogById = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'deleteSystemLogById';
       systemLogModel.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { UserBox } from '../../types/user.box.type';
-import { Address } from '../../types/address.type';
 import UserBoxModel from '../../models/box/user.box.model';
 import asyncHandler from '../../middlewares/asyncHandler';
 import i18n from '../../config/i18n';
@@ -10,11 +9,12 @@ import UserModel from '../../models/users/user.model';
 import RelativeCustomerModel from '../../models/users/relative.customer.model';
 import BoxModel from '../../models/box/box.model';
 import authHandler from '../../utils/authHandler';
-import AddressModel from '../../models/box/address.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import NotificationModel from '../../models/logs/notification.model';
+import CityModel from '../../models/adminstration/city.model';
+import CountryModel from '../../models/adminstration/country.model';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -22,28 +22,33 @@ const userModel = new UserModel();
 const userBoxModel = new UserBoxModel();
 const relativeCustomerModel = new RelativeCustomerModel();
 const boxModel = new BoxModel();
-const addressModel = new AddressModel();
 const systemLog = new SystemLogModel();
 const auditTrail = new AuditTrailModel();
+const cityModel = new CityModel();
+const countryModel = new CountryModel();
 
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newUserBox: UserBox = req.body;
       const createdUserBox = await userBoxModel.createUserBox(newUserBox);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
-        createdUserBox,
-      );
+
       const action = 'createUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
         createdUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_CREATED_SUCCESSFULLY'),
+        createdUserBox,
       );
     } catch (error: any) {
       const source = 'createUserBox';
@@ -57,6 +62,9 @@ export const createUserBox = asyncHandler(
 export const getAllUserBoxes = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxes = await userBoxModel.getAllUserBoxes();
@@ -77,6 +85,9 @@ export const getAllUserBoxes = asyncHandler(
 export const getUserBoxById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
@@ -98,6 +109,9 @@ export const getUserBoxById = asyncHandler(
 export const updateUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
@@ -106,17 +120,18 @@ export const updateUserBox = asyncHandler(
         userBoxData,
         userBoxId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
+
       const action = 'updateUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
         updatedUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_UPDATED_SUCCESSFULLY'),
+        updatedUserBox,
       );
     } catch (error: any) {
       const source = 'updateUserBox';
@@ -130,21 +145,25 @@ export const updateUserBox = asyncHandler(
 export const deleteUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userBoxId = req.params.id;
       const deletedUserBox = await userBoxModel.deleteOne(userBoxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
-        deletedUserBox,
-      );
+
       const action = 'deleteUserBox';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
         deletedUserBox.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_DELETED_SUCCESSFULLY'),
+        deletedUserBox,
       );
     } catch (error: any) {
       const source = 'deleteUserBox';
@@ -158,6 +177,9 @@ export const deleteUserBox = asyncHandler(
 export const getUserBoxesByUserId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       // Fetch user boxes by user ID
       const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
@@ -178,6 +200,9 @@ export const getUserBoxesByUserId = asyncHandler(
 export const getUserBoxesByBoxId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxId = req.params.boxId;
@@ -199,15 +224,31 @@ export const getUserBoxesByBoxId = asyncHandler(
 export const assignBoxToUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
-      const { userId, boxId } = req.body;
+      const { userId, boxId, addressId } = req.body;
 
-      const assignedUserBox = await userBoxModel.assignBoxToUser(userId, boxId);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        assignedUserBox,
+      const checkBoxExists = await boxModel.getOne(boxId);
+      if (!checkBoxExists) {
+        throw new Error('Box ID cannot be Not Found!');
+      }
+      // check if the user already assigned to box
+
+      const checkUserBoxExists = await userBoxModel.getUserBoxesByBoxId(boxId);
+
+      if (checkUserBoxExists.length > 0) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('BOX_ALREADY_ASSIGNED_TO_USER'),
+        );
+      }
+      const assignedUserBox = await userBoxModel.assignBoxToUser(
+        userId,
+        boxId,
+        addressId,
       );
 
       notificationModel.createNotification(
@@ -224,6 +265,11 @@ export const assignBoxToUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         boxId,
       );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+        assignedUserBox,
+      );
     } catch (error: any) {
       const source = 'assignBoxToUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -236,32 +282,59 @@ export const assignBoxToUser = asyncHandler(
 export const userAssignBoxToHimself = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
-      const { serialNumber } = req.body;
-      // create address
-      const newAddress: Address = req.body;
+      const { serialNumber, country_id, city_id, district, street, boxLabel } =
+        req.body;
+      let assignedUserBox;
+      // check if the city and country exist
+      const countryExist = await countryModel.getOne(country_id);
+      if (!countryExist) {
+        return ResponseHandler.badRequest(res, i18n.__('COUNTRY_NOT_EXIST'));
+      }
 
-      const result = await addressModel.createAddress(newAddress, user);
+      const cityExist = await cityModel.getCityById(city_id);
+      if (!cityExist) {
+        return ResponseHandler.badRequest(res, i18n.__('CITY_NOT_EXIST'));
+      }
 
-      const assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
-        user,
-        serialNumber,
-        result.id,
-      );
+      try {
+        assignedUserBox = await userBoxModel.userAssignBoxToHimslef(
+          user,
+          serialNumber,
+          country_id,
+          city_id,
+          district,
+          street,
+          boxLabel,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(user, (error as Error).message, source);
+        return ResponseHandler.badRequest(res, error.message);
+        // next(error);
+      }
       const boxId = await boxModel.boxExistsSerialNumber(serialNumber);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        assignedUserBox,
-      );
-      notificationModel.createNotification(
-        'userAssignBoxToHimself',
-        i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        null,
-        user,
-        boxId as unknown as string,
-      );
+
+      try {
+        notificationModel.createNotification(
+          'userAssignBoxToHimself',
+          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+          null,
+          user,
+          boxId.id as unknown as string,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
         notificationModel.pushNotification(
@@ -278,12 +351,26 @@ export const userAssignBoxToHimself = asyncHandler(
           source,
         );
       }
-      const action = 'userAssignBoxToHimself';
-      auditTrail.createAuditTrail(
-        user,
-        action,
+      try {
+        const action = 'userAssignBoxToHimself';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+          boxId.id as unknown as string,
+        );
+      } catch (error: any) {
+        const source = 'userAssignBoxToHimself';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_AUDIT_TRAIL', ' ', error.message),
+          source,
+        );
+      }
+      ResponseHandler.success(
+        res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        boxId as unknown as string,
+        assignedUserBox,
       );
     } catch (error: any) {
       const source = 'userAssignBoxToHimself';
@@ -297,6 +384,9 @@ export const userAssignBoxToHimself = asyncHandler(
 export const userAssignBoxToRelativeUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const { boxId, email, relation } = req.body;
       const boxExist = await boxModel.getOne(boxId);
@@ -324,11 +414,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         };
         relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
       }
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-        assignedUserBox,
-      );
+
       notificationModel.createNotification(
         'userAssignBoxToRelativeUser',
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
@@ -360,6 +446,11 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        assignedUserBox,
+      );
     } catch (error: any) {
       const source = 'userAssignBoxToRelativeUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -372,6 +463,9 @@ export const userAssignBoxToRelativeUser = asyncHandler(
 export const updateUserBoxStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { id } = req.params;
     const { is_active } = req.body;
 
@@ -380,17 +474,18 @@ export const updateUserBoxStatus = asyncHandler(
         is_active,
         id,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
-        updatedUserBox,
-      );
+
       const action = 'updateUserBoxStatus';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('USER_BOX_STATUS_UPDATED_SUCCESSFULLY'),
+        updatedUserBox,
       );
     } catch (error: any) {
       const source = 'updateUserBoxStatus';
@@ -404,10 +499,17 @@ export const updateUserBoxStatus = asyncHandler(
 export const transferBoxOwnership = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     const { boxId, email } = req.body;
-    const newUserId = await userModel.findByEmail(email);
-
     try {
+      const newUserId = await userModel.findByEmail(email);
+      if (!newUserId) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
+      }
       // check if the boxId related to the user exists
       const boxExist = await boxModel.getOneByUser(user, boxId);
       if (!boxExist) {
@@ -419,22 +521,65 @@ export const transferBoxOwnership = asyncHandler(
         );
       }
 
+      // check if the user exists
+      const userExist = await userModel.findByEmail(email);
+      if (!userExist) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
+      }
+
+      // check if the user is already the owner of the box
       const updatedUserBox = await userBoxModel.transferBoxOwnership(
         user,
         boxId,
         newUserId?.id as string,
       );
+      const action = 'transferBoxOwnership';
+      auditTrail.createAuditTrail(
+        newUserId?.id as string,
+        action,
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        boxId,
+      );
+
+      notificationModel.createNotification(
+        'transferBoxOwnership',
+        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        null,
+        newUserId?.id as string,
+        boxId,
+      );
+
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      const fcmTokenNewUser = await userDevicesModel.getFcmTokenDevicesByUser(
+        newUserId.id as string,
+      );
+
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        );
+        notificationModel.pushNotification(
+          fcmTokenNewUser,
+          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'transferBoxOwnership';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.success(
         res,
         i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
         updatedUserBox,
-      );
-      const action = 'transferBoxOwnership';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
-        boxId,
       );
     } catch (error: any) {
       const source = 'transferBoxOwnership';

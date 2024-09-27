@@ -22,6 +22,9 @@ const relativeCustomerModel = new RelativeCustomerModel();
 export const createRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newRelaticeCustomerData: RelativeCustomer = req.body;
 
@@ -38,24 +41,25 @@ export const createRelativeCustomer = asyncHandler(
       );
       if (!boxRelatedToUSer) {
         const source = 'createRelativeCustomer';
-        systemLog.createSystemLog(user, 'Invalid Box Id', source);
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_BOX_ID'));
+        systemLog.createSystemLog(user, 'Box Not Related To User', source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_NOT_RELATED_TO_USER'));
       }
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
         );
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
-        createdRelativeCustomer,
-      );
+
       const action = 'createRelativeCustomer';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
         newRelaticeCustomerData.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_CREATED_SUCCESSFULLY'),
+        createdRelativeCustomer,
       );
     } catch (error: any) {
       const source = 'createRelativeCustomer';
@@ -69,6 +73,9 @@ export const createRelativeCustomer = asyncHandler(
 export const getAllRelativeCustomersByUserId = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomers = await relativeCustomerModel.getMany(user);
       ResponseHandler.success(
@@ -87,6 +94,9 @@ export const getAllRelativeCustomersByUserId = asyncHandler(
 export const getAllRelativeCustomersForAdmin = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomers = await relativeCustomerModel.getAllForAdmin();
       ResponseHandler.success(
@@ -106,6 +116,9 @@ export const getAllRelativeCustomersForAdmin = asyncHandler(
 export const getRelativeCustomerById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const relativeCustomerId = parseInt(req.params.id, 10);
@@ -133,6 +146,9 @@ export const getRelativeCustomerById = asyncHandler(
 export const updateRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const relativeCustomerId = req.params.id;
       const newRelaticeCustomerData: RelativeCustomer = req.body;
@@ -190,16 +206,14 @@ export const updateRelativeCustomer = asyncHandler(
 export const deleteRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const relativeCustomerId = req.params.id;
       const deletedRelativeCustomer = await relativeCustomerModel.deleteOne(
         Number(relativeCustomerId),
-      );
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
-        deletedRelativeCustomer,
       );
 
       notificationModel.createNotification(
@@ -216,6 +230,11 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer.box_id,
       );
+      ResponseHandler.success(
+        res,
+        i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
+        deletedRelativeCustomer,
+      );
     } catch (error: any) {
       const source = 'deleteRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -229,6 +248,9 @@ export const deleteRelativeCustomer = asyncHandler(
 export const updateRelativeCustomerStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { id, status } = req.body;

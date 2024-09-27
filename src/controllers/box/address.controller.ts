@@ -7,28 +7,34 @@ import AddressModel from '../../models/box/address.model';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import authHandler from '../../utils/authHandler';
+import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
 const addressModel = new AddressModel();
+const deliveryPackageModel = new DeliveryPackageModel();
 
 export const createAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const newAddress: Address = req.body;
       const createdAddress = await addressModel.createAddress(newAddress, user);
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
-        createdAddress,
-      );
+
       const action = 'createAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        createdAddress,
       );
     } catch (error) {
       const source = 'createAddress';
@@ -50,6 +56,9 @@ export const getAllAddresses = asyncHandler(
       );
     } catch (error) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getAllAddresses';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, (error as Error).message);
@@ -61,6 +70,9 @@ export const getAllAddresses = asyncHandler(
 export const getAddressById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
       const address = await addressModel.getOne(addressId, user);
@@ -81,6 +93,9 @@ export const getAddressById = asyncHandler(
 export const updateAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
       const addressData: Partial<Address> = req.body;
@@ -90,17 +105,17 @@ export const updateAddress = asyncHandler(
         user,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
-        updatedAddress,
-      );
       const action = 'updateAddress';
       auditTrail.createAuditTrail(
         user,
         action,
-        i18n.__('ADDRESS_CREATED_SUCCESSFULLY'),
+        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_UPDATED_SUCCESSFULLY'),
+        updatedAddress,
       );
     } catch (error) {
       const source = 'updateAddress';
@@ -114,21 +129,35 @@ export const updateAddress = asyncHandler(
 export const deleteAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const addressId = parseInt(req.params.id, 10);
+
+      // check if the user has delivery packages
+      const checkDeliveryPackages =
+        await deliveryPackageModel.getDeliveryPackagesByAddressId(addressId);
+
+      if (checkDeliveryPackages.length > 0) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('DELETE_DELIVERY_PACKAGES_RELATED_TO_ADDRESS_ID'),
+        );
+      }
       const deletedAddress = await addressModel.deleteOne(addressId, user);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
-        deletedAddress,
-      );
       const action = 'deleteAddress';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ADDRESS_DELETED_SUCCESSFULLY'),
+        deletedAddress,
       );
     } catch (error) {
       const source = 'deleteAddress';

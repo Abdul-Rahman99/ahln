@@ -40,7 +40,7 @@ class HistoryModel {
             !table.table_fullname.includes('user_permission') &&
             !table.table_fullname.includes('permission'),
         )
-        .map((table) => table.table_fullname.replace('public.', ''));
+        .map((table) => table.table_fullname.replace('public.', 'table_name: "'));
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -136,7 +136,7 @@ class HistoryModel {
 
     try {
       // Select from the audit trail table
-      const sql = `SELECT * FROM audit_trail WHERE user_id = $1 AND box_id = $2`;
+      const sql = `SELECT * FROM audit_trail WHERE user_id = $1 AND box_id = $2 ORDER BY createdat DESC`;
       const result = await connection.query(sql, [userId, boxId]);
       return result.rows;
     } catch (error) {

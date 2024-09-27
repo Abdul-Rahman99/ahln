@@ -51,6 +51,7 @@ export const getUserBoxesByBoxIdValidation = [
 export const assignBoxToUserValidation = [
   body('userId').notEmpty().withMessage(i18n.__('USER_ID_REQUIRED')),
   body('boxId').notEmpty().withMessage(i18n.__('BOX_ID_REQUIRED')),
+  body('addressId').notEmpty().withMessage(i18n.__('ADDRESS_ID_REQUIRED')),
   validatorMiddleware,
 ];
 

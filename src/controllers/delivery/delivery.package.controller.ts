@@ -12,7 +12,9 @@ import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import BoxModel from '../../models/box/box.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBoxModel = new UserBoxModel();
 const boxModel = new BoxModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -24,11 +26,27 @@ const deliveryPackageModel = new DeliveryPackageModel();
 export const createDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
+      // check if the user related to box
+      const userRelatedToBox = await userBoxModel.checkUserBox(
+        user,
+        req.body.box_id,
+      );
+      if (!userRelatedToBox) {
+        const source = 'createDeliveryPackage';
+        const message = i18n.__('USER_NOT_RELATED_TO_BOX');
+        systemLog.createSystemLog(user, message, source);
+        return ResponseHandler.badRequest(res, message);
+      }
+
       if (req.body.tracking_number) {
         await deliveryPackageModel.checkTrackingNumber(
           req.body.tracking_number.toLowerCase(),
+          req.body.box_id,
         );
       }
 
@@ -51,11 +69,7 @@ export const createDeliveryPackage = asyncHandler(
           user,
           newDeliveryPackage,
         );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
-        createdDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'createDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
@@ -86,6 +100,11 @@ export const createDeliveryPackage = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        createdDeliveryPackage,
+      );
     } catch (error: any) {
       const source = 'createDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -98,6 +117,9 @@ export const createDeliveryPackage = asyncHandler(
 export const getAllDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackages = await deliveryPackageModel.getMany();
@@ -118,6 +140,9 @@ export const getAllDeliveryPackages = asyncHandler(
 export const getDeliveryPackageById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -140,6 +165,9 @@ export const getDeliveryPackageById = asyncHandler(
 export const updateDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -168,11 +196,7 @@ export const updateDeliveryPackage = asyncHandler(
         deliveryPackageId,
         user,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
-        updatedDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'updateDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
@@ -187,6 +211,11 @@ export const updateDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
         deliveryPackageData.box_id as string,
       );
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_UPDATED_SUCCESSFULLY'),
+        updatedDeliveryPackage,
+      );
     } catch (error: any) {
       const source = 'updateDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -199,6 +228,9 @@ export const updateDeliveryPackage = asyncHandler(
 export const deleteDeliveryPackage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deliveryPackageId = req.params.id;
@@ -206,11 +238,7 @@ export const deleteDeliveryPackage = asyncHandler(
         deliveryPackageId,
         user,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
-        deletedDeliveryPackage,
-      );
+
       notificationModel.createNotification(
         'deleteDeliveryPackage',
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
@@ -241,6 +269,11 @@ export const deleteDeliveryPackage = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+        deletedDeliveryPackage,
+      );
     } catch (error: any) {
       const source = 'deleteDeliveryPackage';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -254,6 +287,9 @@ export const deleteDeliveryPackage = asyncHandler(
 export const getUserDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const { boxId, status } = req.query;
@@ -291,6 +327,9 @@ export const getUserDeliveryPackages = asyncHandler(
 export const transferDeliveryPackages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const { fromBoxId, toBoxId } = req.body;
       const fromBoxRelatedToUser = await boxModel.getOneByUser(user, fromBoxId);
@@ -300,7 +339,7 @@ export const transferDeliveryPackages = asyncHandler(
         const source = 'transferDeliveryPackages';
         systemLog.createSystemLog(
           user,
-          'fromBox Does Not Belong To User',
+          'from Box Does Not Belong To User',
           source,
         );
         return ResponseHandler.badRequest(
@@ -314,6 +353,21 @@ export const transferDeliveryPackages = asyncHandler(
           toBoxId,
           user,
         );
+
+      notificationModel.createNotification(
+        'transferDeliveryPackages',
+        i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),
+        null,
+        user,
+        toBoxId,
+      );
+      const action = 'transferDeliveryPackages';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),
+        fromBoxId,
+      );
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGES_TRANSFERRED_SUCCESSFULLY'),

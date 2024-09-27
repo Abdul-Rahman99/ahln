@@ -14,10 +14,12 @@ const roleModel = new RoleModel();
 
 export const createRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { title, description } = req.body;
     const role = await roleModel.create(title, description);
-    ResponseHandler.success(res, i18n.__('ROLE_CREATED_SUCCESSFULLY'), role);
     const action = 'createRole';
     auditTrail.createAuditTrail(
       user,
@@ -25,6 +27,7 @@ export const createRole = async (req: Request, res: Response) => {
       i18n.__('ROLE_CREATED_SUCCESSFULLY'),
       null,
     );
+    ResponseHandler.success(res, i18n.__('ROLE_CREATED_SUCCESSFULLY'), role);
   } catch (error: any) {
     const source = 'createRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -35,6 +38,9 @@ export const createRole = async (req: Request, res: Response) => {
 
 export const getAllRoles = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const roles = await roleModel.getAll();
     ResponseHandler.success(
@@ -52,6 +58,9 @@ export const getAllRoles = async (req: Request, res: Response) => {
 
 export const getRoleById = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const role = await roleModel.getById(Number(id));
@@ -66,11 +75,13 @@ export const getRoleById = async (req: Request, res: Response) => {
 
 export const updateRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const { id } = req.params;
     const { title, description } = req.body;
     const role = await roleModel.update(Number(id), title, description);
-    ResponseHandler.success(res, i18n.__('ROLE_UPDATED_SUCCESSFULLY'), role);
     const action = 'updateRole';
     auditTrail.createAuditTrail(
       user,
@@ -78,6 +89,7 @@ export const updateRole = async (req: Request, res: Response) => {
       i18n.__('ROLE_UPDATED_SUCCESSFULLY'),
       null,
     );
+    ResponseHandler.success(res, i18n.__('ROLE_UPDATED_SUCCESSFULLY'), role);
   } catch (error: any) {
     const source = 'updateRole';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -88,11 +100,13 @@ export const updateRole = async (req: Request, res: Response) => {
 
 export const deleteRole = async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const { id } = req.params;
     const role = await roleModel.delete(Number(id));
-    ResponseHandler.success(res, i18n.__('ROLE_DELETED_SUCCESSFULLY'), role);
     const action = 'deleteRole';
     auditTrail.createAuditTrail(
       user,
@@ -100,6 +114,7 @@ export const deleteRole = async (req: Request, res: Response) => {
       i18n.__('ROLE_DELETED_SUCCESSFULLY'),
       null,
     );
+    ResponseHandler.success(res, i18n.__('ROLE_DELETED_SUCCESSFULLY'), role);
   } catch (error: any) {
     const source = 'deleteRole';
     systemLog.createSystemLog(user, (error as Error).message, source);

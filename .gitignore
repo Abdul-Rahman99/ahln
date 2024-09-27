@@ -1,5 +1,7 @@
+.env
 /node_modules
 config.env
 /dist
 ahlnowner.json
 /uploads
+.env

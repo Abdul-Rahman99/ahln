@@ -459,7 +459,6 @@ class UserModel {
   async findUserByBoxId(boxId: string): Promise<string> {
     const connection = await db.connect();
     try {
-
       const userResult = await connection.query(
         'SELECT User_Box.user_id FROM Box INNER JOIN User_Box ON Box.id = User_Box.box_id WHERE Box.id = $1',
         [boxId],

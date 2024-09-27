@@ -13,12 +13,9 @@ class AddressModel {
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
-
       const sqlFields = [
         'createdAt',
         'updatedAt',
-        'country',
-        'city',
         'district',
         'street',
         'building_type',
@@ -28,12 +25,12 @@ class AddressModel {
         'user_id',
         'lat',
         'lang',
+        'country_id',
+        'city_id',
       ];
       const sqlParams = [
         createdAt,
         updatedAt,
-        address.country,
-        address.city,
         address.district,
         address.street,
         address.building_type,
@@ -43,11 +40,13 @@ class AddressModel {
         user,
         address.lat,
         address.lang,
+        address.country_id,
+        address.city_id,
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                  RETURNING id, createdAt, updatedAt, country, city, district, street, building_type, building_number, floor, apartment_number, user_id`;
+                  RETURNING id, createdAt, updatedAt, district, street, building_type, building_number, floor, apartment_number, user_id, lat, lang, country_id, city_id`;
 
       const result = await connection.query(sql, sqlParams);
 
@@ -64,7 +63,7 @@ class AddressModel {
     const connection = await db.connect();
     try {
       const sql =
-        'SELECT Box.id as box_id, Address.* FROM Address LEFT JOIN Box ON Box.address_id=Address.id';
+        'SELECT Box.id as box_id, Country.name as country_name, City.name as city_name, Users.email, Address.* FROM Address LEFT JOIN Box ON Box.address_id=Address.id LEFT JOIN Users ON Address.user_id=Users.id LEFT JOIN Country ON Address.country_id=Country.id LEFT JOIN City ON Address.city_id=City.id';
       const result = await connection.query(sql);
 
       return result.rows as Address[];
@@ -107,8 +106,8 @@ class AddressModel {
     const connection = await db.connect();
     try {
       // Check if the address exists
-      const checkSql = 'SELECT * FROM address WHERE id=$1 AND user_id=$2';
-      const checkResult = await connection.query(checkSql, [id, user]);
+      const checkSql = 'SELECT * FROM address WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
         throw new Error(`Address with ID ${id} does not exist`);
@@ -133,7 +132,9 @@ class AddressModel {
         .filter((field) => field !== null);
 
       queryParams.push(updatedAt); // Add the updatedAt timestamp
+      queryParams.push(user);
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
+      updateFields.push(`user_id=$${paramIndex++}`);
 
       queryParams.push(id); // Add the address ID to the query parameters
 

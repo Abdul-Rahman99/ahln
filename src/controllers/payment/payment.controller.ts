@@ -28,6 +28,9 @@ const parseBillingDate = (dateString: string): Date | null => {
 export const createPayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newPayment: Payment = req.body;
@@ -49,14 +52,10 @@ export const createPayment = asyncHandler(
         throw new Error(`No Card Found, please add a card`);
       }
       const createdPayment = await paymentModel.createPayment(newPayment, user);
-      ResponseHandler.success(
-        res,
-        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
-        createdPayment,
-      );
+
       notificationModel.createNotification(
-        'checkOTP',
-        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
+        'createPayment',
+        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         null,
         user,
         null,
@@ -67,6 +66,11 @@ export const createPayment = asyncHandler(
         action,
         i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('PAYMENT_CREATED_SUCCESSFULLY'),
+        createdPayment,
       );
     } catch (error: any) {
       const source = 'createPayment';
@@ -80,6 +84,9 @@ export const createPayment = asyncHandler(
 export const getAllPayments = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const payments = await paymentModel.getAllPayments();
@@ -100,6 +107,9 @@ export const getAllPayments = asyncHandler(
 export const getPaymentById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -125,6 +135,9 @@ export const getPaymentById = asyncHandler(
 export const updatePayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const paymentId = parseInt(req.params.id, 10);
@@ -162,11 +175,6 @@ export const updatePayment = asyncHandler(
         paymentData,
       );
       if (updatedPayment) {
-        ResponseHandler.success(
-          res,
-          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
-          updatedPayment,
-        );
         notificationModel.createNotification(
           'updatePayment',
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
@@ -197,6 +205,11 @@ export const updatePayment = asyncHandler(
             source,
           );
         }
+        ResponseHandler.success(
+          res,
+          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
+          updatedPayment,
+        );
       }
     } catch (error: any) {
       const source = 'updatePayment';
@@ -207,7 +220,7 @@ export const updatePayment = asyncHandler(
         notificationModel.pushNotification(
           fcmToken,
           i18n.__('UPDATE_PAYMENT'),
-          i18n.__('PAYMENT_UNSUCCESSFULL'),
+          i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
@@ -226,6 +239,9 @@ export const updatePayment = asyncHandler(
 export const deletePayment = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const paymentId = parseInt(req.params.id, 10);
       if (isNaN(paymentId)) {
@@ -234,17 +250,18 @@ export const deletePayment = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('INVALID_PAYMENT_ID'));
       }
       const deletedPayment = await paymentModel.deletePayment(paymentId);
-      ResponseHandler.success(
-        res,
-        i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
-        deletedPayment,
-      );
+
       const action = 'deletePayment';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('PAYMENT_DELETED_SUCCESSFULLY'),
+        deletedPayment,
       );
     } catch (error: any) {
       const source = 'deletePayment';
@@ -258,6 +275,9 @@ export const deletePayment = asyncHandler(
 export const getPaymentsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const payments = await paymentModel.getPaymentsByUser(user);

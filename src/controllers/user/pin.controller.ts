@@ -11,7 +11,9 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import UserModel from '../../models/users/user.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBox = new UserBoxModel();
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -22,6 +24,9 @@ const systemLog = new SystemLogModel();
 
 export const createPin = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const newPin: PIN = req.body;
     const boxExist = await boxModel.getOne(newPin.box_id);
@@ -31,9 +36,20 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
       return ResponseHandler.badRequest(res, i18n.__('BOX_ID_INVALID'));
     }
 
-    const passcodeExist = await pinModel.getOnePinByPasscode(
+    const boxRelatedToUser = await userBox.checkUserBox(user, newPin.box_id);
+
+    if (!boxRelatedToUser) {
+      const source = 'createPin';
+      systemLog.createSystemLog(user, 'Box Id Invalid', source);
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('BOX_NOT_RELATED_TO_USER'),
+      );
+    }
+
+    const passcodeExist = await pinModel.getOnePinByPasscodeAndBox(
       newPin.passcode,
-      user,
+      newPin.box_id,
     );
     if (passcodeExist) {
       const source = 'createPin';
@@ -42,11 +58,7 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const createdPin = await pinModel.createPIN(newPin, user);
-    ResponseHandler.success(
-      res,
-      i18n.__('PIN_CREATED_SUCCESSFULLY'),
-      createdPin,
-    );
+
     notificationModel.createNotification(
       'createPin',
       i18n.__('PIN_CREATED_SUCCESSFULLY'),
@@ -77,6 +89,11 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
         source,
       );
     }
+    ResponseHandler.success(
+      res,
+      i18n.__('PIN_CREATED_SUCCESSFULLY'),
+      createdPin,
+    );
   } catch (error) {
     const source = 'createPin';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -104,6 +121,9 @@ export const createPin = asyncHandler(async (req: Request, res: Response) => {
 export const getAllPinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const pins = await pinModel.getAllPinByUser(user);
       ResponseHandler.success(
@@ -123,6 +143,9 @@ export const getAllPinByUser = asyncHandler(
 export const getOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const pinId = parseInt(req.params.id, 10);
       const pin = await pinModel.getOnePinByUser(pinId, user);
@@ -139,11 +162,13 @@ export const getOnePinByUser = asyncHandler(
 export const deleteOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const pinId = parseInt(req.params.id, 10);
       const pin = await pinModel.deleteOnePinByUser(pinId, user);
-      ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
       notificationModel.createNotification(
         'deleteOnePinByUser',
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
@@ -158,6 +183,7 @@ export const deleteOnePinByUser = asyncHandler(
         i18n.__('PIN_DELETED_SUCCESSFULLY'),
         pin.box_id,
       );
+      ResponseHandler.success(res, i18n.__('PIN_DELETED_SUCCESSFULLY'), pin);
     } catch (error) {
       const source = 'deleteOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -170,12 +196,14 @@ export const deleteOnePinByUser = asyncHandler(
 export const updateOnePinByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const pinId = parseInt(req.params.id, 10);
       const pinData: Partial<PIN> = req.body;
       const pin = await pinModel.updatePinByUser(pinData, pinId, user);
-      ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
       notificationModel.createNotification(
         'updateOnePinByUser',
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
@@ -206,6 +234,7 @@ export const updateOnePinByUser = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
     } catch (error) {
       const source = 'updateOnePinByUser';
       systemLog.createSystemLog(user, (error as Error).message, source);
@@ -218,17 +247,12 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { passcode, box_id } = req.body;
 
-    const checkPinResult = await pinModel.checkPIN(passcode, box_id);
     const userId = await pinModel.getUserByPasscode(passcode);
+    const checkPinResult = await pinModel.checkPIN(passcode, box_id, userId);
 
     const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(userId);
 
     if (checkPinResult) {
-      ResponseHandler.success(
-        res,
-        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
-        checkPinResult,
-      );
       notificationModel.createNotification(
         'checkPIN',
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
@@ -243,6 +267,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('DELIVERY_CHECK_PIN'),
           i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         );
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkPIN';
@@ -259,11 +284,12 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         box_id,
       );
-    } else {
-      ResponseHandler.badRequest(
+      ResponseHandler.success(
         res,
-        i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
+        i18n.__('PIN_CHECKED_SUCCESSFULLY'),
+        checkPinResult,
       );
+    } else {
       notificationModel.createNotification(
         'checkPIN',
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
@@ -282,6 +308,10 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         action,
         i18n.__('PIN_CHECKED_FAILED'),
         box_id,
+      );
+      ResponseHandler.badRequest(
+        res,
+        i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
       );
     }
   } catch (error) {

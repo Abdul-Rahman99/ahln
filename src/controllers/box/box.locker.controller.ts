@@ -16,22 +16,26 @@ const boxLockerModel = new BoxLockerModel();
 export const createBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newBoxLocker: BoxLocker = req.body;
       const createdBoxLocker =
         await boxLockerModel.createBoxLocker(newBoxLocker);
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
-        createdBoxLocker,
-      );
+
       const action = 'createBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
         newBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_CREATED_SUCCESSFULLY'),
+        createdBoxLocker,
       );
     } catch (error: any) {
       const source = 'createBoxLocker';
@@ -45,6 +49,9 @@ export const createBoxLocker = asyncHandler(
 export const getAllBoxLockers = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockers = await boxLockerModel.getMany();
@@ -74,6 +81,9 @@ export const getBoxLockerById = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getBoxLockerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -85,6 +95,9 @@ export const getBoxLockerById = asyncHandler(
 export const updateBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockerId = req.params.id;
@@ -93,17 +106,17 @@ export const updateBoxLocker = asyncHandler(
         boxLockerData,
         String(boxLockerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
-        updatedBoxLocker,
-      );
       const action = 'updateBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
         updatedBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_UPDATED_SUCCESSFULLY'),
+        updatedBoxLocker,
       );
     } catch (error: any) {
       const source = 'updateBoxLocker';
@@ -117,23 +130,27 @@ export const updateBoxLocker = asyncHandler(
 export const deleteBoxLocker = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxLockerId = req.params.id;
       const deletedBoxLocker = await boxLockerModel.deleteOne(
         String(boxLockerId),
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
-        deletedBoxLocker,
-      );
+
       const action = 'deleteBoxLocker';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
         deletedBoxLocker.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_LOCKER_DELETED_SUCCESSFULLY'),
+        deletedBoxLocker,
       );
     } catch (error: any) {
       const source = 'deleteBoxLocker';
@@ -147,6 +164,9 @@ export const deleteBoxLocker = asyncHandler(
 export const getAllLockersById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxId = req.body.boxId;

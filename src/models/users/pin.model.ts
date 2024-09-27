@@ -1,6 +1,11 @@
 import { PIN } from '../../types/pin.type';
 import db from '../../config/database';
 import moment from 'moment-timezone';
+import AuditTrailModel from '../logs/audit.trail.model';
+import i18n from '../../config/i18n';
+
+const auditTrail = new AuditTrailModel();
+
 class PINModel {
   // create PIN
   async createPIN(pinData: Partial<PIN>, user: string): Promise<PIN> {
@@ -21,6 +26,7 @@ class PINModel {
         'user_id',
         'type',
         'passcode',
+        'end_date',
       ];
 
       // Ensure time_range and day_range are arrays
@@ -43,6 +49,7 @@ class PINModel {
         user,
         pinData.type,
         pinData.passcode,
+        pinData.end_date,
       ];
 
       const sql = `INSERT INTO PIN (${sqlFields.join(', ')}) 
@@ -63,10 +70,17 @@ class PINModel {
     const connection = await db.connect();
     try {
       const sql =
-        'SELECT b.box_label, PIN.* FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1';
+        'SELECT b.box_label, PIN.* FROM PIN INNER JOIN Box as b ON b.id=PIN.box_id WHERE user_id=$1 ORDER BY createdat DESC';
       const result = await connection.query(sql, [user]);
+      const results = result.rows.map((row) => {
+        const endDate = moment(row.end_date).add(1, 'day');
+        return {
+          ...row,
+          end_date: endDate.toDate(),
+        };
+      });
 
-      return result.rows as PIN[];
+      return results as PIN[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -89,11 +103,14 @@ class PINModel {
   }
 
   // get one pin management
-  async getOnePinByPasscode(pass: string, user: string): Promise<boolean> {
+  async getOnePinByPasscodeAndBox(
+    pass: string,
+    boxId: string,
+  ): Promise<boolean> {
     const connection = await db.connect();
     try {
-      const sql = 'SELECT * FROM PIN WHERE passcode=$1 AND user_id=$2';
-      const result = await connection.query(sql, [pass, user]);
+      const sql = 'SELECT * FROM PIN WHERE passcode=$1 AND box_id=$2';
+      const result = await connection.query(sql, [pass, boxId]);
       if (result.rows.length > 0) {
         return true;
       }
@@ -200,7 +217,11 @@ class PINModel {
     }
   }
 
-  async checkPIN(passcode: string, box_id: string): Promise<boolean> {
+  async checkPIN(
+    passcode: string,
+    box_id: string,
+    user_id: string,
+  ): Promise<boolean> {
     const connection = await db.connect();
     try {
       if (!passcode) {
@@ -208,25 +229,79 @@ class PINModel {
       }
 
       const pinResult = await connection.query(
-        'SELECT time_range, day_range FROM PIN WHERE passcode = $1 AND is_active = TRUE AND box_id = $2',
+        'SELECT time_range, day_range, end_date, type, id FROM PIN WHERE passcode = $1 AND is_active = TRUE AND box_id = $2',
         [passcode, box_id],
       );
 
       if (pinResult.rows.length === 0) {
+        const action = 'checkPIN';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('PIN_NOT_FOUND_OR_ALREADY_USED'),
+          box_id,
+        );
         throw new Error('PIN not found or PIN is not activated');
       }
 
-      const { time_range, day_range } = pinResult.rows[0];
-
-      const parsedTimeRange = time_range
-        .split(',')
-        .map((item: string) => item.trim());
-      const parsedDayRange = day_range
-        .split(',')
-        .map((item: string) => item.trim());
+      const { time_range, day_range, end_date, type, id } = pinResult.rows[0];
+      let parsedTimeRange, parsedDayRange;
+      try {
+        parsedTimeRange = time_range
+          .split(',')
+          .map((item: string) => item.trim());
+        parsedDayRange = day_range
+          .split(',')
+          .map((item: string) => item.trim());
+      } catch (error) {
+        throw new Error('Update your pin time and day range');
+      }
 
       const currentTime = moment().tz('Asia/Dubai');
       const currentDay = currentTime.day().toString();
+      if (type === 'Timed') {
+        const parsedEndDate = moment(end_date, 'DD-MM-YYYY')
+          .tz('Asia/Dubai')
+          .format('DD-MM-YYYY')
+          .toString();
+
+        const parsedCurrentDay = currentTime
+          .tz('Asia/Dubai')
+          .format('DD-MM-YYYY')
+          .toString();
+        if (parsedEndDate >= parsedCurrentDay) {
+          const action = 'checkPIN';
+          auditTrail.createAuditTrail(
+            user_id,
+            action,
+            i18n.__('PIN_CHEKED_SUCCESSFULLY'),
+            box_id,
+          );
+        } else {
+          const action = 'checkPIN';
+          auditTrail.createAuditTrail(
+            user_id,
+            action,
+            i18n.__('PIN_EXPIRED'),
+            box_id,
+          );
+          throw new Error('PIN expired');
+        }
+      } else if (type === 'One-Time') {
+        const action = 'checkPIN';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('PIN_ALREADY_USED'),
+          box_id,
+        );
+        const deletePIN = await this.deleteOnePinByUser(id, user_id);
+
+        if (!deletePIN) {
+          throw new Error('Failed to delete PIN');
+        }
+        return true;
+      }
 
       if (!parsedDayRange.includes(currentDay)) {
         return false;
@@ -237,10 +312,15 @@ class PINModel {
       for (let i = 0; i < parsedTimeRange.length; i += 2) {
         const startTimeStr = parsedTimeRange[i];
         const endTimeStr = parsedTimeRange[i + 1];
+        let [startHour, startMin] = [0, 0];
+        let [endHour, endMin] = [0, 0];
+        try {
+          [startHour, startMin] = startTimeStr.split(':').map(Number);
 
-        const [startHour, startMin] = startTimeStr.split(':').map(Number);
-        const [endHour, endMin] = endTimeStr.split(':').map(Number);
-
+          [endHour, endMin] = endTimeStr.split(':').map(Number);
+        } catch (error) {
+          throw new Error('Update your PIN to add a time range');
+        }
         if (
           isNaN(startHour) ||
           isNaN(startMin) ||

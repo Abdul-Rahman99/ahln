@@ -19,6 +19,9 @@ export const createBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { box_id, title, message } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxUserExist = await boxModel.getOneByUser(user, box_id);
@@ -42,11 +45,6 @@ export const createBoxScreenMessage = asyncHandler(
           message,
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
-        boxScreenMessage,
-      );
       const auditUser = await authHandler(req, res);
       const action = 'createBoxScreenMessage';
       auditTrail.createAuditTrail(
@@ -54,6 +52,11 @@ export const createBoxScreenMessage = asyncHandler(
         action,
         i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
         box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_CREATED_SUCCESSFULLY'),
+        boxScreenMessage,
       );
     } catch (error: any) {
       const source = 'boxScreenMessage';
@@ -67,6 +70,9 @@ export const createBoxScreenMessage = asyncHandler(
 export const getAllBoxScreenMessages = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const boxScreenMessages =
         await boxScreenMessagesModel.getAllBoxScreenMessages(user);
@@ -88,6 +94,9 @@ export const getBoxScreenMessageById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const boxScreenMessage =
@@ -124,6 +133,9 @@ export const updateBoxScreenMessage = asyncHandler(
     const { id } = req.params;
     const { box_id, tablet_id, title, message } = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const updatedBoxScreenMessage =
         await boxScreenMessagesModel.updateBoxScreenMessage(
@@ -138,11 +150,6 @@ export const updateBoxScreenMessage = asyncHandler(
           },
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
-        updatedBoxScreenMessage,
-      );
       const auditUser = await authHandler(req, res);
       const action = 'updateBoxScreenMessage';
       auditTrail.createAuditTrail(
@@ -150,6 +157,11 @@ export const updateBoxScreenMessage = asyncHandler(
         action,
         i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
         box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_UPDATED_SUCCESSFULLY'),
+        updatedBoxScreenMessage,
       );
     } catch (error: any) {
       const source = 'updateBoxScreenMessage';
@@ -164,6 +176,9 @@ export const deleteBoxScreenMessage = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedBoxScreenMessage =
@@ -172,17 +187,17 @@ export const deleteBoxScreenMessage = asyncHandler(
           user,
         );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
-        deletedBoxScreenMessage,
-      );
       const action = 'deleteBoxScreenMessage';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
         deletedBoxScreenMessage.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('BOX_SCREEN_MESSAGE_DELETED_SUCCESSFULLY'),
+        deletedBoxScreenMessage,
       );
     } catch (error: any) {
       const source = 'deleteBoxScreenMessage';

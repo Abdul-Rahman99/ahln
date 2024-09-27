@@ -13,6 +13,9 @@ const systemLog = new SystemLogModel();
 
 export const liveStream = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     handleLiveStream('image')(req, res, async (err: any) => {
@@ -41,6 +44,9 @@ export const liveStream = asyncHandler(async (req: Request, res: Response) => {
 
 export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     uploadSingleImage('image')(req, res, async (err: any) => {
@@ -70,6 +76,9 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
 export const getLiveStreamImage = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const image =

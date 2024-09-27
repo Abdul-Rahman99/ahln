@@ -42,6 +42,9 @@ export const createSalesInvoice = asyncHandler(
       const userExist = await userModel.getOne(user);
       if (!userExist) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'createSalesInvoice';
         systemLog.createSystemLog(user, 'User Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('USER_NOT_FOUND'));
@@ -73,11 +76,6 @@ export const createSalesInvoice = asyncHandler(
         user,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
-        createdSalesInvoice,
-      );
       notificationModel.createNotification(
         'createSalesInvoice',
         i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
@@ -108,8 +106,16 @@ export const createSalesInvoice = asyncHandler(
           source,
         );
       }
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
+        createdSalesInvoice,
+      );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'createSalesInvoice';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -121,6 +127,9 @@ export const createSalesInvoice = asyncHandler(
 export const getAllSalesInvoices = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const salesInvoices = await salesInvoiceModel.getAllSalesInvoices();
       ResponseHandler.success(
@@ -140,6 +149,9 @@ export const getAllSalesInvoices = asyncHandler(
 export const getSalesInvoiceById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const salesInvoiceId = req.params.id;
@@ -161,6 +173,9 @@ export const getSalesInvoiceById = asyncHandler(
 export const updateSalesInvoice = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const salesInvoiceId = req.params.id;
@@ -183,17 +198,18 @@ export const updateSalesInvoice = asyncHandler(
         newSalesInvoice,
         salesInvoiceId,
       );
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
-        updatedSalesInvoice,
-      );
+
       const action = 'updateSalesInvoice';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
         updatedSalesInvoice.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_UPDATED_SUCCESSFULLY'),
+        updatedSalesInvoice,
       );
     } catch (error: any) {
       const source = 'updateSalesInvoice';
@@ -207,21 +223,25 @@ export const updateSalesInvoice = asyncHandler(
 export const deleteSalesInvoice = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const salesInvoiceId = req.params.id;
       const deletedSalesInvoice =
         await salesInvoiceModel.deleteOne(salesInvoiceId);
-      ResponseHandler.success(
-        res,
-        i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
-        deletedSalesInvoice,
-      );
+
       const action = 'deleteSalesInvoice';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
         deletedSalesInvoice.box_id,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('SALES_INVOICE_DELETED_SUCCESSFULLY'),
+        deletedSalesInvoice,
       );
     } catch (error: any) {
       const source = 'deleteSalesInvoice';
@@ -249,6 +269,9 @@ export const getSalesInvoicesByUserId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoiceByUserId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -274,6 +297,9 @@ export const getSalesInvoicesBySalesId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoicesBySalesId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
@@ -295,6 +321,9 @@ export const getSalesInvoicesByBoxId = asyncHandler(
       );
     } catch (error: any) {
       const user = await authHandler(req, res);
+      if (user === '0') {
+        return user;
+      }
       const source = 'getSalesInvoicesByBoxId';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);

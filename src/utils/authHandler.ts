@@ -5,11 +5,7 @@ import i18n from '../config/i18n';
 
 const userModel = new UserModel();
 
-const authHandler = async (
-  req: Request,
-  res: Response,
-  // next: NextFunction,
-): Promise<string> => {
+const authHandler = async (req: Request, res: Response): Promise<string> => {
   try {
     // Extract token from the request headers
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -21,11 +17,11 @@ const authHandler = async (
       const user = await userModel.findByToken(token);
       if (!user) {
         ResponseHandler.unauthorized(res, i18n.__('INVALID_TOKEN'));
+        return '0';
       } else {
         return user;
       }
     }
-    return 'Ahln_24_U00000010';
   } catch (error) {
     throw new Error((error as Error).message);
   }

@@ -52,7 +52,9 @@ export const loginValidator = [
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
-      await validateLoginCredentials(email, password);
+      const emailLower = await email.toLowerCase();
+
+      await validateLoginCredentials(emailLower, password);
       next();
     } catch (error: any) {
       return ResponseHandler.badRequest(

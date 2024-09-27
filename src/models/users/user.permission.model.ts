@@ -12,7 +12,7 @@ class UserPermissionModel {
     const connection = await db.connect();
 
     try {
-      const sql = `INSERT INTO user_permission (user_id, permission_id) VALUES ($1, $2)`;
+      const sql = `INSERT INTO user_permission (user_id, permission_id) VALUES ($1, $2) RETURNING *`;
       const result = await connection.query(sql, [userId, permissionId]);
       return result.rows[0] as UserPermission;
     } catch (error) {
@@ -30,7 +30,7 @@ class UserPermissionModel {
     const connection = await db.connect();
 
     try {
-      const sql = `DELETE FROM user_permission WHERE user_id=$1 AND permission_id=$2`;
+      const sql = `DELETE FROM user_permission WHERE user_id=$1 AND permission_id=$2 RETURNING *`;
       const result = await connection.query(sql, [userId, permissionId]);
       return result.rows[0] as UserPermission;
     } catch (error) {

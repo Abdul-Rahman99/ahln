@@ -21,16 +21,14 @@ const otpModel = new OTPModel();
 
 export const createOTP = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const newOTP: OTP = req.body;
     const delivery_package_id = req.body.delivery_package_id;
     const createdOTP = await otpModel.createOTP(newOTP, delivery_package_id);
-    ResponseHandler.success(
-      res,
-      i18n.__('OTP_CREATED_SUCCESSFULLY'),
-      createdOTP,
-    );
 
     notificationModel.createNotification(
       'createOTP',
@@ -46,6 +44,11 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
       i18n.__('OTP_CREATED_SUCCESSFULLY'),
       newOTP.box_id,
     );
+    ResponseHandler.success(
+      res,
+      i18n.__('OTP_CREATED_SUCCESSFULLY'),
+      createdOTP,
+    );
   } catch (error: any) {
     const source = 'createOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -56,6 +59,9 @@ export const createOTP = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const otps = await otpModel.getMany();
@@ -70,6 +76,9 @@ export const getAllOTPs = asyncHandler(async (req: Request, res: Response) => {
 
 export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
 
   try {
     const otpId = req.params.id;
@@ -86,6 +95,9 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 // export const updateOTP = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
 // const user = await authHandler(req, res);
+// if (user === '0') {
+//   return user;
+// }
 //     try {
 //       const otpId = req.params.id;
 //       const otpData: Partial<OTP> = req.body;
@@ -135,14 +147,13 @@ export const getOTPById = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
   const user = await authHandler(req, res);
+  if (user === '0') {
+    return user;
+  }
   try {
     const otpId = req.params.id;
     const deletedOTP = await otpModel.deleteOne(Number(otpId));
-    ResponseHandler.success(
-      res,
-      i18n.__('OTP_DELETED_SUCCESSFULLY'),
-      deletedOTP,
-    );
+
     notificationModel.createNotification(
       'deleteOTP',
       i18n.__('OTP_DELTED_SUCCESSFULLY'),
@@ -173,6 +184,11 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
         source,
       );
     }
+    ResponseHandler.success(
+      res,
+      i18n.__('OTP_DELETED_SUCCESSFULLY'),
+      deletedOTP,
+    );
   } catch (error: any) {
     const source = 'deleteOTP';
     systemLog.createSystemLog(user, (error as Error).message, source);
@@ -184,6 +200,9 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
 export const getOTPsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const otps = await otpModel.getOTPsByUser(user);
@@ -208,21 +227,23 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     const verifiedOTP = await otpModel.checkOTP(
       otp,
       delivery_package_id,
-
       boxId,
     );
     const user = await userModel.findUserByBoxId(req.body.boxId);
 
     if (verifiedOTP) {
-      ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
-        box_locker_string: verifiedOTP[0],
-        otp: verifiedOTP[1],
-      });
       notificationModel.createNotification(
         'checkOTP',
         i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         null,
         user,
+        boxId,
+      );
+      const action = 'checkOTP';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         boxId,
       );
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
@@ -232,6 +253,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           i18n.__('CHECK_OTP'),
           i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         );
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'checkOTP';
@@ -241,11 +263,17 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           source,
         );
       }
+      ResponseHandler.success(res, i18n.__('OTP_VERIFIED_SUCCESSFULLY'), {
+        box_locker_string: verifiedOTP[0],
+        otp: verifiedOTP[1],
+      });
     } else {
       const source = 'checkOTP';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
       ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      const action = 'checkOTP';
+      auditTrail.createAuditTrail(user, action, i18n.__('INVALID_OTP'), boxId);
       try {
         notificationModel.pushNotification(
           fcmToken,
@@ -291,9 +319,9 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
 // function to check by tracking number
 export const checkTrackingNumberAndUpdateStatus = asyncHandler(
   async (req: Request, res: Response) => {
+    const boxId = req.body.boxId;
     try {
       const trackingNumber = req.body.trackingNumber.toLowerCase();
-      const boxId = req.body.boxId;
       const user = await userModel.findUserByBoxId(req.body.boxId);
 
       if (!trackingNumber) {
@@ -307,11 +335,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         boxId,
       );
       if (result) {
-        ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
-          box_locker_string: result[0],
-          pin: result[1],
-          otp: result[2],
-        });
+        const action = 'checkTrackingNumberAndUpdateStatus';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
+          boxId,
+        );
         notificationModel.createNotification(
           'checkTrackingNumberAndUpdateStatus',
           i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'),
@@ -324,7 +354,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('CHECK_TRACKING_NUMBER'),
+            result[3] as string,
             i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -336,6 +366,10 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             source,
           );
         }
+        ResponseHandler.success(res, i18n.__('PACKAGE_UPDATED_SUCCESSFULLY'), {
+          box_locker_string: result[0],
+          pin: result[1],
+        });
       } else {
         const source = 'checkTrackingNumberAndUpdateStatus';
         systemLog.createSystemLog(user, 'Invalid Otp', source);
@@ -345,6 +379,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
             fcmToken,
             i18n.__('CHECK_TRACKING_NUMBER'),
             i18n.__('PACKAGE_ALREADY_DELIVERED'),
+          );
+          const action = 'checkTrackingNumberAndUpdateStatus';
+          auditTrail.createAuditTrail(
+            user,
+            action,
+            i18n.__('CHECK_TRACKING_NUMBER'),
+            boxId,
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -368,6 +409,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
           fcmToken,
           i18n.__('CHECK_TRACKING_NUMBER'),
           i18n.__('PACKAGE_ID_INVALID'),
+        );
+        const action = 'checkTrackingNumberAndUpdateStatus';
+        auditTrail.createAuditTrail(
+          user,
+          action,
+          i18n.__('PACKAGE_ID_INVALID'),
+          boxId,
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {

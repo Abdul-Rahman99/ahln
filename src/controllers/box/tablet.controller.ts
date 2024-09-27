@@ -15,21 +15,25 @@ const tabletModel = new TabletModel();
 export const createTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const newTablet: Tablet = req.body;
       const createdTablet = await tabletModel.createTablet(newTablet);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
-        createdTablet,
-      );
+
       const action = 'createTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_CREATED_SUCCESSFULLY'),
+        createdTablet,
       );
     } catch (error) {
       const source = 'createTablet';
@@ -43,6 +47,9 @@ export const createTablet = asyncHandler(
 export const getAllTablets = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tablets = await tabletModel.getMany();
@@ -63,6 +70,9 @@ export const getAllTablets = asyncHandler(
 export const getTabletById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;
@@ -84,22 +94,26 @@ export const getTabletById = asyncHandler(
 export const updateTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;
       const tabletData: Partial<Tablet> = req.body;
       const updatedTablet = await tabletModel.updateOne(tabletData, tabletId);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
-        updatedTablet,
-      );
+
       const action = 'updateTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_UPDATED_SUCCESSFULLY'),
+        updatedTablet,
       );
     } catch (error) {
       const source = 'updateTablet';
@@ -113,21 +127,34 @@ export const updateTablet = asyncHandler(
 export const deleteTablet = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const tabletId = req.params.id;
+      // check if the tablet alraedy has a box
+      const tablet = await tabletModel.tabletIsAssignedToBox(tabletId);
+      if (tablet) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('REMOVE_TABLET_FROM_BOX_FIRST'),
+        );
+      }
+
       const deletedTablet = await tabletModel.deleteOne(tabletId);
-      ResponseHandler.success(
-        res,
-        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
-        deletedTablet,
-      );
+
       const action = 'deleteTablet';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('TABLET_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('TABLET_DELETED_SUCCESSFULLY'),
+        deletedTablet,
       );
     } catch (error) {
       const source = 'deleteTablet';

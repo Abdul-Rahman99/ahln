@@ -18,21 +18,24 @@ export const createUserGuide = asyncHandler(
   async (req: Request, res: Response) => {
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userGuide = await userGuideModel.createUserGuide(pageData);
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
-        userGuide,
-      );
       const action = 'createUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_CREATED_SUCCESSFULLY'),
+        userGuide,
       );
     } catch (error: any) {
       const source = 'createUserGuide';
@@ -46,6 +49,9 @@ export const createUserGuide = asyncHandler(
 export const getAllUserGuide = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
     try {
       const userGuide = await userGuideModel.getAllUserGuide();
 
@@ -67,12 +73,18 @@ export const getUserGuideById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const userGuide = await userGuideModel.getUserGuideById(parseInt(id, 10));
 
       if (!userGuide) {
         const user = await authHandler(req, res);
+        if (user === '0') {
+          return user;
+        }
         const source = 'getUserGuideById';
         systemLog.createSystemLog(user, 'About Us Not Found', source);
         return ResponseHandler.badRequest(res, i18n.__('ABOUT_US_NOT_FOUND'));
@@ -97,6 +109,9 @@ export const updateUserGuide = asyncHandler(
     const { id } = req.params;
     const pageData = req.body;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const updatedAboutU = await userGuideModel.updateUserGuide(
@@ -104,17 +119,17 @@ export const updateUserGuide = asyncHandler(
         pageData,
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
-        updatedAboutU,
-      );
       const action = 'updateUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_UPDATED_SUCCESSFULLY'),
+        updatedAboutU,
       );
     } catch (error: any) {
       const source = 'updateUserGuide';
@@ -129,23 +144,26 @@ export const deleteUserGuide = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
 
     try {
       const deletedUserGuide = await userGuideModel.deleteUserGuide(
         parseInt(id, 10),
       );
 
-      ResponseHandler.success(
-        res,
-        i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
-        deletedUserGuide,
-      );
       const action = 'deleteUserGuide';
       auditTrail.createAuditTrail(
         user,
         action,
         i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
         null,
+      );
+      ResponseHandler.success(
+        res,
+        i18n.__('ABOUT_US_DELETED_SUCCESSFULLY'),
+        deletedUserGuide,
       );
     } catch (error: any) {
       const source = 'deleteUserGuide';

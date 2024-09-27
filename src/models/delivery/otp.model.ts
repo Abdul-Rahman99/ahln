@@ -5,10 +5,12 @@ import UserDevicesModel from '../users/user.devices.model';
 import NotificationModel from '../logs/notification.model';
 import SystemLogModel from '../logs/system.log.model';
 import i18n from '../../config/i18n';
+import AuditTrailModel from '../logs/audit.trail.model';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const systemLog = new SystemLogModel();
+const auditTrail = new AuditTrailModel();
 
 class OTPModel {
   // Create OTP
@@ -74,6 +76,7 @@ class OTPModel {
     boxId: string,
   ): Promise<any> {
     const connection = await db.connect();
+    await connection.query('BEGIN');
     try {
       if (!otp) {
         throw new Error('Please provide an OTP');
@@ -81,7 +84,7 @@ class OTPModel {
 
       // Check if OTP exists and is not used
       const otpResult = await connection.query(
-        'SELECT box_locker_id, delivery_package_id FROM OTP WHERE otp = $1 AND is_used = FALSE AND box_id = $2',
+        'SELECT Delivery_Package.otp AS delivery_package_otp, OTP.box_locker_id, OTP.delivery_package_id FROM OTP LEFT JOIN Delivery_Package ON OTP.delivery_package_id = Delivery_Package.id WHERE OTP.otp = $1 AND OTP.is_used = FALSE AND OTP.box_id = $2',
         [otp, boxId],
       );
 
@@ -110,6 +113,13 @@ class OTPModel {
             source,
           );
         }
+        const action = 'checkOTP';
+        auditTrail.createAuditTrail(
+          user_id,
+          action,
+          i18n.__('OTP_NOT_FOUND_OR_ALREADY_USED'),
+          boxId,
+        );
         throw new Error('OTP not found or already used');
       }
 
@@ -121,7 +131,7 @@ class OTPModel {
         [box_locker_id],
       );
 
-      if (boxLockerResult.rows.length == 0) {
+      if (boxLockerResult.rows.length === 0) {
         throw new Error(
           `Box locker not found for the given box id: ${box_locker_id}`,
         );
@@ -134,6 +144,7 @@ class OTPModel {
 
       let otpResultDP;
       let otpResultt;
+
       if (otpResult.rows[0].delivery_package_id) {
         otpResultDP = await connection.query(
           'SELECT otp FROM Delivery_Package WHERE id = $1',
@@ -142,8 +153,10 @@ class OTPModel {
         otpResultt = otpResultDP.rows[0].otp;
       }
 
+      await connection.query('COMMIT');
       return [parsedSerialPort, otpResultt];
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();
@@ -350,7 +363,6 @@ class OTPModel {
         throw new Error('The package has already been delivered');
       }
       const pin_result = deliveryPackage.delivery_pin;
-      const otp_result = deliveryPackage.otp;
       const boxLockerResult = await connection.query(
         'SELECT serial_port FROM box_locker WHERE id = $1',
         [deliveryPackage.box_locker_id],
@@ -370,8 +382,9 @@ class OTPModel {
         'UPDATE Delivery_Package SET shipment_status = $1, is_delivered = $2, updatedAt = $3 WHERE tracking_number = $4',
         ['delivered', true, updatedAt, trackingNumber],
       );
+      // console.log(deliveryPackage, 'deliveryPackage');
 
-      return [parsedSerialPort, pin_result, otp_result];
+      return [parsedSerialPort, pin_result, deliveryPackage.title];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

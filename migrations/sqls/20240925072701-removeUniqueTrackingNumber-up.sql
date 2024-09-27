@@ -1,4 +1,4 @@
-/* Replace with your SQL commands */
+-- /* Replace with your SQL commands */
 
-ALTER TABLE delivery_package
-DROP CONSTRAINT unique_tracking_number;
+-- ALTER TABLE delivery_package
+-- DROP CONSTRAINT unique_tracking_number;

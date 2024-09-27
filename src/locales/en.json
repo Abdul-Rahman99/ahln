@@ -135,7 +135,7 @@
 	"OTP_CREATED_SUCCESSFULLY": "Your one-time password has been created. Check your phone!",
 	"OTP_VERIFIED_SUCCESSFULLY": "Great! Your one-time password has been verified successfully.",
 	"PIN_CREATED_SUCCESSFULLY": "Your new PIN has been created successfully. Remember to keep it safe!",
-	"CREATE_DELIVERY_PACKAGE": "You're about to create a new delivery package.",
+	"CREATE_DELIVERY_PACKAGE": "New Delivery Package Created.",
 	"CHECK_TRACKING_NUMBER": "Tracking number for package delivery.",
 	"TRACKING_NUMBER_VERIFIED_SUCCESSFULLY": "Great! Your tracking number has been verified successfully.",
 	"TOKEN_REQUIRED": "We need your authentication token to proceed.",

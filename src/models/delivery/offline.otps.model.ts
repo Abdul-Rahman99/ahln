@@ -62,10 +62,31 @@ class OfflineOtps {
         const locker1List: string[] = [];
         const locker2List: string[] = [];
         const locker3List: string[] = [];
-        for (let i = 0; i < 100; i++) {
-          locker1List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
-          locker2List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
-          locker3List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
+        const locker1Set = new Set();
+        const locker2Set = new Set();
+        const locker3Set = new Set();
+        for (
+          let i = 0;
+          locker1List.length < 10000 ||
+          locker2List.length < 10000 ||
+          locker3List.length < 10000;
+          i++
+        ) {
+          const otp1 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          const otp2 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          const otp3 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          if (!locker1Set.has(otp1)) {
+            locker1List.push(otp1);
+            locker1Set.add(otp1);
+          }
+          if (!locker2Set.has(otp2)) {
+            locker2List.push(otp2);
+            locker2Set.add(otp2);
+          }
+          if (!locker3Set.has(otp3)) {
+            locker3List.push(otp3);
+            locker3Set.add(otp3);
+          }
         }
         const result = await this.create({
           locker1_list: locker1List,
@@ -83,19 +104,38 @@ class OfflineOtps {
         const locker1List: string[] = [];
         const locker2List: string[] = [];
         const locker3List: string[] = [];
-        for (let i = 0; i < 100; i++) {
-          locker1List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
-          locker2List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
-          locker3List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
+        const locker1Set = new Set();
+        const locker2Set = new Set();
+        const locker3Set = new Set();
+        for (
+          let i = 0;
+          locker1List.length < 10000 ||
+          locker2List.length < 10000 ||
+          locker3List.length < 10000;
+          i++
+        ) {
+          const otp1 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          const otp2 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          const otp3 = `${Math.floor(100000 + Math.random() * 900000)}`;
+          if (!locker1Set.has(otp1)) {
+            locker1List.push(otp1);
+            locker1Set.add(otp1);
+          }
+          if (!locker2Set.has(otp2)) {
+            locker2List.push(otp2);
+            locker2Set.add(otp2);
+          }
+          if (!locker3Set.has(otp3)) {
+            locker3List.push(otp3);
+            locker3Set.add(otp3);
+          }
         }
-
         const result = await this.create({
           locker1_list: locker1List,
           locker2_list: locker2List,
           locker3_list: locker3List,
           box_id: boxId,
         });
-
         return result;
       }
     } catch (error) {

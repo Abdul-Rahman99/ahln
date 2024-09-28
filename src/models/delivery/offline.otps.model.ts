@@ -62,7 +62,7 @@ class OfflineOtps {
         const locker1List: string[] = [];
         const locker2List: string[] = [];
         const locker3List: string[] = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10000; i++) {
           locker1List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
           locker2List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
           locker3List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
@@ -83,7 +83,7 @@ class OfflineOtps {
         const locker1List: string[] = [];
         const locker2List: string[] = [];
         const locker3List: string[] = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10000; i++) {
           locker1List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
           locker2List.push(`${Math.floor(100000 + Math.random() * 900000)}`);
           locker3List.push(`${Math.floor(100000 + Math.random() * 900000)}`);

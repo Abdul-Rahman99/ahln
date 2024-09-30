@@ -5,8 +5,10 @@ import {
   deleteRelativeCustomer,
   getAllRelativeCustomersByUserId,
   getAllRelativeCustomersForAdmin,
+  getRelativeCustomerAccess,
   getRelativeCustomerById,
   updateRelativeCustomer,
+  updateRelativeCustomerAccess,
   updateRelativeCustomerStatus,
 } from '../../controllers/user/relative.customer.controller';
 
@@ -22,4 +24,17 @@ router.put('/update/:id', verifyToken, updateRelativeCustomer);
 router.delete('/delete/:id', verifyToken, deleteRelativeCustomer);
 
 router.put('/update-status', verifyToken, updateRelativeCustomerStatus);
+
+router.get(
+  '/get-relative-customer-access/:box_id',
+  verifyToken,
+  getRelativeCustomerAccess,
+);
+
+router.put(
+  '/update-relative-customer-access/:id',
+  verifyToken,
+  updateRelativeCustomerAccess,
+);
+
 export default router;

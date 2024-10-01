@@ -71,10 +71,12 @@ export const getAllNotificationsByUser = asyncHandler(
     const page = req.query.page ? Number(req.query.page) : 1;
 
     try {
-      let notifications =
-        await notificationModel.getAllNotificationsByUser(user);
-      const dataCount = notifications.length;
-      if (dataCount === 0) {
+      let notifications = await notificationModel.getAllNotificationsByUser(
+        user,
+        limit,
+        page,
+      );
+      if (notifications.length === 0) {
         notifications = [];
       }
 
@@ -82,8 +84,6 @@ export const getAllNotificationsByUser = asyncHandler(
         res,
         i18n.__('NOTIFICATIONS_RETRIEVED_SUCCESSFULLY'),
         notifications,
-        limit,
-        page,
       );
     } catch (error) {
       const source = 'getAllNotificationsByUser';

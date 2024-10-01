@@ -32,17 +32,20 @@ export const getAllPlaybackByBox = asyncHandler(
       const limit = req.query.limit ? Number(req.query.limit) : 10;
       const page = req.query.page ? Number(req.query.page) : 1;
 
-      const playback = await playbackModel.getAllPlaybackByBox(
+      let playback = await playbackModel.getAllPlaybackByBox(
         box_id,
         fromDate,
         toDate,
+        limit,
+        page,
       );
+      if (playback.length === 0) {
+        playback = [];
+      }
       ResponseHandler.success(
         res,
         i18n.__('PLAYBACK_RETRIEVED_SUCCESSFULLY'),
         playback,
-        limit,
-        page,
       );
     } catch (error) {
       const user = await authHandler(req, res);

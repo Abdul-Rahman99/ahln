@@ -23,44 +23,13 @@ class ResponseHandler {
     return res.status(200).json(responseBody);
   }
 
-  static success(
-    res: Response,
-    message: string,
-    data: any = null,
-    limit?: number,
-    page?: number,
-  ): Response {
-    let responseBody: any;
-    const dataCount = data ? data.length : 0;
-    const skip = (page ? page - 1 : 0) * (limit ? Number(limit) : 0);
+  static success(res: Response, message: string, data: any = null): Response {
+    const responseBody = {
+      success: true,
+      message,
+      data,
+    };
 
-    if (limit && page) {
-      data = data.slice(skip, skip + Number(limit));
-    } else if (limit) {
-      data = data.slice(0, Number(limit));
-    } else if (page) {
-      data = data.slice((page - 1) * Number(limit));
-    }
-    if (dataCount === 0) {
-      data = null;
-    }
-
-    if (limit || page) {
-      responseBody = {
-        dataCount,
-        success: true,
-        message,
-        data,
-        limit,
-        page,
-      };
-    } else {
-      responseBody = {
-        success: true,
-        message,
-        data,
-      };
-    }
     return res.status(200).json(responseBody);
   }
 

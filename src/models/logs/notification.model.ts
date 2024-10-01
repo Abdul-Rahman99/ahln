@@ -72,12 +72,19 @@ export default class NotificationModel {
     }
   }
 
-  async getAllNotificationsByUser(user: string): Promise<Notification[]> {
+  async getAllNotificationsByUser(
+    user: string,
+    limit: number,
+    page: number,
+  ): Promise<Notification[]> {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM Notification WHERE user_id=$1 ORDER BY createdat DESC`;
-      const result = await connection.query(sql, [user]);
+      // pagination logic
+      const offset = limit * (page - 1);
+
+      const sql = `SELECT * FROM Notification WHERE user_id=$1 ORDER BY createdat DESC OFFSET $2 LIMIT $3`;
+      const result = await connection.query(sql, [user, offset, limit]);
 
       const resultRows = result.rows.map((row) => {
         return {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { Playback } from '../../types/playback.type';
 
@@ -42,13 +43,15 @@ export default class PlaybackModel {
 
   async getAllPlaybackByBox(
     box_id: string,
-    fromDate: string,
-    toDate: string,
+    fromDate?: string,
+    toDate?: string,
+    limit?: number,
+    page?: any,
   ): Promise<Playback[]> {
     const connection = await db.connect();
     try {
       let sql = `SELECT * FROM Playback WHERE box_id = $1 `;
-      const sqlParams = [box_id];
+      const sqlParams: string[] = [box_id];
 
       if (fromDate) {
         sql += ` AND createdat >= $2`;
@@ -60,6 +63,14 @@ export default class PlaybackModel {
       }
 
       sql += ` ORDER BY createdat DESC`;
+
+      if (limit) {
+        sql += ` LIMIT $${sqlParams.length + 1} OFFSET $${
+          sqlParams.length + 2
+        }`;
+        sqlParams.push(limit.toString());
+        sqlParams.push(((page - 1) * limit).toString());
+      }
 
       const result = await connection.query(sql, sqlParams);
 

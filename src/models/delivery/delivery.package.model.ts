@@ -283,20 +283,45 @@ class DeliveryPackageModel {
   ): Promise<DeliveryPackage[]> {
     const connection = await db.connect();
     try {
-      const sql = `SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label , Delivery_Package.is_fav,
+      // check if the user is a relative customer or not
+
+      const checkSql =
+        'SELECT * FROM Relative_Customer WHERE relative_customer_id = $1 AND box_id = $2';
+      const checkResult = await connection.query(checkSql, [userId, boxId]);
+
+      let sql = '';
+      if (checkResult.rows.length > 0) {
+        sql = `SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label , Delivery_Package.is_fav,
         Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
-        Delivery_Package.box_locker_id, 
+        Delivery_Package.box_locker_id, Delivery_Package.customer_id,
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
         Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
         WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3 ORDER BY Delivery_Package.updatedAt DESC`;
-      const params: any[] = [userId, boxId, status];
+        const params: any[] = [userId, boxId, status];
 
-      const result = await connection.query(sql, params);
+        const result = await connection.query(sql, params);
+        // console.log('results', result.rows);
+        return result.rows as DeliveryPackage[];
+      } else {
+        sql = `SELECT Delivery_Package.other_shipping_company, Box.box_label ,Box_Locker.locker_label , Delivery_Package.is_fav,
+        Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
+        Delivery_Package.box_locker_id, Delivery_Package.customer_id,
+        Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
+        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
+        FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
+        INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
+        INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        WHERE Delivery_Package.box_id = $1 AND Delivery_Package.shipment_status = $2 ORDER BY Delivery_Package.updatedAt DESC`;
+        const params: any[] = [boxId, status];
 
-      return result.rows as DeliveryPackage[];
+        const result = await connection.query(sql, params);
+        // console.log('results', result.rows);
+
+        return result.rows as DeliveryPackage[];
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

@@ -496,7 +496,6 @@ class UserBoxModel {
 
   // Transfer Box Ownership from one user to another
   async transferBoxOwnership(
-    userId: string,
     boxId: string,
     newUserId: string,
   ): Promise<UserBox> {
@@ -504,8 +503,8 @@ class UserBoxModel {
     await connection.query('BEGIN');
     try {
       try {
-        const selectId = `SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2`;
-        const result = await connection.query(selectId, [userId, boxId]);
+        const selectId = `SELECT * FROM User_Box WHERE box_id=$1`;
+        const result = await connection.query(selectId, [boxId]);
         const deletedId = await this.deleteOne(result.rows[0]?.id);
 
         if (!deletedId) {
@@ -513,6 +512,19 @@ class UserBoxModel {
         }
       } catch (error) {
         throw new Error((error as Error).message + ', You are not the owner!');
+      }
+
+      // delete relative customers from old user
+      try {
+        const selectId = `SELECT * FROM Relative_Customer WHERE box_id=$1`;
+        const result = await connection.query(selectId, [boxId]);
+        const deletedId = await this.deleteOne(result.rows[0]?.id);
+
+        if (!deletedId) {
+          throw new Error('Failed to delete user box');
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
 
       let result2;

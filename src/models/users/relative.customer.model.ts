@@ -119,18 +119,22 @@ class RelativeCustomerModel {
   }
 
   // get specific relative customer
-  async getOne(id: number): Promise<RelativeCustomer> {
+  async getOne(
+    relative_customer_id: string,
+    box_id: string,
+  ): Promise<RelativeCustomer> {
     const connection = await db.connect();
 
     try {
-      if (!id) {
-        throw new Error('ID cannot be null. Please provide a valid ID.');
-      }
+      
 
       //fetch user from db
       const sql = `SELECT * FROM Relative_Customer 
-                    WHERE id=$1`;
-      const result = await connection.query(sql, [id]);
+                    WHERE relative_customer_id=$1 AND box_id=$2`;
+      const result = await connection.query(sql, [
+        relative_customer_id,
+        box_id,
+      ]);
 
       return result.rows[0] as RelativeCustomer;
     } catch (error) {

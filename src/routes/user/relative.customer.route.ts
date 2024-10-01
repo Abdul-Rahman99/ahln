@@ -6,7 +6,6 @@ import {
   getAllRelativeCustomersByUserId,
   getAllRelativeCustomersForAdmin,
   getRelativeCustomerAccess,
-  getRelativeCustomerById,
   updateRelativeCustomer,
   updateRelativeCustomerAccess,
   updateRelativeCustomerStatus,
@@ -19,7 +18,6 @@ const router = Router();
 router.post('/new', verifyToken, createRelativeCustomer);
 router.get('/get-all', verifyToken, getAllRelativeCustomersByUserId);
 router.get('/get-all-admin', verifyToken, getAllRelativeCustomersForAdmin);
-router.get('/get-one/:id', verifyToken, getRelativeCustomerById);
 router.put('/update/:id', verifyToken, updateRelativeCustomer);
 router.delete('/delete/:id', verifyToken, deleteRelativeCustomer);
 

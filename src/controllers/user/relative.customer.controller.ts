@@ -13,7 +13,9 @@ import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import BoxModel from '../../models/box/box.model';
 import RealativeCustomerAccessModel from '../../models/users/relative.customer.access.model';
+import UserBoxModel from '../../models/box/user.box.model';
 
+const userBoxModel = new UserBoxModel();
 const relativeCustomerAccessModel = new RealativeCustomerAccessModel();
 const boxModel = new BoxModel();
 const userDevicesModel = new UserDevicesModel();
@@ -39,9 +41,9 @@ export const createRelativeCustomer = asyncHandler(
         return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
       }
 
-      const boxRelatedToUSer = await boxModel.getOneByUser(
-        newRelaticeCustomerData.box_id,
+      const boxRelatedToUSer = await userBoxModel.checkUserBox(
         newRelaticeCustomerData.customer_id,
+        newRelaticeCustomerData.box_id,
       );
       if (!boxRelatedToUSer) {
         const source = 'createRelativeCustomer';
@@ -51,6 +53,43 @@ export const createRelativeCustomer = asyncHandler(
           i18n.__('BOX_NOT_RELATED_TO_USER'),
         );
       }
+
+      // check if relative customer exists
+      const relativeCustomerExist = await relativeCustomerModel.getOne(
+        newRelaticeCustomerData.relative_customer_id,
+        newRelaticeCustomerData.box_id,
+      );
+      if (relativeCustomerExist) {
+        const source = 'createRelativeCustomer';
+        systemLog.createSystemLog(
+          user,
+          'Relative Customer Already Exist',
+          source,
+        );
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('RELATIVE_CUSTOMER_ALREADY_EXIST'),
+        );
+      }
+
+      // check if relative customer owns the box
+      const relativeCustomerOwnsBox = await userBoxModel.checkUserBox(
+        newRelaticeCustomerData.relative_customer_id,
+        newRelaticeCustomerData.box_id,
+      );
+      if (relativeCustomerOwnsBox) {
+        const source = 'createRelativeCustomer';
+        systemLog.createSystemLog(
+          user,
+          'Relative Customer Owns the Box',
+          source,
+        );
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('RELATIVE_CUSTOMER_ALREADY_OWNS_BOX'),
+        );
+      }
+
       const createdRelativeCustomer =
         await relativeCustomerModel.createRelativeCustomer(
           newRelaticeCustomerData,
@@ -123,36 +162,6 @@ export const getAllRelativeCustomersForAdmin = asyncHandler(
       );
     } catch (error: any) {
       const source = 'getAllRelativeCustomersForAdmin';
-      systemLog.createSystemLog(user, (error as Error).message, source);
-      ResponseHandler.badRequest(res, error.message);
-      // next(error);
-    }
-  },
-);
-
-export const getRelativeCustomerById = asyncHandler(
-  async (req: Request, res: Response) => {
-    const user = await authHandler(req, res);
-    if (user === '0') {
-      return user;
-    }
-
-    try {
-      const relativeCustomerId = parseInt(req.params.id, 10);
-      if (isNaN(relativeCustomerId)) {
-        const source = 'getRelativeCustomerById';
-        systemLog.createSystemLog(user, 'Invalid Card Id', source);
-        return ResponseHandler.badRequest(res, i18n.__('INVALID_CARD_ID'));
-      }
-      const relativeCustomer =
-        await relativeCustomerModel.getOne(relativeCustomerId);
-      ResponseHandler.success(
-        res,
-        i18n.__('RELATIVE_CUSTOMER_RETRIEVED_SUCCESSFULLY'),
-        relativeCustomer,
-      );
-    } catch (error: any) {
-      const source = 'getRelativeCustomerById';
       systemLog.createSystemLog(user, (error as Error).message, source);
       ResponseHandler.badRequest(res, error.message);
       // next(error);

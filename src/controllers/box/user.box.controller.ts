@@ -15,6 +15,7 @@ import UserDevicesModel from '../../models/users/user.devices.model';
 import NotificationModel from '../../models/logs/notification.model';
 import CityModel from '../../models/adminstration/city.model';
 import CountryModel from '../../models/adminstration/country.model';
+import { sendEmailInvitation } from '../../utils/nodemailer';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -389,6 +390,90 @@ export const userAssignBoxToRelativeUser = asyncHandler(
     }
     try {
       const { boxId, email, relation } = req.body;
+
+      const relative_customer = await userModel.findByEmail(email);
+      if (!relative_customer) {
+        // create a system log
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, 'User Does Not Exist', source);
+
+        // create a new user
+        const newUser = await userModel.createUser({
+          email: email,
+          user_name: 'inviteduser',
+          role_id: 3,
+        });
+        if (!newUser) {
+          const source = 'userAssignBoxToRelativeUser';
+          systemLog.createSystemLog(user, 'Error Creating User', source);
+          return ResponseHandler.badRequest(
+            res,
+            i18n.__('ERROR_CREATING_USER'),
+          );
+        }
+
+        // sned email notification to the new user with node mailer
+        const emailSend = await sendEmailInvitation(newUser);
+        if (!emailSend) {
+          const source = 'userAssignBoxToRelativeUser';
+          systemLog.createSystemLog(user, 'Error Sending Email', source);
+          return ResponseHandler.badRequest(
+            res,
+            i18n.__('ERROR_SENDING_EMAIL'),
+          );
+        }
+
+        // create a new user box
+        const relativeCustomerData = {
+          customer_id: user,
+          relative_customer_id: newUser.id,
+          relation: relation,
+          box_id: boxId,
+        };
+        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
+        const relativeFcmToken =
+          await userDevicesModel.getFcmTokenDevicesByUser(newUser.id);
+        try {
+          notificationModel.pushNotification(
+            relativeFcmToken,
+            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+            i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'userAssignBoxToRelativeUser';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      } else {
+        const relativeCustomerData = {
+          customer_id: user,
+          relative_customer_id: relative_customer.id,
+          relation: relation,
+          box_id: boxId,
+        };
+        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
+        const relativeFcmToken =
+          await userDevicesModel.getFcmTokenDevicesByUser(relative_customer.id);
+        try {
+          notificationModel.pushNotification(
+            relativeFcmToken,
+            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+            i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'userAssignBoxToRelativeUser';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
       const boxExist = await boxModel.getOne(boxId);
       if (!boxExist) {
         const source = 'userAssignBoxToRelativeUser';
@@ -400,20 +485,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         boxId,
         email,
       );
-      const relative_customer = await userModel.findByEmail(email);
-      if (!relative_customer) {
-        const source = 'userAssignBoxToRelativeUser';
-        systemLog.createSystemLog(user, 'User Does Not Exist', source);
-        ResponseHandler.badRequest(res, i18n.__('USER_NOT_EXIST'));
-      } else {
-        const relativeCustomerData = {
-          customer_id: user,
-          relative_customer_id: relative_customer.id,
-          relation: relation,
-          box_id: boxId,
-        };
-        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
-      }
 
       notificationModel.createNotification(
         'userAssignBoxToRelativeUser',
@@ -446,6 +517,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           source,
         );
       }
+
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),

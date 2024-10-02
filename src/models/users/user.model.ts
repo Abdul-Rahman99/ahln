@@ -10,7 +10,7 @@ class UserModel {
 
     try {
       // Required fields
-      const requiredFields: string[] = ['email', 'phone_number', 'user_name'];
+      const requiredFields: string[] = ['email', 'user_name'];
       const providedFields: string[] = Object.keys(u).filter(
         (key) => u[key as keyof User] !== undefined,
       );
@@ -291,6 +291,26 @@ class UserModel {
     }
   }
 
+  // update invitedUser by his email
+  async updateInvitedUser(
+    email: string,
+    updateFields: Partial<User>,
+  ): Promise<User> {
+    try {
+      const sql = `UPDATE users SET user_name = $1, phone_number = $2, password = $3, avatar = $4 WHERE email = $5 RETURNING *`;
+      const result = await db.query(sql, [
+        updateFields.user_name,
+        updateFields.phone_number,
+        updateFields.password,
+        updateFields.avatar,
+        email,
+      ]);
+      return result.rows[0] as User;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   // helper func to determine if the email exists when creation
   async emailExists(email: string): Promise<boolean> {
     const connection = await db.connect();
@@ -495,6 +515,26 @@ class UserModel {
       const sql = `UPDATE users SET is_active = $1 WHERE id = $2`;
       const result = await connection.query(sql, [status, userId]);
       return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // check if the user_name invitedUser
+  async checkInvitedUser(invitedUser: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      console.log(invitedUser);
+
+      const sql = `SELECT * FROM users WHERE email = $1`;
+      const result = await connection.query(sql, [invitedUser]);
+      if (result.rows[0].user_name === 'inviteduser') {
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

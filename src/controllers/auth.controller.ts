@@ -27,35 +27,39 @@ const sendVerificationEmail = async (
   req: Request,
   res: Response,
 ) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 587,
-    auth: {
-      user: 'developer@dccme.ai',
-      pass: 'yfen ping pjfh emkp',
-    },
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      auth: {
+        user: 'developer@dccme.ai',
+        pass: 'yfen ping pjfh emkp',
+      },
+    });
 
-  const mailOptions = {
-    from: 'AHLN App',
-    to: email,
-    subject: 'Verify your email',
-    html: `<p>Your OTP for email verification is: <b>${otp}</b></p>`,
-  };
+    const mailOptions = {
+      from: 'AHLN App',
+      to: email,
+      subject: 'Verify your email',
+      html: `<p>Your OTP for email verification is: <b>${otp}</b></p>`,
+    };
 
-  transporter.sendMail(mailOptions);
-  const user = await authHandler(req, res);
-  if (user === '0') {
-    return user;
+    transporter.sendMail(mailOptions);
+    const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
+    notificationModel.createNotification(
+      'sendVerificationEmail',
+      i18n.__('VERFICATION_SENT_SUCCESSFULLY'),
+      null,
+      user,
+      null,
+    );
+  } catch (error) {
+    throw new Error((error as Error).message);
   }
-  notificationModel.createNotification(
-    'sendVerificationEmail',
-    i18n.__('VERFICATION_SENT_SUCCESSFULLY'),
-    null,
-    user,
-    null,
-  );
 };
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
@@ -68,9 +72,56 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     if (user === '0') {
       return user;
     }
-    const source = 'register';
-    systemLog.createSystemLog(user, 'Email already Registerd', source);
-    return ResponseHandler.badRequest(res, i18n.__('EMAIL_ALREADY_REGISTERED'));
+
+    // check if the user's user_name is invitedUser
+    const checkInvitedUser = await userModel.checkInvitedUser(email);
+    if (checkInvitedUser) {
+      // Hash the password
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      const updatedUser = await userModel.updateInvitedUser(email, {
+        user_name,
+        phone_number,
+        password: hashedPassword,
+        avatar: req.file?.filename,
+      });
+      if (updatedUser) {
+        const source = 'register';
+        systemLog.createSystemLog(
+          updatedUser.id,
+          'Invited User Successfully Registered',
+          source,
+        );
+        // send the verification otp
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await userModel.saveOtp(email, otp);
+
+        // Send verification email
+        sendVerificationEmail(email, otp, req, res);
+
+        // Generate JWT token
+        const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+
+        // Update user token in the database
+        await userModel.updateUserToken(updatedUser.id, token);
+
+        return ResponseHandler.logInSuccess(
+          res,
+          i18n.__('REGISTER_SUCCESS'),
+          null,
+          token,
+        );
+      }
+    } else {
+      const source = 'register';
+      systemLog.createSystemLog(user, 'Email already Registerd', source);
+      return ResponseHandler.badRequest(
+        res,
+        i18n.__('EMAIL_ALREADY_REGISTERED'),
+      );
+    }
   }
 
   const phoneExists = await userModel.phoneExists(phone_number);

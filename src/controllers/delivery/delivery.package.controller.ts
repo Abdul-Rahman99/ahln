@@ -290,8 +290,6 @@ export const getUserDeliveryPackages = asyncHandler(
     if (user === '0') {
       return user;
     }
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const page = req.query.page ? Number(req.query.page) : 1;
 
     try {
       const { boxId, status } = req.query;
@@ -316,8 +314,6 @@ export const getUserDeliveryPackages = asyncHandler(
         res,
         i18n.__('DELIVERY_PACKAGES_FETCHED_SUCCESSFULLY'),
         deliveryPackages,
-        limit,
-        page,
       );
     } catch (error: any) {
       const source = 'getUserDeliveryPackages';

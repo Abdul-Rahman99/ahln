@@ -109,7 +109,7 @@ class UserBoxModel {
       FROM
         User_Box ub
         INNER JOIN box_locker ON ub.box_id = box_locker.box_id
-        INNER JOIN offline_otps ON ub.box_id = offline_otps.box_id
+        LEFT JOIN offline_otps ON ub.box_id = offline_otps.box_id
         INNER JOIN Box b ON ub.box_id = b.id
         LEFT JOIN Address a ON b.address_id = a.id
         LEFT JOIN Country c ON a.country_id = c.id

@@ -4,7 +4,7 @@ import { User } from '../types/user.type';
 export const sendEmailInvitation = async (user: User) => {
   try {
     const emailTemplate = `
-                  <p>Hello, <strong>${user.user_name}</strong></p>
+                  <p>Hello, </strong></p>
                   <p>You have received an invitation to join our <strong>AHLN app.</strong></p>
                   <a href="https://apps.apple.com/ae/app/ahln/id6479874039 "> <strong>Invite Link</strong></a>
                   <p>If you didn't recognize this, please ignore this email.</p>

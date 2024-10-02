@@ -14,7 +14,7 @@ export const getToken = asyncHandler(async (req: Request, res: Response) => {
   if (!checkToken) {
     return res
       .status(403)
-      .send({ success: false, message: 'Token Valid.', data: {} });
+      .send({ success: false, message: 'Token Invalid.', data: {} });
   }
   return res
     .status(200)

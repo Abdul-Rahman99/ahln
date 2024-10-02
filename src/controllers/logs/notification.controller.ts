@@ -67,9 +67,19 @@ export const getAllNotificationsByUser = asyncHandler(
     if (user === '0') {
       return user;
     }
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const page = req.query.page ? Number(req.query.page) : 1;
+
     try {
-      const notifications =
-        await notificationModel.getAllNotificationsByUser(user);
+      let notifications = await notificationModel.getAllNotificationsByUser(
+        user,
+        limit,
+        page,
+      );
+      if (notifications.length === 0) {
+        notifications = [];
+      }
+
       ResponseHandler.success(
         res,
         i18n.__('NOTIFICATIONS_RETRIEVED_SUCCESSFULLY'),

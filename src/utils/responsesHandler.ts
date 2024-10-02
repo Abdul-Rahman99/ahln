@@ -22,8 +22,9 @@ class ResponseHandler {
 
     return res.status(200).json(responseBody);
   }
+
   static success(res: Response, message: string, data: any = null): Response {
-    const responseBody: any = {
+    const responseBody = {
       success: true,
       message,
       data,

@@ -5,8 +5,9 @@ import {
   deleteRelativeCustomer,
   getAllRelativeCustomersByUserId,
   getAllRelativeCustomersForAdmin,
-  getRelativeCustomerById,
+  getRelativeCustomerAccess,
   updateRelativeCustomer,
+  updateRelativeCustomerAccess,
   updateRelativeCustomerStatus,
 } from '../../controllers/user/relative.customer.controller';
 
@@ -17,9 +18,21 @@ const router = Router();
 router.post('/new', verifyToken, createRelativeCustomer);
 router.get('/get-all', verifyToken, getAllRelativeCustomersByUserId);
 router.get('/get-all-admin', verifyToken, getAllRelativeCustomersForAdmin);
-router.get('/get-one/:id', verifyToken, getRelativeCustomerById);
 router.put('/update/:id', verifyToken, updateRelativeCustomer);
 router.delete('/delete/:id', verifyToken, deleteRelativeCustomer);
 
 router.put('/update-status', verifyToken, updateRelativeCustomerStatus);
+
+router.get(
+  '/get-relative-customer-access/:box_id',
+  verifyToken,
+  getRelativeCustomerAccess,
+);
+
+router.put(
+  '/update-relative-customer-access/:id',
+  verifyToken,
+  updateRelativeCustomerAccess,
+);
+
 export default router;

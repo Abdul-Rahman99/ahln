@@ -8,7 +8,7 @@ class RelativeCustomerModel {
     newRelaticeCustomerData: Partial<RelativeCustomer>,
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
-
+    await connection.query('BEGIN');
     try {
       const createdAt = new Date();
       const updatedAt = new Date();
@@ -36,9 +36,10 @@ class RelativeCustomerModel {
                 RETURNING *`;
 
       const result = await connection.query(sql, sqlParams);
-
+      await connection.query('COMMIT');
       return result.rows[0] as RelativeCustomer;
     } catch (error) {
+      await connection.query('ROLLBACK');
       throw new Error((error as Error).message);
     } finally {
       connection.release();
@@ -50,9 +51,48 @@ class RelativeCustomerModel {
     const connection = await db.connect();
 
     try {
-      const sql =
-        'SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.* FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id WHERE Relative_Customer.customer_id=$1 ORDER BY Relative_Customer.createdat DESC';
+      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.*,
+        COALESCE(
+          (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', relative_customer_access.id,
+                'createdAt', relative_customer_access.createdAt,
+                'updatedAt', relative_customer_access.updatedAt,
+                'relative_customer_id', relative_customer_access.relative_customer_id,
+                'box_id', relative_customer_access.box_id,
+                'add_shipment', relative_customer_access.add_shipment,
+                'read_owner_shipment', relative_customer_access.read_owner_shipment,
+                'read_own_shipment', relative_customer_access.read_own_shipment,
+                'create_pin', relative_customer_access.create_pin,
+                'create_offline_otps', relative_customer_access.create_offline_otps,
+                'create_otp', relative_customer_access.create_otp,
+                'open_door1', relative_customer_access.open_door1,
+                'open_door2', relative_customer_access.open_door2,
+                'open_door3', relative_customer_access.open_door3,
+                'read_playback', relative_customer_access.read_playback,
+                'read_notification', relative_customer_access.read_notification,
+                'craete_realative_customer', relative_customer_access.craete_realative_customer,
+                'transfer_box_ownership', relative_customer_access.transfer_box_ownership,
+                'read_history', relative_customer_access.read_history,
+                'update_box_screen_message', relative_customer_access.update_box_screen_message,
+                'read_live_stream', relative_customer_access.read_live_stream,
+                'update_box_data', relative_customer_access.update_box_data
+              )
+            ) AS relative_customer_access
+            FROM relative_customer_access 
+            WHERE relative_customer_access.relative_customer_id=Relative_Customer.relative_customer_id
+          ),
+          '[]'::jsonb
+        ) AS relative_customer_access
+        FROM Relative_Customer 
+        INNER JOIN users ON users.id=Relative_Customer.relative_customer_id 
+        INNER JOIN Box ON Box.id=Relative_Customer.box_id
+        WHERE Relative_Customer.customer_id=$1 
+        ORDER BY Relative_Customer.createdat DESC`;
+
       const result = await connection.query(sql, [user]);
+
       return result.rows as RelativeCustomer[];
     } catch (error) {
       throw new Error((error as Error).message);
@@ -79,18 +119,22 @@ class RelativeCustomerModel {
   }
 
   // get specific relative customer
-  async getOne(id: number): Promise<RelativeCustomer> {
+  async getOne(
+    relative_customer_id: string,
+    box_id: string,
+  ): Promise<RelativeCustomer> {
     const connection = await db.connect();
 
     try {
-      if (!id) {
-        throw new Error('ID cannot be null. Please provide a valid ID.');
-      }
+      
 
       //fetch user from db
       const sql = `SELECT * FROM Relative_Customer 
-                    WHERE id=$1`;
-      const result = await connection.query(sql, [id]);
+                    WHERE relative_customer_id=$1 AND box_id=$2`;
+      const result = await connection.query(sql, [
+        relative_customer_id,
+        box_id,
+      ]);
 
       return result.rows[0] as RelativeCustomer;
     } catch (error) {

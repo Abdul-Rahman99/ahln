@@ -104,10 +104,12 @@ class UserBoxModel {
         b.current_tablet_id,
         c.name AS country_name,
         ci.name AS city_name,
-        COALESCE(json_agg(box_locker.*), '[]'::json) AS lockers
+        COALESCE(json_agg(box_locker.*), '[]'::json) AS lockers,
+        COALESCE(json_agg(offline_otps.*), '[]'::json) AS offline_otps 
       FROM
         User_Box ub
         INNER JOIN box_locker ON ub.box_id = box_locker.box_id
+        INNER JOIN offline_otps ON ub.box_id = offline_otps.box_id
         INNER JOIN Box b ON ub.box_id = b.id
         LEFT JOIN Address a ON b.address_id = a.id
         LEFT JOIN Country c ON a.country_id = c.id
@@ -494,7 +496,6 @@ class UserBoxModel {
 
   // Transfer Box Ownership from one user to another
   async transferBoxOwnership(
-    userId: string,
     boxId: string,
     newUserId: string,
   ): Promise<UserBox> {
@@ -502,8 +503,8 @@ class UserBoxModel {
     await connection.query('BEGIN');
     try {
       try {
-        const selectId = `SELECT * FROM User_Box WHERE user_id=$1 AND box_id=$2`;
-        const result = await connection.query(selectId, [userId, boxId]);
+        const selectId = `SELECT * FROM User_Box WHERE box_id=$1`;
+        const result = await connection.query(selectId, [boxId]);
         const deletedId = await this.deleteOne(result.rows[0]?.id);
 
         if (!deletedId) {
@@ -511,6 +512,19 @@ class UserBoxModel {
         }
       } catch (error) {
         throw new Error((error as Error).message + ', You are not the owner!');
+      }
+
+      // delete relative customers from old user
+      try {
+        const selectId = `SELECT * FROM Relative_Customer WHERE box_id=$1`;
+        const result = await connection.query(selectId, [boxId]);
+        const deletedId = await this.deleteOne(result.rows[0]?.id);
+
+        if (!deletedId) {
+          throw new Error('Failed to delete user box');
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
 
       let result2;

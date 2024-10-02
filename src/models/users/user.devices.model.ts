@@ -8,6 +8,12 @@ class UserDevicesModel {
     const connection = await db.connect();
 
     try {
+      // check if user device already exists
+      const userDevice = await this.fcmTokenExists(fcmToken);
+      if (userDevice) {
+        throw new Error('User device already exists');
+      }
+
       const sql = `INSERT INTO user_devices (user_id, fcm_token) VALUES ($1, $2)`;
       await connection.query(sql, [userId, fcmToken]);
     } catch (error) {

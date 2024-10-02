@@ -40,7 +40,9 @@ class HistoryModel {
             !table.table_fullname.includes('user_permission') &&
             !table.table_fullname.includes('permission'),
         )
-        .map((table) => table.table_fullname.replace('public.', 'table_name: "'));
+        .map((table) =>
+          table.table_fullname.replace('public.', 'table_name: "'),
+        );
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -131,13 +133,26 @@ class HistoryModel {
   }
 
   // return all box history data by user_id and box_id
-  async getBoxHistory(userId: string, boxId: string): Promise<Array<any>> {
+  async getBoxHistory(
+    userId: string,
+    boxId: string,
+    limit: number,
+    page: number,
+  ): Promise<Array<any>> {
     const connection = await db.connect();
 
     try {
+      // pagination logic
+      const offset = limit * (page - 1);
+
       // Select from the audit trail table
-      const sql = `SELECT * FROM audit_trail WHERE user_id = $1 AND box_id = $2 ORDER BY createdat DESC`;
-      const result = await connection.query(sql, [userId, boxId]);
+      const sql = `SELECT * FROM audit_trail WHERE user_id = $1 AND box_id = $2 ORDER BY createdat DESC OFFSET $3 LIMIT $4`;
+      const result = await connection.query(sql, [
+        userId,
+        boxId,
+        offset,
+        limit,
+      ]);
       return result.rows;
     } catch (error) {
       throw new Error((error as Error).message);

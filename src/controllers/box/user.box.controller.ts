@@ -531,7 +531,6 @@ export const transferBoxOwnership = asyncHandler(
 
       // check if the user is already the owner of the box
       const updatedUserBox = await userBoxModel.transferBoxOwnership(
-        user,
         boxId,
         newUserId?.id as string,
       );

@@ -297,11 +297,22 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
         userId,
         box_id,
       );
-      notificationModel.pushNotification(
-        fcmToken,
-        i18n.__('DELIVERY_CHECK_PIN'),
-        i18n.__('PIN_CHECKED_FAILED'),
-      );
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('DELIVERY_CHECK_PIN'),
+          i18n.__('PIN_CHECKED_FAILED'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'checkPIN';
+        systemLog.createSystemLog(
+          userId,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+        // next(error);
+      }
       const action = 'checkPIN';
       auditTrail.createAuditTrail(
         userId,

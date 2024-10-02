@@ -175,8 +175,8 @@ export default class NotificationModel {
               }
             });
         }
-      } catch (error) {
-        throw new Error((error as Error).message);
+      } catch (error: any) {
+        console.error(error.message);
       }
     } catch (error) {
       throw new Error((error as Error).message);

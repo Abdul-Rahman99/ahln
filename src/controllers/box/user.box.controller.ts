@@ -266,6 +266,7 @@ export const assignBoxToUser = asyncHandler(
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
         boxId,
       );
+
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
@@ -472,6 +473,31 @@ export const userAssignBoxToRelativeUser = asyncHandler(
             i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
             source,
           );
+        }
+
+        try {
+          const fcmToken =
+            await userDevicesModel.getFcmTokenDevicesByUser(user);
+          try {
+            notificationModel.pushNotification(
+              fcmToken,
+              i18n.__('UPDATE_RELATIVE_CUSTOMER'),
+              i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
+            );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            const source = 'updateRelativeCustomer';
+            systemLog.createSystemLog(
+              user,
+              i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+              source,
+            );
+          }
+        } catch (error: any) {
+          const source = 'updateUserBoxStatus';
+          systemLog.createSystemLog(user, (error as Error).message, source);
+          ResponseHandler.badRequest(res, error.message);
+          // next(error);
         }
       }
       const boxExist = await boxModel.getOne(boxId);

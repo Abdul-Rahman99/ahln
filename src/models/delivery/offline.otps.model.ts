@@ -67,9 +67,9 @@ class OfflineOtps {
         const locker3Set = new Set();
         for (
           let i = 0;
-          locker1List.length < 10000 ||
-          locker2List.length < 10000 ||
-          locker3List.length < 10000;
+          locker1List.length < 100 ||
+          locker2List.length < 100 ||
+          locker3List.length < 100;
           i++
         ) {
           const otp1 = `${Math.floor(100000 + Math.random() * 900000)}`;
@@ -109,9 +109,9 @@ class OfflineOtps {
         const locker3Set = new Set();
         for (
           let i = 0;
-          locker1List.length < 10000 ||
-          locker2List.length < 10000 ||
-          locker3List.length < 10000;
+          locker1List.length < 100 ||
+          locker2List.length < 100 ||
+          locker3List.length < 100;
           i++
         ) {
           const otp1 = `${Math.floor(100000 + Math.random() * 900000)}`;

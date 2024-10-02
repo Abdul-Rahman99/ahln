@@ -12,11 +12,17 @@ export const getToken = asyncHandler(async (req: Request, res: Response) => {
 
   const checkToken = await userModel.findByToken(token);
   if (!checkToken) {
-    return res.status(403).send({ message: 'Token Expired.' });
+    return res
+      .status(403)
+      .send({ success: false, message: 'Token Valid.', data: {} });
   }
-  return res.status(200).send({ message: 'Token Valid.' });
+  return res
+    .status(200)
+    .send({ success: true, message: 'Token Valid.', data: {} });
 });
 
 export const noToken = asyncHandler(async (req: Request, res: Response) => {
-  return res.status(200).send({ message: 'Server Is Alive.' });
+  return res
+    .status(200)
+    .send({ success: true, message: 'Server Is Alive.', data: {} });
 });

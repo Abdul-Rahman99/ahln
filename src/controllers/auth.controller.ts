@@ -65,6 +65,11 @@ const sendVerificationEmail = async (
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, user_name, phone_number, password }: User = req.body;
   const { fcmToken } = req.body;
+
+  // make the email lowercase
+  await email.toLowerCase();
+  const userData = await userModel.findByEmail(email);
+
   // Check if email or phone already exists
   const emailExists = await userModel.emailExists(email);
   if (emailExists) {
@@ -114,6 +119,40 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
           token,
         );
       }
+    } else if (userData?.is_active === false) {
+      // check if the user is_active is false
+      if (userData?.is_active === false) {
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await userModel.saveOtp(email, otp);
+
+        // Send verification email
+        sendVerificationEmail(email, otp, req, res);
+
+        // Generate JWT token
+        const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+
+        // Update user token in the database
+        await userModel.updateUserToken(userData.id, token);
+
+        // Update the user is_active to true
+        await userModel.updateUser(userData.email, { is_active: true });
+
+        const action = 'register';
+        auditTrail.createAuditTrail(
+          userData.id,
+          action,
+          i18n.__('REGISTER_SUCCESS'),
+          null,
+        );
+        return ResponseHandler.logInSuccess(
+          res,
+          i18n.__('REGISTER_SUCCESS'),
+          null,
+          token,
+        );
+      }
     } else {
       const source = 'register';
       systemLog.createSystemLog(user, 'Email already Registerd', source);
@@ -136,9 +175,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   }
   // Hash the password
   const hashedPassword = bcrypt.hashSync(password, 10);
-
-  // make the email lowercase
-  await email.toLowerCase();
 
   // Create the user
   const user = await userModel.createUser({
@@ -298,7 +334,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
   }
-
   const isPasswordValid = bcrypt.compareSync(password, user.password);
   if (!isPasswordValid) {
     const user = await authHandler(req, res);
@@ -485,5 +520,60 @@ export const updatePassword = asyncHandler(
       null,
     );
     ResponseHandler.success(res, i18n.__('PASSWORD_RESET_SUCCESS'), null);
+  },
+);
+
+// delete Account
+export const deleteAccount = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
+    try {
+      const deletedUser = await userModel.deleteUser(user);
+      if (!deletedUser) {
+        throw new Error('Failed to delete user');
+      }
+
+      const action = 'deleteAccount';
+      auditTrail.createAuditTrail(
+        user,
+        action,
+        i18n.__('ACCOUNT_DELETED_SUCCESSFULLY'),
+        null,
+      );
+
+      const source = 'deleteAccount';
+      systemLog.createSystemLog(
+        user,
+        i18n.__('ACCOUNT_DELETED_SUCCESSFULLY'),
+        source,
+      );
+
+      // delete all notifications
+      const deletedNotifications =
+        await notificationModel.deleteAllUserNotifications(user);
+
+      try {
+        if (deletedNotifications) {
+          notificationModel.createNotification(
+            'deleteAccount',
+            i18n.__('ACCOUNT_DELETED_SUCCESSFULLY'),
+            null,
+            user,
+            null,
+          );
+        }
+      } catch (error) {
+        throw new Error((error as Error).message);
+      }
+
+      ResponseHandler.success(res, i18n.__('ACCOUNT_DELETED_SUCCESSFULLY'));
+    } catch (error: any) {
+      const source = 'deleteAccount';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.internalError(res, error.message);
+    }
   },
 );

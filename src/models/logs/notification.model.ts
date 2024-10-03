@@ -195,4 +195,18 @@ export default class NotificationModel {
       connection.release();
     }
   }
+
+  // delete all user notifications
+  async deleteAllUserNotifications(user: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `DELETE FROM Notification WHERE user_id = $1`;
+      const result = await connection.query(sql, [user]);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }

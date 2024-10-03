@@ -5,6 +5,8 @@ class RelativeCustomerAccessModel {
   // create PIN
   async createRelativeCustomerAccess(
     RelativeCustomerAccess: Partial<RelativeCustomerAccess>,
+    relative_customer: string,
+    box_id: string,
   ): Promise<RelativeCustomerAccess> {
     const connection = await db.connect();
     try {
@@ -38,8 +40,8 @@ class RelativeCustomerAccessModel {
       const sqlParams = [
         createdAt,
         updatedAt,
-        RelativeCustomerAccess.relative_customer_id,
-        RelativeCustomerAccess.box_id,
+        relative_customer,
+        box_id,
         RelativeCustomerAccess.add_shipment || false,
         RelativeCustomerAccess.read_owner_shipment || false,
         RelativeCustomerAccess.read_own_shipment || false,

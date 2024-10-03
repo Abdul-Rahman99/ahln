@@ -16,7 +16,10 @@ import NotificationModel from '../../models/logs/notification.model';
 import CityModel from '../../models/adminstration/city.model';
 import CountryModel from '../../models/adminstration/country.model';
 import { sendEmailInvitation } from '../../utils/nodemailer';
+import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
+import RelativeCustomerAccessModel from '../../models/users/relative.customer.access.model';
 
+const relativeCustomerAccessModel = new RelativeCustomerAccessModel();
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const userModel = new UserModel();
@@ -391,8 +394,25 @@ export const userAssignBoxToRelativeUser = asyncHandler(
     }
     try {
       const { boxId, email, relation } = req.body;
-
+      const newRelaticeCustomerAccessData: RelativeCustomerAccess = req.body;
+      let createdRelativeCustomerAccess;
+      let assignedUserBox;
+      let createdRelativeCustomer;
       const relative_customer = await userModel.findByEmail(email);
+
+      // check if relative customer exist
+      const relativeCustomerExist = await relativeCustomerModel.getOne(
+        relative_customer?.id as string,
+        boxId,
+      );
+
+      if (relativeCustomerExist) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('RELATIVE_CUSTOMER_ALREADY_ASSIGNED'),
+        );
+      }
+
       if (!relative_customer) {
         // create a system log
         const source = 'userAssignBoxToRelativeUser';
@@ -424,14 +444,23 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           );
         }
 
+        // create relative customer accress
+        createdRelativeCustomerAccess =
+          await relativeCustomerAccessModel.createRelativeCustomerAccess(
+            newRelaticeCustomerAccessData,
+            newUser.id,
+            boxId,
+          );
+
         // create a new user box
-        const relativeCustomerData = {
+        assignedUserBox = {
           customer_id: user,
           relative_customer_id: newUser.id,
           relation: relation,
           box_id: boxId,
         };
-        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
+        createdRelativeCustomer =
+          await relativeCustomerModel.createRelativeCustomer(assignedUserBox);
         const relativeFcmToken =
           await userDevicesModel.getFcmTokenDevicesByUser(newUser.id);
         try {
@@ -450,13 +479,23 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           );
         }
       } else {
+        createdRelativeCustomerAccess =
+          await relativeCustomerAccessModel.createRelativeCustomerAccess(
+            newRelaticeCustomerAccessData,
+            relative_customer?.id as string,
+            boxId,
+          );
+
         const relativeCustomerData = {
           customer_id: user,
           relative_customer_id: relative_customer.id,
           relation: relation,
           box_id: boxId,
         };
-        relativeCustomerModel.createRelativeCustomer(relativeCustomerData);
+        createdRelativeCustomer =
+          await relativeCustomerModel.createRelativeCustomer(
+            relativeCustomerData,
+          );
         const relativeFcmToken =
           await userDevicesModel.getFcmTokenDevicesByUser(relative_customer.id);
         try {
@@ -506,7 +545,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         systemLog.createSystemLog(user, 'Box Does Not Exist', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
       }
-      const assignedUserBox = await userBoxModel.assignRelativeUser(
+      assignedUserBox = await userBoxModel.assignRelativeUser(
         user,
         boxId,
         email,
@@ -547,7 +586,10 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-        assignedUserBox,
+        {
+          ...createdRelativeCustomer,
+          relative_customer_access: createdRelativeCustomerAccess,
+        },
       );
     } catch (error: any) {
       const source = 'userAssignBoxToRelativeUser';

@@ -8,6 +8,7 @@ import {
   resendOtpAndUpdateDB,
   updatePasswordWithOTP,
   updatePassword,
+  deleteAccount,
 } from '../controllers/auth.controller';
 
 import {
@@ -18,6 +19,7 @@ import {
   resendOtpAndUpdateDBValidator,
   updatePasswordWithOTPValidator,
   updatePasswordValidation,
+  deleteAccountValidation,
 } from '../validation/auth.validation';
 
 import verifyToken from '../middlewares/verifyToken';
@@ -43,5 +45,12 @@ router.post(
 );
 
 router.post('/update-user-password', updatePasswordValidation, updatePassword);
+
+router.delete(
+  '/delete-user',
+  verifyToken,
+  deleteAccountValidation,
+  deleteAccount,
+);
 
 export default router;

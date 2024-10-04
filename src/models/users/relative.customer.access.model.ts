@@ -176,7 +176,7 @@ class RelativeCustomerAccessModel {
     const connection = await db.connect(); 
     try {
       const sql =
-        'SELECT * FROM relative_customer WHERE id = $1';
+        'SELECT * FROM relative_customer_access WHERE id = $1';
       const result = await connection.query(sql, [id]);
 
       return result.rows.length > 0;

@@ -51,7 +51,7 @@ class RelativeCustomerModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.*,
+      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, relative_customer.*,
         COALESCE(
           (
             SELECT jsonb_build_object(
@@ -79,15 +79,15 @@ class RelativeCustomerModel {
               'update_box_data', relative_customer_access.update_box_data
             ) AS relative_customer_access
             FROM relative_customer_access 
-            WHERE relative_customer_access.relative_customer_id=Relative_Customer.relative_customer_id
+            WHERE relative_customer_access.relative_customer_id = relative_customer.relative_customer_id
           ),
           '[]'::jsonb
         ) AS relative_customer_access
-        FROM Relative_Customer 
-        INNER JOIN users ON users.id=Relative_Customer.relative_customer_id 
-        INNER JOIN Box ON Box.id=Relative_Customer.box_id
-        WHERE Relative_Customer.customer_id=$1 
-        ORDER BY Relative_Customer.createdat DESC`;
+        FROM relative_customer 
+        INNER JOIN users ON users.id = relative_customer.relative_customer_id 
+        INNER JOIN Box ON Box.id=relative_customer.box_id
+        WHERE relative_customer.customer_id=$1 
+        ORDER BY relative_customer.createdat DESC`;
 
       const result = await connection.query(sql, [user]);
 

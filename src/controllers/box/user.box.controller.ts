@@ -597,6 +597,25 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         );
       }
 
+      const fcmTokenRelative = await userDevicesModel.getFcmTokenDevicesByUser(
+        relative_customer?.id as string,
+      );
+      try {
+        notificationModel.pushNotification(
+          fcmTokenRelative,
+          i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+          i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
+
       ResponseHandler.success(
         res,
         i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),

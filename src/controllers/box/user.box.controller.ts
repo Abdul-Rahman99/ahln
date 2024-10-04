@@ -400,6 +400,20 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       let createdRelativeCustomer;
       const relative_customer = await userModel.findByEmail(email);
 
+      // check if relative customer have access to add another relative customer
+      const relativeCustomerAccess =
+        await relativeCustomerAccessModel.getRelativeCustomerAccessById(user);
+      if (relativeCustomerAccess) {
+        const relativeCustomerAccess2 =
+          await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
+        // check if relative customer have access to add another relative customer
+        if (relativeCustomerAccess2 === false) {
+          return ResponseHandler.badRequest(
+            res,
+            i18n.__('RELATIVE_CUSTOMER_DOES_NOT_HAVE_PERMISSION'),
+          );
+        }
+      }
       // check if relative customer exist
       const relativeCustomerExist = await relativeCustomerModel.getOne(
         relative_customer?.id as string,
@@ -570,6 +584,25 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
+          i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+          i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
+
+      const fcmTokenRelative = await userDevicesModel.getFcmTokenDevicesByUser(
+        relative_customer?.id as string,
+      );
+      try {
+        notificationModel.pushNotification(
+          fcmTokenRelative,
           i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
           i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
         );

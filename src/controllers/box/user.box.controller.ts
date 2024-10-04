@@ -409,7 +409,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       if (userBox) {
         return ResponseHandler.badRequest(
           res,
-          i18n.__('USER_DOES_NOT_HAVE_PERMISSION'),
+          i18n.__('USER_ALREADY_OWNS_BOX'),
         );
       }
 

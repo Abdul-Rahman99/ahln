@@ -107,6 +107,8 @@ export const createRelativeCustomer = asyncHandler(
       const createdRelativeCustomerAccess =
         await relativeCustomerAccessModel.createRelativeCustomerAccess(
           newRelaticeCustomerAccessData,
+          newRelaticeCustomerAccessData.relative_customer_id,
+          newRelaticeCustomerData.box_id,
         );
 
       ResponseHandler.success(

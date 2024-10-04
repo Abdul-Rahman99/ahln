@@ -475,23 +475,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         };
         createdRelativeCustomer =
           await relativeCustomerModel.createRelativeCustomer(assignedUserBox);
-        const relativeFcmToken =
-          await userDevicesModel.getFcmTokenDevicesByUser(newUser.id);
-        try {
-          notificationModel.pushNotification(
-            relativeFcmToken,
-            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
-            i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-          );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          const source = 'userAssignBoxToRelativeUser';
-          systemLog.createSystemLog(
-            user,
-            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-            source,
-          );
-        }
       } else {
         createdRelativeCustomerAccess =
           await relativeCustomerAccessModel.createRelativeCustomerAccess(
@@ -510,48 +493,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           await relativeCustomerModel.createRelativeCustomer(
             relativeCustomerData,
           );
-        const relativeFcmToken =
-          await userDevicesModel.getFcmTokenDevicesByUser(relative_customer.id);
-        try {
-          notificationModel.pushNotification(
-            relativeFcmToken,
-            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
-            i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-          );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          const source = 'userAssignBoxToRelativeUser';
-          systemLog.createSystemLog(
-            user,
-            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-            source,
-          );
-        }
-
-        try {
-          const fcmToken =
-            await userDevicesModel.getFcmTokenDevicesByUser(user);
-          try {
-            notificationModel.pushNotification(
-              fcmToken,
-              i18n.__('UPDATE_RELATIVE_CUSTOMER'),
-              i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
-            );
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } catch (error: any) {
-            const source = 'updateRelativeCustomer';
-            systemLog.createSystemLog(
-              user,
-              i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-              source,
-            );
-          }
-        } catch (error: any) {
-          const source = 'updateUserBoxStatus';
-          systemLog.createSystemLog(user, (error as Error).message, source);
-          ResponseHandler.badRequest(res, error.message);
-          // next(error);
-        }
       }
       const boxExist = await boxModel.getOne(boxId);
       if (!boxExist) {
@@ -572,13 +513,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         user,
         boxId,
       );
-      const action = 'userAssignBoxToRelativeUser';
-      auditTrail.createAuditTrail(
-        user,
-        action,
-        i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-        boxId,
-      );
 
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       try {
@@ -597,23 +531,25 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         );
       }
 
-      const fcmTokenRelative = await userDevicesModel.getFcmTokenDevicesByUser(
-        relative_customer?.id as string,
-      );
-      try {
-        notificationModel.pushNotification(
-          fcmTokenRelative,
-          i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
-          i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+      if (relative_customer) {
+        const fcmTokenRelative = await userDevicesModel.getFcmTokenDevicesByUser(
+          relative_customer.id,
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        const source = 'userAssignBoxToRelativeUser';
-        systemLog.createSystemLog(
-          user,
-          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-          source,
-        );
+        try {
+          notificationModel.pushNotification(
+            fcmTokenRelative,
+            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+            i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const source = 'userAssignBoxToRelativeUser';
+          systemLog.createSystemLog(
+            user,
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
       }
 
       ResponseHandler.success(

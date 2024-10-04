@@ -187,6 +187,7 @@ export const getUserBoxesByUserId = asyncHandler(
     try {
       // Fetch user boxes by user ID
       const userBoxes = await userBoxModel.getUserBoxesByUserId(user);
+
       // Send a success response
       ResponseHandler.success(
         res,
@@ -399,6 +400,18 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       let assignedUserBox;
       let createdRelativeCustomer;
       const relative_customer = await userModel.findByEmail(email);
+
+      // check if user is owner of the box
+      const userBox = await userBoxModel.checkUserBox(
+        relative_customer?.id as string,
+        boxId,
+      );
+      if (userBox) {
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('USER_DOES_NOT_HAVE_PERMISSION'),
+        );
+      }
 
       // check if relative customer have access to add another relative customer
       const relativeCustomerAccess =

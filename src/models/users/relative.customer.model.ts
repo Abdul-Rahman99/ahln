@@ -54,31 +54,29 @@ class RelativeCustomerModel {
       const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.*,
         COALESCE(
           (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                'id', relative_customer_access.id,
-                'createdAt', relative_customer_access.createdAt,
-                'updatedAt', relative_customer_access.updatedAt,
-                'relative_customer_id', relative_customer_access.relative_customer_id,
-                'box_id', relative_customer_access.box_id,
-                'add_shipment', relative_customer_access.add_shipment,
-                'read_owner_shipment', relative_customer_access.read_owner_shipment,
-                'read_own_shipment', relative_customer_access.read_own_shipment,
-                'create_pin', relative_customer_access.create_pin,
-                'create_offline_otps', relative_customer_access.create_offline_otps,
-                'create_otp', relative_customer_access.create_otp,
-                'open_door1', relative_customer_access.open_door1,
-                'open_door2', relative_customer_access.open_door2,
-                'open_door3', relative_customer_access.open_door3,
-                'read_playback', relative_customer_access.read_playback,
-                'read_notification', relative_customer_access.read_notification,
-                'craete_realative_customer', relative_customer_access.craete_realative_customer,
-                'transfer_box_ownership', relative_customer_access.transfer_box_ownership,
-                'read_history', relative_customer_access.read_history,
-                'update_box_screen_message', relative_customer_access.update_box_screen_message,
-                'read_live_stream', relative_customer_access.read_live_stream,
-                'update_box_data', relative_customer_access.update_box_data
-              )
+            SELECT jsonb_build_object(
+              'id', relative_customer_access.id,
+              'createdAt', relative_customer_access.createdAt,
+              'updatedAt', relative_customer_access.updatedAt,
+              'relative_customer_id', relative_customer_access.relative_customer_id,
+              'box_id', relative_customer_access.box_id,
+              'add_shipment', relative_customer_access.add_shipment,
+              'read_owner_shipment', relative_customer_access.read_owner_shipment,
+              'read_own_shipment', relative_customer_access.read_own_shipment,
+              'create_pin', relative_customer_access.create_pin,
+              'create_offline_otps', relative_customer_access.create_offline_otps,
+              'create_otp', relative_customer_access.create_otp,
+              'open_door1', relative_customer_access.open_door1,
+              'open_door2', relative_customer_access.open_door2,
+              'open_door3', relative_customer_access.open_door3,
+              'read_playback', relative_customer_access.read_playback,
+              'read_notification', relative_customer_access.read_notification,
+              'craete_realative_customer', relative_customer_access.craete_realative_customer,
+              'transfer_box_ownership', relative_customer_access.transfer_box_ownership,
+              'read_history', relative_customer_access.read_history,
+              'update_box_screen_message', relative_customer_access.update_box_screen_message,
+              'read_live_stream', relative_customer_access.read_live_stream,
+              'update_box_data', relative_customer_access.update_box_data
             ) AS relative_customer_access
             FROM relative_customer_access 
             WHERE relative_customer_access.relative_customer_id=Relative_Customer.relative_customer_id
@@ -126,8 +124,6 @@ class RelativeCustomerModel {
     const connection = await db.connect();
 
     try {
-      
-
       //fetch user from db
       const sql = `SELECT * FROM Relative_Customer 
                     WHERE relative_customer_id=$1 AND box_id=$2`;

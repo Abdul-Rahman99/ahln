@@ -134,7 +134,24 @@ class UserBoxModel {
     `;
       const result = await connection.query(sql, [userId]);
 
-      return result.rows as (UserBox & Box & Address)[];
+      // check if the user is the owner of the box from relative customer table
+      // let is_owner: boolean;
+      for (const row of result.rows) {
+        console.log(row.id);
+        const sql2 = `SELECT * FROM relative_customer WHERE relative_customer_id=$1 AND box_id=$2 `;
+        const result2 = await connection.query(sql2, [userId, row.id]);
+        if (result2.rows.length > 0) {
+          console.log(row.id);
+          row.is_owner = false;
+        } else {
+          row.is_owner = true;
+        }
+      }
+
+      return result.rows.map((row) => ({
+        ...row,
+        is_owner: row.is_owner,
+      })) as (UserBox & Box & Address)[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {
@@ -455,11 +472,11 @@ class UserBoxModel {
         if (await this.checkUserBox(userId, boxId)) {
           if (await user.emailExists(email)) {
             const userData = await user.findByEmail(email);
-  
+
             const userRelative = userData != null ? userData.id : undefined;
             const userBoxData = { user_id: userRelative, box_id: boxId };
             await this.createUserBox(userBoxData);
-  
+
             const fullObject = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.* 
             FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id 
             WHERE Relative_Customer.relative_customer_id=$1 AND Relative_Customer.box_id=$2`;
@@ -467,12 +484,12 @@ class UserBoxModel {
               userRelative,
               boxId,
             ]);
-  
+
             return result2.rows[0];
           } else {
             throw new Error(`User with this email ${email} dosne't exist`);
           }
-        } 
+        }
       } catch (error) {
         throw new Error((error as Error).message);
       }

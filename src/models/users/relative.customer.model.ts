@@ -51,7 +51,7 @@ class RelativeCustomerModel {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, relative_customer.*,
+      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, relative_customer.*
         FROM relative_customer 
         INNER JOIN users ON users.id = relative_customer.relative_customer_id 
         INNER JOIN Box ON Box.id=relative_customer.box_id

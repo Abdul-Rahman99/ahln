@@ -407,7 +407,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         const relativeCustomerAccess2 =
           await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
         // check if relative customer have access to add another relative customer
-        if (relativeCustomerAccess2 === false) {
+        if (!relativeCustomerAccess2 === false) {
           return ResponseHandler.badRequest(
             res,
             i18n.__('RELATIVE_CUSTOMER_DOES_NOT_HAVE_PERMISSION'),
@@ -532,9 +532,8 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       }
 
       if (relative_customer) {
-        const fcmTokenRelative = await userDevicesModel.getFcmTokenDevicesByUser(
-          relative_customer.id,
-        );
+        const fcmTokenRelative =
+          await userDevicesModel.getFcmTokenDevicesByUser(relative_customer.id);
         try {
           notificationModel.pushNotification(
             fcmTokenRelative,

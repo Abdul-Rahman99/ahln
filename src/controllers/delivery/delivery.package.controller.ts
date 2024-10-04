@@ -234,10 +234,8 @@ export const deleteDeliveryPackage = asyncHandler(
 
     try {
       const deliveryPackageId = req.params.id;
-      const deletedDeliveryPackage = await deliveryPackageModel.deleteOne(
-        deliveryPackageId,
-        user,
-      );
+      const deletedDeliveryPackage =
+        await deliveryPackageModel.deleteOne(deliveryPackageId);
 
       notificationModel.createNotification(
         'deleteDeliveryPackage',

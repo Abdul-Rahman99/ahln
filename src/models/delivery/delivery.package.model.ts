@@ -229,7 +229,7 @@ class DeliveryPackageModel {
   }
 
   // Delete delivery package
-  async deleteOne(id: string, user: string): Promise<DeliveryPackage> {
+  async deleteOne(id: string): Promise<DeliveryPackage> {
     const connection = await db.connect();
     try {
       if (!id) {
@@ -238,9 +238,8 @@ class DeliveryPackageModel {
         );
       }
 
-      const checkSql =
-        'SELECT * FROM Delivery_Package WHERE id=$1 AND customer_id=$2';
-      const checkResult = await connection.query(checkSql, [id, user]);
+      const checkSql = 'SELECT * FROM Delivery_Package WHERE id=$1';
+      const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
         throw new Error(`Delivery package with ID ${id} does not exist`);

@@ -144,6 +144,42 @@ class RelativeCustomerAccessModel {
     }
   }
 
+  // get relative customer access
+  async getRelativeCustomerAccessById(id: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql =
+        'SELECT * FROM relative_customer WHERE relative_customer_id = $1';
+      const result = await connection.query(sql, [id]);
+
+      return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async relativeCustomerAccess(id: string, boxId: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql =
+        'SELECT craete_realative_customer FROM relative_customer_access WHERE relative_customer_id = $1 AND box_id = $2';
+      const result = await connection.query(sql, [id, boxId]);
+      if (result.rows.length === 0) {
+        throw new Error(
+          `Relative Customer Access with ID ${id} does not exist`,
+        );
+      }
+
+      return result.rows[0].craete_realative_customer;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
   async getRelativeCustomerAccess(
     id: string,
   ): Promise<RelativeCustomerAccess[]> {

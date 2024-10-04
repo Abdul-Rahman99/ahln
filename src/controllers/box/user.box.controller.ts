@@ -400,6 +400,20 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       let createdRelativeCustomer;
       const relative_customer = await userModel.findByEmail(email);
 
+      // check if relative customer have access to add another relative customer
+      const relativeCustomerAccess =
+        await relativeCustomerAccessModel.getRelativeCustomerAccessById(user);
+      if (relativeCustomerAccess) {
+        const relativeCustomerAccess2 =
+          await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
+        // check if relative customer have access to add another relative customer
+        if (relativeCustomerAccess2 === false) {
+          return ResponseHandler.badRequest(
+            res,
+            i18n.__('RELATIVE_CUSTOMER_DOES_NOT_HAVE_PERMISSION'),
+          );
+        }
+      }
       // check if relative customer exist
       const relativeCustomerExist = await relativeCustomerModel.getOne(
         relative_customer?.id as string,

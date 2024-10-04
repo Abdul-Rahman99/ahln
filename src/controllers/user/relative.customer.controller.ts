@@ -347,7 +347,7 @@ export const updateRelativeCustomerAccess = asyncHandler(
       const id = req.params.id;
       // get the record id from the user id
       const record =
-        await relativeCustomerAccessModel.getRelativeCustomerAccess(id);
+        await relativeCustomerAccessModel.getRelativeCustomerAccessById(id);
 
       if (!record) {
         const source = 'updateRelativeCustomerAccess';

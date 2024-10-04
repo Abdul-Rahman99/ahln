@@ -265,7 +265,7 @@ class UserModel {
     try {
       const sql = `SELECT Role.title, users.* FROM users INNER JOIN Role ON users.role_id=Role.id WHERE users.email=$1`;
       const result = await connection.query(sql, [email]);
-      if (result.rows.length) {
+      if (result.rows.length > 0) {
         return result.rows[0] as User;
       }
 
@@ -378,7 +378,7 @@ class UserModel {
     try {
       const sql = `SELECT register_otp FROM users WHERE email=$1`;
       const result = await connection.query(sql, [email]);
-      if (result.rows.length && result.rows[0].register_otp === otp) {
+      if (result.rows.length > 0 && result.rows[0].register_otp === otp) {
         return true;
       }
       return false;
@@ -526,8 +526,6 @@ class UserModel {
   async checkInvitedUser(invitedUser: string): Promise<boolean> {
     const connection = await db.connect();
     try {
-      console.log(invitedUser);
-
       const sql = `SELECT * FROM users WHERE email = $1`;
       const result = await connection.query(sql, [invitedUser]);
       if (result.rows[0].user_name === 'inviteduser') {
@@ -535,6 +533,20 @@ class UserModel {
       } else {
         return false;
       }
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // delete user account
+  async deleteUser(user_id: string): Promise<User> {
+    const connection = await db.connect();
+    try {
+      const sql = `UPDATE users SET is_active = false, email_verified = false, token = null WHERE id = $1 RETURNING *`;
+      const result = await connection.query(sql, [user_id]);
+      return result.rows[0];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

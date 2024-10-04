@@ -157,3 +157,19 @@ export const updatePasswordValidation = [
     .withMessage(i18n.__('NEW_PASSWORD_REQUIRED')),
   validatorMiddleware,
 ];
+
+export const deleteAccountValidation = [
+  header('authorization')
+    .notEmpty()
+    .withMessage(i18n.__('AUTH_HEADER_REQUIRED'))
+    .custom((value, { req }) => {
+      if (!value.startsWith('Bearer ')) {
+        throw new Error(i18n.__('AUTH_HEADER_INVALID'));
+      }
+      const token = value.split(' ')[1];
+      // Perform further validation on the token if necessary
+      (req as any).token = token;
+      return true;
+    }),
+  validatorMiddleware,
+];

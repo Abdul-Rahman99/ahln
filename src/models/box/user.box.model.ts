@@ -451,28 +451,30 @@ class UserBoxModel {
   ): Promise<any> {
     const connection = await db.connect();
     try {
-      if (await this.checkUserBox(userId, boxId)) {
-        if (await user.emailExists(email)) {
-          const userData = await user.findByEmail(email);
-
-          const userRelative = userData != null ? userData.id : undefined;
-          const userBoxData = { user_id: userRelative, box_id: boxId };
-          await this.createUserBox(userBoxData);
-
-          const fullObject = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.* 
-          FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id 
-          WHERE Relative_Customer.relative_customer_id=$1 AND Relative_Customer.box_id=$2`;
-          const result2 = await connection.query(fullObject, [
-            userRelative,
-            boxId,
-          ]);
-
-          return result2.rows[0];
-        } else {
-          throw new Error(`User with this email ${email} dosne't exist`);
-        }
-      } else {
-        throw new Error(`You don't have enough permissions to do that`);
+      try {
+        if (await this.checkUserBox(userId, boxId)) {
+          if (await user.emailExists(email)) {
+            const userData = await user.findByEmail(email);
+  
+            const userRelative = userData != null ? userData.id : undefined;
+            const userBoxData = { user_id: userRelative, box_id: boxId };
+            await this.createUserBox(userBoxData);
+  
+            const fullObject = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, Relative_Customer.* 
+            FROM Relative_Customer INNER JOIN users ON users.id=Relative_Customer.relative_customer_id INNER JOIN Box ON Box.id=Relative_Customer.box_id 
+            WHERE Relative_Customer.relative_customer_id=$1 AND Relative_Customer.box_id=$2`;
+            const result2 = await connection.query(fullObject, [
+              userRelative,
+              boxId,
+            ]);
+  
+            return result2.rows[0];
+          } else {
+            throw new Error(`User with this email ${email} dosne't exist`);
+          }
+        } 
+      } catch (error) {
+        throw new Error((error as Error).message);
       }
     } catch (error) {
       throw new Error((error as Error).message);

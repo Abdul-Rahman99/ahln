@@ -170,35 +170,38 @@ export const getAllRelativeCustomersForAdmin = asyncHandler(
     }
   },
 );
-
 export const updateRelativeCustomer = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
     if (user === '0') {
       return user;
     }
+
     try {
       const relativeCustomerId = req.params.id;
-      const relativeCustomerDate: RelativeCustomer = req.body;
+      const relativeCustomerData: Partial<RelativeCustomer> = req.body;
 
-      // if (req.body.relative_customer_access) {
-      //   const relativeCustomerAccessData = req.body.relative_customer_access;
-      //   relativeCustomerDate = {
-      //     ...relativeCustomerDate,
-      //     relative_customer_access: relativeCustomerAccessData,
-      //   };
-      // }
+      // Check if relative_customer_access data is present in the request body
+      let relativeCustomerAccessData:
+        | Partial<RelativeCustomerAccess>
+        | undefined;
+      if (req.body.relative_customer_access) {
+        relativeCustomerAccessData = req.body.relative_customer_access;
+      }
 
+      // Call updateOne with relative_customer_access data if available
       const updatedRelativeCustomer = await relativeCustomerModel.updateOne(
         Number(relativeCustomerId),
-        relativeCustomerDate,
+        relativeCustomerData,
+        relativeCustomerAccessData, 
       );
+
       notificationModel.createNotification(
         'updateRelativeCustomer',
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         null,
         user,
-        relativeCustomerDate.box_id,
+        relativeCustomerData.box_id as string,
       );
 
       const action = 'updateRelativeCustomer';
@@ -206,7 +209,7 @@ export const updateRelativeCustomer = asyncHandler(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
-        relativeCustomerDate.box_id,
+        relativeCustomerData.box_id as string,
       );
 
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
@@ -216,7 +219,6 @@ export const updateRelativeCustomer = asyncHandler(
           i18n.__('UPDATE_RELATIVE_CUSTOMER'),
           i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const source = 'updateRelativeCustomer';
         systemLog.createSystemLog(
@@ -225,6 +227,7 @@ export const updateRelativeCustomer = asyncHandler(
           source,
         );
       }
+
       ResponseHandler.success(
         res,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
@@ -234,7 +237,6 @@ export const updateRelativeCustomer = asyncHandler(
       ResponseHandler.badRequest(res, error.message);
       const source = 'updateRelativeCustomer';
       systemLog.createSystemLog(user, (error as Error).message, source);
-      // next(error);
     }
   },
 );

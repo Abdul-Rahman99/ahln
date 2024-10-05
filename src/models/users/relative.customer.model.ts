@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RelativeCustomer } from '../../types/relative.customer.type';
 import db from '../../config/database';
-// import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
-// import RelativeCustomerAccessModel from './relative.customer.access.model';
+import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
+import RelativeCustomerAccessModel from './relative.customer.access.model';
 
-// const rcAccess = new RelativeCustomerAccessModel();
+const rcAccess = new RelativeCustomerAccessModel();
 
 class RelativeCustomerModel {
   // create new relative customer
@@ -174,38 +174,40 @@ class RelativeCustomerModel {
     }
   }
 
-  // update Relative Customer in db
+  // update Relative Customer in db// update Relative Customer in db
   async updateOne(
     id: number,
     relativeCustomerData: Partial<RelativeCustomer>,
-    // relativeCustomerAccessData: Partial<RelativeCustomerAccess>,
+    relativeCustomerAccessData?: Partial<RelativeCustomerAccess>, // Add this parameter
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
     try {
-      // check if the main user already exist
+      // check if the main user already exists
       const mainUser = 'SELECT customer_id FROM Relative_Customer WHERE id=$1';
       const checkMainUser = await connection.query(mainUser, [id]);
       if (!checkMainUser.rows.length) {
         throw new Error(`Main Customer with ID does not exist`);
       }
-      // Check if the relative cutomer already exists
+
+      // Check if the relative customer already exists
       const checkSql = 'SELECT * FROM Relative_Customer WHERE id=$1';
       const checkResult = await connection.query(checkSql, [id]);
 
       if (checkResult.rows.length === 0) {
         throw new Error(`Relative Customer with ID ${id} does not exist`);
       }
+
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
       const updatedAt = new Date();
-
       const updateFields = Object.keys(relativeCustomerData)
         .map((key) => {
           if (
             relativeCustomerData[key as keyof RelativeCustomer] !== undefined &&
             key !== 'id' &&
-            key !== 'createdAt'
+            key !== 'createdAt' &&
+            key !== 'relative_customer_access'
           ) {
             queryParams.push(
               relativeCustomerData[key as keyof RelativeCustomer],
@@ -219,21 +221,37 @@ class RelativeCustomerModel {
       queryParams.push(updatedAt); // Add the updatedAt timestamp
       updateFields.push(`updatedAt=$${paramIndex++}`); // Include updatedAt field in the update query
 
-      queryParams.push(id); // Add the rc ID to the query parameters
+      queryParams.push(id); // Add the relative customer ID to the query parameters
 
       const sql = `UPDATE Relative_Customer SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
 
-      // // check if the relative customer access sent in the body
-      // if (relativeCustomerAccessData) {
-      //   await rcAccess.updateOne(
-      //     relativeCustomerAccessData,
-      //     Number(relativeCustomerAccessData?.id),
-      //   );
-      // }
+      // If relative_customer_access data is provided, update it
+      // select the relative customer access by id
+      // SQL query to get access for a specific relative customer
+      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1`;
+      const result2 = await connection.query(sql2, [
+        result.rows[0].relative_customer_id,
+      ]);
+      if (relativeCustomerAccessData) {
+        const accessResult = await rcAccess.updateOne(
+          relativeCustomerAccessData,
+          result2.rows[0]?.id || null,
+        );
 
-      return result.rows[0] as RelativeCustomer;
+        if (result2.rows[0]) {
+          result.rows[0].relative_customer_access = accessResult;
+        }
+
+        return result.rows[0] as RelativeCustomer;
+      } else {
+        const combinedResult = {
+          ...result.rows[0],
+          relative_customer_access: { ...result2.rows[0] },
+        };
+        return combinedResult as RelativeCustomer;
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

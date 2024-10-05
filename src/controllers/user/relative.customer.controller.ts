@@ -179,18 +179,26 @@ export const updateRelativeCustomer = asyncHandler(
     }
     try {
       const relativeCustomerId = req.params.id;
-      const newRelaticeCustomerData: RelativeCustomer = req.body;
+      const relativeCustomerDate: RelativeCustomer = req.body;
+
+      // if (req.body.relative_customer_access) {
+      //   const relativeCustomerAccessData = req.body.relative_customer_access;
+      //   relativeCustomerDate = {
+      //     ...relativeCustomerDate,
+      //     relative_customer_access: relativeCustomerAccessData,
+      //   };
+      // }
 
       const updatedRelativeCustomer = await relativeCustomerModel.updateOne(
-        newRelaticeCustomerData,
         Number(relativeCustomerId),
+        relativeCustomerDate,
       );
       notificationModel.createNotification(
         'updateRelativeCustomer',
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         null,
         user,
-        newRelaticeCustomerData.box_id,
+        relativeCustomerDate.box_id,
       );
 
       const action = 'updateRelativeCustomer';
@@ -198,7 +206,7 @@ export const updateRelativeCustomer = asyncHandler(
         user,
         action,
         i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
-        newRelaticeCustomerData.box_id,
+        relativeCustomerDate.box_id,
       );
 
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);

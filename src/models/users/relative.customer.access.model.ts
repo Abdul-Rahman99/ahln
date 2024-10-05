@@ -174,11 +174,11 @@ class RelativeCustomerAccessModel {
   // get relative customer access
   async getRelativeCustomerAccessById(id: string): Promise<boolean> {
     const connection = await db.connect(); 
-    try {
+    try {      
       const sql =
-        'SELECT * FROM relative_customer_access WHERE id = $1';
+        'SELECT * FROM relative_customer_access WHERE relative_customer_id = $1';
       const result = await connection.query(sql, [id]);
-
+      
       return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);

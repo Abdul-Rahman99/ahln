@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RelativeCustomer } from '../../types/relative.customer.type';
 import db from '../../config/database';
+// import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
+// import RelativeCustomerAccessModel from './relative.customer.access.model';
+
+// const rcAccess = new RelativeCustomerAccessModel();
 
 class RelativeCustomerModel {
   // create new relative customer
@@ -49,16 +53,53 @@ class RelativeCustomerModel {
   // get all relative customers by user auth
   async getMany(user: string): Promise<RelativeCustomer[]> {
     const connection = await db.connect();
-
     try {
-      const sql = `SELECT Box.box_label, users.user_name, users.email ,users.phone_number, relative_customer.*
-        FROM relative_customer 
-        INNER JOIN users ON users.id = relative_customer.relative_customer_id 
-        INNER JOIN Box ON Box.id=relative_customer.box_id
-        WHERE relative_customer.customer_id=$1 
-        ORDER BY relative_customer.createdat DESC`;
+      const sql = `SELECT Box.box_label, users.user_name, users.email, users.phone_number, relative_customer.*
+      FROM relative_customer 
+      INNER JOIN users ON users.id = relative_customer.relative_customer_id 
+      INNER JOIN Box ON Box.id = relative_customer.box_id
+      WHERE relative_customer.customer_id = $1 
+      ORDER BY relative_customer.createdat DESC`;
 
       const result = await connection.query(sql, [user]);
+
+      // SQL query to get access for a specific relative customer
+      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1`;
+
+      for (const row of result.rows) {
+        const result2 = await connection.query(sql2, [
+          row.relative_customer_id,
+        ]);
+
+        if (result2.rows.length > 0) {
+          row.relative_customer_access = result2.rows[0];
+        } else {
+          row.relative_customer_access = {
+            id: null,
+            createdAt: null,
+            updatedAt: null,
+            relative_customer_id: row.relative_customer_id,
+            box_id: row.box_id,
+            add_shipment: false,
+            read_owner_shipment: false,
+            read_own_shipment: false,
+            create_pin: false,
+            create_offline_otps: false,
+            create_otp: false,
+            open_door1: false,
+            open_door2: false,
+            open_door3: false,
+            read_playback: false,
+            read_notification: false,
+            craete_realative_customer: false,
+            transfer_box_ownership: false,
+            read_history: false,
+            update_box_screen_message: false,
+            read_live_stream: false,
+            update_box_data: false,
+          };
+        }
+      }
 
       return result.rows as RelativeCustomer[];
     } catch (error) {
@@ -135,8 +176,9 @@ class RelativeCustomerModel {
 
   // update Relative Customer in db
   async updateOne(
-    relativeCustomerData: Partial<RelativeCustomer>,
     id: number,
+    relativeCustomerData: Partial<RelativeCustomer>,
+    // relativeCustomerAccessData: Partial<RelativeCustomerAccess>,
   ): Promise<RelativeCustomer> {
     const connection = await db.connect();
     try {
@@ -182,6 +224,14 @@ class RelativeCustomerModel {
       const sql = `UPDATE Relative_Customer SET ${updateFields.join(', ')} WHERE id=$${paramIndex} RETURNING *`;
 
       const result = await connection.query(sql, queryParams);
+
+      // // check if the relative customer access sent in the body
+      // if (relativeCustomerAccessData) {
+      //   await rcAccess.updateOne(
+      //     relativeCustomerAccessData,
+      //     Number(relativeCustomerAccessData?.id),
+      //   );
+      // }
 
       return result.rows[0] as RelativeCustomer;
     } catch (error) {

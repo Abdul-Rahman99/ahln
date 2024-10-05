@@ -416,6 +416,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       // check if relative customer have access to add another relative customer
       const relativeCustomerAccess =
         await relativeCustomerAccessModel.getRelativeCustomerAccessById(user);
+
       if (relativeCustomerAccess) {
         const relativeCustomerAccess2 =
           await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
@@ -478,7 +479,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
             newUser.id,
             boxId,
           );
-
         // create a new user box
         assignedUserBox = {
           customer_id: user,
@@ -513,6 +513,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         systemLog.createSystemLog(user, 'Box Does Not Exist', source);
         return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
       }
+
       assignedUserBox = await userBoxModel.assignRelativeUser(
         user,
         boxId,

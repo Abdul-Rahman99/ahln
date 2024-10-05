@@ -209,4 +209,34 @@ export default class NotificationModel {
       connection.release();
     }
   }
+
+  // get all user unread notifications
+  async getUnreadNotifications(user: string): Promise<number> {
+    const connection = await db.connect();
+    try {
+      const sql = `SELECT COUNT(*) FROM Notification WHERE user_id = $1 AND is_read = false`;
+      const result = await connection.query(sql, [user]);
+      console.log(result.rows[0]);
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // mark all user notifications as read
+  async markAllUserNotificationsAsRead(user: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
+      const sql = `UPDATE Notification SET is_read = true WHERE user_id = $1`;
+      const result = await connection.query(sql, [user]);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
 }

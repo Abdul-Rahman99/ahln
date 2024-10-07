@@ -401,6 +401,13 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       let createdRelativeCustomer;
       const relative_customer = await userModel.findByEmail(email);
 
+      const boxExist = await boxModel.getOne(boxId);
+      if (!boxExist) {
+        const source = 'userAssignBoxToRelativeUser';
+        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
+        return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
+      }
+
       // check if user is owner of the box
       const userBox = await userBoxModel.checkUserBox(
         relative_customer?.id as string,
@@ -506,12 +513,6 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           await relativeCustomerModel.createRelativeCustomer(
             relativeCustomerData,
           );
-      }
-      const boxExist = await boxModel.getOne(boxId);
-      if (!boxExist) {
-        const source = 'userAssignBoxToRelativeUser';
-        systemLog.createSystemLog(user, 'Box Does Not Exist', source);
-        return ResponseHandler.badRequest(res, i18n.__('BOX_DOES_NOT_EXIST'));
       }
 
       assignedUserBox = await userBoxModel.assignRelativeUser(

@@ -326,39 +326,28 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await userModel.findByEmail(emailLower);
 
   if (!user) {
-    const user = await authHandler(req, res);
-    if (user === '0') {
-      return user;
-    }
-    const source = 'login';
-    systemLog.createSystemLog(user, 'Invalid credentials', source);
+    // const user = await authHandler(req, res);
+    // if (user === '0') {
+    //   return user;
+    // }
+    // const source = 'login';
+    // systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
   }
   const isPasswordValid = bcrypt.compareSync(password, user.password);
   if (!isPasswordValid) {
-    const user = await authHandler(req, res);
-    if (user === '0') {
-      return user;
-    }
-    const source = 'login';
-    systemLog.createSystemLog(user, 'Invalid credentials', source);
+    // const user = await authHandler(req, res);
+    // if (user === '0') {
+    //   return user;
+    // }
+    // const source = 'login';
+    // systemLog.createSystemLog(user, 'Invalid credentials', source);
     return ResponseHandler.badRequest(res, i18n.__('INVALID_CREDENTIALS'));
   }
   const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
   await userModel.updateUserToken(user.id, token);
 
   if (!user.is_active || !user.email_verified) {
-    // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await userModel.saveOtp(email, otp);
-
-    // Send verification email
-    sendVerificationEmail(email, otp, req, res);
-
-    // Generate JWT token
-    const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
-
     // Update user token in the database
     await userModel.updateUserToken(user.id, token);
     const userAuth = await authHandler(req, res);

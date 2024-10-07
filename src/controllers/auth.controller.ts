@@ -348,6 +348,19 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   await userModel.updateUserToken(user.id, token);
 
   if (!user.is_active || !user.email_verified) {
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await userModel.saveOtp(email, otp);
+
+    // Send verification email
+    sendVerificationEmail(email, otp, req, res);
+
+    // Generate JWT token
+    const token = jwt.sign({ email, password }, config.JWT_SECRET_KEY!);
+
+    // Update user token in the database
+    await userModel.updateUserToken(user.id, token);
     const userAuth = await authHandler(req, res);
     const source = 'login';
     systemLog.createSystemLog(userAuth, 'User Inactive or Unverified', source);

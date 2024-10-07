@@ -198,3 +198,51 @@ export const updateNotification = asyncHandler(
 //     }
 //   },
 // );
+
+// get all user unread notifications
+export const getUnreadNotifications = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
+    try {
+      const notifications =
+        await notificationModel.getUnreadNotifications(user);
+      ResponseHandler.success(
+        res,
+        i18n.__('NOTIFICATIONS_COUNT_RETRIEVED_SUCCESSFULLY'),
+        notifications,
+      );
+    } catch (error) {
+      const source = 'getUnreadNotifications';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, (error as Error).message);
+      // next(error);
+    }
+  },
+);
+
+// mark all user notifications as read
+export const markAllUserNotificationsAsRead = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await authHandler(req, res);
+    if (user === '0') {
+      return user;
+    }
+    try {
+      const notifications =
+        await notificationModel.markAllUserNotificationsAsRead(user);
+      ResponseHandler.success(
+        res,
+        i18n.__('NOTIFICATIONS_MARKED_READ_SUCCESSFULLY'),
+        notifications,
+      );
+    } catch (error) {
+      const source = 'markAllUserNotificationsAsRead';
+      systemLog.createSystemLog(user, (error as Error).message, source);
+      ResponseHandler.badRequest(res, (error as Error).message);
+      // next(error);
+    }
+  },
+);

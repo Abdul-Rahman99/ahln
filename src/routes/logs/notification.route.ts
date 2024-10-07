@@ -5,12 +5,16 @@ import {
   getAllNotifications,
   getAllNotificationsByUser,
   getNotificationById,
+  getUnreadNotifications,
   updateNotification,
+  markAllUserNotificationsAsRead,
 } from '../../controllers/logs/notification.controller';
 import {
   getNotificationByIdValidation,
   deleteNotificationByIdValidation,
   updateNotificationStatusByIdValidation,
+  getUnreadNotificationsValidation,
+  markUnreadNotificationsValidation,
 } from '../../validation/logs/notification.validation';
 const router = express.Router();
 
@@ -34,6 +38,20 @@ router.put(
   verifyToken,
   updateNotificationStatusByIdValidation,
   updateNotification,
+);
+
+router.get(
+  '/get-unread-notifications',
+  verifyToken,
+  getUnreadNotificationsValidation,
+  getUnreadNotifications,
+);
+
+router.put(
+  '/mark-unread-notifications',
+  verifyToken,
+  markUnreadNotificationsValidation,
+  markAllUserNotificationsAsRead,
 );
 
 export default router;

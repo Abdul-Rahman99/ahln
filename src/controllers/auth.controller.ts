@@ -350,9 +350,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   if (!user.is_active || !user.email_verified) {
     // Update user token in the database
     await userModel.updateUserToken(user.id, token);
-    const userAuth = await authHandler(req, res);
-    const source = 'login';
-    systemLog.createSystemLog(userAuth, 'User Inactive or Unverified', source);
+    // const userAuth = await authHandler(req, res);
+    // const source = 'login';
+    // systemLog.createSystemLog(userAuth, 'User Inactive or Unverified', source);
     return ResponseHandler.badRequest(
       res,
       i18n.__('USER_INACTIVE_OR_UNVERIFIED'),

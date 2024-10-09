@@ -30,7 +30,7 @@ router.post(
 );
 
 router.get(
-  '/get-all',
+  '/get-all/:boxId?',
   verifyToken,
   //  authorize(['read_box']),
   getUserPinsByUserIdValidation,

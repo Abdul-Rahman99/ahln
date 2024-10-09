@@ -16,7 +16,7 @@ import verifyToken from '../../middlewares/verifyToken';
 const router = Router();
 
 router.post('/new', verifyToken, createRelativeCustomer);
-router.get('/get-all', verifyToken, getAllRelativeCustomersByUserId);
+router.get('/get-all/:boxId?', verifyToken, getAllRelativeCustomersByUserId);
 router.get('/get-all-admin', verifyToken, getAllRelativeCustomersForAdmin);
 router.put('/update/:id', verifyToken, updateRelativeCustomer);
 router.delete('/delete/:id', verifyToken, deleteRelativeCustomer);

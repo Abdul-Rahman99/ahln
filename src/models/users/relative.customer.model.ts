@@ -51,17 +51,24 @@ class RelativeCustomerModel {
   }
 
   // get all relative customers by user auth
-  async getMany(user: string): Promise<RelativeCustomer[]> {
+  async getMany(user: string, boxId?: string): Promise<RelativeCustomer[]> {
     const connection = await db.connect();
     try {
-      const sql = `SELECT Box.box_label, users.user_name, users.email, users.phone_number, relative_customer.*
+      let sql = `SELECT Box.box_label, users.user_name, users.email, users.phone_number, relative_customer.*
       FROM relative_customer 
       INNER JOIN users ON users.id = relative_customer.relative_customer_id 
       INNER JOIN Box ON Box.id = relative_customer.box_id
-      WHERE relative_customer.customer_id = $1 
-      ORDER BY relative_customer.createdat DESC`;
+      WHERE relative_customer.customer_id = $1 `;
+      const params = [user];
 
-      const result = await connection.query(sql, [user]);
+      if (boxId) {
+        sql += ` AND relative_customer.box_id = $2`;
+        params.push(boxId);
+      }
+
+      sql += ` ORDER BY relative_customer.createdat DESC`;
+
+      const result = await connection.query(sql, params);
 
       // SQL query to get access for a specific relative customer
       const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1`;

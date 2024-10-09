@@ -125,7 +125,8 @@ export const getAllPinByUser = asyncHandler(
       return user;
     }
     try {
-      const pins = await pinModel.getAllPinByUser(user);
+      const boxId = req.params.boxId;
+      const pins = await pinModel.getAllPinByUser(user, boxId);
       ResponseHandler.success(
         res,
         i18n.__('PINS_RETRIEVED_SUCCESSFULLY'),

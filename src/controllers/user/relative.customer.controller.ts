@@ -135,7 +135,11 @@ export const getAllRelativeCustomersByUserId = asyncHandler(
       return user;
     }
     try {
-      const relativeCustomers = await relativeCustomerModel.getMany(user);
+      const boxId = req.params.boxId;
+      const relativeCustomers = await relativeCustomerModel.getMany(
+        user,
+        boxId,
+      );
       ResponseHandler.success(
         res,
         i18n.__('RELATIVE_CUSTOMERS_RETRIEVED_SUCCESSFULLY'),
@@ -193,7 +197,7 @@ export const updateRelativeCustomer = asyncHandler(
       const updatedRelativeCustomer = await relativeCustomerModel.updateOne(
         Number(relativeCustomerId),
         relativeCustomerData,
-        relativeCustomerAccessData, 
+        relativeCustomerAccessData,
       );
 
       notificationModel.createNotification(
@@ -362,7 +366,10 @@ export const updateRelativeCustomerAccess = asyncHandler(
       if (!record) {
         const source = 'updateRelativeCustomerAccess';
         systemLog.createSystemLog(user, 'Record Does Not Exist', source);
-        return ResponseHandler.badRequest(res, i18n.__('USER_DOES_NOT_EXIST'));
+        return ResponseHandler.badRequest(
+          res,
+          i18n.__('USER_ACCESS_DOES_NOT_EXIST'),
+        );
       }
 
       const newRelaticeCustomerAccessData: RelativeCustomerAccess = req.body;

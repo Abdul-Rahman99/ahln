@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mqtt, { MqttClient, IClientOptions } from 'mqtt';
+import mqtt, { IClientOptions } from 'mqtt';
 import config from '../../config';
 import moment from 'moment';
 import path from 'path';
@@ -8,9 +8,20 @@ import fs from 'fs';
 import { exec } from 'child_process';
 import PlaybackModel from '../models/logs/playback.model';
 import db from '../config/database';
-import { liveStream } from 'src/controllers/delivery/image.controller';
+import UserBoxModel from '../models/box/user.box.model';
+import NotificationModel from '../models/logs/notification.model';
+import UserDevicesModel from '../models/users/user.devices.model';
+import SystemLogModel from '../models/logs/system.log.model';
+import UserModel from '../models/users/user.model';
+import i18n from './i18n';
 
+const userModel = new UserModel();
+const systemLog = new SystemLogModel();
+const userDevicesModel = new UserDevicesModel();
+const notificationModel = new NotificationModel();
+const userBox = new UserBoxModel();
 const playbackModel = new PlaybackModel();
+
 let tag = '';
 const options: IClientOptions = {
   host: config.MQTT_HOST,
@@ -40,17 +51,30 @@ async function get_box_ids() {
   }
 }
 
+// get users boxes with boxes ids
+
+async function get_user_ids() {
+  const connection = db.connect();
+  try {
+    const sql = `SELECT id FROM users`;
+    const result = db.query(sql);
+    return result;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+}
+
 export const client = mqtt.connect(options);
 const mainTopic = 'ahlanBox';
+const usersTopic = 'ahlanOwner';
 const topics: string[] = [];
-
+const users: string[] = [];
+const door: string[] = [];
 client.on('connect', async () => {
   console.log('MQTT Connected');
 
   await get_box_ids()
     .then((result: any) => {
-      // console.log(result.rows);
-      // console.log(result)
       result.rows.forEach((row: { id: any }) => {
         topics.push(`${mainTopic}/ahlanBox_${row.id}/liveStream`);
       });
@@ -64,6 +88,28 @@ client.on('connect', async () => {
   // console.log(topics);
   // const selectedTopic = `ahlanBox/ahlanBox_${}`;
 
+  await get_box_ids()
+    .then((result: any) => {
+      result.rows.forEach((row: { id: any }) => {
+        users.push(`${usersTopic}/ahlanOwner_${row.id}/doorAction`);
+      });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  // console.log(users);
+
+  await get_box_ids()
+    .then((result: any) => {
+      result.rows.forEach((row: { id: any }) => {
+        door.push(`${mainTopic}/ahlanBox_${row.id}/doorAction`);
+      });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  // console.log(door);
+
   client.subscribe(topics, function (err) {
     if (err) {
       console.error('Subscription error:', err);
@@ -73,24 +119,260 @@ client.on('connect', async () => {
       console.log('Unable to Subscribe to topic:');
     }
   });
+
+  client.subscribe(users, function (err) {
+    if (err) {
+      console.error('Subscription error:', err);
+    } else if (users) {
+      // console.log('Subscribed to topic:', users);
+    } else {
+      console.log('Unable to Subscribe to topic:');
+    }
+  });
+
+  client.subscribe(door, function (err) {
+    if (err) {
+      console.error('Subscription error:', err);
+    } else if (users) {
+      // console.log('Subscribed to topic:', users);
+    } else {
+      console.log('Unable to Subscribe to topic:');
+    }
+  });
 });
 
-client.on('message', (topic, message) => {
+client.on('message', async (topic, message) => {
   const messageString = message.toString();
   const parsedTopic = topic.split('/');
-  const boxId = parsedTopic[1].replace(/ahlanBox_/g, '');
+  let boxId = '';
+  // console.log(parsedTopic);
 
-  tag = parsedTopic[2];
+  if (parsedTopic[0] === 'ahlanBox' && parsedTopic[2] === 'liveStream') {
+    boxId = parsedTopic[1].replace(/ahlanBox_/g, '');
 
-  const boxPlaybackFolder = path.join(
-    __dirname,
-    `../../uploads/playback/${boxId}`,
-  );
-  if (!fs.existsSync(boxPlaybackFolder)) {
-    fs.mkdirSync(boxPlaybackFolder, { recursive: true });
+    tag = parsedTopic[2];
+
+    const boxPlaybackFolder = path.join(
+      __dirname,
+      `../../uploads/playback/${boxId}`,
+    );
+    if (!fs.existsSync(boxPlaybackFolder)) {
+      fs.mkdirSync(boxPlaybackFolder, { recursive: true });
+    }
+
+    uploadImage(messageString, boxPlaybackFolder, boxId);
+  } else if (parsedTopic[0] === 'ahlanOwner') {
+    boxId = parsedTopic[1].replace(/ahlanOwner_/g, '');
+    // console.log(boxId);
+    // console.log(parsedTopic[2]);
+    const parsedMessage = JSON.parse(messageString);
+
+    const door = parsedMessage.door;
+    const hex = parsedMessage.hex;
+    const status = parsedMessage.statu;
+
+    // get user boxes by box id
+    const users = await userBox.getUserBoxesByBoxId(boxId);
+    const responseArray: string[] = [];
+    users.forEach((user) => {
+      responseArray.push(user.user_id);
+    });
+
+    for (let i = 0; i < responseArray.length; i++) {
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+        responseArray[i],
+      );
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          status,
+          status == `${door} is unlocked`
+            ? i18n.__('DOOR_OPEN')
+            : i18n.__('DOOR_CLOSE'),
+        );
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'doorActionMqtt';
+        systemLog.createSystemLog(
+          responseArray[i],
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
+    }
+  } else if (parsedTopic[0] === 'ahlanBox' && parsedTopic[2] === 'doorAction') {
+    boxId = parsedTopic[1].replace(/ahlanBox_/g, '');
+    const doorStatus = message.toString();
+    // get user boxes by box id
+    const users = await userBox.getUserBoxesByBoxId(boxId);
+    const responseArray: string[] = [];
+    users.forEach((user) => {
+      responseArray.push(user.user_id);
+    });
+
+    if (doorStatus === 'FE') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_1'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'FB') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_2'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'FA') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_1_AND_2'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'EF') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_3'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'EE') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_1_AND_3'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'EB') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_2_AND_3'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'EA') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_1_AND_2_AND_3'),
+            i18n.__('DOOR_OPENED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    } else if (doorStatus === 'FF') {
+      for (let i = 0; i < responseArray.length; i++) {
+        const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+          responseArray[i],
+        );
+        try {
+          notificationModel.pushNotification(
+            fcmToken,
+            i18n.__('DOOR_CLOSED'),
+            i18n.__('DOOR_CLOSED'),
+          );
+        } catch (error: any) {
+          const source = 'doorActionMqtt';
+          systemLog.createSystemLog(
+            responseArray[i],
+            i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+            source,
+          );
+        }
+      }
+    }
   }
-
-  uploadImage(messageString, boxPlaybackFolder, boxId);
 });
 
 client.on('error', (error) => {

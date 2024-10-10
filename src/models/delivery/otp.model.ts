@@ -6,6 +6,7 @@ import NotificationModel from '../logs/notification.model';
 import SystemLogModel from '../logs/system.log.model';
 import i18n from '../../config/i18n';
 import AuditTrailModel from '../logs/audit.trail.model';
+import moment from 'moment-timezone';
 
 const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
@@ -21,8 +22,8 @@ class OTPModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       if (delivery_package_id) {
         const checkDeliveryPackageResult = await connection.query(

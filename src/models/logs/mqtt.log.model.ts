@@ -1,13 +1,14 @@
 import { MqttLog } from '../../types/mqtt.log.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class MqttLogModel {
   // create a mqtt log
   async createMqttLog(mqttLogData: Partial<MqttLog>): Promise<MqttLog> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = ['createdAt', 'updatedAt', 'mqtt_topic_id', 'message'];
 

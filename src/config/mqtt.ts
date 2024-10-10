@@ -14,7 +14,12 @@ import UserDevicesModel from '../models/users/user.devices.model';
 import SystemLogModel from '../models/logs/system.log.model';
 import UserModel from '../models/users/user.model';
 import i18n from './i18n';
+import BoxModel from '../models/box/box.model';
+import AddressModel from '../models/box/address.model';
+import { sendNotificationIfNearby } from '../controllers/extra.controller';
 
+const addressModel = new AddressModel();
+const boxModel = new BoxModel();
 const userModel = new UserModel();
 const systemLog = new SystemLogModel();
 const userDevicesModel = new UserDevicesModel();
@@ -139,6 +144,17 @@ client.on('connect', async () => {
       console.log('Unable to Subscribe to topic:');
     }
   });
+
+  client.subscribe(
+    'ahlanOwner/ahlanOwner_Ahln_24_B0000001/location',
+    function (err) {
+      if (err) {
+        console.error('Subscription error:', err);
+      } else {
+        // console.log('Subscribed to topic: ahlanOwner/ahlanOwner_Ahln_24_B0000001/location');
+      }
+    },
+  );
 });
 
 client.on('message', async (topic, message) => {
@@ -161,7 +177,10 @@ client.on('message', async (topic, message) => {
     }
 
     uploadImage(messageString, boxPlaybackFolder, boxId);
-  } else if (parsedTopic[0] === 'ahlanOwner') {
+  } else if (
+    parsedTopic[0] === 'ahlanOwner' &&
+    parsedTopic[2] === 'doorAction'
+  ) {
     boxId = parsedTopic[1].replace(/ahlanOwner_/g, '');
     // console.log(boxId);
     // console.log(parsedTopic[2]);
@@ -371,6 +390,31 @@ client.on('message', async (topic, message) => {
           );
         }
       }
+    }
+  } else if (parsedTopic[0] === 'ahlanOwner' && parsedTopic[2] === 'location') {
+    const parsedMessage = JSON.parse(messageString);
+    const lat = parsedMessage.lat;
+    const long = parsedMessage.long;
+
+    // fetch box lat and long from database
+    const boxId = parsedTopic[1].replace(/ahlanOwner_/g, '');
+    const box = await boxModel.getOne(boxId);
+    // User needs to be added
+    const addressData = await addressModel.getOne(
+      box.address_id,
+      'Ahln_24_U0000002',
+    );
+
+    const notified = sendNotificationIfNearby(
+      lat,
+      long,
+      addressData?.lat as number,
+      addressData?.lang as number,
+      'Ahln_24_U0000002', // needs to be changed from static to dynamic
+    );
+
+    if (!notified) {
+      console.error('No notifications sent');
     }
   }
 });

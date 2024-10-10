@@ -3,6 +3,7 @@ import { RelativeCustomer } from '../../types/relative.customer.type';
 import db from '../../config/database';
 import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
 import RelativeCustomerAccessModel from './relative.customer.access.model';
+import moment from 'moment-timezone';
 
 const rcAccess = new RelativeCustomerAccessModel();
 
@@ -14,8 +15,8 @@ class RelativeCustomerModel {
     const connection = await db.connect();
     await connection.query('BEGIN');
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Prepare SQL query based on provided fields
       const sqlFields: string[] = [
@@ -207,8 +208,7 @@ class RelativeCustomerModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-      const updateFields = Object.keys(relativeCustomerData)
+      const updatedAt = moment().tz('Asia/Dubai').format();      const updateFields = Object.keys(relativeCustomerData)
         .map((key) => {
           if (
             relativeCustomerData[key as keyof RelativeCustomer] !== undefined &&

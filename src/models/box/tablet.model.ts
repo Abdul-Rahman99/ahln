@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tablet } from '../../types/tablet.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class TabletModel {
   // Create new tablet
@@ -18,8 +19,8 @@ class TabletModel {
         throw new Error('Serial number and Android ID are required fields.');
       }
 
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Prepare SQL query based on provided fields
       const sqlFields: string[] = [
@@ -101,8 +102,7 @@ class TabletModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(t)
         .map((key) => {
           if (

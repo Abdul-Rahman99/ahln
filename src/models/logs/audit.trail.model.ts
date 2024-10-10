@@ -1,5 +1,6 @@
 import db from '../../config/database';
 import { AuditTrail } from '../../types/audit.trail.type';
+import moment from 'moment-timezone';
 
 export default class AuditTrailModel {
   async createAuditTrail(
@@ -11,8 +12,8 @@ export default class AuditTrailModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

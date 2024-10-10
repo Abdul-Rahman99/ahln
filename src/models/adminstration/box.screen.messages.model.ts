@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import moment from 'moment-timezone';
 import db from '../../config/database';
 import { BoxScreenMessage } from '../../types/box.screen.messages.type';
 
@@ -14,8 +15,8 @@ class BoxScreenMessagesModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

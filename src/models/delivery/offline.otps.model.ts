@@ -1,12 +1,13 @@
 import db from '../../config/database';
 import { OfflineOtp } from '../../types/offline.otps.type';
+import moment from 'moment-timezone';
 
 class OfflineOtps {
   async create(offlineOtp: Partial<OfflineOtp>): Promise<OfflineOtp> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

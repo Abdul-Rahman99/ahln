@@ -11,8 +11,8 @@ class PINModel {
   async createPIN(pinData: Partial<PIN>, user: string): Promise<PIN> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',
@@ -180,8 +180,7 @@ class PINModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(pinData)
         .map((key) => {
           if (

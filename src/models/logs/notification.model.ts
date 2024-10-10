@@ -4,6 +4,7 @@ import { Notification } from '../../types/notification.type';
 import { getMessaging } from 'firebase-admin/messaging';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { config } from '../../../config';
+import moment from 'moment-timezone';
 
 config.FCM_TOKEN;
 
@@ -23,8 +24,8 @@ export default class NotificationModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'title',

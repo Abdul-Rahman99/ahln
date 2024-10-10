@@ -1,5 +1,6 @@
 import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class RelativeCustomerAccessModel {
   // create PIN
@@ -10,8 +11,8 @@ class RelativeCustomerAccessModel {
   ): Promise<RelativeCustomerAccess> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',
@@ -93,8 +94,7 @@ class RelativeCustomerAccessModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(b)
         .map((key) => {
           if (
@@ -173,12 +173,12 @@ class RelativeCustomerAccessModel {
 
   // get relative customer access
   async getRelativeCustomerAccessById(id: string): Promise<boolean> {
-    const connection = await db.connect(); 
-    try {      
+    const connection = await db.connect();
+    try {
       const sql =
         'SELECT * FROM relative_customer_access WHERE relative_customer_id = $1';
       const result = await connection.query(sql, [id]);
-      
+
       return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);

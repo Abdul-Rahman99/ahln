@@ -459,6 +459,19 @@ export const userAssignBoxToRelativeUser = asyncHandler(
           i18n.__('RELATIVE_CUSTOMER_ALREADY_ASSIGNED'),
         );
       }
+      // // check if relative customer access already exists
+      // const relativeCustomerAccessExist =
+      //   await relativeCustomerAccessModel.getRelativeCustomerAccessByUserAndBox(
+      //     user,
+      //     boxId,
+      //   );
+
+      // if (relativeCustomerAccessExist) {
+      //   return ResponseHandler.badRequest(
+      //     res,
+      //     i18n.__('RELATIVE_CUSTOMER_ACCESS_ALREADY_ASSIGNED'),
+      //   );
+      // }
 
       if (!relative_customer) {
         // create a system log

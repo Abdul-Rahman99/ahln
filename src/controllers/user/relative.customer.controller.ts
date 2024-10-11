@@ -272,6 +272,23 @@ export const deleteRelativeCustomer = asyncHandler(
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         deletedRelativeCustomer.box_id,
       );
+
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          i18n.__('DELETE_RELATIVE_CUSTOMER'),
+          i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'deleteRelativeCustomer';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.success(
         res,
         i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),

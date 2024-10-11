@@ -72,11 +72,12 @@ class RelativeCustomerModel {
       const result = await connection.query(sql, params);
 
       // SQL query to get access for a specific relative customer
-      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1`;
+      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1 AND box_id = $2`;
 
       for (const row of result.rows) {
         const result2 = await connection.query(sql2, [
           row.relative_customer_id,
+          row.box_id,
         ]);
 
         if (result2.rows.length > 0) {
@@ -208,7 +209,8 @@ class RelativeCustomerModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = moment().tz('Asia/Dubai').format();      const updateFields = Object.keys(relativeCustomerData)
+      const updatedAt = moment().tz('Asia/Dubai').format();
+      const updateFields = Object.keys(relativeCustomerData)
         .map((key) => {
           if (
             relativeCustomerData[key as keyof RelativeCustomer] !== undefined &&
@@ -237,10 +239,12 @@ class RelativeCustomerModel {
       // If relative_customer_access data is provided, update it
       // select the relative customer access by id
       // SQL query to get access for a specific relative customer
-      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1`;
+      const sql2 = `SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1 AND box_id = $2`;
       const result2 = await connection.query(sql2, [
         result.rows[0].relative_customer_id,
+        result.rows[0].box_id,
       ]);
+
       if (relativeCustomerAccessData) {
         const accessResult = await rcAccess.updateOne(
           relativeCustomerAccessData,

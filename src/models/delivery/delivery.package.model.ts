@@ -295,10 +295,12 @@ class DeliveryPackageModel {
         Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
         Delivery_Package.box_locker_id, Delivery_Package.customer_id,
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
-        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
+        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt ,
+        users.user_name
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        INNER JOIN users ON Delivery_Package.customer_id = users.id
         WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3 ORDER BY Delivery_Package.updatedAt DESC`;
         const params: any[] = [userId, boxId, status];
 
@@ -311,9 +313,11 @@ class DeliveryPackageModel {
         Delivery_Package.box_locker_id, Delivery_Package.customer_id,
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
         Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
+        , users.user_name
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        INNER JOIN users ON Delivery_Package.customer_id = users.id
         WHERE Delivery_Package.box_id = $1 AND Delivery_Package.shipment_status = $2 ORDER BY Delivery_Package.updatedAt DESC`;
         const params: any[] = [boxId, status];
 

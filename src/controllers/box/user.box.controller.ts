@@ -436,7 +436,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       const relativeCustomerAccess =
         await relativeCustomerAccessModel.getRelativeCustomerAccessById(user);
 
-      if (relativeCustomerAccess) {
+      if (relativeCustomerAccess && !userBox) {
         const relativeCustomerAccess2 =
           await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
         // check if relative customer have access to add another relative customer

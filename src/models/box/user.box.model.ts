@@ -141,21 +141,54 @@ class UserBoxModel {
       // check if the user is the owner of the box from relative customer table
       // let is_owner: boolean;
       for (const row of result.rows) {
-        console.log(row.id);
-        const sql2 = `SELECT * FROM relative_customer WHERE relative_customer_id=$1 AND box_id=$2 `;
+        const sql2 = `SELECT relative_customer.box_id, relative_customer_access.id ,relative_customer_access.updatedAt , relative_customer_access.createdat ,
+        relative_customer_access.add_shipment, relative_customer_access.read_owner_shipment, relative_customer_access.read_own_shipment,
+        relative_customer_access.create_pin, relative_customer_access.create_offline_otps, relative_customer_access.create_otp,
+        relative_customer_access.open_door1, relative_customer_access.open_door2, relative_customer_access.open_door3,
+        relative_customer_access.read_playback, relative_customer_access.read_notification, relative_customer_access.craete_realative_customer,
+        relative_customer_access.transfer_box_ownership, relative_customer_access.read_history, relative_customer_access.update_box_screen_message,
+        relative_customer_access.read_live_stream, relative_customer_access.update_box_data
+
+        FROM relative_customer 
+        
+        INNER JOIN relative_customer_access 
+        ON relative_customer.relative_customer_id = relative_customer_access.relative_customer_id AND relative_customer.box_id = relative_customer_access.box_id
+        WHERE relative_customer.relative_customer_id=$1 AND relative_customer.box_id=$2 `;
         const result2 = await connection.query(sql2, [userId, row.id]);
+
         if (result2.rows.length > 0) {
-          console.log(row.id);
           row.is_owner = false;
+          row.relative_customer_access = result2.rows[0];
         } else {
           row.is_owner = true;
+          row.relative_customer_access = {
+            id: null,
+            createdAt: null,
+            updatedAt: null,
+            relative_customer_id: row.relative_customer_id,
+            box_id: row.box_id,
+            add_shipment: true,
+            read_owner_shipment: true,
+            read_own_shipment: true,
+            create_pin: true,
+            create_offline_otps: true,
+            create_otp: true,
+            open_door1: true,
+            open_door2: true,
+            open_door3: true,
+            read_playback: true,
+            read_notification: true,
+            craete_realative_customer: true,
+            transfer_box_ownership: true,
+            read_history: true,
+            update_box_screen_message: true,
+            read_live_stream: true,
+            update_box_data: true,
+          };
         }
       }
 
-      return result.rows.map((row) => ({
-        ...row,
-        is_owner: row.is_owner,
-      })) as (UserBox & Box & Address)[];
+      return result.rows;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

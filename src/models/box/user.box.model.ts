@@ -5,6 +5,8 @@ import { UserBox } from '../../types/user.box.type';
 import { Address } from '../../types/address.type';
 import UserModel from '../users/user.model';
 import AddressModel from './address.model';
+import moment from 'moment-timezone';
+
 const user = new UserModel();
 
 class UserBoxModel {
@@ -12,8 +14,8 @@ class UserBoxModel {
   async createUserBox(userBox: Partial<UserBox>): Promise<UserBox> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const userBoxId = `${userBox.user_id}_${userBox.box_id}`; // Custom user_box id
 
@@ -101,6 +103,7 @@ class UserBoxModel {
         a.floor,
         a.lat,
         a.lang,
+        a.address,
         b.current_tablet_id,
         c.name AS country_name,
         ci.name AS city_name,
@@ -128,6 +131,7 @@ class UserBoxModel {
         a.floor,
         a.lat,
         a.lang,
+        a.address,
         b.current_tablet_id,
         c.name,
         ci.name
@@ -197,8 +201,8 @@ class UserBoxModel {
         throw new Error(`Box with ID ${boxId} does not exist`);
       }
 
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const userBoxId = `${userId}_${boxId}`; // Custom user_box id
 
       const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
@@ -317,6 +321,9 @@ class UserBoxModel {
     street: string,
     district: string,
     boxLabel: string,
+    lat: number,
+    lang: number,
+    address: string,
   ): Promise<UserBox> {
     const connection = await db.connect();
     await connection.query('BEGIN');
@@ -356,7 +363,7 @@ class UserBoxModel {
           throw new Error(`Box ${serialNumber} Already assigned to a user`);
         }
         const createdAt = new Date();
-        const updatedAt = new Date();
+        const updatedAt = moment().tz('Asia/Dubai').format();
         const userBoxId = `${userId}_${boxCheckResult.rows[0].id}`; // Custom user_box id
 
         const sqlFields = ['id', 'user_id', 'box_id', 'createdAt', 'updatedAt'];
@@ -380,16 +387,19 @@ class UserBoxModel {
         ]);
 
         // If the box has no address, Create new address for the user
-        const address = {
+        const addressData = {
           district,
           street,
           country_id,
           city_id,
+          lat,
+          lang,
+          address,
         };
 
         if (boxHasAddressResult.rows[0].address_id === null) {
           const createdAddress = await new AddressModel().createAddress(
-            address,
+            addressData,
             userId,
           );
 
@@ -411,7 +421,7 @@ class UserBoxModel {
           }
         } else {
           await new AddressModel().updateOne(
-            address,
+            addressData,
             boxHasAddressResult.rows[0].address_id,
             userId,
           );

@@ -1,5 +1,6 @@
 import db from '../../config/database';
 import { ShippingCompany } from '../../types/shipping.company.type';
+import moment from 'moment-timezone';
 
 export default class ShippingCompanyModel {
   async createShippingCompany(
@@ -10,8 +11,8 @@ export default class ShippingCompanyModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'tracking_system',

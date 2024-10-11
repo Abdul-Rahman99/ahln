@@ -1,3 +1,4 @@
+import moment from 'moment-timezone';
 import db from '../../config/database';
 import { UserGuide } from '../../types/user.guide.type';
 
@@ -7,8 +8,8 @@ class UserGuideModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = ['createdAt', 'updatedAt', 'pdf_link', 'video_link'];
       const sqlParams = [

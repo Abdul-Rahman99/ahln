@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Address } from '../../types/address.type';
+import moment from 'moment-timezone';
 import db from '../../config/database';
 
 class AddressModel {
@@ -11,8 +12,8 @@ class AddressModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const sqlFields = [
         'createdAt',
         'updatedAt',
@@ -27,6 +28,7 @@ class AddressModel {
         'lang',
         'country_id',
         'city_id',
+        'address',
       ];
       const sqlParams = [
         createdAt,
@@ -42,11 +44,12 @@ class AddressModel {
         address.lang,
         address.country_id,
         address.city_id,
+        address.address,
       ];
 
       const sql = `INSERT INTO Address (${sqlFields.join(', ')}) 
                   VALUES (${sqlParams.map((_, index) => `$${index + 1}`).join(', ')}) 
-                  RETURNING id, createdAt, updatedAt, district, street, building_type, building_number, floor, apartment_number, user_id, lat, lang, country_id, city_id`;
+                  RETURNING id, createdAt, updatedAt, district, street, building_type, building_number, floor, apartment_number, user_id, lat, lang, country_id, city_id, address`;
 
       const result = await connection.query(sql, sqlParams);
 
@@ -115,8 +118,7 @@ class AddressModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(address)
         .map((key) => {
           if (

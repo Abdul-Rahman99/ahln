@@ -1,4 +1,5 @@
 import db from '../../config/database';
+import moment from 'moment-timezone';
 import { Versions } from '../../types/versions.type';
 
 class VersionsModel {
@@ -7,8 +8,8 @@ class VersionsModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = ['createdAt', 'updatedAt', 'IOS', 'Android'];
       const sqlParams = [createdAt, updatedAt, verions.IOS, verions.Android];

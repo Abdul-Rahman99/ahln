@@ -1,5 +1,6 @@
 import { RelativeCustomerAccess } from '../../types/realative.customer.acces.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class RelativeCustomerAccessModel {
   // create PIN
@@ -10,8 +11,21 @@ class RelativeCustomerAccessModel {
   ): Promise<RelativeCustomerAccess> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
+
+      // check if relative customer access already exists with box id and relative customer id and user id
+      const checkSql =
+        'SELECT * FROM Relative_Customer_Access WHERE relative_customer_id = $1 AND box_id = $2';
+
+      const checkResult = await connection.query(checkSql, [
+        relative_customer,
+        box_id,
+      ]);
+
+      if (checkResult.rows.length > 0) {
+        return checkResult.rows[0];
+      }
 
       const sqlFields = [
         'createdAt',
@@ -93,8 +107,7 @@ class RelativeCustomerAccessModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(b)
         .map((key) => {
           if (
@@ -172,13 +185,13 @@ class RelativeCustomerAccessModel {
   }
 
   // get relative customer access
-  async getRelativeCustomerAccessById(id: string): Promise<boolean> {
-    const connection = await db.connect(); 
-    try {      
+  async getRelativeCustomerAccessById(user: string): Promise<boolean> {
+    const connection = await db.connect();
+    try {
       const sql =
         'SELECT * FROM relative_customer_access WHERE relative_customer_id = $1';
-      const result = await connection.query(sql, [id]);
-      
+      const result = await connection.query(sql, [user]);
+
       return result.rows.length > 0;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -219,6 +232,25 @@ class RelativeCustomerAccessModel {
         );
       }
       return result.rows[0].id as RelativeCustomerAccess[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // get relative customer access by user id and box id
+  async getRelativeCustomerAccessByUserAndBox(
+    user: string,
+    boxId: string,
+  ): Promise<RelativeCustomerAccess[]> {
+    const connection = await db.connect();
+    try {
+      const sql =
+        'SELECT * FROM relative_customer_access WHERE relative_customer_id = $1 AND box_id = $2';
+      const result = await connection.query(sql, [user, boxId]);
+
+      return result.rows[0] as RelativeCustomerAccess[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

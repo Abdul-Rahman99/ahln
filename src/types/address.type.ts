@@ -14,4 +14,5 @@ export interface Address {
   lang?: number;
   country_id: number;
   city_id: number;
+  address: string;
 }

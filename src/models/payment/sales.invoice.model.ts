@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SalesInvoice } from '../../types/sales.invoice.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class SalesInvoiceModel {
   // Generate a unique sales invoice ID
@@ -39,8 +40,8 @@ class SalesInvoiceModel {
       // Generate box generation ID
       const id = await this.generateSalesInvoiceId(); // Await here to get the actual ID string
 
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'id',

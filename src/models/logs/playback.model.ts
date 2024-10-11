@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import db from '../../config/database';
 import { Playback } from '../../types/playback.type';
+import moment from 'moment-timezone';
 
 export default class PlaybackModel {
   async createPlayback(
@@ -11,8 +12,8 @@ export default class PlaybackModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

@@ -251,22 +251,22 @@ export const deleteDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
         deletedDeliveryPackage.box_id,
       );
-      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
-      try {
-        notificationModel.pushNotification(
-          fcmToken,
-          i18n.__('DELETE_DELIVERY_PACKAGE'),
-          i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
-        );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        const source = 'deleteDeliveryPackage';
-        systemLog.createSystemLog(
-          user,
-          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-          source,
-        );
-      }
+      // const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      // try {
+      //   notificationModel.pushNotification(
+      //     fcmToken,
+      //     i18n.__('DELETE_DELIVERY_PACKAGE'),
+      //     i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),
+      //   );
+      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // } catch (error: any) {
+      //   const source = 'deleteDeliveryPackage';
+      //   systemLog.createSystemLog(
+      //     user,
+      //     i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+      //     source,
+      //   );
+      // }
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_DELETED_SUCCESSFULLY'),

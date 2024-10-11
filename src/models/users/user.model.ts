@@ -2,6 +2,7 @@
 import { User } from '../../types/user.type';
 import db from '../../config/database';
 import pool from '../../config/database';
+import moment from 'moment-timezone';
 
 class UserModel {
   // create new user
@@ -50,8 +51,8 @@ class UserModel {
       // Generate user id
       const id = await generateUserId(); // Await here to get the actual ID string
 
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Prepare SQL query based on provided fields
       const sqlFields: string[] = [
@@ -189,8 +190,7 @@ class UserModel {
 
       const queryParams: unknown[] = [];
       let paramIndex = 1;
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(u)
         .map((key) => {
           if (

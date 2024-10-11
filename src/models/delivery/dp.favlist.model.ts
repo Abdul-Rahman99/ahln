@@ -1,5 +1,6 @@
 import db from '../../config/database';
 import { DPFavList } from '../../types/dp.favlist.type';
+import moment from 'moment-timezone';
 
 class DPFavListModel {
   // Create DP_Fav_List
@@ -10,8 +11,8 @@ class DPFavListModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

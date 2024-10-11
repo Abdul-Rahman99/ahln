@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BoxLocker } from '../../types/box.locker.type';
+import moment from 'moment-timezone';
 import db from '../../config/database';
 
 class BoxLockerModel {
@@ -8,8 +9,8 @@ class BoxLockerModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'id',
@@ -98,8 +99,7 @@ class BoxLockerModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
-
+      const updatedAt = moment().tz('Asia/Dubai').format();
       const updateFields = Object.keys(boxLocker)
         .map((key) => {
           if (

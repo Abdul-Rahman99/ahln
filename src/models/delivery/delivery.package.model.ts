@@ -2,6 +2,7 @@
 import pool from '../../config/database';
 import db from '../../config/database';
 import { DeliveryPackage } from '../../types/delivery.package.type';
+import moment from 'moment-timezone';
 
 class DeliveryPackageModel {
   // Function to generate custom ID
@@ -43,8 +44,8 @@ class DeliveryPackageModel {
     const connection = await db.connect();
     await connection.query('BEGIN');
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Generate custom ID
       const customId = await this.generateCustomId(userId);
@@ -195,7 +196,7 @@ class DeliveryPackageModel {
       const queryParams: unknown[] = [];
       let paramIndex = 1;
 
-      const updatedAt = new Date();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const updateFields = Object.keys(deliveryPackage)
         .map((key) => {
@@ -294,10 +295,12 @@ class DeliveryPackageModel {
         Delivery_Package.id, Shipping_Company.title AS shipping_company_name , Delivery_Package.tracking_number, Delivery_Package.box_id, 
         Delivery_Package.box_locker_id, Delivery_Package.customer_id,
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
-        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
+        Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt ,
+        users.user_name
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        INNER JOIN users ON Delivery_Package.customer_id = users.id
         WHERE Delivery_Package.customer_id = $1 AND Delivery_Package.box_id = $2 AND Delivery_Package.shipment_status = $3 ORDER BY Delivery_Package.updatedAt DESC`;
         const params: any[] = [userId, boxId, status];
 
@@ -310,9 +313,11 @@ class DeliveryPackageModel {
         Delivery_Package.box_locker_id, Delivery_Package.customer_id,
         Delivery_Package.shipping_company_id, Delivery_Package.shipment_status, Delivery_Package.title AS name, Delivery_Package.delivery_pin,
         Delivery_Package.description, Delivery_Package.createdAt , Delivery_Package.updatedAt 
+        , users.user_name
         FROM Delivery_Package LEFT JOIN Shipping_Company ON shipping_company_id = Shipping_Company.id 
         INNER JOIN Box_Locker ON Delivery_Package.box_locker_id = Box_Locker.id 
         INNER JOIN Box ON Delivery_Package.box_id = Box.id 
+        INNER JOIN users ON Delivery_Package.customer_id = users.id
         WHERE Delivery_Package.box_id = $1 AND Delivery_Package.shipment_status = $2 ORDER BY Delivery_Package.updatedAt DESC`;
         const params: any[] = [boxId, status];
 
@@ -415,6 +420,21 @@ class DeliveryPackageModel {
       console.log(result.rows);
 
       return result.rows.length > 0;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // get all delivery packages with today date and is_delivered = false
+  async getTodayDeliveryPackages(userId: string): Promise<DeliveryPackage[]> {
+    const connection = await db.connect();
+
+    try {
+      const sql = `SELECT * FROM Delivery_Package WHERE DATE(updatedat) = CURRENT_DATE AND is_delivered = true AND customer_id = $1`;
+      const result = await connection.query(sql, [userId]);
+      return result.rows as DeliveryPackage[];
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

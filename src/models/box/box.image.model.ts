@@ -1,5 +1,6 @@
 import db from '../../config/database';
 import { BoxImage } from '../../types/box.image.type';
+import moment from 'moment-timezone';
 
 export default class BoxImageModel {
   async createBoxImage(
@@ -10,8 +11,8 @@ export default class BoxImageModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'box_id',

@@ -293,8 +293,17 @@ export const userAssignBoxToHimself = asyncHandler(
     }
 
     try {
-      const { serialNumber, country_id, city_id, district, street, boxLabel } =
-        req.body;
+      const {
+        serialNumber,
+        country_id,
+        city_id,
+        district,
+        street,
+        boxLabel,
+        lat,
+        lang,
+        address,
+      } = req.body;
       let assignedUserBox;
       // check if the city and country exist
       const countryExist = await countryModel.getOne(country_id);
@@ -316,6 +325,9 @@ export const userAssignBoxToHimself = asyncHandler(
           district,
           street,
           boxLabel,
+          lat,
+          lang,
+          address,
         );
       } catch (error: any) {
         const source = 'userAssignBoxToHimself';
@@ -424,7 +436,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       const relativeCustomerAccess =
         await relativeCustomerAccessModel.getRelativeCustomerAccessById(user);
 
-      if (relativeCustomerAccess) {
+      if (relativeCustomerAccess && !userBox) {
         const relativeCustomerAccess2 =
           await relativeCustomerAccessModel.relativeCustomerAccess(user, boxId);
         // check if relative customer have access to add another relative customer

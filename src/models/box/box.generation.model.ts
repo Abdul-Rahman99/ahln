@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BoxGeneration } from '../../types/box.generation.type';
+import moment from 'moment-timezone';
 import db from '../../config/database';
 
 class BoxGenerationModel {
@@ -46,8 +47,8 @@ class BoxGenerationModel {
       // Generate box generation ID
       const id = await this.generateBoxGenerationId(); // Await here to get the new ID string
 
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Prepare SQL query based on provided fields
       const sqlFields: string[] = [

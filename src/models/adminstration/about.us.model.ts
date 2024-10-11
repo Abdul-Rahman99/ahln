@@ -1,3 +1,4 @@
+import moment from 'moment-timezone';
 import db from '../../config/database';
 import { AboutUs } from '../../types/about.us.type';
 
@@ -7,8 +8,8 @@ class AboutUsModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

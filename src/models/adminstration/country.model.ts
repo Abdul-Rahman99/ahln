@@ -1,4 +1,5 @@
 import db from '../../config/database';
+import moment from 'moment-timezone';
 import { Country } from '../../types/country.type';
 
 class CountryModel {
@@ -7,8 +8,8 @@ class CountryModel {
     const connection = await db.connect();
 
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = ['createdAt', 'updatedAt', 'code', 'name'];
       const sqlParams = [createdAt, updatedAt, country.code, country.name];

@@ -1,5 +1,6 @@
 import { SystemLog } from '../../types/system.log.type';
 import db from '../../config/database';
+import moment from 'moment-timezone';
 
 class SystemLogModel {
   // create new System Log
@@ -10,8 +11,8 @@ class SystemLogModel {
   ): Promise<SystemLog | null> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       const sqlFields = [
         'createdAt',

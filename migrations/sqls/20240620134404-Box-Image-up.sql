@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Delivery_Package (
     id VARCHAR(20) PRIMARY KEY,
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    updatedAt TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
     customer_id VARCHAR(20) REFERENCES users(id),
     vendor_id VARCHAR(20) REFERENCES users(id),

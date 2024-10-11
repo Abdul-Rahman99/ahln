@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import moment from 'moment-timezone';
 import { Box } from '../../types/box.type';
 import db from '../../config/database';
 import pool from '../../config/database';
@@ -10,8 +11,8 @@ class BoxModel {
   async createBox(box: Partial<Box>): Promise<Box> {
     const connection = await db.connect();
     try {
-      const createdAt = new Date();
-      const updatedAt = new Date();
+      const createdAt = moment().tz('Asia/Dubai').format();
+      const updatedAt = moment().tz('Asia/Dubai').format();
 
       // Function to generate box id
       async function generateBoxId() {
@@ -102,8 +103,6 @@ class BoxModel {
           id: lockerId,
           locker_label: lockerLabel,
           serial_port: serial_ports[i - 1],
-          createdAt,
-          updatedAt,
           is_empty: true,
           box_id: id,
         });

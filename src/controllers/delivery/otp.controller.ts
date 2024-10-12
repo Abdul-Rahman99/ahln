@@ -11,7 +11,9 @@ import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import UserDevicesModel from '../../models/users/user.devices.model';
 import UserModel from '../../models/users/user.model';
+import DeliveryPackageModel from '../../models/delivery/delivery.package.model';
 
+const deliveryPackageModel = new DeliveryPackageModel();
 const userModel = new UserModel();
 const userDevicesModel = new UserDevicesModel();
 const systemLog = new SystemLogModel();
@@ -270,7 +272,6 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     } else {
       const source = 'checkOTP';
       systemLog.createSystemLog(user, 'Invalid Otp', source);
-      ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
       const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
       const action = 'checkOTP';
       auditTrail.createAuditTrail(user, action, i18n.__('INVALID_OTP'), boxId);
@@ -289,6 +290,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
           source,
         );
       }
+      ResponseHandler.badRequest(res, i18n.__('INVALID_OTP'), null);
     }
   } catch (error: any) {
     const user = await userModel.findUserByBoxId(req.body.boxId);
@@ -322,7 +324,13 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
     const boxId = req.body.boxId;
     try {
       const trackingNumber = req.body.trackingNumber.toLowerCase();
-      const user = await userModel.findUserByBoxId(req.body.boxId);
+
+      // get delivery package
+      const deliveryPackage = await deliveryPackageModel.getOne(
+        req.body.delivery_package_id,
+      );
+
+      const user = deliveryPackage.customer_id;
 
       if (!trackingNumber) {
         const source = 'checkTrackingNumberAndUpdateStatus';

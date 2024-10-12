@@ -360,22 +360,22 @@ export const userAssignBoxToHimself = asyncHandler(
           source,
         );
       }
-      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
-      try {
-        notificationModel.pushNotification(
-          fcmToken,
-          i18n.__('ASSIGN_BOX_TO_USER'),
-          i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
-        );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        const source = 'userAssignBoxToHimself';
-        systemLog.createSystemLog(
-          user,
-          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-          source,
-        );
-      }
+      // const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      // try {
+      //   notificationModel.pushNotification(
+      //     fcmToken,
+      //     i18n.__('ASSIGN_BOX_TO_USER'),
+      //     i18n.__('BOX_ASSIGNED_TO_USER_SUCCESSFULLY'),
+      //   );
+      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // } catch (error: any) {
+      //   const source = 'userAssignBoxToHimself';
+      //   systemLog.createSystemLog(
+      //     user,
+      //     i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+      //     source,
+      //   );
+      // }
       try {
         const action = 'userAssignBoxToHimself';
         auditTrail.createAuditTrail(
@@ -554,22 +554,22 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         boxId,
       );
 
-      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
-      try {
-        notificationModel.pushNotification(
-          fcmToken,
-          i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
-          i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
-        );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        const source = 'userAssignBoxToRelativeUser';
-        systemLog.createSystemLog(
-          user,
-          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-          source,
-        );
-      }
+      // const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      // try {
+      //   notificationModel.pushNotification(
+      //     fcmToken,
+      //     i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+      //     i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
+      //   );
+      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // } catch (error: any) {
+      //   const source = 'userAssignBoxToRelativeUser';
+      //   systemLog.createSystemLog(
+      //     user,
+      //     i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+      //     source,
+      //   );
+      // }
 
       if (relative_customer) {
         const fcmTokenRelative =

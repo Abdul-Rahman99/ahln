@@ -273,7 +273,9 @@ export const deleteRelativeCustomer = asyncHandler(
         deletedRelativeCustomer.box_id,
       );
 
-      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(
+        deletedRelativeCustomer.relative_customer_id,
+      );
       try {
         notificationModel.pushNotification(
           fcmToken,
@@ -376,9 +378,14 @@ export const updateRelativeCustomerAccess = asyncHandler(
     }
     try {
       const id = req.params.id;
+
+      const newRelaticeCustomerAccessData: RelativeCustomerAccess = req.body;
       // get the record id from the user id
       const record =
-        await relativeCustomerAccessModel.getRelativeCustomerAccessById(id);
+        await relativeCustomerAccessModel.getRelativeCustomerAccessById(
+          id,
+          newRelaticeCustomerAccessData.box_id,
+        );
 
       if (!record) {
         const source = 'updateRelativeCustomerAccess';
@@ -388,8 +395,6 @@ export const updateRelativeCustomerAccess = asyncHandler(
           i18n.__('USER_ACCESS_DOES_NOT_EXIST'),
         );
       }
-
-      const newRelaticeCustomerAccessData: RelativeCustomerAccess = req.body;
       const updatedRelativeCustomerAccess =
         await relativeCustomerAccessModel.updateOne(
           newRelaticeCustomerAccessData,

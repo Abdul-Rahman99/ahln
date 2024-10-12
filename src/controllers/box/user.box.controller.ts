@@ -31,6 +31,13 @@ const auditTrail = new AuditTrailModel();
 const cityModel = new CityModel();
 const countryModel = new CountryModel();
 
+function validateEmail(email: string): boolean {
+  const validRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  return validRegex.test(email);
+}
+
 export const createUserBox = asyncHandler(
   async (req: Request, res: Response) => {
     const user = await authHandler(req, res);
@@ -411,6 +418,12 @@ export const userAssignBoxToRelativeUser = asyncHandler(
       let createdRelativeCustomerAccess;
       let assignedUserBox;
       let createdRelativeCustomer;
+
+      // check if the email syntax is valid
+      if (!validateEmail(email)) {
+        return ResponseHandler.badRequest(res, i18n.__('EMAIL_INVALID'));
+      }
+
       const relative_customer = await userModel.findByEmail(email);
 
       const boxExist = await boxModel.getOne(boxId);

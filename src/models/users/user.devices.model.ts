@@ -9,7 +9,7 @@ class UserDevicesModel {
 
     try {
       // check if user device already exists
-      const userDevice = await this.fcmTokenExists(fcmToken);
+      const userDevice = await this.fcmTokenExists(fcmToken, userId);
       if (userDevice) {
         return;
       }
@@ -59,12 +59,12 @@ class UserDevicesModel {
   }
 
   // check if fcm token already exists
-  async fcmTokenExists(fcmToken: string): Promise<boolean> {
+  async fcmTokenExists(fcmToken: string, userId: string): Promise<boolean> {
     const connection = await db.connect();
 
     try {
-      const sql = `SELECT * FROM user_devices WHERE fcm_token = $1`;
-      const result = await connection.query(sql, [fcmToken]);
+      const sql = `SELECT * FROM user_devices WHERE fcm_token = $1 AND user_id = $2`;
+      const result = await connection.query(sql, [fcmToken, userId]);
 
       return result.rows.length > 0;
     } catch (error) {

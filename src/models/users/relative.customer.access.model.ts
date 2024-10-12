@@ -206,11 +206,11 @@ class RelativeCustomerAccessModel {
       const sql =
         'SELECT craete_realative_customer FROM relative_customer_access WHERE relative_customer_id = $1 AND box_id = $2';
       const result = await connection.query(sql, [id, boxId]);
-      if (result.rows.length === 0) {
+      if (result.rows.length == 0) {
         return false;
       }
 
-      return result.rows[0].craete_realative_customer;
+      return true;
     } catch (error) {
       throw new Error((error as Error).message);
     } finally {

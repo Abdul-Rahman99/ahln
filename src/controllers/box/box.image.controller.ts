@@ -88,7 +88,7 @@ export const uploadBoxImage = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DELIVERY_MAN_ARRIEVED'),
+            'Ahln',
             i18n.__('DELIVERY_MAN_TRIES_TO_OPEN_BOX'),
           );
 

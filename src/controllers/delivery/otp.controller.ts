@@ -172,7 +172,7 @@ export const deleteOTP = asyncHandler(async (req: Request, res: Response) => {
     try {
       notificationModel.pushNotification(
         fcmToken,
-        i18n.__('DELETE_OTP'),
+        'Ahln',
         i18n.__('OTP_DELETED_SUCCESSFULLY'),
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,7 +250,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('CHECK_OTP'),
+          'Ahln',
           i18n.__('OTP_VERIFIED_SUCCESSFULLY'),
         );
 
@@ -277,7 +277,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('CHECK_OTP'),
+          'Ahln',
           i18n.__('INVALID_OTP'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -299,7 +299,7 @@ export const checkOTP = asyncHandler(async (req: Request, res: Response) => {
     try {
       notificationModel.pushNotification(
         fcmToken,
-        i18n.__('CHECK_OTP'),
+        'Ahln',
         i18n.__('INVALID_OTP'),
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -354,7 +354,8 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            result[3] as string,
+            // result[3] as string,
+            'Ahln',
             i18n.__('TRACKING_NUMBER_VERIFIED_SUCCESSFULLY'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -377,7 +378,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('CHECK_TRACKING_NUMBER'),
+            'Ahln',
             i18n.__('PACKAGE_ALREADY_DELIVERED'),
           );
           const action = 'checkTrackingNumberAndUpdateStatus';
@@ -407,7 +408,7 @@ export const checkTrackingNumberAndUpdateStatus = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('CHECK_TRACKING_NUMBER'),
+          'Ahln',
           i18n.__('PACKAGE_ID_INVALID'),
         );
         const action = 'checkTrackingNumberAndUpdateStatus';

@@ -220,7 +220,7 @@ export const updateRelativeCustomer = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('UPDATE_RELATIVE_CUSTOMER'),
+          'Ahln',
           i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
         );
       } catch (error: any) {
@@ -279,7 +279,7 @@ export const deleteRelativeCustomer = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('DELETE_RELATIVE_CUSTOMER'),
+          'Ahln',
           i18n.__('RELATIVE_CUSTOMER_DELETED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

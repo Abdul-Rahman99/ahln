@@ -204,7 +204,7 @@ client.on('message', async (topic, message) => {
       try {
         notificationModel.pushNotification(
           fcmToken,
-          status,
+          `Ahln ${status}`,
           status == `${door} is unlocked`
             ? i18n.__('DOOR_OPEN')
             : i18n.__('DOOR_CLOSE'),
@@ -238,8 +238,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_1'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_1_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -258,8 +258,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_2'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_2_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -278,8 +278,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_1_AND_2'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_1_AND_2_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -298,8 +298,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_3'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_3_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -318,8 +318,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_1_AND_3'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_1_AND_3_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -338,8 +338,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_2_AND_3'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_2_AND_3_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -358,8 +358,8 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_1_AND_2_AND_3'),
-            i18n.__('DOOR_OPENED'),
+            'Ahln',
+            i18n.__('DOOR_1_AND_2_AND_3_OPENED'),
           );
         } catch (error: any) {
           const source = 'doorActionMqtt';
@@ -378,7 +378,7 @@ client.on('message', async (topic, message) => {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('DOOR_CLOSED'),
+            'Ahln',
             i18n.__('DOOR_CLOSED'),
           );
         } catch (error: any) {

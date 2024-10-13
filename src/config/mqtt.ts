@@ -202,13 +202,7 @@ client.on('message', async (topic, message) => {
         responseArray[i],
       );
       try {
-        notificationModel.pushNotification(
-          fcmToken,
-          `Ahln ${status}`,
-          status == `${door} is unlocked`
-            ? i18n.__('DOOR_OPEN')
-            : i18n.__('DOOR_CLOSE'),
-        );
+        notificationModel.pushNotification(fcmToken, `Ahln`, status);
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {

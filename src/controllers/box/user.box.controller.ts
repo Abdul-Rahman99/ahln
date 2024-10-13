@@ -577,7 +577,7 @@ export const userAssignBoxToRelativeUser = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmTokenRelative,
-            i18n.__('ASSIGN_BOX_TO_RELATIVE_USER'),
+            'Ahln',
             i18n.__('BOX_ASSIGNED_TO_RELATIVE_USER_SUCCESSFULLY'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -706,12 +706,12 @@ export const transferBoxOwnership = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          'Ahln',
           i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
         );
         notificationModel.pushNotification(
           fcmTokenNewUser,
-          i18n.__('TRANSFER_BOX_OWNERSHIP'),
+          'Ahln',
           i18n.__('BOX_OWNERSHIP_TRANSFERRED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

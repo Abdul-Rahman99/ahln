@@ -87,7 +87,7 @@ export const sendNotificationIfNearby = async (
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('YOU_ARE_NEARBY'),
+          'Ahln',
           i18n.__('PICK_UP_THE_DELIVERY_PACKAGE'),
         );
       } catch (error: any) {

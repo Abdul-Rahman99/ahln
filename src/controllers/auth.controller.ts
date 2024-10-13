@@ -292,7 +292,7 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   try {
     notificationModel.pushNotification(
       fcmToken,
-      i18n.__('UPDATE_RELATIVE_CUSTOMER'),
+      'Ahln',
       i18n.__('RELATIVE_CUSTOMER_UPDATED_SUCCESSFULLY'),
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -365,7 +365,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (fcmToken) {
-    if (await userDevicesModel.fcmTokenExists(fcmToken)) {
+    if (await userDevicesModel.fcmTokenExists(fcmToken, user.id)) {
       //console.log('User already has a FCM token');
     } else {
       await userDevicesModel.saveUserDevice(user.id, fcmToken);

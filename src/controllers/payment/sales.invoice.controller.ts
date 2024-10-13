@@ -94,7 +94,7 @@ export const createSalesInvoice = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('CREATE_SALES_INVOICE'),
+          'Ahln',
           i18n.__('SALES_INVOICE_CREATED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

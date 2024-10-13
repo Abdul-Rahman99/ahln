@@ -265,7 +265,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('DELIVERY_CHECK_PIN'),
+          'Ahln',
           i18n.__('PIN_CHECKED_SUCCESSFULLY'),
         );
 
@@ -301,7 +301,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('DELIVERY_CHECK_PIN'),
+          'Ahln',
           i18n.__('PIN_CHECKED_FAILED'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -336,7 +336,7 @@ export const checkPIN = asyncHandler(async (req: Request, res: Response) => {
     try {
       notificationModel.pushNotification(
         fcmToken,
-        i18n.__('DELIVERY_CHECK_PIN'),
+        'Ahln',
         i18n.__('PIN_INVALID_OR_OUT_OF_TIME_RANGE'),
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

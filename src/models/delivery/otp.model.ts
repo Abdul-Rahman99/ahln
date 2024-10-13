@@ -331,7 +331,7 @@ class OTPModel {
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('CHECK_TRACKING_NUMBER'),
+            'Ahln',
             i18n.__('PACKAGE_ALREADY_DELIVERED'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

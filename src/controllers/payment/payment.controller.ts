@@ -193,7 +193,7 @@ export const updatePayment = asyncHandler(
         try {
           notificationModel.pushNotification(
             fcmToken,
-            i18n.__('UPDATE_PAYMENT'),
+            'Ahln',
             i18n.__('PAYMENT_SUCCESSFULLY_DONE'),
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,7 +219,7 @@ export const updatePayment = asyncHandler(
       try {
         notificationModel.pushNotification(
           fcmToken,
-          i18n.__('UPDATE_PAYMENT'),
+          'Ahln',
           i18n.__('PAYMENT_UPDATED_SUCCESSFULLY'),
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

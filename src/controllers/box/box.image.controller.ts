@@ -62,7 +62,7 @@ export const uploadBoxImage = asyncHandler(
         );
 
         notificationModel.createNotification(
-          'Delivery Man in front of Ahkn Box',
+          'Delivery Man in front of Ahln Box',
           i18n.__('IMAGE_UPLOADED_SUCCESSFULLY'),
           imageName,
           userId,

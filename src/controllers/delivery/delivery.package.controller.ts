@@ -10,13 +10,13 @@ import authHandler from '../../utils/authHandler';
 import AuditTrailModel from '../../models/logs/audit.trail.model';
 import NotificationModel from '../../models/logs/notification.model';
 import SystemLogModel from '../../models/logs/system.log.model';
-// import UserDevicesModel from '../../models/users/user.devices.model';
+import UserDevicesModel from '../../models/users/user.devices.model';
 import BoxModel from '../../models/box/box.model';
 import UserBoxModel from '../../models/box/user.box.model';
 
 const userBoxModel = new UserBoxModel();
 const boxModel = new BoxModel();
-// const userDevicesModel = new UserDevicesModel();
+const userDevicesModel = new UserDevicesModel();
 const notificationModel = new NotificationModel();
 const auditTrail = new AuditTrailModel();
 const systemLog = new SystemLogModel();
@@ -71,7 +71,7 @@ export const createDeliveryPackage = asyncHandler(
         );
 
       notificationModel.createNotification(
-        'createDeliveryPackage',
+        `createDeliveryPackage ${createdDeliveryPackage.title}`,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         null,
         user,
@@ -84,22 +84,22 @@ export const createDeliveryPackage = asyncHandler(
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         newDeliveryPackage.box_id as string,
       );
-      // const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
-      // try {
-      //   notificationModel.pushNotification(
-      //     fcmToken,
-      //     i18n.__('CREATE_DELIVERY_PACKAGE'),
-      //     i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
-      //   );
-      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // } catch (error: any) {
-      //   const source = 'createDeliveryPackage';
-      //   systemLog.createSystemLog(
-      //     user,
-      //     i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-      //     source,
-      //   );
-      // }
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          'Ahln',
+          i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'createDeliveryPackage';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.success(
         res,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),

@@ -219,22 +219,22 @@ export const updateOnePinByUser = asyncHandler(
         i18n.__('PIN_UPDATED_SUCCESSFULLY'),
         pin.box_id,
       );
-      // const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
-      // try {
-      //   notificationModel.pushNotification(
-      //     fcmToken,
-      //     i18n.__('PIN_UPDATE'),
-      //     i18n.__('PIN_UPDATED_SUCCESSFULLY'),
-      //   );
-      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // } catch (error: any) {
-      //   const source = 'createPin';
-      //   systemLog.createSystemLog(
-      //     user,
-      //     i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
-      //     source,
-      //   );
-      // }
+      const fcmToken = await userDevicesModel.getFcmTokenDevicesByUser(user);
+      try {
+        notificationModel.pushNotification(
+          fcmToken,
+          'Ahln',
+          i18n.__('PIN_UPDATED_SUCCESSFULLY'),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const source = 'createPin';
+        systemLog.createSystemLog(
+          user,
+          i18n.__('ERROR_CREATING_NOTIFICATION', ' ', error.message),
+          source,
+        );
+      }
       ResponseHandler.success(res, i18n.__('PIN_UPDATED_SUCCESSFULLY'), pin);
     } catch (error) {
       const source = 'updateOnePinByUser';

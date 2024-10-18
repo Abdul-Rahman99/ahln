@@ -71,7 +71,7 @@ export const createDeliveryPackage = asyncHandler(
         );
 
       notificationModel.createNotification(
-        `createDeliveryPackage ${createdDeliveryPackage.title}`,
+        `createDeliveryPackage ${newDeliveryPackage?.title}`,
         i18n.__('DELIVERY_PACKAGE_CREATED_SUCCESSFULLY'),
         null,
         user,
